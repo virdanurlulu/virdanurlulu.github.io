@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simulation & Modeling of Explosion Effects (TNT Equivalence)</title>
+  <style>
+    :root{
+      --ink:#1e293b;           /* slate-800 */
+      --muted:#64748b;         /* slate-500 */
+      --card:#ffffff;
+      --bg:#f5f7fb;
+      --blue:#1296d4;
+      --blue-2:#0f7fb3;
+      --purple:#6a1b9a;
+      --teal:#06b6d4;
+      --stripe:#eaf3fb;
+      --ring: rgba(18,150,212,.25);
+      --danger:#b91c1c;
+      --ok:#0ea5e9;
+      --pink:#f06292;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; background:var(--bg); color:var(--ink);
+      font: 14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    .wrap{max-width:1280px; margin:32px auto; padding-left:max(16px, env(safe-area-inset-left)); padding-right:max(16px, env(safe-area-inset-right))}
+    body.full .wrap{max-width:none; width:100%; padding-left:max(20px, env(safe-area-inset-left)); padding-right:max(20px, env(safe-area-inset-right))}
+
+    /* Header */
+    .title{display:grid; gap:6px; margin-bottom:18px}
+    .title h1{margin:0; font-size:clamp(26px, 3.2vw, 44px); line-height:1.25; font-family: Georgia, 'Times New Roman', serif; display:inline-block; background:var(--blue-itb); color:#fff; padding:6px 10px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,.15); max-width:clamp(560px, 70vw, 62ch); white-space:normal; word-break:normal; overflow-wrap:break-word; hyphens:auto}
+    @supports (text-wrap: balance){ .title h1{ text-wrap: balance } }
+    .title h2{margin:0; font-size:clamp(12px, 1.2vw, 16px); font-weight:600; color:#fff}
+    .banner{
+      position:relative; color:#fff;
+      /* background image only */
+      background-image: url('https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/banner-itb1.webp');
+      background-size:cover; background-position:center; background-repeat:no-repeat;
+      padding:clamp(16px, 2.2vw, 24px) clamp(16px, 2.4vw, 28px);
+      min-height:clamp(120px, 20vw, 240px);
+      border-radius:14px; box-shadow:0 6px 20px rgba(2,41,77,.12);
+    }
+    .title h1, .title h2{ text-shadow:0 1px 2px rgba(0,0,0,.25) }
+    /* Brand bar with ITB logo */
+    .brandbar{display:flex; align-items:center; gap:16px}
+    .brand-logo{height:clamp(56px,6.5vw,96px); width:auto; display:block}
+    .nowrap{white-space:nowrap}
+    .brand-text{display:flex; flex-direction:column; gap:6px}
+
+    /* Cards */
+    .card{background:var(--card); border-radius:14px; overflow:hidden; box-shadow:0 4px 14px rgba(10,34,64,.08); margin-bottom:18px}
+    .card-header{background:var(--blue); color:#fff; font-weight:700; padding:10px 14px; letter-spacing:.3px; font-family: Georgia, 'Times New Roman', serif}
+
+    table{width:100%; border-collapse:collapse}
+    th, td{padding:8px 10px; vertical-align:middle}
+    thead th{background:var(--stripe); font-weight:700; color:#294050; border-bottom:1px solid #dbe7f2}
+    tbody tr:nth-child(even){background:#fbfdff}
+    tbody td{border-bottom:1px solid #eef4fa}
+
+    .label{font-weight:600}
+    .unit{color:#0f2a3a; font-weight:600; white-space:nowrap}
+    .ref{color:#0f7fb3; font-size:12px}
+
+    input[type="number"], input[readonly], select, textarea{
+      width:100%; border:1px solid #d6e3ef; background:#fff; color:var(--ink);
+      border-radius:10px; padding:10px 12px; min-height:40px; outline:none; transition:.2s box-shadow,.2s border-color;
+    }
+    input[readonly]{background:#f6f9fd; color:#475569}
+    input:focus, select:focus, textarea:focus{border-color:var(--blue); box-shadow:0 0 0 4px var(--ring)}
+
+    .grid{display:grid; grid-template-columns:1fr; gap:14px}
+    @media (min-width:720px){ .grid{grid-template-columns:1fr 1fr}}
+
+    /* Chemical Material compact grid */
+    .chem-grid{display:grid; grid-template-columns:1.3fr 1fr; gap:14px; align-items:start}
+    @media (max-width:720px){ .chem-grid{grid-template-columns:1fr} }
+
+    .mini{display:flex; gap:12px; align-items:flex-start}
+    .mini > *{flex:1}
+    /* Material column layout: stack Material on top, Volume & Distance below */
+    .matcol{display:flex; flex-direction:column; gap:12px}
+    .matcol > .mini{flex-direction:column; gap:12px; align-items:stretch}
+    .sameW{width:var(--matW, 320px)}
+    
+
+    /* Equation panel on the right of Chemical Material */
+    .eq-panel{border:1px solid #dbe7f2; background:var(--card); color:var(--ink); border-radius:12px; padding:12px; box-shadow:inset 0 0 0 1px rgba(13,41,77,.02)}
+    .eq-title{font-weight:700; color:var(--blue-2); margin-bottom:8px}
+    .eq-note{font-size:12px; color:var(--muted); margin-top:6px}
+    .rxn{padding:10px 12px; border:1px dashed #c9d8e6; border-radius:10px; margin-top:8px; background:var(--stripe)}
+    .rxn small{display:block; color:#334155; margin-bottom:4px}
+    .rxn-eq{font-family: 'Times New Roman', Georgia, serif; font-size:16px; color:var(--ink)}
+    .rxn-eq .arrow{padding:0 6px; font-weight:700}
+    
+
+    .toolbar{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end; padding:10px}
+    .btn{appearance:none; border:1px solid #cfe3f3; background:#fff; color:#0f2a3a; font-weight:600; border-radius:10px; padding:8px 12px; cursor:pointer}
+    .btn:hover{border-color:var(--blue)}
+    .btn.primary{background:var(--blue); color:#fff; border-color:transparent}
+    .btn.primary:hover{background:var(--blue-2)}
+    .btn.ghost{background:transparent}
+
+    .hint{font-size:12px; color:var(--muted)}
+    .status{padding:8px 12px; border-left:4px solid var(--ok); background:#ebf8ff; color:#075985; border-radius:10px; display:none; margin-top:8px}
+    .status.bad{border-left-color:var(--danger); background:#fff4f4; color:#7f1d1d}
+
+    .footnote{font-size:12px; color:#475569; margin-top:8px}
+    code.badge{background:#e8f5fd; color:#0b5f83; font-weight:700; padding:2px 6px; border-radius:6px}
+
+    .tight{min-width:240px; max-width:320px}
+
+    /* ===== Right-Side Estimation Panels ===== */
+    .split{display:grid; grid-template-columns: 40% 60%; gap:18px}
+    @media (max-width: 960px){ .split{grid-template-columns:1fr} }
+    .left{display:flex; flex-direction:column; gap:18px}
+    .right{display:flex; flex-direction:column; gap:18px; position:sticky; top:12px; align-self:start; max-height:calc(100vh - 24px); overflow:auto}
+
+    /* Float RIGHT default: fix estimation panel at right 60% */
+    body.float-right .right{position:fixed; top:var(--rightTop, var(--headerH,120px)); right:calc(16px + env(safe-area-inset-right)); bottom:16px; width:var(--panelWpx, 60vw); z-index:50; overflow:auto; box-shadow:0 16px 30px rgba(2,41,77,.25); background:transparent; will-change:top,left,width; transition: top .12s ease-out,left .12s ease-out,width .12s ease-out}
+    body.float-right .split{grid-template-columns:1fr; margin-right: calc(60vw + max(24px, env(safe-area-inset-right))); position:relative;}  
+
+    body.float-right .right.pin-end{position:absolute; top:var(--pinEndTop,0px); left:var(--pinLeft,0px); right:auto; bottom:auto; width:var(--panelWpx, 60vw); box-shadow:0 16px 30px rgba(2,41,77,.25); will-change:top,left,width; transition: top .12s ease-out,left .12s ease-out,width .12s ease-out}   
+    body.float-right .right.pin-start{position:absolute; top:var(--pinStartTop,0px); left:var(--pinLeft,0px); right:auto; bottom:auto; width:var(--panelWpx, 60vw); box-shadow:0 16px 30px rgba(2,41,77,.25); will-change:top,left,width; transition: top .12s ease-out,left .12s ease-out,width .12s ease-out}   
+    .estimation .card-header{text-transform:uppercase}
+    .method-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px; padding:12px}
+    
+    
+    .method-card{position:relative; min-height:220px; border:1px solid #dbe7f2; background:#fff}
+    .method-card .vlabel{position:absolute; top:0; bottom:0; left:0; width:28px; background:#f7fafc; border-right:1px solid #e6eef6;
+      writing-mode:vertical-rl; text-orientation:upright; letter-spacing:2px; font-weight:700; color:#4b5563; display:flex; align-items:center; justify-content:center}
+    .method-card .pad{padding:10px 10px 40px 38px; height:100%;}
+    .sevfoot{position:absolute; left:0; right:0; bottom:0; height:30px; background:var(--pink); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700}
+
+    /* View controls / Academic layout */
+    .viewbar{position:sticky; top:8px; z-index:30; display:flex; gap:8px; align-items:center; justify-content:flex-end; padding:10px 0}
+    .viewbar:empty{display:none} 
+    .btn.toggle[aria-pressed="true"]{background:var(--blue); color:#fff}
+    .density{display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted)}
+    .density input{accent-color: var(--blue)}
+
+    /* Theme swatches */
+    .swatches{display:flex; gap:6px; align-items:center}
+    .swatch{width:22px; height:22px; border-radius:50%; border:1px solid #cfe3f3; cursor:pointer}
+    .swatch[data-theme="theme-warm"]{background:linear-gradient(135deg,#f5efe6,#e6d7c3)}
+    .swatch[data-theme="theme-nord"]{background:linear-gradient(135deg,#eceff4,#d8e2f0)}
+    .swatch[data-theme="theme-solar"]{background:linear-gradient(135deg,#fdf6e3,#f2e9ca)}
+    .swatch[data-theme="theme-itb"]{background:linear-gradient(135deg,#e8f4fc,#b9daf3)}
+    .swatch[data-theme="theme-inkless"]{background:linear-gradient(135deg,#f4f5f6,#e7eaee)}
+
+    /* Theme palettes (choose in Viewbar) */
+    body.theme-warm { --bg:#f5efe6; --card:#faf6ef; --ink:#2e2a24; --muted:#6f685f; --stripe:#efe6da; --blue:#0e86b6; --blue-2:#0c7096; --pink:#e79aa8; }
+    body.theme-nord { --bg:#eceff4; --card:#ffffff; --ink:#2e3440; --muted:#6b778d; --stripe:#e5e9f0; --blue:#5e81ac; --blue-2:#4c6f9a; --pink:#d77a8b; }
+    body.theme-solar{ --bg:#fdf6e3; --card:#fffaf0; --ink:#657b83; --muted:#7b8b8c; --stripe:#eee8d5; --blue:#268bd2; --blue-2:#1f6fa7; --pink:#d33682; }
+    body.theme-inkless{ --bg:#f4f5f6; --card:#fcfcfd; --ink:#2b3036; --muted:#66707b; --stripe:#eceff2; --blue:#3a7ca5; --blue-2:#326d91; --pink:#de869a; }
+    body.theme-itb   { --bg:#eef6fb; --card:#ffffff; --ink:#112a3a; --muted:#516a7a; --stripe:#e6f0f7; --blue:#0079c2; --blue-2:#0067a5; --pink:#e17b9a; }
+
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark){
+      :root{ --bg:#0b1220; --card:#0e1a2b; --ink:#dbe7ff; --muted:#94a3b8; --stripe:#0f1f35; }
+      .btn{border-color:#274160; color:#cfe3ff}
+      .btn:hover{border-color:#5aa7e0}
+      tbody td{border-bottom-color:#1b2b47}
+      .method-card{border-color:#1b2b47; background:#0e1a2b}
+      .method-card .vlabel{background:#0c1526; border-right-color:#1b2b47; color:#9fb7d1}
+    }
+
+  
+
+    /* ===== Tablet & medium screens ===== */
+    @media (max-width: 960px){
+      body.float-right .right{position:static; width:auto; box-shadow:none}
+      body.float-right .split{margin-right:0}
+    }
+
+    /* ===== Mobile tweaks for better phone layout ===== */
+    @media (max-width: 600px){
+      .wrap{padding:0 12px}
+      .split{gap:12px; margin-right:0}
+      .viewbar{position:static}
+      .left, .right{position:static; top:auto; max-height:none; overflow:visible}
+      body.float-right .right{position:static; width:auto; box-shadow:none}
+      body.float-right .split{margin-right:0}
+}
+
+/* ===== Footer ===== */
+    .app-footer{
+      margin-top:20px;
+      color:#fff;
+      background-color:#0079c2; /* ITB blue */
+      background-image: url('https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/teknik-kimia-ITB1.webp');
+      background-size:cover; background-position:center; background-repeat:no-repeat;
+      width:100vw;
+      margin-left:calc(50% - 50vw);
+      margin-right:calc(50% - 50vw);
+      padding:16px;
+      padding-left:max(16px, env(safe-area-inset-left));
+      padding-right:max(16px, env(safe-area-inset-right));
+      border-top:1px solid rgba(255,255,255,.25);
+      border-bottom:1px solid rgba(255,255,255,.25);
+      border-left:0; border-right:0;
+      border-radius:0;
+      box-shadow:0 4px 12px rgba(10,34,64,.06);
+    }
+    .app-footer .grid{display:grid; grid-template-columns:2fr 1fr; gap:16px; align-items:start}
+    @media (max-width: 720px){ .app-footer .grid{grid-template-columns:1fr} }
+    .app-footer .credit{font-weight:700; color:#e9f5ff; margin-bottom:6px; text-align:center}
+    .app-footer .dedication{font-size:13px; line-height:1.6; text-align:center; max-width:960px; margin:0 auto}
+    .app-footer .actions{display:flex; gap:10px; align-items:center; justify-content:flex-end}
+    .app-footer .actions .btn{padding:8px 12px; background:#fff; color:#004a6d; border:1px solid rgba(0,0,0,.12); border-radius:10px}
+    /* Footer links as white text */
+    .app-footer a{color:#fff; text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:2px}
+    .app-footer a:visited{color:#fff}
+    .app-footer a:hover{opacity:.9}
+    /* Center footer texts when fullscreen */
+    body.full .app-footer .grid{grid-template-columns:1fr; justify-items:center; text-align:center}
+    body.full .app-footer .actions{justify-content:center}
+    .app-footer{background-image: url('https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/banner-itb1.webp'), url('https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/main/img/banner-itb1.webp'); background-size:cover; background-position:center} 
+  </style>
+  <!-- SEO & Social START -->
+  <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/favicon.ico">
+  <link rel="canonical" href="https://virdanurlulu.github.io/">
+  <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
+  <link rel="dns-prefetch" href="//raw.githubusercontent.com">
+
+  <meta name="description" content="Interactive simulation and modeling of explosion effects based on TNT equivalence using JavaScript — with chemical materials, properties, parameters, and consequence estimation.">
+  <meta name="author" content="Virda Nur Lu'lu">
+  <meta name="robots" content="index,follow">
+
+  <!-- Open Graph / WhatsApp -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Program Magister Teknik Kimia — Institut Teknologi Bandung">
+  <meta property="og:title" content="Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript">
+  <meta property="og:description" content="Interactive explosion-effects modeling (TNT equivalence). Chemical materials, properties, parameters, and consequence estimation.">
+  <meta property="og:url" content="https://virdanurlulu.github.io/">
+  <meta property="og:image" content="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/ITB-Exlosion-Modeling-Simulation.webp">
+  <meta property="og:image" content="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/main/img/ITB-Exlosion-Modeling-Simulation.webp">
+  <meta property="og:image:type" content="image/webp">
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript">
+  <meta name="twitter:description" content="Interactive explosion-effects modeling (TNT equivalence). Chemical materials, properties, parameters, and consequence estimation.">
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/ITB-Exlosion-Modeling-Simulation.webp">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Explosion Effects Modeling (TNT Equivalence)",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Web",
+    "url": "https://virdanurlulu.github.io/",
+    "image": "https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/ITB-Exlosion-Modeling-Simulation.webp",
+    "author": {"@type": "Person", "name": "Virda Nur Lu'lu", "sameAs": ["https://id.linkedin.com/in/virdanurlulu"]},
+    "inLanguage": "en",
+    "description": "Interactive simulation and modeling of explosion effects based on TNT equivalence using JavaScript — with chemical materials, properties, parameters, and consequence estimation.",
+    "publisher": {"@type": "Organization", "name": "Institut Teknologi Bandung", "url": "https://che.itb.ac.id/"}
+  }
+  </script>
+  <!-- SEO & Social END -->
+</head>
+<body class="theme-warm full float-right">
+  <div class="wrap"><span id="top" aria-hidden="true"></span>
+    <div class="banner title">
+      <div class="brandbar">
+        <a href="https://virdanurlulu.github.io/" target="_blank" rel="noopener noreferrer" class="brand-logo-link" aria-label="Kunjungi beranda">
+          <img id="itbLogo" class="brand-logo" alt="Logo ITB" src="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/Logo_Institut_Teknologi_Bandung.webp"/>
+        </a>
+        <div class="brand-text">
+          <h1>Simulation and Modeling of Explosion Effects Based on TNT Equivalence <span class="nowrap">using Javascript.</span></h1>
+          <h2>Program Magister Teknik Kimia  -  Institut Teknologi Bandung</h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="viewbar" aria-label="View controls"></div>
+
+    <div class="split"><div class="left">
+    <!-- MATERIAL & BASIC INPUTS -->
+    <section class="card" aria-labelledby="mat-head">
+      <div id="mat-head" class="card-header">Chemical Material</div>
+      <div style="padding:14px">
+        <div class="chem-grid">
+          <div class="matcol">
+            <label class="tight">
+              <div class="label">Pilih Material</div>
+              <select id="material">
+                <option value="">— pilih —</option>
+                <option value="AN">Ammonium Nitrate (AN)</option>
+                <option value="LPG">Liquefied Petroleum Gas (LPG)</option>
+                <option value="H2">Hydrogen (H₂)</option>
+                <option value="TNT">TNT (referensi)</option>
+              </select>
+            </label>
+            <div class="mini">
+              <label>
+                <div class="label">Volume</div>
+                <div class="mini sameW">
+                  <input id="vol" type="number" min="0" step="any" placeholder="cth 12.5" aria-label="Volume" />
+                  <input value="m³" class="unit" readonly />
+                </div>
+              </label>
+              <label>
+                <div class="label">Distance</div>
+                <div class="mini sameW">
+                  <input id="dist" type="number" min="0" step="any" placeholder="cth 150" aria-label="Distance" />
+                  <input value="meters" class="unit" readonly />
+                </div>
+              </label>
+            </div>
+          </div>
+          <div class="eq-panel">
+            <div class="eq-title">Representative Overall Reaction (Energy Basis)</div>
+            <div id="eq-text" class="eq-body">Pilih material untuk menampilkan persamaan reaksi representatif.</div>
+            <div class="eq-note">Catatan: Persamaan berikut bersifat <em>overall/representative</em> untuk tujuan neraca energi; komposisi produk nyata bergantung pada kondisi (tekanan, temperatur, oksigen, confinement).</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROPERTIES TABLE -->
+    <section class="card" aria-labelledby="prop-head">
+      <div id="prop-head" class="card-header">Properties</div>
+      <div style="padding:12px">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:36%">Properties</th>
+              <th style="width:22%">Value</th>
+              <th style="width:12%">Unit</th>
+              <th>Literature</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="label">Density ρ = m/V</td>
+              <td><input id="rho" type="number" min="0" step="any" placeholder="kg/m³"/></td>
+              <td class="unit">kg/m³</td>
+              <td class="ref">@Literature, NIST</td>
+            </tr>
+            <tr>
+              <td class="label">ΔH<sub>explosion</sub></td>
+              <td><input id="dh" type="number" min="0" step="any" placeholder="kJ/kg"/></td>
+              <td class="unit">kJ/kg</td>
+              <td class="ref">@Literature, NIST</td>
+            </tr>
+            <tr>
+              <td class="label">(Pa) Ambient Pressure</td>
+              <td><input id="pa" type="number" min="0" step="any" placeholder="101.325"/></td>
+              <td class="unit">kPa</td>
+              <td class="ref">@Literature, NIST @20&nbsp;°C</td>
+            </tr>
+            <tr>
+              <td class="label">η<sub>E</sub> Explosion Efficiency</td>
+              <td><input id="eta" type="number" min="0" max="1" step="any" placeholder="0–1"/></td>
+              <td class="unit">–</td>
+              <td class="ref">@Literature, Crowl &amp; Louvar; Alonso; Sadovski</td>
+            </tr>
+            <tr>
+              <td class="label">E<sub>TNT</sub></td>
+              <td><input id="e_tnt" type="number" min="0" step="any" placeholder="kJ/kg"/></td>
+              <td class="unit">kJ/kg</td>
+              <td class="ref">@Literature, Crowl &amp; Louvar; Alonso; Sadovski</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="footnote">Catatan: Nilai default tidak diisikan agar Anda memasukkan referensi yang tepat. Form ini hanya memfasilitasi perhitungan berdasarkan input Anda.</div>
+      </div>
+    </section>
+
+    <!-- PARAMETERS TABLE -->
+    <section class="card" aria-labelledby="param-head">
+      <div id="param-head" class="card-header">Parameters</div>
+      
+      <div style="padding:12px">
+        <table id="paramTable">
+          <thead>
+            <tr>
+              <th style="width:36%">Parameters</th>
+              <th style="width:22%">Value</th>
+              <th style="width:12%">Unit</th>
+              <th>Sources</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="label">(W) Mass Material</td>
+              <td><input id="W_mass" type="number" readonly /></td>
+              <td class="unit">kg</td>
+              <td class="ref">@CCPS, Crowl &amp; Louvar</td>
+            </tr>
+            <tr>
+              <td class="label">(E) Total Energy</td>
+              <td><input id="E_total" type="number" readonly /></td>
+              <td class="unit">kJ</td>
+              <td class="ref">@CCPS, Crowl &amp; Louvar</td>
+            </tr>
+            <tr>
+              <td class="label">(W) TNT Equivalent</td>
+              <td><input id="W_tnt" type="number" readonly /></td>
+              <td class="unit">kg</td>
+              <td class="ref">@CCPS, Crowl &amp; Louvar</td>
+            </tr>
+            <tr>
+              <td class="label">(Ze) Scaled Distance</td>
+              <td><input id="Ze" type="number" readonly /></td>
+              <td class="unit">m·kg<sup>−1/3</sup></td>
+              <td class="ref">@Crowl &amp; Louvar</td>
+            </tr>
+            <tr>
+              <td class="label">(Ps) Scaled Overpressure</td>
+              <td><input id="Ps" type="text" readonly placeholder="—"/></td>
+              <td class="unit">–</td>
+              <td class="ref">@Crowl &amp; Louvar</td>
+            </tr>
+            <tr>
+              <td class="label">(Po) Peak side‑on Overpressure — Crowl method</td>
+              <td><input id="Po_crowl" type="text" readonly placeholder="—"/></td>
+              <td class="unit">kPa</td>
+              <td class="ref">@Crowl method</td>
+            </tr>
+            <tr>
+              <td class="label">(Po) Peak side‑on Overpressure — Alonso method</td>
+              <td><input id="Po_alonso" type="text" readonly placeholder="—"/></td>
+              <td class="unit">kPa</td>
+              <td class="ref">@Alonso method</td>
+            </tr>
+            <tr>
+              <td class="label">(Po) Peak side‑on Overpressure — Sadovski method</td>
+              <td><input id="Po_sadovski" type="text" readonly placeholder="—"/></td>
+              <td class="unit">kPa</td>
+              <td class="ref">@Sadovski method</td>
+            </tr>
+          </tbody>
+        </table>
+        <div id="msg" class="status" role="status"></div>
+        <div class="footnote">Perhitungan otomatis yang diaktifkan: <code class="badge">W = ρ · V</code>, <code class="badge">E = W · ΔH · η<sub>E</sub></code>, <code class="badge">W<sub>TNT</sub> = E / E<sub>TNT</sub></code>, <code class="badge">Ze = R / (W<sub>TNT</sub>)<sup>1/3</sup></code>. Rumus (Ps, Po) tidak diaktifkan karena bergantung pada korelasi kurva/metode masing‑masing.</div>
+      </div>
+    </section>      </div>
+      <aside class="right">
+        <section class="card estimation" aria-labelledby="est-damage">
+          <div id="est-damage" class="card-header">Estimation of Damage Structure and Process Equipment</div>
+          <div class="method-grid">
+            <div class="method-card">
+              <div class="vlabel">CROWL</div>
+              <div class="pad" id="panel-damage-crowl" aria-label="Crowl damage panel"></div>
+              <div class="sevfoot">Major</div>
+            </div>
+            <div class="method-card">
+              <div class="vlabel">ALONSO</div>
+              <div class="pad" id="panel-damage-alonso" aria-label="Alonso damage panel"></div>
+              <div class="sevfoot">Major</div>
+            </div>
+            <div class="method-card">
+              <div class="vlabel">SADOVSKI</div>
+              <div class="pad" id="panel-damage-sadovski" aria-label="Sadovski damage panel"></div>
+              <div class="sevfoot">Major</div>
+            </div>
+          </div>
+        </section>
+        <section class="card estimation" aria-labelledby="est-injury">
+          <div id="est-injury" class="card-header">Estimation of Injury Consequences</div>
+          <div class="method-grid">
+            <div class="method-card">
+              <div class="vlabel">CROWL</div>
+              <div class="pad" id="panel-injury-crowl" aria-label="Crowl injury panel"></div>
+              <div class="sevfoot">Major</div>
+            </div>
+            <div class="method-card">
+              <div class="vlabel">ALONSO</div>
+              <div class="pad" id="panel-injury-alonso" aria-label="Alonso injury panel"></div>
+              <div class="sevfoot">Major</div>
+            </div>
+            <div class="method-card">
+              <div class="vlabel">SADOVSKI</div>
+              <div class="pad" id="panel-injury-sadovski" aria-label="Sadovski injury panel"></div>
+              <div class="sevfoot">Major</div>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </div>
+    <footer class="app-footer" role="contentinfo">
+      <div class="grid">
+        <div>
+          <div class="credit">Copyright (c) 2025 by <a href="https://id.linkedin.com/in/virdanurlulu" target="_blank" rel="nofollow">Virda Nur Lu'lu</a></div>
+          <div class="dedication">This application is dedicated to my parents, whose persistent support and patient guidance throughout my journey with JavaScript. It is also presented to the academic community at <a href="https://che.itb.ac.id/" target="_blank" rel="nofollow">Institut Teknologi Bandung</a> as a contribution towards inspiring further advancements in JavaScript technology.</div>
+        </div>
+        <div class="actions">
+          <a class="btn primary" href="https://virdanurlulu.github.io/" target="_blank" rel="noopener noreferrer">Home</a>
+          <button class="btn" id="toTop" type="button">Back to top</button>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const fields = ['rho','vol','dh','eta','e_tnt','dist','pa'];
+
+    // ---- Logo loader with multiple fallbacks ----
+    const logoCandidates = [
+      'https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/Logo_Institut_Teknologi_Bandung.webp'];
+    function loadLogo(){
+      const img = document.getElementById('itbLogo');
+      if(!img) return;
+      let i = 0;
+      const fallbackData = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><circle cx="128" cy="128" r="120" fill="%230079c2"/><text x="50%" y="56%" font-family="Georgia, serif" font-size="88" text-anchor="middle" fill="white">ITB</text></svg>';
+      const tryNext = ()=>{
+        if(i >= logoCandidates.length){ img.onerror=null; img.src = fallbackData; return; }
+        const url = logoCandidates[i++] + (logoCandidates[i-1].includes('?') ? '' : '?v=1');
+        img.onerror = tryNext;
+        img.src = url;
+      };
+      tryNext();
+    }
+
+    function syncMatWidth(){
+      try{
+        // Samakan lebar input dengan label ketat (opsional UI)
+        const tight = document.querySelector('label.tight');
+        if (tight){
+          const w = Math.round(tight.getBoundingClientRect().width);
+          document.documentElement.style.setProperty('--matW', w + 'px');
+        }
+        // Tinggi header + margin bawah + buffer kecil
+        const header = document.querySelector('.banner');
+        let headerH = 120;
+        if (header){
+          const rect = header.getBoundingClientRect();
+          const mb = parseFloat(getComputedStyle(header).marginBottom) || 0;
+          headerH = Math.round(rect.height + mb + 12);
+          document.documentElement.style.setProperty('--headerH', headerH + 'px');
+        }
+        // Hitung inset (jarak) dari atas aside.right ke atas card Estimation pertama
+        const aside = document.querySelector('aside.right');
+        const firstEst = aside?.querySelector('section.card.estimation, .estimation');
+        let estInset = 0;
+        if (aside && firstEst){
+          const a = aside.getBoundingClientRect();
+          const e = firstEst.getBoundingClientRect();
+          estInset = Math.max(0, Math.round(e.top - a.top));
+        }
+        document.documentElement.style.setProperty('--estInset', estInset + 'px');
+
+        // Sejajarkan top Estimation Card dengan top Chemical Material pada posisi paling atas
+        const matCard = document.querySelector('#mat-head')?.closest('section.card');
+        let rightTop = headerH; // fallback
+        if (matCard){
+          const mTop = Math.round(matCard.getBoundingClientRect().top);
+          rightTop = Math.max(mTop - estInset, headerH + 8);
+        }
+        document.documentElement.style.setProperty('--rightTop', rightTop + 'px');
+
+        // Lebar panel kanan stabil px (mengurangi jitter lintas device)
+        const vpW = window.innerWidth;
+        const panelWpx = Math.round(vpW * 0.60);
+        document.documentElement.style.setProperty('--panelWpx', panelWpx + 'px');
+      }catch(e){}
+    }
+        // Tinggi header + margin bawah + buffer kecil
+        const header = document.querySelector('.banner');
+        let headerH = 120;
+        if (header){
+          const rect = header.getBoundingClientRect();
+          const mb = parseFloat(getComputedStyle(header).marginBottom) || 0;
+          headerH = Math.round(rect.height + mb + 12);
+          document.documentElement.style.setProperty('--headerH', headerH + 'px');
+        }
+        // Top kartu Chemical Material relatif terhadap viewport (untuk menyelaraskan panel fixed)
+        const matCard = document.querySelector('#mat-head')?.closest('section.card');
+        let rightTop = headerH; // fallback
+        if (matCard){
+          rightTop = Math.max(Math.round(matCard.getBoundingClientRect().top), headerH + 8);
+        }
+        document.documentElement.style.setProperty('--rightTop', rightTop + 'px');
+        // Lebar panel kanan stabil px (mengurangi jitter lintas device)
+        const vpW = window.innerWidth;
+        const panelWpx = Math.round(vpW * 0.60);
+        document.documentElement.style.setProperty('--panelWpx', panelWpx + 'px');
+      }catch(e){}
+    
+    window.addEventListener('load', function(){
+      syncMatWidth();
+      loadLogo();
+      updateFloatStop();
+      // Recalc once more after layout settles (fonts/images)
+      setTimeout(()=>{ syncMatWidth(); updateFloatStop(); }, 80);
+      const toTop = document.getElementById('toTop');
+      if (toTop) toTop.addEventListener('click', goTop);
+    });
+    let _resizeTimer;
+    window.addEventListener('resize', ()=>{
+      clearTimeout(_resizeTimer);
+      _resizeTimer = setTimeout(()=>{ syncMatWidth(); updateFloatStop(); }, 80);
+    });
+    window.addEventListener('orientationchange', ()=>{
+      setTimeout(()=>{ syncMatWidth(); updateFloatStop(); }, 120);
+    });
+    let _scrollTick = 0;
+    window.addEventListener('scroll', ()=>{
+      if(!_scrollTick){
+        _scrollTick = requestAnimationFrame(()=>{
+          if (window.scrollY <= 2) syncMatWidth();
+          updateFloatStop();
+          _scrollTick = 0;
+        });
+      }
+    });
+
+    fields.forEach(id=> $(id).addEventListener('input', compute));
+
+    // Back to top
+    function goTop(){ try{ window.scrollTo({top:0, behavior:'smooth'}); }catch(e){ window.scrollTo(0,0);} }
+
+    // Keep right panel from overlapping footer: stop at bottom of Parameters
+    function updateFloatStop(){
+      try{
+        if (!document.body.classList.contains('float-right')) return;
+        if (window.matchMedia('(max-width: 960px)').matches) return; // disabled on mobile/tablet
+        const right = document.querySelector('aside.right');
+        const split = document.querySelector('.split');
+        const paramsCard = document.querySelector('#param-head')?.closest('section.card');
+        const matCard = document.querySelector('#mat-head')?.closest('section.card');
+        if (!right || !split || !paramsCard || !matCard) return;
+
+        const cs = getComputedStyle(document.documentElement);
+        const rt = parseFloat(cs.getPropertyValue('--rightTop')) || parseFloat(cs.getPropertyValue('--headerH')) || 120; // fixed top offset of ASIDE
+        const estInset = parseFloat(cs.getPropertyValue('--estInset')) || 0; // distance from aside top to first estimation card
+        const bottomGap = 16; // spacing from bottom viewport
+        const splitRect = split.getBoundingClientRect();
+
+        // Panel width (px) & horizontal alignment
+        const panelWpx = Math.round(window.innerWidth * 0.60);
+        document.documentElement.style.setProperty('--panelWpx', panelWpx + 'px');
+        const rightRect = right.getBoundingClientRect();
+        const leftPx = Math.max(0, rightRect.left - splitRect.left);
+        right.style.setProperty('--pinLeft', leftPx + 'px');
+
+        // Visible height of right panel when fixed
+        const rightViewportH = Math.max(100, window.innerHeight - rt - bottomGap);
+
+        // BOUNDARIES (absolute page Y)
+        const stopBottom = paramsCard.getBoundingClientRect().bottom + window.scrollY; // bottom of Parameters
+        const stopTop = matCard.getBoundingClientRect().top + window.scrollY;          // top of Chemical Material
+
+        // THRESHOLDS
+        const threshBottom = stopBottom - (rt + bottomGap + rightViewportH);
+        // include estInset so first estimation card top aligns with mat top
+        const threshTop = stopTop - (rt + estInset);
+
+        const splitTopAbs = splitRect.top + window.scrollY;
+
+        if (window.scrollY <= threshTop){
+          // Pin to TOP boundary (make estimation header align with mat top)
+          const topAbs = Math.max(0, stopTop - splitTopAbs - estInset);
+          right.classList.add('pin-start');
+          right.classList.remove('pin-end');
+          right.style.setProperty('--pinStartTop', topAbs + 'px');
+          right.style.removeProperty('--pinEndTop');
+          return;
+        }
+
+        if (window.scrollY >= threshBottom){
+          // Pin to BOTTOM boundary (next to Parameters bottom)
+          const topAbs = Math.max(0, threshBottom + rt - splitTopAbs);
+          right.classList.add('pin-end');
+          right.classList.remove('pin-start');
+          right.style.setProperty('--pinEndTop', topAbs + 'px');
+          right.style.removeProperty('--pinStartTop');
+          return;
+        }
+
+        // Otherwise keep FIXED
+        right.classList.remove('pin-start');
+        right.classList.remove('pin-end');
+        right.style.removeProperty('--pinStartTop');
+        right.style.removeProperty('--pinEndTop');
+      }catch(e){}
+    }
+
+    // Demo values (non‑authoritative; untuk melihat tampilan) (non‑authoritative; untuk melihat tampilan) (non‑authoritative; untuk melihat tampilan)
+    const presets = {
+      AN:  { rho: 1700, dh: 3900, e_tnt: 4184, eta: 0.1 },
+      LPG: { rho: 510,  dh: 46000, e_tnt: 4184, eta: 0.02 },
+      H2:  { rho: 71,   dh: 120000, e_tnt: 4184, eta: 0.02 },
+      TNT: { rho: 1600, dh: 4184,   e_tnt: 4184, eta: 1.0  }
+    };
+
+    // Representative overall reaction equations (display only)
+    const eqMap = {
+      AN: [
+        {label:'Thermal decomposition (sub‑detonation)', eq:'NH<sub>4</sub>NO<sub>3</sub>(s) <span class="arrow">→</span> N<sub>2</sub>O(g) + 2 H<sub>2</sub>O(g)'},
+        {label:'Detonation (oxygen‑balanced approx.)', eq:'2 NH<sub>4</sub>NO<sub>3</sub>(s) <span class="arrow">→</span> 2 N<sub>2</sub>(g) + O<sub>2</sub>(g) + 4 H<sub>2</sub>O(g)'}
+      ],
+      LPG: [
+        {label:'Combustion proxy (propane)', eq:'C<sub>3</sub>H<sub>8</sub>(g) + 5 O<sub>2</sub>(g) <span class="arrow">→</span> 3 CO<sub>2</sub>(g) + 4 H<sub>2</sub>O(g)'}
+      ],
+      H2: [
+        {label:'Combustion/explosion', eq:'2 H<sub>2</sub>(g) + O<sub>2</sub>(g) <span class="arrow">→</span> 2 H<sub>2</sub>O(g)'}
+      ],
+      TNT: [
+        {label:'Detonation (oxygen‑deficient, typical overall)', eq:'2 C<sub>7</sub>H<sub>5</sub>N<sub>3</sub>O<sub>6</sub>(s) <span class="arrow">→</span> 3 N<sub>2</sub>(g) + 5 H<sub>2</sub>O(g) + 7 CO(g) + 7 C(s)'}
+      ]
+    };
+
+    function renderEquation(material){
+      const box = $('eq-text');
+      if (!box) return;
+      if (!material || !eqMap[material]){ box.innerHTML = 'Pilih material untuk menampilkan persamaan reaksi representatif.'; return; }
+      const html = eqMap[material].map(item=>`<div class="rxn"><small>${item.label}</small><div class="rxn-eq">${item.eq}</div></div>`).join('');
+      box.innerHTML = html;
+    }
+
+    $("material").addEventListener('change', (e)=>{
+      const p = presets[e.target.value];
+      if (p){
+        $("rho").value = p.rho;  $("dh").value = p.dh; $("e_tnt").value = p.e_tnt; $("eta").value = p.eta;
+        compute();
+      }
+      renderEquation(e.target.value);
+      const msg = $("msg");
+      msg.classList.remove('bad');
+      msg.textContent = 'Nilai contoh diisikan untuk pratinjau. Ganti dengan nilai dari literatur Anda.';
+      msg.style.display = 'block';
+    });
+
+            
+  </script>
+</body>
+</html>
