@@ -128,10 +128,27 @@
     
     
     .method-card{position:relative; min-height:220px; border:1px solid #dbe7f2; background:#fff}
-    .method-card .vlabel{position:absolute; top:0; bottom:0; left:0; width:28px; background:#f7fafc; border-right:1px solid #e6eef6;
-      writing-mode:vertical-rl; text-orientation:upright; letter-spacing:2px; font-weight:700; color:#4b5563; display:flex; align-items:center; justify-content:center}
-    .method-card .pad{padding:10px 10px 40px 38px; height:100%;}
+    .method-card .vlabel{
+      background:var(--stripe);
+      color:var(--blue-2);
+      padding: 8px 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-align: center;
+      border-bottom: 1px solid #e6eef6;
+    }
+    .method-card .pad{
+      padding:10px 10px 40px 38px;
+      height:100%;
+      background-color: var(--bg);
+      color: var(--ink);
+    }
     .sevfoot{position:absolute; left:0; right:0; bottom:0; height:30px; background:var(--pink); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700}
+    .sevfoot.Minor{ background-color: #22c55e; }
+    .sevfoot.Moderate{ background-color: #f97316; }
+    .sevfoot.Serious{ background-color: #dc2626; }
+    .sevfoot.Major{ background-color: #991b1b; }
+    .sevfoot.Unknown{ background-color: var(--muted); }
 
     /* View controls / Academic layout */
     .viewbar{position:sticky; top:8px; z-index:30; display:flex; gap:8px; align-items:center; justify-content:flex-end; padding:10px 0}
@@ -687,21 +704,14 @@
           const elB = $(`val-Po-${method}-inj`);
           if (elA) elA.textContent = '—';
           if (elB) elB.textContent = '—';
-          if (sevFoot) { sevFoot.textContent = 'Unknown'; sevFoot.style.backgroundColor = 'var(--muted)'; }
-          if (sevFootInjury) { sevFootInjury.textContent = 'Unknown'; sevFootInjury.style.backgroundColor = 'var(--muted)'; }
+          if (sevFoot) { sevFoot.textContent = 'Unknown'; sevFoot.className = 'sevfoot Unknown'; }
+          if (sevFootInjury) { sevFootInjury.textContent = 'Unknown'; sevFootInjury.className = 'sevfoot Unknown'; }
           if (effectsDamageEl) effectsDamageEl.innerHTML = '';
           if (effectsInjuryEl) effectsInjuryEl.innerHTML = '';
           return;
         }
 
         const severity = getSeverity(Po);
-        const severityColors = {
-          'Minor':'#22c55e',  // green-500
-          'Moderate':'#f97316', // orange-500
-          'Serious':'#dc2626',  // red-600
-          'Major':'#991b1b',    // red-800
-          'Unknown':'var(--muted)'
-        };
 
         const val = Number.isFinite(Po) ? Po : NaN;
         const pretty = Number.isFinite(val) ? val.toLocaleString('id-ID',{maximumFractionDigits:2}) : '—';
@@ -713,8 +723,8 @@
 
         sevFoot.textContent = severity;
         sevFootInjury.textContent = severity;
-        sevFoot.style.backgroundColor = severityColors[severity];
-        sevFootInjury.style.backgroundColor = severityColors[severity];
+        sevFoot.className = `sevfoot ${severity}`;
+        sevFootInjury.className = `sevfoot ${severity}`;
 
         // Dynamically update effect lists
         const applicableDamage = damageEffects[method].filter(e => Po >= e.threshold);
@@ -722,13 +732,13 @@
 
         if (effectsDamageEl) {
           effectsDamageEl.innerHTML = applicableDamage.length > 0
-            ? applicableDamage.map(e => `<li style="color:var(--card);">${e.text} (${e.threshold} kPa)</li>`).join('')
-            : '<li style="color:var(--card);">Tidak ada efek yang terdaftar pada overpressure ini.</li>';
+            ? applicableDamage.map(e => `<li style="color:var(--ink);">${e.text} (${e.threshold} kPa)</li>`).join('')
+            : '<li style="color:var(--ink);">Tidak ada efek yang terdaftar pada overpressure ini.</li>';
         }
         if (effectsInjuryEl) {
           effectsInjuryEl.innerHTML = applicableInjury.length > 0
-            ? applicableInjury.map(e => `<li style="color:var(--card);">${e.text} (${e.threshold} kPa)</li>`).join('')
-            : '<li style="color:var(--card);">Tidak ada efek yang terdaftar pada overpressure ini.</li>';
+            ? applicableInjury.map(e => `<li style="color:var(--ink);">${e.text} (${e.threshold} kPa)</li>`).join('')
+            : '<li style="color:var(--ink);">Tidak ada efek yang terdaftar pada overpressure ini.</li>';
         }
       };
 
@@ -813,7 +823,7 @@
       const computeOverpressureSadovski = (W_tnt, dist) => {
         let Po;
         if (dist > 0 && W_tnt > 0) {
-            const ratioTerm = Math.pow(W_tnt / (dist * dist * dist), 1/3);
+            const ratioTerm = Math.pow(W_tnt, 1/3) / dist;
             Po = 0.085 * ratioTerm + 0.3 * Math.pow(ratioTerm, 2) + 0.8 * Math.pow(ratioTerm, 3);
         } else {
             Po = NaN;
