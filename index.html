@@ -1,1 +1,682 @@
-Under construction
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript</title>
+  <meta name="description" content="Interactive simulation and modeling of explosion effects based on TNT equivalence using JavaScript — with chemical materials, properties, parameters, and consequence estimation.">
+  <!-- SEO & Social START -->
+  <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/favicon.ico">
+  <link rel="canonical" href="https://virdanurlulu.github.io/">
+  <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
+  <link rel="dns-prefetch" href="//raw.githubusercontent.com">
+
+  <meta name="author" content="Virda Nur Lu'lu">
+  <meta name="robots" content="index,follow">
+
+  <!-- Open Graph / WhatsApp -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Program Magister Teknik Kimia — Institut Teknologi Bandung">
+  <meta property="og:title" content="Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript">
+  <meta property="og:description" content="Interactive explosion-effects modeling (TNT equivalence). Chemical materials, properties, parameters, and consequence estimation.">
+  <meta property="og:url" content="https://virdanurlulu.github.io/">
+  <meta property="og:image" content="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/ITB-Exlosion-Modeling-Simulation.webp">
+  <meta property="og:image" content="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/main/img/ITB-Exlosion-Modeling-Simulation.webp">
+  <meta property="og:image:type" content="image/webp">
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript">
+  <meta name="twitter:description" content="Interactive explosion-effects modeling (TNT equivalence). Chemical materials, properties, parameters, and consequence estimation.">
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/ITB-Exlosion-Modeling-Simulation.webp">
+  <!-- SEO & Social END -->
+
+  <style>
+    :root{
+      --bg: #0b1120;         /* slate-900 */
+      --panel: #111827;      /* gray-900 */
+      --muted: #94a3b8;      /* slate-400 */
+      --txt: #e5e7eb;        /* gray-200 */
+      --brand: #38bdf8;      /* sky-400 */
+      --accent: #22d3ee;     /* cyan-400 */
+      --card: #0f172a;       /* slate-900 deeper */
+      --ok: #10b981;         /* emerald */
+      --warn: #f59e0b;       /* amber */
+      --pass: #10b981;
+      --fail: #ef4444;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color:var(--txt);
+      background:linear-gradient(180deg,#0b1120 0%, #0b1222 30%, #0b1225 100%);
+    }
+    a{color:var(--brand);text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    /* Header (hero) */
+    .hero{
+      position:relative;
+      min-height:46vh;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      padding: clamp(2rem, 3vw, 3rem) 1rem;
+      background-color:#0b1120;
+      /* Pakai RAW GitHub agar file image ter-load di sandbox */
+      background-image:
+        linear-gradient( to bottom, rgba(5,10,25,.65), rgba(5,10,25,.72) 40%, rgba(5,10,25,.92) ),
+        url("https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/main/img/banner-itb1.webp");
+      background-size:cover;
+      background-position:center;
+      background-repeat:no-repeat;
+      border-bottom:1px solid rgba(148,163,184,.15);
+    }
+    .hero h1{
+      margin:0 0 .25rem;
+      font-weight:800;
+      letter-spacing:.2px;
+      font-size: clamp(1.8rem, 2.8vw, 2.6rem);
+    }
+    .hero p{
+      margin:.25rem auto 0;
+      max-width: 900px;
+      color: var(--muted);
+      font-size: clamp(.98rem, 1.2vw, 1.05rem);
+      line-height:1.6;
+    }
+
+    /* Navbar sederhana */
+    .nav{
+      position:sticky; top:0; z-index:30;
+      backdrop-filter:saturate(140%) blur(6px);
+      background:rgba(11,17,32,.65);
+      border-bottom:1px solid rgba(148,163,184,.12);
+    }
+    .nav-inner{
+      max-width:1100px; margin:0 auto; padding:.6rem 1rem;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .nav a{margin-right:1rem}
+
+    /* Container utama */
+    .container{max-width:1100px;margin:0 auto;padding:2rem 1rem 4rem}
+
+    /* Section */
+    section{margin:2.5rem 0}
+    section h2{
+      margin:0 0 1rem 0;
+      font-size: clamp(1.4rem, 2.2vw, 1.8rem);
+      letter-spacing:.2px
+    }
+    .lead{color:var(--muted);line-height:1.75;max-width:68ch}
+
+    /* Intro grid */
+    .grid{
+      display:grid; gap:1.25rem;
+      grid-template-columns:1fr; align-items:start
+    }
+    @media(min-width:900px){
+      .grid{grid-template-columns: 1.1fr .9fr}
+    }
+
+    .card{background:linear-gradient(180deg, rgba(17,24,39,.65), rgba(17,24,39,.82));
+      border:1px solid rgba(148,163,184,.12); border-radius:18px; padding:1.1rem}
+
+    figure{margin:0}
+    .fig{border-radius:16px; overflow:hidden; border:1px solid rgba(148,163,184,.18); background:#0b1325}
+    .fig img{display:block; width:100%; height:auto}
+    .fig figcaption{font-size:.85rem; color:var(--muted); padding:.6rem .8rem}
+
+    /* Methodology steps */
+    .steps{display:grid; gap:1rem}
+    @media(min-width:840px){
+      .steps{grid-template-columns:repeat(3,1fr)}
+    }
+    .step{
+      background: linear-gradient(180deg, rgba(15,23,42,.7), rgba(15,23,42,.95));
+      border:1px solid rgba(148,163,184,.12);
+      border-radius:16px; padding:1rem 1.1rem; min-height: 220px;
+    }
+    .step h3{margin:.2rem 0 .5rem;font-size:1.05rem}
+    .badge{display:inline-block; min-width:36px; height:36px; border-radius:10px; background:rgba(56,189,248,.15); border:1px solid rgba(56,189,248,.4); color:#7dd3fc; font-weight:700; text-align:center; line-height:34px; margin-right:.5rem}
+    .muted{color:var(--muted)}
+
+    /* Table for thresholds */
+    .tbl{width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius:14px; border:1px solid rgba(148,163,184,.15); background:linear-gradient(180deg, rgba(15,23,42,.7), rgba(15,23,42,.95))}
+    .tbl th, .tbl td{padding:.7rem .8rem; text-align:left; border-bottom:1px solid rgba(148,163,184,.12)}
+    .tbl th{font-weight:700; color:#cbd5e1; background:rgba(148,163,184,.06)}
+    .tbl tr:last-child td{border-bottom:none}
+    .kpa{font-variant-numeric:tabular-nums}
+
+    /* Utilities */
+    .row{display:flex; gap:.75rem; flex-wrap:wrap; align-items:center}
+    .pill{font-size:.82rem; padding:.26rem .5rem; border-radius:999px; border:1px solid rgba(148,163,184,.25); color:#bae6fd; background:rgba(56,189,248,.08)}
+    .btn{cursor:pointer; background:linear-gradient(180deg,#0ea5e9,#0284c7); border:none; color:white; padding:.6rem .9rem; border-radius:10px; font-weight:600}
+    .btn.alt{background:transparent; border:1px solid rgba(148,163,184,.35); color:#e2e8f0}
+    .foot{margin-top:1.25rem; font-size:.9rem; color:var(--muted)}
+
+    /* Anchor offset so sticky nav doesn't cover targets */
+    :root{ --nav-offset: 64px }
+    section[id], h2[id], h3[id]{ scroll-margin-top: calc(var(--nav-offset) + 12px) }
+
+    /* Tests panel */
+    
+    
+    
+      /* CTA button */
+    .cta{ margin-top: .9rem; display:flex; gap:.75rem; flex-wrap:wrap }
+    .app-cta{ margin-top:1rem }
+    .btn.cta-btn{ position:relative; display:inline-flex; align-items:center; justify-content:center; gap:.55rem; padding:.9rem 1.1rem; font-size:1rem; font-weight:700; border-radius:12px; border:1px solid rgba(148,163,184,.28); background:linear-gradient(180deg,#22d3ee,#0ea5e9); color:#001018; text-shadow:0 1px 0 rgba(255,255,255,.25); box-shadow: 0 8px 24px rgba(2,132,199,.35), inset 0 1px 0 rgba(255,255,255,.35); transition: transform .15s ease, box-shadow .2s ease, filter .2s ease }
+    .btn.cta-btn:hover{ transform: translateY(-1px); box-shadow: 0 12px 30px rgba(2,132,199,.45), inset 0 1px 0 rgba(255,255,255,.4) }
+    .btn.cta-btn:active{ transform: translateY(0); filter: brightness(.98) }
+    .btn.cta-btn:focus-visible{ outline:none; box-shadow: 0 0 0 3px rgba(34,211,238,.55), 0 8px 24px rgba(2,132,199,.35) }
+    .btn.cta-btn .icon{ width:1.1em; height:1.1em; transition: transform .2s ease; vertical-align:-.12em }
+    .btn.cta-btn:hover .icon{ transform: translateX(2px) translateY(-1px) }
+    /* Sheen effect */
+    .btn.cta-btn::after{ content:''; position:absolute; inset:-1px; border-radius:inherit; pointer-events:none; opacity:.35; background: radial-gradient(120px 60px at var(--mx,50%) -20%, rgba(255,255,255,.22), transparent 40%) }
+    @media (prefers-reduced-motion: reduce){
+      .btn.cta-btn, .btn.cta-btn .icon{ transition:none }
+    }
+      /* Nav Metodologi button */
+    .nav .nav-cta.btn{
+      padding:.55rem .9rem;
+      border-radius:12px;
+      background:linear-gradient(180deg,#38bdf8,#0ea5e9);
+      color:#001018;
+      font-weight:800;
+      border:1px solid rgba(148,163,184,.28);
+      box-shadow: 0 6px 20px rgba(2,132,199,.35), inset 0 1px 0 rgba(255,255,255,.35);
+      text-decoration:none;
+      transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
+    }
+    .nav .nav-cta.btn:hover{
+      transform: translateY(-1px);
+      text-decoration:none;
+      box-shadow: 0 10px 26px rgba(2,132,199,.45), inset 0 1px 0 rgba(255,255,255,.4);
+    }
+    .nav .nav-cta.btn:active{ transform:none; filter:brightness(.98) }
+    .nav .nav-cta.btn:focus-visible{ outline:none; box-shadow:0 0 0 3px rgba(34,211,238,.55), 0 8px 24px rgba(2,132,199,.35) }
+    /* Active state for current section */
+    .nav .nav-cta.btn.active{
+      background:linear-gradient(180deg,#22d3ee,#06b6d4);
+      color:#001018;
+      box-shadow: 0 6px 22px rgba(13,148,136,.35), inset 0 1px 0 rgba(255,255,255,.4);
+      border-color: rgba(34,211,238,.55);
+    }
+  </style>
+  <script>
+    // MathJax configuration for LaTeX rendering
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\(','\)'], ['$', '$']],
+        displayMath: [['\[','\]'], ['$$','$$']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script','noscript','style','textarea'], // allow inside figcaption, p, li
+      },
+      chtml: { scale: 1 },
+      startup: { typeset: true }
+    };
+  </script>
+  <script id="MathJax-script" defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+  <header class="hero" role="banner">
+    <div>
+      <h1>Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript</h1>
+      <p>Web ringkas yang merangkum proposal tesis: pembangunan simulasi otomatis <strong>TNT‑equivalent</strong> dengan <strong>JavaScript (JS)</strong> untuk estimasi <em>overpressure–jarak</em> pada <strong>AN</strong>, <strong>LPG</strong>, dan <strong>H₂</strong> memakai metode <em>Crowl & Louvar</em>, <em>Alonso</em>, dan <em>Sadovski</em>, dengan validasi pada kasus nyata & literatur.</p>
+      
+    </div>
+  </header>
+
+  <nav class="nav" aria-label="Seksi">
+    <div class="nav-inner">
+      <div class="row">
+        <a class="btn nav-cta" href="https://virdanurlulu.github.io/simulation-modeling-explosion-effects.html" target="_blank" rel="noopener noreferrer" role="button" aria-label="Buka Aplikasi Simulasi (tab baru)">Aplikasi Simulasi</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <!-- INTRODUCTION -->
+    <section id="introduction" aria-labelledby="h2-intro">
+      <h2 id="h2-intro">Introduction</h2>
+      <div class="grid">
+        <article class="card" id="intro-text">
+          <p class="lead">
+            Ledakan bahan kimia di fasilitas industri berpotensi menimbulkan kerusakan serius terhadap keselamatan manusia, aset, dan lingkungan. Salah satu pendekatan populer untuk estimasi dampak adalah <strong>TNT‑equivalent</strong>, yakni konversi energi bahan ke energi setara TNT guna memetakan <em>overpressure</em> dan jarak konsekuensi. Penelitian ini bertujuan mengembangkan <strong>simulasi otomatis</strong> berbasis <strong>JavaScript</strong> agar perhitungan cepat, konsisten, dan mudah diaudit.
+          </p>
+          <p class="lead extra">
+            Model menerapkan tiga pendekatan empiris: <strong>Crowl & Louvar</strong>, <strong>Alonso</strong>, dan <strong>Sadovski</strong>, untuk menghitung <em>peak side‑on overpressure</em> dan radius dampak dari <strong>Amonium Nitrat (AN)</strong>, <strong>LPG</strong>, dan <strong>Hidrogen (H₂)</strong>. Hasil lintas‑metode dibandingkan untuk menilai rentang dan bias prediksi sehingga pengguna memperoleh <em>envelope</em> yang transparan.
+          </p>
+          <p class="lead extra">
+            Validasi dilakukan terhadap <em>kejadian nyata</em> dan <em>literatur teknis</em> sehingga hasil simulasi dapat dipakai untuk <em>early screening</em>, perencanaan skenario darurat, dan rujukan teknis mitigasi ledakan di industri proses. Implementasi web ini merangkum inti proposal tesis dan mengarah ke aplikasi simulasi.
+          </p>
+          <div class="cta app-cta">
+          <a id="openAppBtn" class="btn cta-btn" href="https://virdanurlulu.github.io/simulation-modeling-explosion-effects.html" target="_blank" rel="noopener noreferrer" aria-label="Buka Aplikasi Simulasi (tab baru)">
+            <span>Aplikasi Simulasi</span>
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.5 3H21v6.5M21 3l-9.5 9.5M21 3h-6.75c-3.5 0-5.25 0-6.59.68a7 7 0 0 0-3.02 3.02C3 8.04 3 9.79 3 13.28V21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+        </article>
+        <aside>
+          <figure class="fig">
+            <picture>
+              <!-- Fallback gunakan path RAW standar -->
+              <source srcset="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/main/img/ITB-Exlosion-Modeling-Simulation.webp" type="image/webp" />
+              <img src="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/ITB-Exlosion-Modeling-Simulation.webp" alt="Diagram simulasi efek ledakan (TNT‑equivalence) — ITB" loading="lazy" />
+            </picture>
+            <figcaption>Ilustrasi alur perhitungan: energi → massa TNT ekuivalen → Z → \(P_o\), durasi, dan impuls.</figcaption>
+          </figure>
+        </aside>
+      </div>
+    </section>
+
+    <!-- METODOLOGI -->
+    <section id="metodologi" aria-labelledby="h2-method">
+      <h2 id="h2-method">Metodologi Penelitian</h2>
+      <div class="steps" aria-label="Langkah inti metodologi">
+        <div class="step">
+          <div class="row"><span class="badge">1</span><h3>Pengumpulan & Validasi Data</h3></div>
+          <p class="muted">Kumpulkan properti bahan (volume, ρ, ΔH<sub>c</sub>, ε, P<sub>a</sub>) untuk AN, LPG, H₂ dari literatur; lakukan <em>traceability</em> dan <em>range‑check</em> karena deviasi input memengaruhi massa, energi, dan hasil.</p>
+        </div>
+        <div class="step">
+          <div class="row"><span class="badge">2</span><h3>Konversi Energi → TNT‑Equivalen</h3></div>
+          <p id="eq-step2" class="muted">Hitung massa \(m = \rho\,V\), energi total \(E = m\,\Delta H_c\,\varepsilon\), lalu konversi ke massa ekuivalen TNT: \(W_{\mathrm{TNT}} = E / E_{\mathrm{TNT}}\); skala Hopkinson–Cranz: \(Z = R/W_{\mathrm{TNT}}^{1/3}\).</p>
+        </div>
+        <div class="step">
+          <div class="row"><span class="badge">3</span><h3>Perhitungan Overpressure</h3></div>
+          <p class="muted">Prediksi <em>Po</em> via tiga korelasi: <strong>Crowl & Louvar</strong> (basis Kingery–Bulmash), <strong>Alonso</strong> (power‑law dua interval Z), dan <strong>Sadovski</strong> (bentuk empiris cepat).</p>
+        </div>
+        <div class="step">
+          <div class="row"><span class="badge">4</span><h3>Validasi & Kalibrasi</h3></div>
+          <p class="muted">Bandingkan hasil dengan data kasus nyata (mis. Tianjin, Beirut) dan tabel dampak bangunan/manusia; gunakan deviasi untuk kalibrasi parameter ε dan pilihan korelasi.</p>
+        </div>
+        <div class="step">
+          <div class="row"><span class="badge">5</span><h3>Rancangan Percobaan (FFD 2⁴ + 4 CP)</h3></div>
+          <p class="muted">Evaluasi pengaruh faktor: bahan (AN/LPG/H₂), metode (C&L/Alonso/Sadovski), massa, jarak, serta ε. Analisis dengan <em>ANOVA</em> untuk signifikansi dan interaksi.</p>
+        </div>
+      </div>
+
+      
+
+      <div class="card" style="margin-top:1rem">
+        <h3 style="margin:.2rem 0 .6rem">Validasi, Sensitivitas, & Batasan</h3>
+        <ul class="muted" style="margin:.2rem 0 0 1.25rem; line-height:1.7">
+          <li><strong>Verifikasi</strong>: konsistensi antar‑metode pada domain <code>Z</code> menengah; uji terhadap kalkulator K‑B publik.</li>
+          <li><strong>Validasi orde‑besar</strong>: pembandingan radius dampak dengan data pascakejadian yang tersedia.</li>
+          <li><strong>Sensitivitas</strong>: ε (1–10% untuk VCE tak‑terkungkung), massa terlibat.</li>
+          <li><strong>Batasan</strong>: model TNT‑equivalence tidak menangkap VCE terkungkung/hambatan kompleks; untuk desain detail gunakan TNO Multi‑Energy/BST atau CFD.</li>
+        </ul>
+      </div>
+
+      
+    </section>
+
+    <!-- RINGKASAN DARI FILE PDF -->
+    <section id="proposal" aria-labelledby="h2-proposal">
+      <h2 id="h2-proposal">Ringkasan Proposal (konten terintegrasi)</h2>
+
+      <div class="card" style="margin-bottom:1rem">
+        <h3 id="latbel" style="margin:.2rem 0 .6rem">Latar Belakang & Bahaya Utama</h3>
+        <ul class="muted" style="line-height:1.7; margin:.2rem 0 0 1.25rem">
+          <li>Bahaya kebakaran/ledakan di industri dipicu sifat bahan mudah terbakar (gas volatil, debu), reaktivitas tinggi (AN, H₂), dan potensi kebocoran proses.</li>
+          <li>Distribusi fatalitas AN bergeser ke Asia‑Pasifik & Timur Tengah/Afrika pasca 1950; transportasi & penyimpanan merupakan fasilitas paling rawan.</li>
+          <li>Klasifikasi kejadian meliputi <em>physical explosion</em>, <em>condensed‑phase explosion</em>, <em>VCE</em>, <em>BLEVE</em>, ledakan debu, ledakan terkungkung, dan VEEBs.</li>
+        </ul>
+      </div>
+
+      <div class="card" style="margin-bottom:1rem">
+        <h3 id="kejadian" style="margin:.2rem 0 .6rem">Peristiwa Kejadian Nyata (ringkas)</h3>
+        <div style="overflow:auto">
+          <table class="tbl" aria-label="Kejadian nyata ringkas">
+            <thead>
+              <tr><th>#</th><th>Peristiwa (Lokasi/Tahun)</th><th>Bahan/Jenis</th><th>Dampak ringkas</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td><td>LPG plant, Feyzin — 1966</td><td>LPG / BLEVE</td><td>Kerusakan luas fasilitas; 18 tewas, 89 luka.</td>
+              </tr>
+              <tr>
+                <td>2</td><td>San Juan Ixhuatepec, Mexico — 1984</td><td>LPG / BLEVE & kebakaran berantai</td><td>Area pabrik & permukiman rusak; ~500 tewas, ribuan luka.</td>
+              </tr>
+              <tr>
+                <td>3</td><td>Pelabuhan Tianjin, China — 2015</td><td>AN / condensed‑phase</td><td>Kerusakan masif aset & logistik; 173 tewas, >700 luka.</td>
+              </tr>
+              <tr>
+                <td>4</td><td>Pelabuhan Beirut, Lebanon — 2020</td><td>AN / condensed‑phase</td><td>Kerugian besar, puluhan ribu unit bangunan terdampak; >200 tewas.</td>
+              </tr>
+              <tr>
+                <td>5</td><td>Gangneung R&D, Korea — 2019</td><td>H₂ / deflagrasi</td><td>Bangunan R&D hancur; 2 tewas, 6 luka.</td>
+              </tr>
+              <tr>
+                <td>6</td><td>Santa Clara, AS — 2019</td><td>H₂ / deflagrasi + jet fire</td><td>Kerusakan trailer & kebakaran; 2 luka ringan.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:1rem">
+        <h3 id="perbandingan" style="margin:.2rem 0 .6rem">Perbandingan Pendekatan</h3>
+        <div style="overflow:auto">
+          <table class="tbl" aria-label="Perbandingan model">
+            <thead><tr><th>Aspek</th><th>Model Empiris (Crowl/Alonso/Sadovski)</th><th>ALOHA</th><th>PHAST</th><th>FLACS (CFD)</th></tr></thead>
+            <tbody>
+              <tr><td>Kompleksitas input</td><td>Rendah — massa, energi, jarak; tanpa geometri rinci</td><td>Sedang — butuh data cuaca & skenario pelepasan</td><td>Tinggi — bahan & kondisi proses/atmosferik rinci</td><td>Sangat tinggi — CAD 3D, mesh, kondisi batas detail</td></tr>
+              <tr><td>Biaya</td><td>Gratis</td><td>Gratis</td><td>Berbayar (lisensi industri)</td><td>Berbayar tinggi (lisensi + HW)</td></tr>
+              <tr><td>Waktu tipikal</td><td>Detik–menit</td><td>&lt; 1 jam/skenario sederhana</td><td>~1–2 jam/skenario</td><td>6–24 jam/kasus kompleks</td></tr>
+              <tr><td>Visualisasi</td><td>Grafik 2D, tabel, peta sederhana</td><td>Threat zones di peta</td><td>Kontur 2D/3D</td><td>3D dinamis (shockwave, propagasi)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:1rem">
+        <h3 id="tujuan" style="margin:.2rem 0 .6rem">Tujuan & Sasaran</h3>
+        <ul class="muted" style="line-height:1.7; margin:.2rem 0 0 1.25rem">
+          <li>Membangun simulasi perhitungan otomatis berbasis <strong>JavaScript</strong> untuk metode <em>Crowl & Louvar</em>, <em>Alonso</em>, dan <em>Sadovski</em>.</li>
+          <li>Menentukan <em>overpressure</em> & jarak konsekuensi untuk AN, LPG, H₂ serta memetakannya ke dampak bangunan & probabilitas fatality.</li>
+          <li>Menguji signifikansi faktor (bahan, metode, massa, jarak, efisiensi) dengan <strong>Full Factorial Design 2⁴ + 4 CP</strong> dan <em>ANOVA</em>.</li>
+        </ul>
+      </div>
+
+      <div class="card" style="margin-bottom:1rem">
+        <h3 id="rancangan" style="margin:.2rem 0 .6rem">Rancangan Percobaan (rentang contoh)</h3>
+        <div style="overflow:auto">
+          <table class="tbl" aria-label="Rentang faktor">
+            <thead><tr><th>Faktor</th><th>Low</th><th>High</th><th>Catatan</th></tr></thead>
+            <tbody>
+              <tr><td>Massa AN (ton)</td><td>800</td><td>2750</td><td>Kasus validasi AN</td></tr>
+              <tr><td>Massa uap LPG (kg)</td><td>15540</td><td>20720</td><td>Skenario pelepasan LPG</td></tr>
+              <tr><td>Massa H₂ (kg)</td><td>50</td><td>250</td><td>Kasus tangki/pelepasan</td></tr>
+              <tr><td>Efisiensi ε (LPG,H₂)</td><td>1%</td><td>10%</td><td>VCE tak‑terkungkung</td></tr>
+              <tr><td>Efisiensi ε (AN)</td><td>30%</td><td>40%</td><td>Condensed‑phase</td></tr>
+              <tr><td>Energi TNT</td><td colspan="2" class="kpa">4.230–4.836 kJ/kg</td><td>Literatur</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:1rem">
+        <h3 id="validasi" style="margin:.2rem 0 .6rem">Validasi Dampak (contoh ambang)</h3>
+        <div style="overflow:auto">
+          <table class="tbl" aria-label="Ambang dampak bangunan">
+            <thead><tr><th>Overpressure (kPa)</th><th>Kerusakan fasilitas</th></tr></thead>
+            <tbody>
+              <tr><td class="kpa">≈2</td><td>Ambang aman probabilistik; sebagian kaca pecah</td></tr>
+              <tr><td class="kpa">3–7</td><td>Jendela pecah; kerusakan ringan</td></tr>
+              <tr><td class="kpa">14–21</td><td>Runtuhnya elemen non‑bertulang; kerusakan serius</td></tr>
+              <tr><td class="kpa">≥2068</td><td>Bibir kawah (kondisi ekstrem)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="overflow:auto; margin-top:.75rem">
+          <table class="tbl" aria-label="Ambang cedera manusia">
+            <thead><tr><th>Overpressure (kPa)</th><th>Tingkat cedera</th></tr></thead>
+            <tbody>
+              <tr><td class="kpa">20–30</td><td>Ringan</td></tr>
+              <tr><td class="kpa">30–50</td><td>Sedang</td></tr>
+              <tr><td class="kpa">50–100</td><td>Berat</td></tr>
+              <tr><td class="kpa">&gt;100</td><td>Sangat berat</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <p class="foot">Catatan: poin‑poin di atas diringkas dari proposal yang Anda unggah dan diselaraskan dengan implementasi <strong>JavaScript</strong> di laman ini.</p>
+    </section>
+
+  </main>
+
+  <script>
+    // === Utilities ===
+    function safeUpdateHash(id){
+      // Hindari SecurityError pada dokumen about:srcdoc (sandbox)
+      try{
+        var href = String(location.href || '');
+        if(href.indexOf('about:') !== 0 && 'replaceState' in history){
+          history.replaceState(null, '', id);
+        }
+        // Jika about:srcdoc, abaikan perubahan URL.
+      }catch(err){
+        // No-op: sandbox mungkin menolak replaceState.
+        // console.debug('replaceState blocked by sandbox:', err);
+      }
+    }
+
+    // Reorder: place Metodologi section right below header (before Introduction)
+    (function reorderSections(){
+      try{
+        var main = document.querySelector('main.container');
+        var intro = document.getElementById('introduction');
+        var method = document.getElementById('metodologi');
+        if(main && intro && method){
+          if(method.compareDocumentPosition(intro) & Node.DOCUMENT_POSITION_FOLLOWING){
+            main.insertBefore(method, intro);
+          }
+        }
+      }catch(_){/* ignore */}
+    })();
+
+    // Ensure MathJax typesets the moved section (handles async load)
+    function typesetWhenReady(target){
+      var tries = 0;
+      (function tick(){
+        if(!target) return;
+        if(window.MathJax && MathJax.typesetPromise){
+          MathJax.typesetPromise([target]).catch(function(_){});
+        } else if(tries++ < 20){ // retry ~3s total
+          setTimeout(tick, 150);
+        }
+      })();
+    }
+    typesetWhenReady(document.getElementById('metodologi'));
+
+    // Force a couple of re-typeset passes to cover any race in sandbox
+    (function forceTypeset(){
+      var n = 0; function go(){
+        if(window.MathJax && MathJax.typesetPromise){ MathJax.typesetPromise().catch(function(){}); }
+        if(++n < 5) setTimeout(go, 300);
+      } go();
+    })();
+
+    // Smooth scroll untuk anchor (tanpa memodifikasi URL di sandbox)
+    document.querySelectorAll('a[href^="#"]').forEach(function(a){
+      a.addEventListener('click', function(e){
+        var id = a.getAttribute('href');
+        var el = document.querySelector(id);
+        if(el){
+          e.preventDefault();
+          el.scrollIntoView({behavior:'smooth', block:'start'});
+          safeUpdateHash(id);
+        }
+      });
+    });
+
+    // Enhance nav: active state on click & on scroll
+    (function enhanceNav(){
+      var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav a.btn.nav-cta[href^="#"]'));
+      // Active on click
+      navLinks.forEach(function(a){
+        a.addEventListener('click', function(){
+          navLinks.forEach(function(l){ l.classList.toggle('active', l === a); });
+        });
+      });
+      // Active on scroll via IntersectionObserver
+      var pairs = navLinks.map(function(l){ return {link:l, target: document.querySelector(l.getAttribute('href'))}; })
+                          .filter(function(x){ return !!x.target; });
+      if('IntersectionObserver' in window){
+        var obs = new IntersectionObserver(function(ents){
+          ents.forEach(function(ent){
+            if(ent.isIntersecting){
+              var f = pairs.find(function(x){ return x.target === ent.target; });
+              if(f){ navLinks.forEach(function(l){ l.classList.toggle('active', l === f.link); }); }
+            }
+          });
+        }, {root:null, rootMargin: 'calc(var(--nav-offset) + 8px) 0px -60% 0px', threshold: 0.3});
+        pairs.forEach(function(p){ obs.observe(p.target); });
+      }
+    })();
+
+    // Set CSS var for nav offset (handles responsive/sticky height)
+    (function setNavOffset(){
+      var nav = document.querySelector('.nav');
+      function update(){
+        if(!nav) return;
+        var h = Math.ceil((nav.getBoundingClientRect && nav.getBoundingClientRect().height) || nav.offsetHeight || 64);
+        document.documentElement.style.setProperty('--nav-offset', h + 'px');
+      }
+      update();
+      window.addEventListener('resize', update);
+    })();
+
+    // CTA sheen hover (no-op in reduced motion)
+    (function enhanceCTA(){
+      var btn = document.getElementById('openAppBtn');
+      if(!btn) return;
+      function move(e){
+        try{
+          var r = btn.getBoundingClientRect();
+          var x = Math.max(0, Math.min(r.width, (e.clientX||0) - r.left));
+          btn.style.setProperty('--mx', x + 'px');
+        }catch(_){/* ignore */}
+      }
+      btn.addEventListener('mousemove', move);
+      btn.addEventListener('mouseleave', function(){ btn.style.removeProperty('--mx'); });
+    })();
+
+    // === Minimal Test Harness ===
+    (function runTests(){
+      var out = document.getElementById('test-results');
+      if(!out) return;
+      function report(name, ok, note){
+        var li = document.createElement('li');
+        li.className = ok ? 'test-pass' : 'test-fail';
+        li.textContent = (ok ? 'PASS' : 'FAIL') + ' — ' + name + (note ? ' :: ' + note : '');
+        out.appendChild(li);
+      }
+
+      // Test 1: No toggle button exists
+      try{
+        var btn = document.getElementById('toggleMode');
+        report('No toggleMode button present', btn === null);
+      }catch(err){ report('Toggle button absence check', false, err && err.message); }
+
+      // Test 2: Extra paragraphs are visible by default
+      try{
+        var extras = Array.prototype.slice.call(document.querySelectorAll('#intro-text .extra'));
+        var visible = extras.length > 0 && extras.every(function(p){ return p.hidden === false; });
+        report('Extra paragraphs visible by default', visible);
+      }catch(err){ report('Extra paragraphs visibility check', false, err && err.message); }
+
+      // Test 3: Anchor click does not throw (safeUpdateHash guard)
+      try{
+        var anchor = document.querySelector('a[href="#metodologi"]');
+        var ev = new MouseEvent('click', {bubbles:true, cancelable:true});
+        var noThrow = true;
+        try{ anchor && anchor.dispatchEvent(ev); }
+        catch(e){ noThrow = false; }
+        report('Anchor click without SecurityError', noThrow);
+      }catch(err){ report('Anchor click test harness', false, err && err.message); }
+
+      // Test 4: safeUpdateHash does not throw in sandbox
+      try{
+        var ok = true; try{ safeUpdateHash('#introduction'); }catch(e){ ok = false; }
+        report('safeUpdateHash sandbox guard', ok);
+      }catch(err){ report('safeUpdateHash invocation', false, err && err.message); }
+
+      // Test 5: CTA button exists with correct href
+      try{
+        var cta = document.getElementById('openAppBtn');
+        var ok = !!cta && cta.tagName === 'A' && /simulation-modeling-explosion-effects\.html$/.test(cta.getAttribute('href')||'');
+        report('CTA button present with correct href', ok);
+      }catch(err){ report('CTA presence', false, err && err.message); }
+
+      // Test 6: CTA opens in new tab securely
+      try{
+        var cta = document.getElementById('openAppBtn');
+        var ok = !!cta && cta.getAttribute('target') === '_blank' && /noopener/.test(cta.getAttribute('rel')||'');
+        report('CTA uses target=_blank and rel=noopener', ok);
+      }catch(err){ report('CTA target/rel', false, err && err.message); }
+
+      // Test 7: No Introduction anchor buttons exist in header/nav
+      try{
+        var headerIntroBtn = document.querySelector('header .row a[href="#introduction"]');
+        var navIntroBtn = document.querySelector('nav .row a[href="#introduction"]');
+        report('No #introduction buttons in header/nav', !headerIntroBtn && !navIntroBtn);
+      }catch(err){ report('No Introduction buttons test', false, err && err.message); }
+
+      // Test 8: Metodologi section appears before Introduction in DOM
+      try{
+        var intro = document.getElementById('introduction');
+        var method = document.getElementById('metodologi');
+        var before = !!(method && intro && (method.compareDocumentPosition(intro) & Node.DOCUMENT_POSITION_FOLLOWING) === 0);
+        // Recompute by reading order within parent
+        var parent = intro && intro.parentNode;
+        var idxIntro=-1, idxMethod=-1; if(parent){
+          var kids = Array.prototype.slice.call(parent.children);
+          kids.forEach(function(n,i){ if(n===intro) idxIntro=i; if(n===method) idxMethod=i; });
+        }
+        var okOrder = idxMethod > -1 && idxIntro > -1 && idxMethod < idxIntro;
+        report('Metodologi is placed before Introduction', okOrder);
+      }catch(err){ report('Section order test', false, err && err.message); }
+
+      // Test 6: CTA opens in new tab securely
+      try{
+        var cta = document.getElementById('openAppBtn');
+        var ok = !!cta && cta.getAttribute('target') === '_blank' && /noopener/.test(cta.getAttribute('rel')||'');
+        report('CTA uses target=_blank and rel=noopener', ok);
+      }catch(err){ report('CTA target/rel', false, err && err.message); }
+      // Test 9: Nav Metodologi button present & styled
+      try{
+        var nb = document.getElementById('btnMetodologi');
+        var ok2 = !!nb && nb.matches('a.btn.nav-cta[href="#metodologi"]');
+        report('Nav Metodologi button present & styled', ok2);
+      }catch(err){ report('Nav Metodologi button test', false, err && err.message); }
+    })();
+      // Extra Test: ensure no escaped </p> remains in HTML
+    (function checkEscapedP(){
+      var out = document.getElementById('test-results');
+      var hasEscaped = /<\\/p>/.test(document.body.innerHTML);
+      if(out){
+        var li = document.createElement('li');
+        li.className = hasEscaped ? 'test-fail' : 'test-pass';
+        li.textContent = (hasEscaped ? 'FAIL' : 'PASS') + ' — No escaped </p> sequences in DOM';
+        out.appendChild(li);
+      }
+    })();
+
+    // Post-typeset check for MathJax
+    if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+      MathJax.startup.promise.then(function(){
+        var has = document.querySelector('.mjx-chtml,.mjx-svg');
+        var out = document.getElementById('test-results');
+        if(out){ var li = document.createElement('li'); li.className = has ? 'test-pass' : 'test-fail'; li.textContent = (has ? 'PASS' : 'FAIL') + ' — MathJax typeset inline equations'; out.appendChild(li); }
+      }).catch(function(e){
+        var out = document.getElementById('test-results');
+        if(out){ var li = document.createElement('li'); li.className = 'test-fail'; li.textContent = 'FAIL — MathJax typeset error :: ' + (e && e.message); out.appendChild(li);} 
+      });
+    }
+    // Extra check: ensure Step 2 equation typesets under MathJax
+  (function(){
+    function add(msg, ok){
+      var out = document.getElementById('test-results'); if(!out) return;
+      var li = document.createElement('li'); li.className = ok ? 'test-pass' : 'test-fail';
+      li.textContent = (ok ? 'PASS' : 'FAIL') + ' — ' + msg; out.appendChild(li);
+    }
+    function check(){
+      var el = document.querySelector('#eq-step2 .mjx-chtml, #eq-step2 .mjx-svg');
+      add('Step 2 equation typeset', !!el);
+    }
+    if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+      MathJax.startup.promise.then(check).catch(function(){ setTimeout(check, 400); });
+    } else { setTimeout(check, 800); }
+  })();
+</script>
+</body>
+</html>
