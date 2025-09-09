@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simulation & Modeling of Explosion Effects (TNT Equivalence)</title>
+ 
+  <link rel="stylesheet" type="text/css" href="/css/style1.css">
+  
+  <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/favicon.ico">
+  <link rel="canonical" href="https://virdanurlulu.github.io/">
+  <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
+  <link rel="dns-prefetch" href="//raw.githubusercontent.com">
+  <link rel="preload" as="image" href="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/banner-itb1.webp">
+
+  <meta name="description" content="Interactive simulation and modeling of explosion effects based on TNT equivalence using JavaScript — with chemical materials, properties, and consequence estimation.">
+  <meta name="author" content="Virda Nur Lu'lu">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#0079c2">
+  <meta name="color-scheme" content="light dark">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Program Magister Teknik Kimia — Institut Teknologi Bandung">
+  <meta property="og:title" content="Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript">
+  <meta property="og:description" content="Interactive explosion-effects modeling (TNT equivalence). Chemical materials, properties, parameters, and consequence estimation.">
+  <meta property="og:url" content="https://virdanurlulu.github.io/">
+  <meta property="og:image" content="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/ITB-Exlosion-Modeling-Simulation.webp">
+  <meta property="og:image:type" content="image/webp">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript">
+  <meta name="twitter:description" content="Interactive explosion-effects modeling (TNT equivalence). Chemical materials, properties, parameters, and consequence estimation.">
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/ITB-Exlosion-Modeling-Simulation.webp">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Explosion Effects Modeling (TNT Equivalence)",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Web",
+    "url": "https://virdanurlulu.github.io/",
+    "image": "https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/ITB-Exlosion-Modeling-Simulation.webp",
+    "author": {"@type": "Person", "name": "Virda Nur Lu'lu", "sameAs": ["https://id.linkedin.com/in/virdanurlulu"]},
+    "inLanguage": "en",
+    "description": "Interactive simulation and modeling of explosion effects based on TNT equivalence using JavaScript — with chemical materials, properties, and consequence estimation.",
+    "publisher": {"@type": "Organization", "name": "Institut Teknologi Bandung", "url": "https://che.itb.ac.id/"}
+  }
+  </script>
+  </head>
+<body class="theme-itb full">
+  <div class="wrap">
+    <div class="banner title">
+      <div class="brandbar">
+        <a href="https://virdanurlulu.github.io/" target="_blank" rel="noopener noreferrer" class="brand-logo-link" aria-label="Kunjungi beranda">
+          <img id="itbLogo" class="brand-logo" alt="Logo ITB" width="96" height="96" decoding="async" fetchpriority="high"
+               src="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/Logo_Institut_Teknologi_Bandung.webp"/>
+        </a>
+        <div class="brand-text">
+          <h1>Simulation and Modeling of Explosion Effects Based on TNT Equivalence <span class="nowrap">using Javascript</span></h1>
+          <h2>Program Magister Teknik Kimia  -  Institut Teknologi Bandung</h2>
+        </div>
+      </div>
+    </div>
+
+    <main class="split" role="main">
+      <div class="left">
+        <section class="card" aria-labelledby="mat-head">
+          <div id="mat-head" class="card-header">Chemical Material</div>
+          <div style="padding:14px">
+            <div class="chem-grid">
+              <div class="matcol">
+                <div>
+                  <label for="material" class="label">Pilih Material</label>
+                  <select id="material">
+                    <option value="">— pilih —</option>
+                    <option value="AN">Ammonium Nitrate (AN)</option>
+                    <option value="LPG">Liquefied Petroleum Gas (LPG)</option>
+                    <option value="H2">Hydrogen (H₂)</option>
+                    <option value="TNT">TNT (referensi)</option>
+                  </select>
+                </div>
+                <div class="mini">
+                  <div>
+                    <label for="vol" class="label">Volume</label>
+                    <div class="input-group">
+                      <input id="vol" type="number" min="0" step="any" placeholder="cth 12.5" aria-label="Volume" />
+                      <span class="unit">m³</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label for="dist" class="label">Distance</label>
+                    <div class="input-group">
+                      <input id="dist" type="number" min="0" step="any" placeholder="cth 150" aria-label="Distance" />
+                      <span class="unit">meters</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="eq-panel">
+                <div class="eq-title">Representative Overall Reaction (Energy Basis)</div>
+                <div id="eq-text" class="eq-body">Pilih material untuk menampilkan persamaan reaksi representatif.</div>
+                <div class="eq-note">Catatan: Persamaan berikut bersifat <em>overall/representative</em> untuk tujuan neraca energi; komposisi produk nyata bergantung pada kondisi (tekanan, temperatur, oksigen, confinement).</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="prop-head">
+          <div id="prop-head" class="card-header">Properties</div>
+          <div style="padding:12px">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:36%">Properties</th>
+                  <th style="width:22%">Value</th>
+                  <th style="width:12%">Unit</th>
+                  <th>Literature</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><label for="rho" class="label">Density ρ = m/V</label></td>
+                  <td><input id="rho" type="number" min="0" step="any" placeholder="kg/m³"/></td>
+                  <td class="unit">kg/m³</td>
+                  <td class="ref">@Literature, NIST</td>
+                </tr>
+                <tr>
+                  <td><label for="dh" class="label">ΔH<sub>explosion</sub></label></td>
+                  <td><input id="dh" type="number" min="0" step="any" placeholder="kJ/kg"/></td>
+                  <td class="unit">kJ/kg</td>
+                  <td class="ref">@Literature, NIST</td>
+                </tr>
+                <tr>
+                  <td><label for="pa" class="label">(kPa) Ambient Pressure</label></td>
+                  <td><input id="pa" type="number" min="0" step="any" placeholder="101.325"/></td>
+                  <td class="unit">kPa</td>
+                  <td class="ref">@Literature, NIST @20&nbsp;°C</td>
+                </tr>
+                <tr>
+                  <td><label for="eta" class="label">η<sub>E</sub> Explosion Efficiency</label></td>
+                  <td><input id="eta" type="number" min="0" max="1" step="any" placeholder="0–1"/></td>
+                  <td class="unit">–</td>
+                  <td class="ref">@Literature, Crowl &amp; Louvar; Alonso; Sadovski</td>
+                </tr>
+                <tr>
+                  <td><label for="e_tnt" class="label">E<sub>TNT</sub></label></td>
+                  <td><input id="e_tnt" type="number" min="0" step="any" placeholder="kJ/kg"/></td>
+                  <td class="unit">kJ/kg</td>
+                  <td class="ref">@Literature, Crowl &amp; Louvar; Alonso; Sadovski</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="footnote">Catatan: Nilai default tidak diisikan agar Anda memasukkan referensi yang tepat. Form ini hanya memfasilitasi perhitungan berdasarkan input Anda.</div>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="param-head">
+          <div id="param-head" class="card-header">Parameters</div>
+          
+          <div style="padding:12px">
+            <table id="paramTable">
+              <thead>
+                <tr>
+                  <th style="width:36%">Parameters</th>
+                  <th style="width:22%">Value</th>
+                  <th style="width:12%">Unit</th>
+                  <th>Sources</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="label">(W) Mass Material</td>
+                  <td><input id="W_mass" type="number" readonly /></td>
+                  <td class="unit">kg</td>
+                  <td class="ref">@CCPS, Crowl &amp; Louvar</td>
+                </tr>
+                <tr>
+                  <td class="label">(E) Total Energy</td>
+                  <td><input id="E_total" type="number" readonly /></td>
+                  <td class="unit">kJ</td>
+                  <td class="ref">@CCPS, Crowl &amp; Louvar</td>
+                </tr>
+                <tr>
+                  <td class="label">(W) TNT Equivalent</td>
+                  <td><input id="W_tnt" type="number" readonly /></td>
+                  <td class="unit">kg</td>
+                  <td class="ref">@CCPS, Crowl &amp; Louvar</td>
+                </tr>
+                <tr>
+                  <td class="label">(Ze) Scaled Distance</td>
+                  <td><input id="Ze" type="number" readonly /></td>
+                  <td class="unit">m·kg<sup>−1/3</sup></td>
+                  <td class="ref">@Crowl &amp; Louvar</td>
+                </tr>
+                <tr>
+                  <td class="label">(Po/Pa) Overpressure Ratio</td>
+                  <td><input id="Ps" type="text" readonly placeholder="—"/></td>
+                  <td class="unit">–</td>
+                  <td class="ref">@Crowl &amp; Louvar</td>
+                </tr>
+                <tr>
+                  <td class="label">(Po) Peak side‑on Overpressure Crowl</td>
+                  <td><input id="Po_crowl" type="text" readonly placeholder="—"/></td>
+                  <td class="unit">kPa</td>
+                  <td class="ref">@Crowl method</td>
+                </tr>
+                <tr>
+                  <td class="label">(Po) Peak side‑on Overpressure Alonso</td>
+                  <td><input id="Po_alonso" type="text" readonly placeholder="—"/></td>
+                  <td class="unit">kPa</td>
+                  <td class="ref">@Alonso method</td>
+                </tr>
+                <tr>
+                  <td class="label">(Po) Peak side‑on Overpressure Sadovski</td>
+                  <td><input id="Po_sadovski" type="text" readonly placeholder="—"/></td>
+                  <td class="unit">kPa</td>
+                  <td class="ref">@Sadovski method</td>
+                </tr>
+              </tbody>
+            </table>
+            <div id="msg" class="status" role="status" aria-live="polite"></div>
+            <div class="footnote">Perhitungan otomatis diaktifkan: <code class="badge">W = ρ · V</code>, <code class="badge">E = W · ΔH · η<sub>E</sub></code>, <code class="badge">W<sub>TNT</sub> = E / E<sub>TNT</sub></code>, <code class="badge">Ze = R / (W<sub>TNT</sub>)<sup>1/3</sup></code>, serta <code class="badge">Ps, Po</code> menggunakan korelasi aproksimasi berbasis kurva. Mohon validasi parameter & referensi Anda saat publikasi.</div>
+          </div>
+        </section>
+      </div>
+      <aside class="right">
+        <section class="card estimation" aria-labelledby="est-damage">
+          <div id="est-damage" class="card-header">Estimation of Damage Structure and Process Equipment</div>
+          <div class="method-grid">
+            <div class="method-card">
+              <div class="vlabel">CROWL</div>
+              <div class="pad" id="panel-damage-crowl" aria-label="Crowl damage panel">
+                <p><strong>Overpressure (Po):</strong> <span id="val-Po-crowl">—</span> kPa</p>
+                <p><strong>Efek:</strong></p>
+                <ul id="effects-crowl" style="padding-left: 20px;">
+                  <li>Kerusakan ringan pada jendela kaca (1.4 kPa)</li>
+                </ul>
+              </div>
+              <div class="sevfoot" id="sev-crowl">Unknown</div>
+            </div>
+            <div class="method-card">
+              <div class="vlabel">ALONSO</div>
+              <div class="pad" id="panel-damage-alonso" aria-label="Alonso damage panel">
+                <p><strong>Overpressure (Po):</strong> <span id="val-Po-alonso">—</span> kPa</p>
+                <p><strong>Efek:</strong></p>
+                <ul id="effects-alonso" style="padding-left: 20px;">
+                  <li>Kerusakan atap, dinding, dan jendela (7 kPa)</li>
+                </ul>
+              </div>
+              <div class="sevfoot" id="sev-alonso">Unknown</div>
+            </div>
+            <div class="method-card">
+              <div class="vlabel">SADOVSKI</div>
+              <div class="pad" id="panel-damage-sadovski" aria-label="Sadovski damage panel">
+                <p><strong>Overpressure (Po):</strong> <span id="val-Po-sadovski">—</span> kPa</p>
+                <p><strong>Efek:</strong></p>
+                <ul id="effects-sadovski" style="padding-left: 20px;">
+                  <li>Pecah jendela kaca (7 kPa)</li>
+                </ul>
+              </div>
+              <div class="sevfoot" id="sev-sadovski">Unknown</div>
+            </div>
+          </div>
+        </section>
+        <section class="card estimation" aria-labelledby="est-injury">
+          <div id="est-injury" class="card-header">Estimation of Injury Consequences</div>
+          <div class="method-grid">
+            <div class="method-card">
+              <div class="vlabel">CROWL</div>
+              <div class="pad" id="panel-injury-crowl" aria-label="Crowl injury panel">
+                <p><strong>Overpressure (Po):</strong> <span id="val-Po-crowl-inj">—</span> kPa</p>
+                <p><strong>Efek:</strong></p>
+                <ul id="injury-effects-crowl" style="padding-left: 20px;">
+                  <li>Luka-luka kecil (14 kPa)</li>
+                </ul>
+              </div>
+              <div class="sevfoot" id="sev-injury-crowl">Unknown</div>
+            </div>
+            <div class="method-card">
+              <div class="vlabel">ALONSO</div>
+              <div class="pad" id="panel-injury-alonso" aria-label="Alonso injury panel">
+                <p><strong>Overpressure (Po):</strong> <span id="val-Po-alonso-inj">—</span> kPa</p>
+                <p><strong>Efek:</strong></p>
+                <ul id="injury-effects-alonso" style="padding-left: 20px;">
+                   <li>Luka ringan (7 kPa)</li>
+                </ul>
+              </div>
+              <div class="sevfoot" id="sev-injury-alonso">Unknown</div>
+            </div>
+            <div class="method-card">
+              <div class="vlabel">SADOVSKI</div>
+              <div class="pad" id="panel-injury-sadovski" aria-label="Sadovski injury panel">
+                <p><strong>Overpressure (Po):</strong> <span id="val-Po-sadovski-inj">—</span> kPa</p>
+                <p><strong>Efek:</strong></p>
+                <ul id="injury-effects-sadovski" style="padding-left: 20px;">
+                  <li>Luka-luka (14 kPa)</li>
+                </ul>
+              </div>
+              <div class="sevfoot" id="sev-injury-sadovski">Unknown</div>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <footer class="app-footer" role="contentinfo">
+      <div class="grid">
+        <div>
+          <div class="credit">Copyright (c) 2025 by <a href="https://id.linkedin.com/in/virdanurlulu" target="_blank" rel="nofollow">Virda Nur Lu'lu</a></div>
+          <div class="dedication">This application is dedicated to my parents, whose persistent support and patient guidance throughout my journey with JavaScript. It is also presented to the academic community at <a href="https://che.itb.ac.id/" target="_blank" rel="nofollow">Institut Teknologi Bandung</a> as a contribution towards inspiring further advancements in JavaScript technology.</div>
+        </div>
+        <div class="actions">
+          <a class="btn primary" href="https://virdanurlulu.github.io/" target="_blank" rel="noopener noreferrer">Home</a>
+          <button class="btn" id="toTop" type="button">Back to top</button>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/js/script.js"></script>
+  
+</body>
+</html>
