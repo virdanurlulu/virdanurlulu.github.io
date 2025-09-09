@@ -1,1 +1,219 @@
-asa
+:root{
+    --ink:#1e2b3b;          /* slate-800 */
+    --muted:#64748b;         /* slate-500 */
+    --card:#ffffff;
+    --bg:#f5f7fb;
+    --blue:#1296d4;
+    --blue-2:#0f7fb3;
+    --purple:#6a1b9a;
+    --teal:#06b6d4;
+    --stripe:#eaf3fb;
+    --ring: rgba(18,150,212,.25);
+    --danger:#b91c1c;
+    --ok:#0ea5e9;
+    --pink:#f06292;
+    --blue-itb:#0079c2;      /* added for title background */
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
+body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font: 14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+.wrap{max-width:1280px; margin:32px auto; padding-left:max(16px, env(safe-area-inset-left)); padding-right:max(16px, env(safe-area-inset-right))}
+
+body.full .wrap{
+    max-width:none; 
+    width:100%; 
+    padding-left: 0; 
+    padding-right: 0;
+    margin: 0 auto;
+}
+body.full .banner,
+body.full .split {
+    padding-left: max(20px, env(safe-area-inset-left));
+    padding-right: max(20px, env(safe-area-inset-right));
+}
+body.full .banner {
+    border-radius: 0;
+    padding-top: clamp(16px, 2.2vw, 24px);
+    padding-bottom: clamp(16px, 2.2vw, 24px);
+    margin-bottom: 18px;
+}
+body.full .split {
+    margin-top: 18px;
+}
+
+/* Header */
+.title{display:grid; gap:6px;}
+.title h1{margin:0; font-size:clamp(26px, 3.2vw, 44px); line-height:1.25; font-family: Georgia, 'Times New Roman', serif; display:inline-block; color:#fff; padding:6px 10px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,.15); max-width:clamp(560px, 70vw, 62ch); white-space:normal; word-break:normal; overflow-wrap:break-word; hyphens:auto}
+@supports (text-wrap: balance){ .title h1{ text-wrap: balance } }
+.title h2{margin:0; font-size:clamp(12px, 1.2vw, 16px); font-weight:600; color:#fff}
+.banner{
+    position:relative; color:#fff;
+    background-image: url('https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/banner-itb1.webp');
+    background-size:cover; background-position:center; background-repeat:no-repeat;
+    padding:clamp(16px, 2.2vw, 24px) clamp(16px, 2.4vw, 28px);
+    min-height:clamp(120px, 20vw, 240px);
+    border-radius:14px; box-shadow:0 6px 20px rgba(2,41,77,.12);
+    margin-bottom:18px;
+}
+.title h1, .title h2{ text-shadow:0 1px 2px rgba(0,0,0,.25) }
+/* Brand bar with ITB logo */
+.brandbar{display:flex; align-items:center; gap:16px}
+.brand-logo{height:clamp(56px,6.5vw,96px); width:auto; display:block}
+.nowrap{white-space:nowrap}
+.brand-text{display:flex; flex-direction:column; gap:6px}
+
+/* Cards */
+.card{background:var(--card); border-radius:14px; overflow:hidden; box-shadow:0 4px 14px rgba(10,34,64,.08); margin-bottom:18px}
+.card-header{background:var(--blue); color:#e9f5ff; font-weight:700; padding:10px 14px; letter-spacing:.3px; font-family: Georgia, 'Times New Roman', serif}
+
+table{width:100%; border-collapse:collapse}
+th, td{padding:8px 10px; vertical-align:middle; text-align:left;}
+thead th{background:var(--stripe); font-weight:700; color:#294050; border-bottom:1px solid #dbe7f2}
+tbody tr:nth-child(even){background:#fbfdff}
+tbody tr{border-bottom:1px solid #eef4fa}
+
+.label{font-weight:600; display: block; margin-bottom: 4px;}
+.unit{color:#0f2a3a; font-weight:600; white-space:nowrap}
+.ref{color:#0f7fb3; font-size:12px}
+
+input[type="number"], input[readonly], select, textarea{
+    width:100%; border:1px solid #d6e3ef; background:#fff; color:var(--ink);
+    border-radius:10px; padding:10px 12px; min-height:40px; outline:none; transition:.2s box-shadow,.2s border-color;
+}
+input[readonly]{background:#f6f9fd; color:#475569}
+input:focus, select:focus, textarea:focus{border-color:var(--blue); box-shadow:0 0 0 4px var(--ring)}
+
+.grid{display:grid; grid-template-columns:1fr; gap:14px}
+@media (min-width:720px){ .grid{grid-template-columns:1fr 1fr}}
+
+/* Chemical Material compact grid */
+.chem-grid{display:grid; grid-template-columns:1.3fr 1fr; gap:14px; align-items:start}
+@media (max-width:720px){ .chem-grid{grid-template-columns:1fr} }
+
+.mini{display:flex; gap:12px; align-items:flex-start}
+.mini > *{flex:1}
+/* Material column layout: stack Material on top, Volume & Distance below */
+.matcol{display:flex; flex-direction:column; gap:12px}
+.input-group{display:flex; gap:0}
+.input-group input[type="number"]{border-right:0; border-top-right-radius:0; border-bottom-right-radius:0;}
+.input-group .unit{border:1px solid #d6e3ef; border-left:0; border-top-right-radius:10px; border-bottom-right-radius:10px; background:#f6f9fd; padding:10px 12px;}
+
+/* Equation panel on the right of Chemical Material */
+.eq-panel{border:1px solid #dbe7f2; background:var(--card); color:var(--ink); border-radius:12px; padding:12px; box-shadow:inset 0 0 0 1px rgba(13,41,77,.02)}
+.eq-title{font-weight:700; color:var(--blue-2); margin-bottom:8px}
+.eq-note{font-size:12px; color:var(--muted); margin-top:6px}
+.rxn{padding:10px 12px; border:1px dashed #c9d8e6; border-radius:10px; margin-top:8px; background:var(--stripe)}
+.rxn small{display:block; color:#334155; margin-bottom:4px}
+.rxn-eq{font-family: 'Times New Roman', Georgia, serif; font-size:16px; color:var(--ink)}
+.rxn-eq .arrow{padding:0 6px; font-weight:700}
+
+.toolbar{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end; padding:10px}
+.btn{appearance:none; border:1px solid #cfe3f3; background:#fff; color:#0f2a3a; font-weight:600; border-radius:10px; padding:8px 12px; cursor:pointer}
+.btn:hover{border-color:var(--blue)}
+.btn.primary{background:var(--blue); color:#fff; border-color:transparent}
+.btn.primary:hover{background:var(--blue-2)}
+.btn.ghost{background:transparent}
+
+.hint{font-size:12px; color:var(--muted)}
+.status{padding:8px 12px; border-left:4px solid var(--ok); background:#ebf8ff; color:#075985; border-radius:10px; display:none; margin-top:8px}
+.status.bad{border-left-color:var(--danger); background:#fff4f4; color:#7f1d1d}
+
+.footnote{font-size:12px; color:#475569; margin-top:8px}
+code.badge{background:#e8f5fd; color:#0b5f83; font-weight:700; padding:2px 6px; border-radius:6px}
+
+/* ===== Right-Side Estimation Panels ===== */
+.split{ display:grid; grid-template-columns: 40% 60%; gap:18px; }
+@media (max-width: 960px){ .split{grid-template-columns:1fr} }
+
+.left{ display:flex; flex-direction:column; gap:18px; }
+.right{ position:sticky; top: 12px; align-self:start; }
+
+.estimation .card-header{text-transform:uppercase}
+.method-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); gap:12px; padding:12px; }
+
+.method-card{position:relative; min-height:220px; border:1px solid #dbe7f2; background:#fff; border-radius:12px; overflow:hidden;}
+.method-card .vlabel{
+    background:var(--stripe);
+    color:var(--blue-2);
+    padding: 8px 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-align: center;
+    border-bottom: 1px solid #e6eef6;
+}
+.method-card .pad{
+    padding:10px 10px 40px 10px;
+    height:100%;
+    background-color: var(--bg);
+    color: var(--ink);
+}
+.sevfoot{position:absolute; left:0; right:0; bottom:0; height:30px; background:var(--pink); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700}
+.sevfoot.Minor{ background-color: #22c55e; }
+.sevfoot.Moderate{ background-color: #f97316; }
+.sevfoot.Serious{ background-color: #dc2626; }
+.sevfoot.Major{ background-color: #991b1b; }
+.sevfoot.Unknown{ background-color: var(--muted); }
+
+/* ITB Theme */
+body.theme-itb { 
+    --bg:#eef6fb; --card:#ffffff; --ink:#112a3a; --muted:#516a7a; 
+    --stripe:#e6f0f7; --blue:#0079c2; --blue-2:#0067a5; --pink:#e17b9a; 
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark){
+    :root{ --bg:#0b1220; --card:#0e1a2b; --ink:#dbe7ff; --muted:#94a3b8; --stripe:#0f1f35; }
+    .btn{border-color:#274160; color:#cfe3ff}
+    .btn:hover{border-color:#5aa7e0}
+    tbody tr{border-bottom-color:#1b2b47} 
+    thead th{border-bottom-color:#1b2b47}
+    .method-card{border-color:#1b2b47; background:#0e1a2b}
+    .method-card .vlabel{background:#0c1526; border-color:#1b2b47; color:#9fb7d1}
+    .input-group .unit{background:#1b2b47; border-color:#274160;}
+}
+
+/* ===== Tablet & mobile ===== */
+@media (max-width: 960px){
+    .right{position:static; width:auto;}
+}
+
+@media (max-width: 600px){
+    .wrap{padding:0 12px}
+    .split{gap:12px; margin-right:0}
+}
+
+/* ===== Footer ===== */
+.app-footer{
+    margin-top:20px;
+    color:#fff;
+    background-color:#0079c2; /* ITB blue */
+    background-image: url('https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/teknik-kimia-ITB1.webp'), url('https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/main/img/banner-itb1.webp');
+    background-size:cover; background-position:center; background-repeat:no-repeat;
+    width:100vw;
+    margin-left:calc(50% - 50vw);
+    margin-right:calc(50% - 50vw);
+    padding:16px;
+    padding-left:max(16px, env(safe-area-inset-left));
+    padding-right:max(16px, env(safe-area-inset-right));
+    border-top:1px solid rgba(255,255,255,.25);
+    border-bottom:1px solid rgba(255,255,255,.25);
+    border-left:0; border-right:0;
+    border-radius:0;
+    box-shadow:0 4px 12px rgba(10,34,64,.06);
+}
+.app-footer .grid{display:grid; grid-template-columns:2fr 1fr; gap:16px; align-items:start; max-width: 1280px; margin: 0 auto;}
+@media (max-width: 720px){ .app-footer .grid{grid-template-columns:1fr} }
+.app-footer .credit{font-weight:700; color:#e9f5ff; margin-bottom:6px; text-align:center}
+.app-footer .dedication{font-size:13px; line-height:1.6; text-align:center; max-width:960px; margin:0 auto}
+.app-footer .actions{display:flex; gap:10px; align-items:center; justify-content:flex-end}
+.app-footer .actions .btn{padding:8px 12px; background:#fff; color:#004a6d; border:1px solid rgba(0,0,0,.12); border-radius:10px}
+.app-footer a{color:#fff; text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:2px}
+.app-footer a:visited{color:#fff}
+.app-footer a:hover{opacity:.9}
+body.full .app-footer .grid{grid-template-columns:1fr; justify-items:center; text-align:center}
+body.full .app-footer .actions{justify-content:center}
