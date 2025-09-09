@@ -273,7 +273,6 @@
       border-color: var(--blue);
       box-shadow: 0 0 0 4px var(--ring);
     }
-    /* Kelas untuk menyorot input yang tidak valid */
     input.input-error {
       border-color: var(--danger) !important;
       box-shadow: 0 0 0 4px rgba(185, 28, 28, 0.25) !important;
@@ -1123,7 +1122,6 @@
     };
 
     const calculateValues = () => {
-      // Validasi Visual
       fields.forEach(id => $(id)?.classList.remove('input-error'));
       let hasError = false;
 
@@ -1168,7 +1166,7 @@
       const clamp01 = (x) => (isNaN(x) ? NaN : Math.max(0, Math.min(1, x)));
       const _eta = clamp01(eta);
       if ($('eta').value !== String(_eta)) {
-          $('eta').value = _eta; // Correct user input if it's outside 0-1
+          $('eta').value = _eta;
       }
       const W_mass = rho * vol;
       const E_total = W_mass * dh * _eta;
@@ -1229,7 +1227,7 @@
       msg.textContent = "Perhitungan berhasil diselesaikan.";
       msg.style.display = "block";
 
-      saveStateToURL(); // Simpan ke URL setelah kalkulasi berhasil
+      saveStateToURL();
     };
 
     function compute() {
@@ -1266,7 +1264,6 @@
       box.innerHTML = eqMap[material].map((item) => `<div class="rxn"><small>${item.label}</small><div class="rxn-eq">${item.eq}</div></div>`).join("");
     }
 
-    // Fungsi untuk menyimpan dan memuat status dari URL
     const saveStateToURL = () => {
       const params = new URLSearchParams();
       inputFields.forEach(id => {
@@ -1325,7 +1322,7 @@
         });
       }
       
-      loadStateFromURL(); // Muat status dari URL saat halaman dimuat
+      loadStateFromURL();
     });
 
     /* ============== BAGIAN 2: LOGIKA UNTUK GRAFIK ============== */
@@ -1398,12 +1395,12 @@
         
         $('btnAddResult').addEventListener('click', () => {
             const zeVal = parseFloat($('Ze').value);
-            const psVal = parseFloat($('Ps').value); // Ps (Po/Pa) adalah scaled overpressure
+            const psVal = parseFloat($('Ps').value);
             
             if (Number.isFinite(zeVal) && Number.isFinite(psVal) && zeVal > 0 && psVal > 0) {
                 const newRow = addRow(zeVal.toFixed(4), psVal.toFixed(4));
                 newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                plot(); // Langsung perbarui plot
+                plot();
             } else {
                 alert('Tidak ada hasil kalkulasi yang valid untuk ditambahkan. Harap lengkapi input dan hitung terlebih dahulu.');
             }
@@ -1475,8 +1472,31 @@
               return `${p.seriesName}<br/>ze: ${z.toFixed(4)}<br/>Ps: ${val.toFixed(4)}${err}`;
             }},
             legend: { top: 8, textStyle: { color: 'var(--ink)' } },
-            xAxis: { type: 'log', min: xmin, max: xmax, name: 'Scaled Distance (ze)', nameLocation: 'middle', nameGap: 30, nameTextStyle: { color: 'var(--ink)', fontSize: 14 }, axisLabel: { color: 'var(--muted)' }, axisLine: { lineStyle: { color: 'var(--muted)' } }},
-            yAxis: { type: 'log', name: 'Scaled Overpressure (Ps)', nameLocation: 'middle', nameGap: 50, nameRotate: 90, nameTextStyle: { color: 'var(--ink)', fontSize: 14 }, axisLabel: { color: 'var(--muted)' }, axisLine: { lineStyle: { color: 'var(--muted)' } }},
+            xAxis: { 
+                type: 'log', 
+                min: xmin, 
+                max: xmax, 
+                name: 'Scaled Distance (ze)', 
+                nameLocation: 'middle', 
+                nameGap: 30, 
+                nameTextStyle: { color: 'var(--ink)', fontSize: 14 }, 
+                axisLabel: { color: 'var(--muted)' }, 
+                axisLine: { lineStyle: { color: 'var(--muted)' } },
+                splitLine: { lineStyle: { color: '#e0e6f1' } },
+                minorSplitLine: { show: true, lineStyle: { color: '#f0f3f8' } }
+            },
+            yAxis: { 
+                type: 'log', 
+                name: 'Scaled Overpressure (Ps)', 
+                nameLocation: 'middle', 
+                nameGap: 50, 
+                nameRotate: 90, 
+                nameTextStyle: { color: 'var(--ink)', fontSize: 14 }, 
+                axisLabel: { color: 'var(--muted)' }, 
+                axisLine: { lineStyle: { color: 'var(--muted)' } },
+                splitLine: { lineStyle: { color: '#e0e6f1' } },
+                minorSplitLine: { show: true, lineStyle: { color: '#f0f3f8' } }
+            },
             series: [
               { name: 'Kurva Referensi', type: 'line', showSymbol: false, lineStyle: { width: 2, color: '#0079c2' }, data: REF.pairs },
               { name: `Titik Pengguna — ${compound}`, type: 'scatter', symbolSize: 8, data: userData }
