@@ -6,8 +6,8 @@
   <title>Simulation & Modeling of Explosion Effects (TNT Equivalence)</title>
   <style>
     :root{
-      --ink:#1e293b;            /* slate-800 */
-      --muted:#64748b;          /* slate-500 */
+      --ink:#1e2b3b;          /* slate-800 */
+      --muted:#64748b;         /* slate-500 */
       --card:#ffffff;
       --bg:#f5f7fb;
       --blue:#1296d4;
@@ -19,7 +19,7 @@
       --danger:#b91c1c;
       --ok:#0ea5e9;
       --pink:#f06292;
-      --blue-itb:#0079c2;       /* added for title background */
+      --blue-itb:#0079c2;      /* added for title background */
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -30,10 +30,31 @@
       font: 14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
     }
     .wrap{max-width:1280px; margin:32px auto; padding-left:max(16px, env(safe-area-inset-left)); padding-right:max(16px, env(safe-area-inset-right))}
-    body.full .wrap{max-width:none; width:100%; padding-left:max(20px, env(safe-area-inset-left)); padding-right:max(20px, env(safe-area-inset-right))}
+    
+    body.full .wrap{
+        max-width:none; 
+        width:100%; 
+        padding-left: 0; 
+        padding-right: 0;
+        margin: 0 auto;
+    }
+    body.full .banner,
+    body.full .split {
+        padding-left: max(20px, env(safe-area-inset-left));
+        padding-right: max(20px, env(safe-area-inset-right));
+    }
+    body.full .banner {
+        border-radius: 0;
+        padding-top: clamp(16px, 2.2vw, 24px);
+        padding-bottom: clamp(16px, 2.2vw, 24px);
+        margin-bottom: 18px;
+    }
+    body.full .split {
+        margin-top: 18px;
+    }
 
     /* Header */
-    .title{display:grid; gap:6px; margin-bottom:18px}
+    .title{display:grid; gap:6px;}
     .title h1{margin:0; font-size:clamp(26px, 3.2vw, 44px); line-height:1.25; font-family: Georgia, 'Times New Roman', serif; display:inline-block; color:#fff; padding:6px 10px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,.15); max-width:clamp(560px, 70vw, 62ch); white-space:normal; word-break:normal; overflow-wrap:break-word; hyphens:auto}
     @supports (text-wrap: balance){ .title h1{ text-wrap: balance } }
     .title h2{margin:0; font-size:clamp(12px, 1.2vw, 16px); font-weight:600; color:#fff}
@@ -44,6 +65,7 @@
       padding:clamp(16px, 2.2vw, 24px) clamp(16px, 2.4vw, 28px);
       min-height:clamp(120px, 20vw, 240px);
       border-radius:14px; box-shadow:0 6px 20px rgba(2,41,77,.12);
+      margin-bottom:18px;
     }
     .title h1, .title h2{ text-shadow:0 1px 2px rgba(0,0,0,.25) }
     /* Brand bar with ITB logo */
@@ -57,12 +79,12 @@
     .card-header{background:var(--blue); color:#e9f5ff; font-weight:700; padding:10px 14px; letter-spacing:.3px; font-family: Georgia, 'Times New Roman', serif}
 
     table{width:100%; border-collapse:collapse}
-    th, td{padding:8px 10px; vertical-align:middle}
+    th, td{padding:8px 10px; vertical-align:middle; text-align:left;}
     thead th{background:var(--stripe); font-weight:700; color:#294050; border-bottom:1px solid #dbe7f2}
     tbody tr:nth-child(even){background:#fbfdff}
-    tbody td{border-bottom:1px solid #eef4fa}
+    tbody tr{border-bottom:1px solid #eef4fa}
 
-    .label{font-weight:600}
+    .label{font-weight:600; display: block; margin-bottom: 4px;}
     .unit{color:#0f2a3a; font-weight:600; white-space:nowrap}
     .ref{color:#0f7fb3; font-size:12px}
 
@@ -84,9 +106,9 @@
     .mini > *{flex:1}
     /* Material column layout: stack Material on top, Volume & Distance below */
     .matcol{display:flex; flex-direction:column; gap:12px}
-    .matcol > .mini{flex-direction:column; gap:12px; align-items:stretch}
-    .sameW{width:var(--matW, 320px)}
-    
+    .input-group{display:flex; gap:0}
+    .input-group input[type="number"]{border-right:0; border-top-right-radius:0; border-bottom-right-radius:0;}
+    .input-group .unit{border:1px solid #d6e3ef; border-left:0; border-top-right-radius:10px; border-bottom-right-radius:10px; background:#f6f9fd; padding:10px 12px;}
 
     /* Equation panel on the right of Chemical Material */
     .eq-panel{border:1px solid #dbe7f2; background:var(--card); color:var(--ink); border-radius:12px; padding:12px; box-shadow:inset 0 0 0 1px rgba(13,41,77,.02)}
@@ -96,7 +118,6 @@
     .rxn small{display:block; color:#334155; margin-bottom:4px}
     .rxn-eq{font-family: 'Times New Roman', Georgia, serif; font-size:16px; color:var(--ink)}
     .rxn-eq .arrow{padding:0 6px; font-weight:700}
-    
 
     .toolbar{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end; padding:10px}
     .btn{appearance:none; border:1px solid #cfe3f3; background:#fff; color:#0f2a3a; font-weight:600; border-radius:10px; padding:8px 12px; cursor:pointer}
@@ -117,17 +138,12 @@
     @media (max-width: 960px){ .split{grid-template-columns:1fr} }
 
     .left{ display:flex; flex-direction:column; gap:18px; }
-
-    .right{ position:sticky; top: 12px; align-self:start; box-shadow:0 16px 30px rgba(2,41,77,.25); background:transparent; display:flex; flex-direction:column; gap:18px; }
-
-    body.full .split { margin-right: 0; padding-right: 0; }
-    body.full .right { position: sticky; right: 0; width: var(--panelWpx, 60%); z-index:50; }
+    .right{ position:sticky; top: 12px; align-self:start; }
 
     .estimation .card-header{text-transform:uppercase}
     .method-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); gap:12px; padding:12px; }
     
-    
-    .method-card{position:relative; min-height:220px; border:1px solid #dbe7f2; background:#fff}
+    .method-card{position:relative; min-height:220px; border:1px solid #dbe7f2; background:#fff; border-radius:12px; overflow:hidden;}
     .method-card .vlabel{
       background:var(--stripe);
       color:var(--blue-2);
@@ -138,7 +154,7 @@
       border-bottom: 1px solid #e6eef6;
     }
     .method-card .pad{
-      padding:10px 10px 40px 38px;
+      padding:10px 10px 40px 10px;
       height:100%;
       background-color: var(--bg);
       color: var(--ink);
@@ -149,53 +165,34 @@
     .sevfoot.Serious{ background-color: #dc2626; }
     .sevfoot.Major{ background-color: #991b1b; }
     .sevfoot.Unknown{ background-color: var(--muted); }
-
-    /* View controls / Academic layout */
-    .viewbar{position:sticky; top:8px; z-index:30; display:flex; gap:8px; align-items:center; justify-content:flex-end; padding:10px 0}
-    .viewbar:empty{display:none}  
-    .btn.toggle[aria-pressed="true"]{background:var(--blue); color:#fff}
-    .density{display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted)}
-    .density input{accent-color: var(--blue)}
-
-    /* Theme swatches */
-    .swatches{display:flex; gap:6px; align-items:center}
-    .swatch{width:22px; height:22px; border-radius:50%; border:1px solid #cfe3f3; cursor:pointer}
-    .swatch[data-theme="theme-warm"]{background:linear-gradient(135deg,#f5efe6,#e6d7c3)}
-    .swatch[data-theme="theme-nord"]{background:linear-gradient(135deg,#eceff4,#d8e2f0)}
-    .swatch[data-theme="theme-solar"]{background:linear-gradient(135deg,#fdf6e3,#f2e9ca)}
-    .swatch[data-theme="theme-itb"]{background:linear-gradient(135deg,#e8f4fc,#b9daf3)}
-    .swatch[data-theme="theme-inkless"]{background:linear-gradient(135deg,#f4f5f6,#e7eaee)}
-
-    /* Theme palettes (choose in Viewbar) */
-    body.theme-warm { --bg:#f5efe6; --card:#faf6ef; --ink:#2e2a24; --muted:#6f685f; --stripe:#efe6da; --blue:#0e86b6; --blue-2:#0c7096; --pink:#e79aa8; }
-    body.theme-nord { --bg:#eceff4; --card:#ffffff; --ink:#2e3440; --muted:#6b778d; --stripe:#e5e9f0; --blue:#5e81ac; --blue-2:#4c6f9a; --pink:#d77a8b; }
-    body.theme-solar{ --bg:#fdf6e3; --card:#fffaf0; --ink:#657b83; --muted:#7b8b8c; --stripe:#eee8d5; --blue:#268bd2; --blue-2:#1f6fa7; --pink:#d33682; }
-    body.theme-inkless{ --bg:#f4f5f6; --card:#fcfcfd; --ink:#2b3036; --muted:#66707b; --stripe:#eceff2; --blue:#3a7ca5; --blue-2:#326d91; --pink:#de869a; }
-    body.theme-itb    { --bg:#eef6fb; --card:#ffffff; --ink:#112a3a; --muted:#516a7a; --stripe:#e6f0f7; --blue:#0079c2; --blue-2:#0067a5; --pink:#e17b9a; }
+    
+    /* ITB Theme */
+    body.theme-itb { 
+        --bg:#eef6fb; --card:#ffffff; --ink:#112a3a; --muted:#516a7a; 
+        --stripe:#e6f0f7; --blue:#0079c2; --blue-2:#0067a5; --pink:#e17b9a; 
+    }
 
     /* Dark mode support */
     @media (prefers-color-scheme: dark){
       :root{ --bg:#0b1220; --card:#0e1a2b; --ink:#dbe7ff; --muted:#94a3b8; --stripe:#0f1f35; }
       .btn{border-color:#274160; color:#cfe3ff}
       .btn:hover{border-color:#5aa7e0}
-      tbody td{border-bottom-color:#1b2b47}
+      /* --- PERBAIKAN DARK MODE TABLE --- */
+      tbody tr{border-bottom-color:#1b2b47} 
+      thead th{border-bottom-color:#1b2b47}
       .method-card{border-color:#1b2b47; background:#0e1a2b}
-      .method-card .vlabel{background:#0c1526; border-right-color:#1b2b47; color:#9fb7d1}
+      .method-card .vlabel{background:#0c1526; border-color:#1b2b47; color:#9fb7d1}
+      .input-group .unit{background:#1b2b47; border-color:#274160;}
     }
 
     /* ===== Tablet & mobile ===== */
     @media (max-width: 960px){
-      body.float-right .right{position:static; width:auto; box-shadow:none}
-      body.float-right .split{margin-right:0}
+      .right{position:static; width:auto;}
     }
 
     @media (max-width: 600px){
       .wrap{padding:0 12px}
       .split{gap:12px; margin-right:0}
-      .viewbar{position:static}
-      .left, .right{position:static; top=auto; max-height:none; overflow:visible}
-      body.float-right .right{position:static; width=auto; box-shadow:none}
-      body.float-right .split{margin-right:0}
     }
 
     /* ===== Footer ===== */
@@ -217,22 +214,19 @@
       border-radius:0;
       box-shadow:0 4px 12px rgba(10,34,64,.06);
     }
-    .app-footer .grid{display:grid; grid-template-columns:2fr 1fr; gap:16px; align-items:start}
+    .app-footer .grid{display:grid; grid-template-columns:2fr 1fr; gap:16px; align-items:start; max-width: 1280px; margin: 0 auto;}
     @media (max-width: 720px){ .app-footer .grid{grid-template-columns:1fr} }
     .app-footer .credit{font-weight:700; color:#e9f5ff; margin-bottom:6px; text-align:center}
     .app-footer .dedication{font-size:13px; line-height:1.6; text-align:center; max-width:960px; margin:0 auto}
     .app-footer .actions{display:flex; gap:10px; align-items:center; justify-content:flex-end}
     .app-footer .actions .btn{padding:8px 12px; background:#fff; color:#004a6d; border:1px solid rgba(0,0,0,.12); border-radius:10px}
-    /* Footer links as white text */
     .app-footer a{color:#fff; text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:2px}
     .app-footer a:visited{color:#fff}
     .app-footer a:hover{opacity:.9}
-    /* Center footer texts when fullscreen */
     body.full .app-footer .grid{grid-template-columns:1fr; justify-items:center; text-align:center}
     body.full .app-footer .actions{justify-content:center}
   </style>
 
-  <!-- SEO & Social START -->
   <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/favicon.ico">
   <link rel="canonical" href="https://virdanurlulu.github.io/">
   <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
@@ -245,7 +239,6 @@
   <meta name="theme-color" content="#0079c2">
   <meta name="color-scheme" content="light dark">
 
-  <!-- Open Graph / WhatsApp -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Program Magister Teknik Kimia — Institut Teknologi Bandung">
   <meta property="og:title" content="Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript">
@@ -254,13 +247,11 @@
   <meta property="og:image" content="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/ITB-Exlosion-Modeling-Simulation.webp">
   <meta property="og:image:type" content="image/webp">
 
-  <!-- Twitter Cards -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript">
   <meta name="twitter:description" content="Interactive explosion-effects modeling (TNT equivalence). Chemical materials, properties, parameters, and consequence estimation.">
   <meta name="twitter:image" content="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/ITB-Exlosion-Modeling-Simulation.webp">
 
-  <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -276,10 +267,9 @@
     "publisher": {"@type": "Organization", "name": "Institut Teknologi Bandung", "url": "https://che.itb.ac.id/"}
   }
   </script>
-  <!-- SEO & Social END -->
-</head>
-<body class="theme-warm full float-right">
-  <div class="wrap"><span id="top" aria-hidden="true"></span>
+  </head>
+<body class="theme-itb full">
+  <div class="wrap">
     <div class="banner title">
       <div class="brandbar">
         <a href="https://virdanurlulu.github.io/" target="_blank" rel="noopener noreferrer" class="brand-logo-link" aria-label="Kunjungi beranda">
@@ -293,18 +283,15 @@
       </div>
     </div>
 
-    <div class="viewbar" aria-label="View controls"></div>
-
     <main class="split" role="main">
       <div class="left">
-        <!-- MATERIAL & BASIC INPUTS -->
         <section class="card" aria-labelledby="mat-head">
           <div id="mat-head" class="card-header">Chemical Material</div>
           <div style="padding:14px">
             <div class="chem-grid">
               <div class="matcol">
-                <label class="tight">
-                  <div class="label">Pilih Material</div>
+                <div>
+                  <label for="material" class="label">Pilih Material</label>
                   <select id="material">
                     <option value="">— pilih —</option>
                     <option value="AN">Ammonium Nitrate (AN)</option>
@@ -312,22 +299,22 @@
                     <option value="H2">Hydrogen (H₂)</option>
                     <option value="TNT">TNT (referensi)</option>
                   </select>
-                </label>
+                </div>
                 <div class="mini">
-                  <label>
-                    <div class="label">Volume</div>
-                    <div class="mini sameW">
+                  <div>
+                    <label for="vol" class="label">Volume</label>
+                    <div class="input-group">
                       <input id="vol" type="number" min="0" step="any" placeholder="cth 12.5" aria-label="Volume" />
-                      <input value="m³" class="unit" readonly />
+                      <span class="unit">m³</span>
                     </div>
-                  </label>
-                  <label>
-                    <div class="label">Distance</div>
-                    <div class="mini sameW">
+                  </div>
+                  <div>
+                    <label for="dist" class="label">Distance</label>
+                    <div class="input-group">
                       <input id="dist" type="number" min="0" step="any" placeholder="cth 150" aria-label="Distance" />
-                      <input value="meters" class="unit" readonly />
+                      <span class="unit">meters</span>
                     </div>
-                  </label>
+                  </div>
                 </div>
               </div>
               <div class="eq-panel">
@@ -339,7 +326,6 @@
           </div>
         </section>
 
-        <!-- PROPERTIES TABLE -->
         <section class="card" aria-labelledby="prop-head">
           <div id="prop-head" class="card-header">Properties</div>
           <div style="padding:12px">
@@ -354,31 +340,31 @@
               </thead>
               <tbody>
                 <tr>
-                  <td class="label">Density ρ = m/V</td>
+                  <td><label for="rho" class="label">Density ρ = m/V</label></td>
                   <td><input id="rho" type="number" min="0" step="any" placeholder="kg/m³"/></td>
                   <td class="unit">kg/m³</td>
                   <td class="ref">@Literature, NIST</td>
                 </tr>
                 <tr>
-                  <td class="label">ΔH<sub>explosion</sub></td>
+                  <td><label for="dh" class="label">ΔH<sub>explosion</sub></label></td>
                   <td><input id="dh" type="number" min="0" step="any" placeholder="kJ/kg"/></td>
                   <td class="unit">kJ/kg</td>
                   <td class="ref">@Literature, NIST</td>
                 </tr>
                 <tr>
-                  <td class="label">(kPa) Ambient Pressure</td>
+                  <td><label for="pa" class="label">(kPa) Ambient Pressure</label></td>
                   <td><input id="pa" type="number" min="0" step="any" placeholder="101.325"/></td>
                   <td class="unit">kPa</td>
                   <td class="ref">@Literature, NIST @20&nbsp;°C</td>
                 </tr>
                 <tr>
-                  <td class="label">η<sub>E</sub> Explosion Efficiency</td>
+                  <td><label for="eta" class="label">η<sub>E</sub> Explosion Efficiency</label></td>
                   <td><input id="eta" type="number" min="0" max="1" step="any" placeholder="0–1"/></td>
                   <td class="unit">–</td>
                   <td class="ref">@Literature, Crowl &amp; Louvar; Alonso; Sadovski</td>
                 </tr>
                 <tr>
-                  <td class="label">E<sub>TNT</sub></td>
+                  <td><label for="e_tnt" class="label">E<sub>TNT</sub></label></td>
                   <td><input id="e_tnt" type="number" min="0" step="any" placeholder="kJ/kg"/></td>
                   <td class="unit">kJ/kg</td>
                   <td class="ref">@Literature, Crowl &amp; Louvar; Alonso; Sadovski</td>
@@ -389,7 +375,6 @@
           </div>
         </section>
 
-        <!-- PARAMETERS TABLE -->
         <section class="card" aria-labelledby="param-head">
           <div id="param-head" class="card-header">Parameters</div>
           
@@ -470,12 +455,9 @@
                 <p><strong>Efek:</strong></p>
                 <ul id="effects-crowl" style="padding-left: 20px;">
                   <li>Kerusakan ringan pada jendela kaca (1.4 kPa)</li>
-                  <li>Kerusakan struktural parsial pada bangunan (7 kPa)</li>
-                  <li>Kerusakan total pada bangunan non-permanen (34.5 kPa)</li>
-                  <li>Dinding beton bertulang hancur (276 kPa)</li>
                 </ul>
               </div>
-              <div class="sevfoot" id="sev-crowl">Major</div>
+              <div class="sevfoot" id="sev-crowl">Unknown</div>
             </div>
             <div class="method-card">
               <div class="vlabel">ALONSO</div>
@@ -484,12 +466,9 @@
                 <p><strong>Efek:</strong></p>
                 <ul id="effects-alonso" style="padding-left: 20px;">
                   <li>Kerusakan atap, dinding, dan jendela (7 kPa)</li>
-                  <li>Kerusakan besar pada pabrik kimia (21-34.5 kPa)</li>
-                  <li>Kerusakan parah pada bangunan (35 kPa)</li>
-                  <li>Kerusakan total pada bangunan industri (70 kPa)</li>
                 </ul>
               </div>
-              <div class="sevfoot" id="sev-alonso">Major</div>
+              <div class="sevfoot" id="sev-alonso">Unknown</div>
             </div>
             <div class="method-card">
               <div class="vlabel">SADOVSKI</div>
@@ -498,12 +477,9 @@
                 <p><strong>Efek:</strong></p>
                 <ul id="effects-sadovski" style="padding-left: 20px;">
                   <li>Pecah jendela kaca (7 kPa)</li>
-                  <li>Kerusakan struktural ringan (14 kPa)</li>
-                  <li>Dinding runtuh (35 kPa)</li>
-                  <li>Bangunan hancur total (70 kPa)</li>
                 </ul>
               </div>
-              <div class="sevfoot" id="sev-sadovski">Major</div>
+              <div class="sevfoot" id="sev-sadovski">Unknown</div>
             </div>
           </div>
         </section>
@@ -517,12 +493,9 @@
                 <p><strong>Efek:</strong></p>
                 <ul id="injury-effects-crowl" style="padding-left: 20px;">
                   <li>Luka-luka kecil (14 kPa)</li>
-                  <li>Luka berat dan mematikan (28 kPa)</li>
-                  <li>Gendang telinga pecah (34.5 kPa)</li>
-                  <li>Kematian 50% (70 kPa)</li>
                 </ul>
               </div>
-              <div class="sevfoot" id="sev-injury-crowl">Major</div>
+              <div class="sevfoot" id="sev-injury-crowl">Unknown</div>
             </div>
             <div class="method-card">
               <div class="vlabel">ALONSO</div>
@@ -530,27 +503,21 @@
                 <p><strong>Overpressure (Po):</strong> <span id="val-Po-alonso-inj">—</span> kPa</p>
                 <p><strong>Efek:</strong></p>
                 <ul id="injury-effects-alonso" style="padding-left: 20px;">
-                  <li>Luka ringan (7 kPa)</li>
-                  <li>Gendang telinga pecah (21-34.5 kPa)</li>
-                  <li>Cedera serius/fatal (35 kPa)</li>
-                  <li>Kematian (70 kPa)</li>
+                   <li>Luka ringan (7 kPa)</li>
                 </ul>
               </div>
-              <div class="sevfoot" id="sev-injury-alonso">Major</div>
+              <div class="sevfoot" id="sev-injury-alonso">Unknown</div>
             </div>
             <div class="method-card">
               <div class="vlabel">SADOVSKI</div>
               <div class="pad" id="panel-injury-sadovski" aria-label="Sadovski injury panel">
                 <p><strong>Overpressure (Po):</strong> <span id="val-Po-sadovski-inj">—</span> kPa</p>
                 <p><strong>Efek:</strong></p>
-                <ul id="effects-sadovski" style="padding-left: 20px;">
+                <ul id="injury-effects-sadovski" style="padding-left: 20px;">
                   <li>Luka-luka (14 kPa)</li>
-                  <li>Luka serius/fatal (28 kPa)</li>
-                  <li>Gendang telinga pecah (35 kPa)</li>
-                  <li>Kematian (70 kPa)</li>
                 </ul>
               </div>
-              <div class="sevfoot" id="sev-injury-sadovski">Major</div>
+              <div class="sevfoot" id="sev-injury-sadovski">Unknown</div>
             </div>
           </div>
         </section>
@@ -593,50 +560,6 @@
       tryNext();
     }
 
-    function syncMatWidth(){
-      try{
-        // Samakan lebar input dengan label ketat (opsional UI)
-        const tight = document.querySelector('label.tight');
-        if (tight){
-          const w = Math.round(tight.getBoundingClientRect().width);
-          document.documentElement.style.setProperty('--matW', w + 'px');
-        }
-        // Tinggi header + margin bawah + buffer kecil
-        const header = document.querySelector('.banner');
-        let headerH = 120;
-        if (header){
-          const rect = header.getBoundingClientRect();
-          const mb = parseFloat(getComputedStyle(header).marginBottom) || 0;
-          headerH = Math.round(rect.height + mb + 12);
-          document.documentElement.style.setProperty('--headerH', headerH + 'px');
-        }
-        // Hitung inset (jarak) dari atas aside.right ke atas card Estimation pertama
-        const aside = document.querySelector('aside.right');
-        const firstEst = aside?.querySelector('section.card.estimation, .estimation');
-        let estInset = 0;
-        if (aside && firstEst){
-          const a = aside.getBoundingClientRect();
-          const e = firstEst.getBoundingClientRect();
-          estInset = Math.max(0, Math.round(e.top - a.top));
-        }
-        document.documentElement.style.setProperty('--estInset', estInset + 'px');
-
-        // Sejajarkan top Estimation Card dengan top Chemical Material pada posisi paling atas
-        const matCard = document.querySelector('#mat-head')?.closest('section.card');
-        let rightTop = headerH; // fallback
-        if (matCard){
-          const mTop = Math.round(matCard.getBoundingClientRect().top);
-          rightTop = Math.max(mTop - estInset, headerH + 8);
-        }
-        document.documentElement.style.setProperty('--rightTop', rightTop + 'px');
-
-        // Lebar panel kanan stabil px (mengurangi jitter lintas device)
-        const vpW = window.innerWidth;
-        const panelWpx = Math.round(vpW * 0.60);
-        document.documentElement.style.setProperty('--panelWpx', panelWpx + 'px');
-      }catch(e){}
-    }
-
     // Back to top
     function goTop(){ try{ window.scrollTo({top:0, behavior:'smooth'}); }catch(e){ window.scrollTo(0,0);} }
 
@@ -646,12 +569,11 @@
         if (Po >= 70) return 'Major';
         if (Po >= 35) return 'Serious';
         if (Po >= 14) return 'Moderate';
-        return 'Minor';
+        if (Po >= 1.4) return 'Minor';
+        return 'Unknown';
       };
 
       const updatePanel = (method, Po) => {
-        const panel = $(`panel-damage-${method}`);
-        const panelInjury = $(`panel-injury-${method}`);
         const sevFoot = $(`sev-${method}`);
         const sevFootInjury = $(`sev-injury-${method}`);
         const effectsDamageEl = $(`effects-${method}`);
@@ -699,27 +621,25 @@
           ]
         };
 
-        if (!panel || !panelInjury || !sevFoot || !sevFootInjury || isNaN(Po)) {
+        if (isNaN(Po)) {
           const elA = $(`val-Po-${method}`);
           const elB = $(`val-Po-${method}-inj`);
           if (elA) elA.textContent = '—';
           if (elB) elB.textContent = '—';
           if (sevFoot) { sevFoot.textContent = 'Unknown'; sevFoot.className = 'sevfoot Unknown'; }
           if (sevFootInjury) { sevFootInjury.textContent = 'Unknown'; sevFootInjury.className = 'sevfoot Unknown'; }
-          if (effectsDamageEl) effectsDamageEl.innerHTML = '';
-          if (effectsInjuryEl) effectsInjuryEl.innerHTML = '';
+          if (effectsDamageEl) effectsDamageEl.innerHTML = '<li>Menunggu input...</li>';
+          if (effectsInjuryEl) effectsInjuryEl.innerHTML = '<li>Menunggu input...</li>';
           return;
         }
 
         const severity = getSeverity(Po);
-
-        const val = Number.isFinite(Po) ? Po : NaN;
-        const pretty = Number.isFinite(val) ? val.toLocaleString('id-ID',{maximumFractionDigits:2}) : '—';
+        const pretty = Po.toLocaleString('id-ID',{maximumFractionDigits:2});
 
         const elA = $(`val-Po-${method}`);
         const elB = $(`val-Po-${method}-inj`);
-        if (elA) elA.textContent = pretty;            // unit kPa sudah di HTML
-        if (elB) elB.textContent = pretty;            // unit kPa sudah di HTML
+        if (elA) elA.textContent = pretty;
+        if (elB) elB.textContent = pretty;
 
         sevFoot.textContent = severity;
         sevFootInjury.textContent = severity;
@@ -733,12 +653,12 @@
         if (effectsDamageEl) {
           effectsDamageEl.innerHTML = applicableDamage.length > 0
             ? applicableDamage.map(e => `<li style="color:var(--ink);">${e.text} (${e.threshold} kPa)</li>`).join('')
-            : '<li style="color:var(--ink);">Tidak ada efek yang terdaftar pada overpressure ini.</li>';
+            : '<li style="color:var(--ink);">Tidak ada efek signifikan pada level ini.</li>';
         }
         if (effectsInjuryEl) {
           effectsInjuryEl.innerHTML = applicableInjury.length > 0
             ? applicableInjury.map(e => `<li style="color:var(--ink);">${e.text} (${e.threshold} kPa)</li>`).join('')
-            : '<li style="color:var(--ink);">Tidak ada efek yang terdaftar pada overpressure ini.</li>';
+            : '<li style="color:var(--ink);">Tidak ada efek signifikan pada level ini.</li>';
         }
       };
 
@@ -754,10 +674,7 @@
       const eta = parseFloat($("eta").value);
       const e_tnt = parseFloat($("e_tnt").value);
       const dist = parseFloat($("dist").value);
-      const pa = parseFloat($("pa").value); // Ambil nilai ambient pressure dari input
-
-      const clamp01 = (x)=> isNaN(x) ? NaN : Math.max(0, Math.min(1, x));
-      const _eta = clamp01(eta);
+      const pa = parseFloat($("pa").value);
 
       const resetAll = (msgText, bad=true) => {
         ["W_mass","E_total","W_tnt","Ze","Ps","Po_crowl","Po_alonso","Po_sadovski"].forEach(id=> $(id).value = "");
@@ -768,9 +685,19 @@
         updateEstimationPanels(NaN, NaN, NaN);
       };
 
-      if (isNaN(rho) || isNaN(vol) || isNaN(dh) || isNaN(_eta) || isNaN(e_tnt) || isNaN(dist) || isNaN(pa)) {
+      const isAnyInputFilled = fields.some(id => $(id).value !== "");
+      if (!isAnyInputFilled) {
+          $("msg").style.display = 'none';
+          updateEstimationPanels(NaN, NaN, NaN);
+          return;
+      }
+
+      if (isNaN(rho) || isNaN(vol) || isNaN(dh) || isNaN(eta) || isNaN(e_tnt) || isNaN(dist) || isNaN(pa)) {
         return resetAll('Harap isi semua properti yang dibutuhkan.');
       }
+
+      const clamp01 = (x)=> isNaN(x) ? NaN : Math.max(0, Math.min(1, x));
+      const _eta = clamp01(eta);
 
       const W_mass = rho * vol;
       const E_total = W_mass * dh * _eta;
@@ -794,62 +721,48 @@
       $("W_tnt").value = W_tnt.toFixed(2);
       $("Ze").value = Ze.toFixed(4);
 
-      // Crowl method (curve-fit approximation)
+      // Crowl method
       const computeOverpressureCrowl = (Ze) => {
-        // Updated formula for Po/Pa based on the provided image
         const numerator = 1616 * (1 + Math.pow(Ze / 4.5, 2));
         const term1_den = Math.sqrt(1 + Math.pow(Ze / 0.048, 2));
         const term2_den = Math.sqrt(1 + Math.pow(Ze / 0.32, 2));
         const term3_den = Math.sqrt(1 + Math.pow(Ze / 1.35, 2));
         const denominator = term1_den * term2_den * term3_den;
-        const ratio = numerator / denominator;
-        return ratio;
+        return numerator / denominator;
       }
       
-      // Alonso method (curve-fit approximation)
+      // Alonso method
       const computeOverpressureAlonso = (Ze) => {
-        let Po;
-        if (Ze >= 1 && Ze < 10) {
-          Po = 1.13 * Math.pow(10, 6) * Math.pow(Ze, -2.01);
-        } else if (Ze >= 10 && Ze <= 200) {
-          Po = 1.83 * Math.pow(10, 5) * Math.pow(Ze, -1.16);
-        } else {
-          Po = NaN;
-        }
-        return Po;
+        if (Ze >= 1 && Ze < 10) return 1.13 * Math.pow(10, 6) * Math.pow(Ze, -2.01);
+        if (Ze >= 10 && Ze <= 200) return 1.83 * Math.pow(10, 5) * Math.pow(Ze, -1.16);
+        return NaN;
       }
       
-      // Sadovski method (updated based on image)
+      // Sadovski method
       const computeOverpressureSadovski = (W_tnt, dist) => {
-        let Po;
         if (dist > 0 && W_tnt > 0) {
-            const ratioTerm = Math.pow(W_tnt, 1/3) / dist;
-            Po = 0.085 * ratioTerm + 0.3 * Math.pow(ratioTerm, 2) + 0.8 * Math.pow(ratioTerm, 3);
-        } else {
-            Po = NaN;
+          const ratioTerm = Math.cbrt(W_tnt) / dist;
+          return 0.085 * ratioTerm + 0.3 * Math.pow(ratioTerm, 2) + 0.8 * Math.pow(ratioTerm, 3);
         }
-        return Po;
+        return NaN;
       }
 
-      // Calculate Po/Pa ratio using the new formula
       const PoPa_crowl = computeOverpressureCrowl(Ze);
-      // Calculate Po by multiplying the ratio by ambient pressure
       const Po_crowl = PoPa_crowl * pa; 
       
+      // Rumus Alonso menghasilkan Pa, konversi ke kPa (/1000)
       const Po_alonso = computeOverpressureAlonso(Ze) / 1000;
       
+      // Rumus Sadovski menghasilkan MPa, konversi ke kPa (*1000)
       const Po_sadovski = computeOverpressureSadovski(W_tnt, dist) * 1000; 
 
-      // Update the Ps field with the Po/Pa ratio from the Crowl formula
       $("Ps").value = PoPa_crowl.toFixed(4);
       $("Po_crowl").value = Po_crowl.toFixed(2);
-      $("Po_alonso").value = Po_alonso.toFixed(2);
-      $("Po_sadovski").value = Po_sadovski.toFixed(2);
+      $("Po_alonso").value = isNaN(Po_alonso) ? '' : Po_alonso.toFixed(2);
+      $("Po_sadovski").value = isNaN(Po_sadovski) ? '' : Po_sadovski.toFixed(2);
 
-      // Perbarui panel estimasi dengan nilai baru
       updateEstimationPanels(Po_crowl, Po_alonso, Po_sadovski);
       
-      // Status message
       const msg = $("msg");
       msg.classList.remove('bad');
       msg.textContent = "Perhitungan berhasil diselesaikan.";
@@ -857,37 +770,27 @@
     };
 
     function compute() {
-        // Tambahkan pengecekan untuk nilai default jika kosong
-        const paInput = $('pa');
-        if (paInput.value === '' || isNaN(parseFloat(paInput.value))) {
-            paInput.value = '101.325';
-        }
-        calculateValues();
+      if ($('pa').value === '' || isNaN(parseFloat($('pa').value))) {
+          $('pa').value = '101.325';
+      }
+      calculateValues();
     }
 
-    // Presets (demo only)
     const presets = {
       AN:  { rho: 1725, dh: 2479,  e_tnt: 4500, eta: 0.35  },
-      LPG: { rho: 37,  dh: 50000, e_tnt: 4500, eta: 0.03 },
-      H2:  { rho: 0.08375,   dh: 130800,e_tnt: 4500, eta: 0.05 },
-      TNT: { rho: 1600, dh: 4184,  e_tnt: 4184, eta: 1.0  }
+      LPG: { rho: 37,   dh: 50000, e_tnt: 4500, eta: 0.03 },
+      H2:  { rho: 0.08375, dh: 130800,e_tnt: 4500, eta: 0.05 },
+      TNT: { rho: 1600, dh: 4184,  e_tnt: 4184, eta: 1.0   }
     };
 
-    // Representative overall reaction equations (display only)
     const eqMap = {
       AN: [
         {label:'Thermal decomposition (sub‑detonation)', eq:'NH<sub>4</sub>NO<sub>3</sub>(s) <span class="arrow">→</span> N<sub>2</sub>O(g) + 2 H<sub>2</sub>O(g)'},
         {label:'Detonation (oxygen‑balanced approx.)', eq:'2 NH<sub>4</sub>NO<sub>3</sub>(s) <span class="arrow">→</span> 2 N<sub>2</sub>(g) + O<sub>2</sub>(g) + 4 H<sub>2</sub>O(g)'}
       ],
-      LPG: [
-        {label:'Combustion proxy (propane)', eq:'C<sub>3</sub>H<sub>8</sub>(g) + 5 O<sub>2</sub>(g) <span class="arrow">→</span> 3 CO<sub>2</sub>(g) + 4 H<sub>2</sub>O(g)'}
-      ],
-      H2: [
-        {label:'Combustion/explosion', eq:'2 H<sub>2</sub>(g) + O<sub>2</sub>(g) <span class="arrow">→</span> 2 H<sub>2</sub>O(g)'}
-      ],
-      TNT: [
-        {label:'Detonation (oxygen‑deficient, typical overall)', eq:'2 C<sub>7</sub>H<sub>5</sub>N<sub>3</sub>O<sub>6</sub>(s) <span class="arrow">→</span> 3 N<sub>2</sub>(g) + 5 H<sub>2</sub>O(g) + 7 CO(g) + 7 C(s)'}
-      ]
+      LPG: [ {label:'Combustion proxy (propane)', eq:'C<sub>3</sub>H<sub>8</sub>(g) + 5 O<sub>2</sub>(g) <span class="arrow">→</span> 3 CO<sub>2</sub>(g) + 4 H<sub>2</sub>O(g)'} ],
+      H2: [ {label:'Combustion/explosion', eq:'2 H<sub>2</sub>(g) + O<sub>2</sub>(g) <span class="arrow">→</span> 2 H<sub>2</sub>O(g)'} ],
+      TNT: [ {label:'Detonation (oxygen‑deficient, typical overall)', eq:'2 C<sub>7</sub>H<sub>5</sub>N<sub>3</sub>O<sub>6</sub>(s) <span class="arrow">→</span> 3 N<sub>2</sub>(g) + 5 H<sub>2</sub>O(g) + 7 CO(g) + 7 C(s)'} ]
     };
 
     function renderEquation(material){
@@ -899,13 +802,11 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      syncMatWidth();
       loadLogo();
 
-      const toTop = document.getElementById('toTop');
-      if (toTop) toTop.addEventListener('click', goTop);
+      $('toTop')?.addEventListener('click', goTop);
 
-      fields.forEach(id=> { const el=$(id); if(el) el.addEventListener('input', compute); });
+      fields.forEach(id=> $(id)?.addEventListener('input', compute));
 
       const materialSel = $("material");
       if (materialSel){
@@ -923,17 +824,7 @@
         });
       }
 
-      // Initial compute
-      compute();
-    });
-
-    let _resizeTimer;
-    window.addEventListener('resize', ()=>{
-      clearTimeout(_resizeTimer);
-      _resizeTimer = setTimeout(()=>{ syncMatWidth(); }, 80);
-    });
-    window.addEventListener('orientationchange', ()=>{
-      setTimeout(()=>{ syncMatWidth(); }, 120);
+      compute(); // Initial compute
     });
   </script>
 </body>
