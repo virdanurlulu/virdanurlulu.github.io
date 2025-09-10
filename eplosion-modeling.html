@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Explosion Contour — Live & Share</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    :root{--ink:#0f172a;--muted:#64748b;--card:#fff;--bg:#f6f8fb;--brand:#1296d4}
+    *{box-sizing:border-box} html,body{height:100%} body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,Segoe UI,Roboto,Arial}
+    .wrap{max-width:1200px;margin:auto;padding:16px}
+    .grid{display:grid;gap:16px;grid-template-columns:360px 1fr}
+    .card{background:var(--card);border-radius:14px;box-shadow:0 8px 24px rgba(2,8,20,.08);padding:14px}
+    h1{font-size:20px;margin:4px 0 12px}
+    label{font-weight:600;font-size:14px}
+    input,textarea,select,button{width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px}
+    textarea{resize:vertical;min-height:140px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .btn{background:var(--brand);color:#fff;border:none;font-weight:700;cursor:pointer}
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+    #map{height:72vh;border-radius:14px;overflow:hidden}
+    .muted{color:var(--muted)}
+    .legend{position:absolute;z-index:1000;bottom:12px;left:12px;background:#fff;border-radius:10px;
+      box-shadow:0 6px 18px rgba(2,8,20,.15);padding:10px 12px;font:14px/1.2 system-ui,Segoe UI,Roboto,Arial}
+    .legend b{display:block;margin-bottom:6px}
+    .sharebox{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px}
+    #shareurl{font-size:12px;color:#334155;word-break:break-all;background:#f8fafc}
+    @media (max-width:960px){.grid{grid-template-columns:1fr} #map{height:64vh}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Explosion Contour — Input → Peta (Shareable)</h1>
+    <div class="grid">
+      <!-- Panel Input -->
+      <div class="card" aria-label="Panel input parameter">
+        <div class="row">
+          <div>
+            <label>Latitude pusat (W2)</label>
+            <input id="lat" type="number" step="any" value="39.041475">
+          </div>
+          <div>
+            <label>Longitude pusat (X2)</label>
+            <input id="lon" type="number" step="any" value="117.74265">
+          </div>
+        </div>
+
+        <div style="margin-top:10px">
+          <label>Data Distance (r, meter) &amp; Po (opsional)</label>
+          <textarea id="data" placeholder="Satu baris per ring: r, Po (atau r saja)"></textarea>
+          <div class="muted" style="margin-top:6px">
+            Contoh: <code>49, 2042.348</code><br>
+            Pemisah boleh koma ; spasi ; tab
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px">
+          <div>
+            <label>nPoints (kepadatan lingkaran)</label>
+            <input id="npoints" type="number" min="16" max="360" step="1" value="90">
+          </div>
+          <div>
+            <label>Interval animasi (ms)</label>
+            <input id="interval" type="number" min="0" step="1" value="25">
+          </div>
+        </div>
+
+        <details style="margin-top:10px">
+          <summary>Advanced style</summary>
+          <div class="row" style="margin-top:8px">
+            <div><label>Opacity awal</label><input id="opaStart" type="number" step="0.01" min="0" max="1" value="0.13"></div>
+            <div><label>Opacity final</label><input id="opaFinal" type="number" step="0.01" min="0" max="1" value="0.02"></div>
+          </div>
+          <div class="row" style="margin-top:8px">
+            <div><label>Stroke width</label><input id="strokeW" type="number" step="0.1" min="0" value="0.05"></div>
+            <div><label>Palette</label>
+              <select id="palette">
+                <option value="bright" selected>Cerah (default)</option>
+                <option value="bluegreen">Biru–Hijau</option>
+                <option value="heat">Heat</option>
+              </select>
+            </div>
+          </div>
+        </details>
+
+        <div class="row" style="margin-top:10px">
+          <button id="render" class="btn">Render &amp; Animasi</button>
+          <button id="clear"  class="btn" style="background:#ef4444">Bersihkan</button>
+        </div>
+
+        <!-- Share link -->
+        <div class="sharebox">
+          <input id="shareurl" readonly placeholder="Share link akan muncul di sini…" />
+          <button id="copy" class="btn" title="Salin link ke clipboard">Copy Share Link</button>
+        </div>
+
+        <div style="margin-top:8px" class="muted">
+          Link berisi lat, lon, data r/Po, serta semua setting (nPoints, interval, opacity, stroke, palette).
+        </div>
+      </div>
+
+      <!-- Peta -->
+      <div class="card" style="position:relative">
+        <div id="map" role="region" aria-label="Peta kontur ledakan"></div>
+        <div class="legend" id="legend" hidden></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+  // ======= Basemap & Map init =======
+  const map = L.map('map', {center:[-6.2,106.8], zoom: 5, zoomControl:true});
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{
+    maxZoom:19, attribution:'Tiles © Esri'
+  }).addTo(map);
+
+  // ======= Helpers =======
+  const palettes = {
+    bright: ["#FF0000","#FFA500","#FFFF00","#00FF00","#00FFFF","#0000FF","#FF00FF","#800080","#FFC0CB","#A52A2A"],
+    bluegreen: ["#203a8f","#2d6cdf","#3fb6ff","#27c3a4","#15a371","#0f7a54","#0b533b","#083b2c"],
+    heat: ["#4b0d0d","#7a1f0e","#ad3510","#e65a0d","#ff8c00","#ffb200","#ffd000","#ffe680"]
+  };
+  const $ = id => document.getElementById(id);
+
+  function parseData(text){
+    const out = [];
+    const rows = (text||'').trim().split(/[\r\n]+/).filter(Boolean);
+    for(const r of rows){
+      const parts = r.trim().split(/[,\t; ]+/).filter(Boolean);
+      const rVal = Number((parts[0]||'').replace(',', '.'));
+      const poVal = parts.length>1 ? Number((parts[1]||'').replace(',', '.')) : null;
+      if(isFinite(rVal) && rVal>0){
+        out.push({r:rVal, Po: isFinite(poVal)?poVal:null});
+      }
+    }
+    out.sort((a,b)=>a.r-b.r);
+    return out;
+  }
+  function circleCoords(lat0, lon0, R, n=90){
+    const latRad0 = lat0*Math.PI/180;
+    const coords = [];
+    for(let i=0;i<=n;i++){
+      const th = 2*Math.PI*i/n;
+      const lat = lat0 + (R*Math.sin(th))/110574.0;
+      const lon = lon0 + (R*Math.cos(th))/(111320.0*Math.cos(latRad0));
+      coords.push([lat, lon]); // Leaflet LatLng order
+    }
+    return coords;
+  }
+
+  // Base64 URL-safe
+  const b64url = {
+    enc: obj => {
+      const json = JSON.stringify(obj);
+      const b64 = btoa(unescape(encodeURIComponent(json)));
+      return b64.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+    },
+    dec: str => {
+      const b64 = (str||'').replace(/-/g,'+').replace(/_/g,'/') + '==='.slice((str||'').length%4);
+      const json = decodeURIComponent(escape(atob(b64)));
+      return JSON.parse(json);
+    }
+  };
+
+  // ======= State & URL =======
+  function getState(){
+    return {
+      lat: parseFloat($('lat').value),
+      lon: parseFloat($('lon').value),
+      csv: $('data').value || '',
+      np:  Math.max(16, Math.min(360, parseInt($('npoints').value||90,10))),
+      iv:  Math.max(0, parseInt($('interval').value||25,10)),
+      os:  Math.max(0, Math.min(1, parseFloat($('opaStart').value||0.13))),
+      of:  Math.max(0, Math.min(1, parseFloat($('opaFinal').value||0.02))),
+      sw:  Math.max(0, parseFloat($('strokeW').value||0.05)),
+      pal: $('palette').value || 'bright'
+    };
+  }
+  function setState(s){
+    if(s.lat!=null) $('lat').value = s.lat;
+    if(s.lon!=null) $('lon').value = s.lon;
+    if(s.csv!=null) $('data').value = s.csv;
+    if(s.np!=null) $('npoints').value = s.np;
+    if(s.iv!=null) $('interval').value = s.iv;
+    if(s.os!=null) $('opaStart').value = s.os;
+    if(s.of!=null) $('opaFinal').value = s.of;
+    if(s.sw!=null) $('strokeW').value = s.sw;
+    if(s.pal!=null) $('palette').value = s.pal;
+  }
+  function makeShareURL(){
+    const s = getState();
+    const q = b64url.enc(s);
+    const url = `${location.origin}${location.pathname}?s=${q}`;
+    return url;
+  }
+  function loadFromURLIfAny(){
+    const sp = new URLSearchParams(location.search);
+    const s = sp.get('s');
+    if(!s) return false;
+    try{
+      const obj = b64url.dec(s);
+      setState(obj);
+      $('shareurl').value = `${location.origin}${location.pathname}?s=${s}`;
+      return true;
+    }catch(e){ console.warn('Gagal decode state dari URL', e); }
+    return false;
+  }
+  function updateURL(){
+    const url = makeShareURL();
+    history.replaceState(null, '', url);
+    $('shareurl').value = url;
+  }
+
+  // ======= Rendering =======
+  let finalLayer = null;
+  let animHandles = [];
+  function clearMap(){
+    animHandles.forEach(h => clearTimeout(h));
+    animHandles = [];
+    if(finalLayer){ map.removeLayer(finalLayer); finalLayer=null; }
+    map.eachLayer(l=>{
+      if(l instanceof L.Polygon || l instanceof L.GeoJSON || (l.getAttribution && !l.getAttribution())){
+        // do nothing for basemap; remove polygons/geojson
+      }
+    });
+    // Remove any previous polygons explicitly
+    const toRemove = [];
+    map.eachLayer(l=>{ if(l instanceof L.Polygon || l instanceof L.GeoJSON){ toRemove.push(l);} });
+    toRemove.forEach(l=>map.removeLayer(l));
+    $('legend').hidden = true;
+  }
+
+  function render(){
+    clearMap();
+    const s = getState();
+    const rings = parseData(s.csv);
+    if(!isFinite(s.lat)||!isFinite(s.lon)){ alert('Lat/Lon tidak valid.'); return; }
+    if(!rings.length){ alert('Data r/Po kosong atau tidak valid.'); return; }
+
+    const pal = (palettes[s.pal] || palettes.bright);
+    const tempLayers = [];
+
+    rings.forEach((d, idx)=>{
+      const t = setTimeout(()=>{
+        const coords = circleCoords(s.lat, s.lon, d.r, s.np);
+        const layer = L.polygon(coords, {
+          color: "#000000",
+          weight: s.sw,
+          fillColor: pal[idx % pal.length],
+          fillOpacity: s.os
+        }).bindPopup(`<b>r = ${d.r} m</b>${d.Po!=null?`<br>Po: <code>${d.Po}</code>`:''}`).addTo(map);
+        tempLayers.push(layer);
+        if(idx===0){
+          try{ map.setView([s.lat,s.lon], 14); }catch(e){}
+        }
+      }, idx*s.iv);
+      animHandles.push(t);
+    });
+
+    const tFinal = setTimeout(()=>{
+      tempLayers.forEach(l=>map.removeLayer(l));
+      const reversed = rings.slice().reverse();
+      finalLayer = L.featureGroup(
+        reversed.map((d, idx)=>{
+          const coords = circleCoords(s.lat, s.lon, d.r, s.np);
+          return L.polygon(coords, {
+            color: "#000000",
+            weight: s.sw,
+            fillColor: pal[(rings.length-1-idx) % pal.length],
+            fillOpacity: s.of
+          }).bindPopup(`<b>r = ${d.r} m</b>${d.Po!=null?`<br>Po: <code>${d.Po}</code>`:''}`);
+        })
+      ).addTo(map);
+      try{ map.fitBounds(finalLayer.getBounds(), {padding:[20,20]}); }catch(e){}
+      $('legend').innerHTML = `<b>Kontur Ledakan</b>
+        <div>Pusat: ${s.lat.toFixed(6)}, ${s.lon.toFixed(6)}</div>
+        <div>Rings: ${rings.map(x=>x.r).join(', ')} m</div>`;
+      $('legend').hidden = false;
+
+      // Update URL agar bisa dishare
+      updateURL();
+    }, rings.length*s.iv + 300);
+    animHandles.push(tFinal);
+  }
+
+  // ======= Wire UI =======
+  $('render').addEventListener('click', render);
+  $('clear').addEventListener('click', ()=>{ clearMap(); $('shareurl').value=''; history.replaceState(null,'',location.pathname); });
+
+  $('copy').addEventListener('click', async ()=>{
+    const url = makeShareURL();
+    $('shareurl').value = url;
+    try{
+      await navigator.clipboard.writeText(url);
+      $('copy').textContent = 'Copied!';
+      setTimeout(()=>$('copy').textContent='Copy Share Link', 1200);
+    }catch(e){
+      prompt('Copy this link:', url);
+    }
+  });
+
+  // Prefill contoh (bila tidak ada state di URL)
+  if(!loadFromURLIfAny()){
+    $('data').value =
+`49, 2042.348
+150, 159.4947
+300, 41.51972
+500, 19.59217
+1000, 8.648397
+3000, 2.768441`;
+    // Auto render pertama kali
+    setTimeout(render, 80);
+  }else{
+    // Jika datang dari link share, langsung render sesuai state
+    setTimeout(render, 80);
+  }
+  </script>
+</body>
+</html>
