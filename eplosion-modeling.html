@@ -3,11 +3,25 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Explosion Contour — Live & Share</title>
+  <title>Explosion Contour - Share Result</title>
+
+  <!-- SEO & Share preview (opsional, boleh ganti gambar) -->
+  <meta name="description" content="Input koordinat + data r/Po, render kontur ledakan, dan bagikan hasil lewat tautan yang menyimpan seluruh pengaturan.">
+  <meta property="og:title" content="Explosion Contour - Share Result">
+  <meta property="og:description" content="Input koordinat + data r/Po, render kontur ledakan, dan bagikan hasil lewat tautan yang menyimpan seluruh pengaturan.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/ITB-Exlosion-Modeling-Simulation.webp">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
   <style>
     :root{--ink:#0f172a;--muted:#64748b;--card:#fff;--bg:#f6f8fb;--brand:#1296d4}
-    *{box-sizing:border-box} html,body{height:100%} body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,Segoe UI,Roboto,Arial}
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,Segoe UI,Roboto,Arial}
     .wrap{max-width:1200px;margin:auto;padding:16px}
     .grid{display:grid;gap:16px;grid-template-columns:360px 1fr}
     .card{background:var(--card);border-radius:14px;box-shadow:0 8px 24px rgba(2,8,20,.08);padding:14px}
@@ -30,51 +44,51 @@
 </head>
 <body>
   <div class="wrap">
-    <h1>Explosion Contour — Input → Peta (Shareable)</h1>
+    <h1>Explosion Contour - Share Result</h1>
     <div class="grid">
       <!-- Panel Input -->
       <div class="card" aria-label="Panel input parameter">
         <div class="row">
           <div>
-            <label>Latitude pusat (W2)</label>
+            <label for="lat">Latitude pusat (W2)</label>
             <input id="lat" type="number" step="any" value="39.041475">
           </div>
           <div>
-            <label>Longitude pusat (X2)</label>
+            <label for="lon">Longitude pusat (X2)</label>
             <input id="lon" type="number" step="any" value="117.74265">
           </div>
         </div>
 
         <div style="margin-top:10px">
-          <label>Data Distance (r, meter) &amp; Po (opsional)</label>
+          <label for="data">Data Distance (r, meter) &amp; Po (opsional)</label>
           <textarea id="data" placeholder="Satu baris per ring: r, Po (atau r saja)"></textarea>
           <div class="muted" style="margin-top:6px">
-            Contoh: <code>49, 2042.348</code><br>
-            Pemisah boleh koma ; spasi ; tab
+            Contoh: <code>49, 2042.348</code> (pemisah: koma / titik koma / spasi / tab)
           </div>
         </div>
 
         <div class="row" style="margin-top:10px">
           <div>
-            <label>nPoints (kepadatan lingkaran)</label>
+            <label for="npoints">nPoints (kepadatan lingkaran)</label>
             <input id="npoints" type="number" min="16" max="360" step="1" value="90">
           </div>
           <div>
-            <label>Interval animasi (ms)</label>
-            <input id="interval" type="number" min="0" step="1" value="25">
+            <label for="interval">Interval animasi (ms)</label>
+            <input id="interval" type="number" min="0" step="1" value="124">
           </div>
         </div>
 
-        <details style="margin-top:10px">
+        <details style="margin-top:10px" open>
           <summary>Advanced style</summary>
           <div class="row" style="margin-top:8px">
-            <div><label>Opacity awal</label><input id="opaStart" type="number" step="0.01" min="0" max="1" value="0.13"></div>
-            <div><label>Opacity final</label><input id="opaFinal" type="number" step="0.01" min="0" max="1" value="0.02"></div>
+            <div><label for="opaStart">Opacity awal</label><input id="opaStart" type="number" step="0.01" min="0" max="1" value="0.22"></div>
+            <div><label for="opaFinal">Opacity final</label><input id="opaFinal" type="number" step="0.01" min="0" max="1" value="0.11"></div>
           </div>
           <div class="row" style="margin-top:8px">
-            <div><label>Stroke width</label><input id="strokeW" type="number" step="0.1" min="0" value="0.05"></div>
-            <div><label>Palette</label>
-              <select id="palette">
+            <div><label for="strokeW">Stroke width</label><input id="strokeW" type="number" step="0.05" min="0" value="0.3"></div>
+            <div>
+              <label for="palette">Palette</label>
+              <select id="palette" aria-label="Palet warna">
                 <option value="bright" selected>Cerah (default)</option>
                 <option value="bluegreen">Biru–Hijau</option>
                 <option value="heat">Heat</option>
@@ -90,12 +104,11 @@
 
         <!-- Share link -->
         <div class="sharebox">
-          <input id="shareurl" readonly placeholder="Share link akan muncul di sini…" />
+          <input id="shareurl" readonly placeholder="Share link akan muncul di sini…" aria-label="Share link" />
           <button id="copy" class="btn" title="Salin link ke clipboard">Copy Share Link</button>
         </div>
-
-        <div style="margin-top:8px" class="muted">
-          Link berisi lat, lon, data r/Po, serta semua setting (nPoints, interval, opacity, stroke, palette).
+        <div class="muted" style="margin-top:8px">
+          Link menyimpan: lat, lon, <b>seluruh teks r/Po</b> (apa adanya), <b>nPoints</b>, <b>interval</b>, <b>opacity awal/akhir</b>, <b>stroke width</b>, dan <b>palette</b>.
         </div>
       </div>
 
@@ -109,6 +122,14 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
+  // ======= Judul sinkron (opsional) =======
+  (function syncTitle(){
+    const APP_TITLE = "Explosion Contour - Share Result";
+    document.title = APP_TITLE;
+    const h1 = document.querySelector('h1');
+    if (h1) h1.textContent = APP_TITLE;
+  })();
+
   // ======= Basemap & Map init =======
   const map = L.map('map', {center:[-6.2,106.8], zoom: 5, zoomControl:true});
   L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{
@@ -137,6 +158,7 @@
     out.sort((a,b)=>a.r-b.r);
     return out;
   }
+
   function circleCoords(lat0, lon0, R, n=90){
     const latRad0 = lat0*Math.PI/180;
     const coords = [];
@@ -149,31 +171,41 @@
     return coords;
   }
 
-  // Base64 URL-safe
-  const b64url = {
-    enc: obj => {
-      const json = JSON.stringify(obj);
-      const b64 = btoa(unescape(encodeURIComponent(json)));
+  // ======= Base64 URL-safe encoder/decoder tanpa API deprecated =======
+  const b64url = (() => {
+    const te = new TextEncoder();
+    const td = new TextDecoder();
+    function toB64Url(str){
+      const bytes = te.encode(str);
+      let bin = "";
+      for(let i=0;i<bytes.length;i++){ bin += String.fromCharCode(bytes[i]); }
+      const b64 = btoa(bin);
       return b64.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-    },
-    dec: str => {
-      const b64 = (str||'').replace(/-/g,'+').replace(/_/g,'/') + '==='.slice((str||'').length%4);
-      const json = decodeURIComponent(escape(atob(b64)));
-      return JSON.parse(json);
     }
-  };
+    function fromB64Url(b64u){
+      const b64 = (b64u||'').replace(/-/g,'+').replace(/_/g,'/') + '==='.slice((b64u||'').length%4);
+      const bin = atob(b64);
+      const bytes = new Uint8Array(bin.length);
+      for(let i=0;i<bin.length;i++){ bytes[i] = bin.charCodeAt(i); }
+      return td.decode(bytes);
+    }
+    return {
+      enc: obj => toB64Url(JSON.stringify(obj)),
+      dec: str => JSON.parse(fromB64Url(str))
+    };
+  })();
 
   // ======= State & URL =======
   function getState(){
     return {
       lat: parseFloat($('lat').value),
       lon: parseFloat($('lon').value),
-      csv: $('data').value || '',
+      csv: $('data').value || '',               // seluruh teks r/Po disimpan apa adanya
       np:  Math.max(16, Math.min(360, parseInt($('npoints').value||90,10))),
-      iv:  Math.max(0, parseInt($('interval').value||25,10)),
-      os:  Math.max(0, Math.min(1, parseFloat($('opaStart').value||0.13))),
-      of:  Math.max(0, Math.min(1, parseFloat($('opaFinal').value||0.02))),
-      sw:  Math.max(0, parseFloat($('strokeW').value||0.05)),
+      iv:  Math.max(0, parseInt($('interval').value||124,10)),
+      os:  Math.max(0, Math.min(1, parseFloat($('opaStart').value||0.22))),
+      of:  Math.max(0, Math.min(1, parseFloat($('opaFinal').value||0.11))),
+      sw:  Math.max(0, parseFloat($('strokeW').value||0.3)),
       pal: $('palette').value || 'bright'
     };
   }
@@ -189,10 +221,8 @@
     if(s.pal!=null) $('palette').value = s.pal;
   }
   function makeShareURL(){
-    const s = getState();
-    const q = b64url.enc(s);
-    const url = `${location.origin}${location.pathname}?s=${q}`;
-    return url;
+    const q = b64url.enc(getState());
+    return `${location.origin}${location.pathname}?s=${q}`;
   }
   function loadFromURLIfAny(){
     const sp = new URLSearchParams(location.search);
@@ -219,12 +249,7 @@
     animHandles.forEach(h => clearTimeout(h));
     animHandles = [];
     if(finalLayer){ map.removeLayer(finalLayer); finalLayer=null; }
-    map.eachLayer(l=>{
-      if(l instanceof L.Polygon || l instanceof L.GeoJSON || (l.getAttribution && !l.getAttribution())){
-        // do nothing for basemap; remove polygons/geojson
-      }
-    });
-    // Remove any previous polygons explicitly
+    // hapus polygon/geojson
     const toRemove = [];
     map.eachLayer(l=>{ if(l instanceof L.Polygon || l instanceof L.GeoJSON){ toRemove.push(l);} });
     toRemove.forEach(l=>map.removeLayer(l));
@@ -241,6 +266,7 @@
     const pal = (palettes[s.pal] || palettes.bright);
     const tempLayers = [];
 
+    // anim kecil -> besar
     rings.forEach((d, idx)=>{
       const t = setTimeout(()=>{
         const coords = circleCoords(s.lat, s.lon, d.r, s.np);
@@ -258,6 +284,7 @@
       animHandles.push(t);
     });
 
+    // setelah animasi: hapus temp, gambar semua (besar -> kecil), fit bounds, update URL
     const tFinal = setTimeout(()=>{
       tempLayers.forEach(l=>map.removeLayer(l));
       const reversed = rings.slice().reverse();
@@ -275,18 +302,30 @@
       try{ map.fitBounds(finalLayer.getBounds(), {padding:[20,20]}); }catch(e){}
       $('legend').innerHTML = `<b>Kontur Ledakan</b>
         <div>Pusat: ${s.lat.toFixed(6)}, ${s.lon.toFixed(6)}</div>
-        <div>Rings: ${rings.map(x=>x.r).join(', ')} m</div>`;
+        <div>Rings: ${rings.map(x=>x.r).join(', ')} m</div>
+        <hr style="border:none;border-top:1px solid #e5e7eb;margin:8px 0">
+        <div class="muted">nPoints=${s.np}, interval=${s.iv} ms</div>
+        <div class="muted">opacity awal=${s.os}, akhir=${s.of}, strokeW=${s.sw}, palette=${s.pal}</div>`;
       $('legend').hidden = false;
 
-      // Update URL agar bisa dishare
-      updateURL();
+      updateURL(); // pastikan semua point & angka Advanced terserap di share link
     }, rings.length*s.iv + 300);
     animHandles.push(tFinal);
   }
 
   // ======= Wire UI =======
+  const inputs = ['lat','lon','data','npoints','interval','opaStart','opaFinal','strokeW','palette'];
+  inputs.forEach(id=>{
+    $(id).addEventListener('input', ()=>{ $('shareurl').value = makeShareURL(); history.replaceState(null,'', $('shareurl').value); });
+    $(id).addEventListener('change', ()=>{ $('shareurl').value = makeShareURL(); history.replaceState(null,'', $('shareurl').value); });
+  });
+
   $('render').addEventListener('click', render);
-  $('clear').addEventListener('click', ()=>{ clearMap(); $('shareurl').value=''; history.replaceState(null,'',location.pathname); });
+  $('clear').addEventListener('click', ()=>{
+    clearMap();
+    $('shareurl').value='';
+    history.replaceState(null,'',location.pathname);
+  });
 
   $('copy').addEventListener('click', async ()=>{
     const url = makeShareURL();
@@ -300,8 +339,8 @@
     }
   });
 
-  // Prefill contoh (bila tidak ada state di URL)
-  if(!loadFromURLIfAny()){
+  // Prefill contoh kalau tidak ada state di URL
+  function prefillExample(){
     $('data').value =
 `49, 2042.348
 150, 159.4947
@@ -309,12 +348,11 @@
 500, 19.59217
 1000, 8.648397
 3000, 2.768441`;
-    // Auto render pertama kali
-    setTimeout(render, 80);
-  }else{
-    // Jika datang dari link share, langsung render sesuai state
-    setTimeout(render, 80);
   }
+
+  if(!loadFromURLIfAny()){ prefillExample(); }
+  // Auto render
+  setTimeout(render, 80);
   </script>
 </body>
 </html>
