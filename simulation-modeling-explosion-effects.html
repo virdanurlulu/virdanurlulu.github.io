@@ -4,228 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Simulation & Modeling of Explosion Effects (TNT Equivalence)</title>
-  <style>
-    :root{
-      --ink:#1e2b3b;          /* slate-800 */
-      --muted:#64748b;         /* slate-500 */
-      --card:#ffffff;
-      --bg:#f5f7fb;
-      --blue:#1296d4;
-      --blue-2:#0f7fb3;
-      --purple:#6a1b9a;
-      --teal:#06b6d4;
-      --stripe:#eaf3fb;
-      --ring: rgba(18,150,212,.25);
-      --danger:#b91c1c;
-      --ok:#0ea5e9;
-      --pink:#f06292;
-      --blue-itb:#0079c2;      /* added for title background */
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    html{scroll-behavior:smooth}
-    @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
-    body{
-      margin:0; background:var(--bg); color:var(--ink);
-      font: 14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-    }
-    .wrap{max-width:1280px; margin:32px auto; padding-left:max(16px, env(safe-area-inset-left)); padding-right:max(16px, env(safe-area-inset-right))}
-    
-    body.full .wrap{
-        max-width:none; 
-        width:100%; 
-        padding-left: 0; 
-        padding-right: 0;
-        margin: 0 auto;
-    }
-    body.full .banner,
-    body.full .split {
-        padding-left: max(20px, env(safe-area-inset-left));
-        padding-right: max(20px, env(safe-area-inset-right));
-    }
-    body.full .banner {
-        border-radius: 0;
-        padding-top: clamp(16px, 2.2vw, 24px);
-        padding-bottom: clamp(16px, 2.2vw, 24px);
-        margin-bottom: 18px;
-    }
-    body.full .split {
-        margin-top: 18px;
-    }
-
-    /* Header */
-    .title{display:grid; gap:6px;}
-    .title h1{margin:0; font-size:clamp(26px, 3.2vw, 44px); line-height:1.25; font-family: Georgia, 'Times New Roman', serif; display:inline-block; color:#fff; padding:6px 10px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,.15); max-width:clamp(560px, 70vw, 62ch); white-space:normal; word-break:normal; overflow-wrap:break-word; hyphens:auto}
-    @supports (text-wrap: balance){ .title h1{ text-wrap: balance } }
-    .title h2{margin:0; font-size:clamp(12px, 1.2vw, 16px); font-weight:600; color:#fff}
-    .banner{
-      position:relative; color:#fff;
-      background-image: url('https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/banner-itb1.webp');
-      background-size:cover; background-position:center; background-repeat:no-repeat;
-      padding:clamp(16px, 2.2vw, 24px) clamp(16px, 2.4vw, 28px);
-      min-height:clamp(120px, 20vw, 240px);
-      border-radius:14px; box-shadow:0 6px 20px rgba(2,41,77,.12);
-      margin-bottom:18px;
-    }
-    .title h1, .title h2{ text-shadow:0 1px 2px rgba(0,0,0,.25) }
-    /* Brand bar with ITB logo */
-    .brandbar{display:flex; align-items:center; gap:16px}
-    .brand-logo{height:clamp(56px,6.5vw,96px); width:auto; display:block}
-    .nowrap{white-space:nowrap}
-    .brand-text{display:flex; flex-direction:column; gap:6px}
-
-    /* Cards */
-    .card{background:var(--card); border-radius:14px; overflow:hidden; box-shadow:0 4px 14px rgba(10,34,64,.08); margin-bottom:18px}
-    .card-header{background:var(--blue); color:#e9f5ff; font-weight:700; padding:10px 14px; letter-spacing:.3px; font-family: Georgia, 'Times New Roman', serif}
-
-    table{width:100%; border-collapse:collapse}
-    th, td{padding:8px 10px; vertical-align:middle; text-align:left;}
-    thead th{background:var(--stripe); font-weight:700; color:#294050; border-bottom:1px solid #dbe7f2}
-    tbody tr:nth-child(even){background:#fbfdff}
-    tbody tr{border-bottom:1px solid #eef4fa}
-
-    .label{font-weight:600; display: block; margin-bottom: 4px;}
-    .unit{color:#0f2a3a; font-weight:600; white-space:nowrap}
-    .ref{color:#0f7fb3; font-size:12px}
-
-    input[type="number"], input[readonly], select, textarea{
-      width:100%; border:1px solid #d6e3ef; background:#fff; color:var(--ink);
-      border-radius:10px; padding:10px 12px; min-height:40px; outline:none; transition:.2s box-shadow,.2s border-color;
-    }
-    input[readonly]{background:#f6f9fd; color:#475569}
-    input:focus, select:focus, textarea:focus{border-color:var(--blue); box-shadow:0 0 0 4px var(--ring)}
-
-    .grid{display:grid; grid-template-columns:1fr; gap:14px}
-    @media (min-width:720px){ .grid{grid-template-columns:1fr 1fr}}
-
-    /* Chemical Material compact grid */
-    .chem-grid{display:grid; grid-template-columns:1.3fr 1fr; gap:14px; align-items:start}
-    @media (max-width:720px){ .chem-grid{grid-template-columns:1fr} }
-
-    .mini{display:flex; gap:12px; align-items:flex-start}
-    .mini > *{flex:1}
-    /* Material column layout: stack Material on top, Volume & Distance below */
-    .matcol{display:flex; flex-direction:column; gap:12px}
-    .input-group{display:flex; gap:0}
-    .input-group input[type="number"]{border-right:0; border-top-right-radius:0; border-bottom-right-radius:0;}
-    .input-group .unit{border:1px solid #d6e3ef; border-left:0; border-top-right-radius:10px; border-bottom-right-radius:10px; background:#f6f9fd; padding:10px 12px;}
-
-    /* Equation panel on the right of Chemical Material */
-    .eq-panel{border:1px solid #dbe7f2; background:var(--card); color:var(--ink); border-radius:12px; padding:12px; box-shadow:inset 0 0 0 1px rgba(13,41,77,.02)}
-    .eq-title{font-weight:700; color:var(--blue-2); margin-bottom:8px}
-    .eq-note{font-size:12px; color:var(--muted); margin-top:6px}
-    .rxn{padding:10px 12px; border:1px dashed #c9d8e6; border-radius:10px; margin-top:8px; background:var(--stripe)}
-    .rxn small{display:block; color:#334155; margin-bottom:4px}
-    .rxn-eq{font-family: 'Times New Roman', Georgia, serif; font-size:16px; color:var(--ink)}
-    .rxn-eq .arrow{padding:0 6px; font-weight:700}
-
-    .toolbar{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end; padding:10px}
-    .btn{appearance:none; border:1px solid #cfe3f3; background:#fff; color:#0f2a3a; font-weight:600; border-radius:10px; padding:8px 12px; cursor:pointer}
-    .btn:hover{border-color:var(--blue)}
-    .btn.primary{background:var(--blue); color:#fff; border-color:transparent}
-    .btn.primary:hover{background:var(--blue-2)}
-    .btn.ghost{background:transparent}
-
-    .hint{font-size:12px; color:var(--muted)}
-    .status{padding:8px 12px; border-left:4px solid var(--ok); background:#ebf8ff; color:#075985; border-radius:10px; display:none; margin-top:8px}
-    .status.bad{border-left-color:var(--danger); background:#fff4f4; color:#7f1d1d}
-
-    .footnote{font-size:12px; color:#475569; margin-top:8px}
-    code.badge{background:#e8f5fd; color:#0b5f83; font-weight:700; padding:2px 6px; border-radius:6px}
-
-    /* ===== Right-Side Estimation Panels ===== */
-    .split{ display:grid; grid-template-columns: 40% 60%; gap:18px; }
-    @media (max-width: 960px){ .split{grid-template-columns:1fr} }
-
-    .left{ display:flex; flex-direction:column; gap:18px; }
-    .right{ position:sticky; top: 12px; align-self:start; }
-
-    .estimation .card-header{text-transform:uppercase}
-    .method-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); gap:12px; padding:12px; }
-    
-    .method-card{position:relative; min-height:220px; border:1px solid #dbe7f2; background:#fff; border-radius:12px; overflow:hidden;}
-    .method-card .vlabel{
-      background:var(--stripe);
-      color:var(--blue-2);
-      padding: 8px 12px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-align: center;
-      border-bottom: 1px solid #e6eef6;
-    }
-    .method-card .pad{
-      padding:10px 10px 40px 10px;
-      height:100%;
-      background-color: var(--bg);
-      color: var(--ink);
-    }
-    .sevfoot{position:absolute; left:0; right:0; bottom:0; height:30px; background:var(--pink); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700}
-    .sevfoot.Minor{ background-color: #22c55e; }
-    .sevfoot.Moderate{ background-color: #f97316; }
-    .sevfoot.Serious{ background-color: #dc2626; }
-    .sevfoot.Major{ background-color: #991b1b; }
-    .sevfoot.Unknown{ background-color: var(--muted); }
-    
-    /* ITB Theme */
-    body.theme-itb { 
-        --bg:#eef6fb; --card:#ffffff; --ink:#112a3a; --muted:#516a7a; 
-        --stripe:#e6f0f7; --blue:#0079c2; --blue-2:#0067a5; --pink:#e17b9a; 
-    }
-
-    /* Dark mode support */
-    @media (prefers-color-scheme: dark){
-      :root{ --bg:#0b1220; --card:#0e1a2b; --ink:#dbe7ff; --muted:#94a3b8; --stripe:#0f1f35; }
-      .btn{border-color:#274160; color:#cfe3ff}
-      .btn:hover{border-color:#5aa7e0}
-      /* --- PERBAIKAN DARK MODE TABLE --- */
-      tbody tr{border-bottom-color:#1b2b47} 
-      thead th{border-bottom-color:#1b2b47}
-      .method-card{border-color:#1b2b47; background:#0e1a2b}
-      .method-card .vlabel{background:#0c1526; border-color:#1b2b47; color:#9fb7d1}
-      .input-group .unit{background:#1b2b47; border-color:#274160;}
-    }
-
-    /* ===== Tablet & mobile ===== */
-    @media (max-width: 960px){
-      .right{position:static; width:auto;}
-    }
-
-    @media (max-width: 600px){
-      .wrap{padding:0 12px}
-      .split{gap:12px; margin-right:0}
-    }
-
-    /* ===== Footer ===== */
-    .app-footer{
-      margin-top:20px;
-      color:#fff;
-      background-color:#0079c2; /* ITB blue */
-      background-image: url('https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/teknik-kimia-ITB1.webp'), url('https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/main/img/banner-itb1.webp');
-      background-size:cover; background-position:center; background-repeat:no-repeat;
-      width:100vw;
-      margin-left:calc(50% - 50vw);
-      margin-right:calc(50% - 50vw);
-      padding:16px;
-      padding-left:max(16px, env(safe-area-inset-left));
-      padding-right:max(16px, env(safe-area-inset-right));
-      border-top:1px solid rgba(255,255,255,.25);
-      border-bottom:1px solid rgba(255,255,255,.25);
-      border-left:0; border-right:0;
-      border-radius:0;
-      box-shadow:0 4px 12px rgba(10,34,64,.06);
-    }
-    .app-footer .grid{display:grid; grid-template-columns:2fr 1fr; gap:16px; align-items:start; max-width: 1280px; margin: 0 auto;}
-    @media (max-width: 720px){ .app-footer .grid{grid-template-columns:1fr} }
-    .app-footer .credit{font-weight:700; color:#e9f5ff; margin-bottom:6px; text-align:center}
-    .app-footer .dedication{font-size:13px; line-height:1.6; text-align:center; max-width:960px; margin:0 auto}
-    .app-footer .actions{display:flex; gap:10px; align-items:center; justify-content:flex-end}
-    .app-footer .actions .btn{padding:8px 12px; background:#fff; color:#004a6d; border:1px solid rgba(0,0,0,.12); border-radius:10px}
-    .app-footer a{color:#fff; text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:2px}
-    .app-footer a:visited{color:#fff}
-    .app-footer a:hover{opacity:.9}
-    body.full .app-footer .grid{grid-template-columns:1fr; justify-items:center; text-align:center}
-    body.full .app-footer .actions{justify-content:center}
-  </style>
 
   <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/favicon.ico">
   <link rel="canonical" href="https://virdanurlulu.github.io/">
@@ -246,7 +24,6 @@
   <meta property="og:url" content="https://virdanurlulu.github.io/">
   <meta property="og:image" content="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/ITB-Exlosion-Modeling-Simulation.webp">
   <meta property="og:image:type" content="image/webp">
-
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript">
   <meta name="twitter:description" content="Interactive explosion-effects modeling (TNT equivalence). Chemical materials, properties, parameters, and consequence estimation.">
@@ -262,23 +39,160 @@
     "url": "https://virdanurlulu.github.io/",
     "image": "https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/ITB-Exlosion-Modeling-Simulation.webp",
     "author": {"@type": "Person", "name": "Virda Nur Lu'lu", "sameAs": ["https://id.linkedin.com/in/virdanurlulu"]},
-    "inLanguage": "en",
+    "inLanguage": "id",
     "description": "Interactive simulation and modeling of explosion effects based on TNT equivalence using JavaScript — with chemical materials, properties, and consequence estimation.",
     "publisher": {"@type": "Organization", "name": "Institut Teknologi Bandung", "url": "https://che.itb.ac.id/"}
   }
   </script>
-  </head>
+
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js" defer></script>
+
+  <style>
+    :root {
+      --ink: #1e2b3b;
+      --muted: #64748b;
+      --card: #ffffff;
+      --bg: #f5f7fb;
+      --blue-itb: #0079c2;
+      --stripe: #eaf3fb;
+      --ring: rgba(0, 121, 194, 0.25);
+      --danger: #DC2626;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    .wrap { max-width: 1280px; margin: 32px auto; padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+    body.full .wrap { max-width: none; width: 100%; padding: 0; margin: 0 auto; }
+    body.full .banner, body.full .split { padding-left: max(20px, env(safe-area-inset-left)); padding-right: max(20px, env(safe-area-inset-right)); }
+    body.full .banner { border-radius: 0; padding-top: clamp(16px, 2.2vw, 24px); padding-bottom: clamp(16px, 2.2vw, 24px); margin-bottom: 18px; }
+    body.full .split { margin-top: 18px; }
+    .title { display: grid; gap: 6px; }
+    .title h1 { margin: 0; font-size: clamp(24px, 3.2vw, 44px); line-height: 1.25; font-family: Georgia, "Times New Roman", serif; color: #fff; padding: 6px 10px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); max-width: clamp(560px, 70vw, 62ch); }
+    @supports (text-wrap: balance) { .title h1 { text-wrap: balance; } }
+    .title h2 { margin: 0; font-size: clamp(12px, 1.2vw, 16px); font-weight: 600; color: #fff; }
+    .banner { position: relative; color: #fff; background-image: url("https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/banner-itb1.webp"); background-size: cover; background-position: center; padding: clamp(16px, 2.2vw, 24px) clamp(16px, 2.4vw, 28px); min-height: clamp(120px, 20vw, 240px); border-radius: 14px; box-shadow: 0 6px 20px rgba(2, 41, 77, 0.12); margin-bottom: 18px; }
+    .title h1, .title h2 { text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25); }
+    .brandbar { display: flex; align-items: center; gap: 16px; }
+    .brand-logo { height: clamp(56px, 6.5vw, 96px); width: auto; }
+    .nowrap { white-space: nowrap; }
+    .brand-text { display: flex; flex-direction: column; gap: 6px; }
+    .card { background: var(--card); border-radius: 14px; overflow: hidden; box-shadow: 0 4px 14px rgba(10, 34, 64, 0.08); margin-bottom: 18px; }
+    .card-header { background: var(--blue-itb); color: #e9f5ff; font-weight: 700; padding: 10px 14px; font-family: Georgia, "Times New Roman", serif; display: flex; justify-content: space-between; align-items: center; }
+    .card-header .btn { padding: 6px 10px; font-size: 12px; background: #fff; color: var(--blue-itb); border: none; cursor: pointer; border-radius: 6px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 8px 10px; vertical-align: middle; text-align: left; font-size: 14px; }
+    thead th { background: var(--stripe); font-weight: 700; color: #294050; border-bottom: 1px solid #dbe7f2; }
+    tbody tr:nth-child(even) { background: #fbfdff; }
+    tbody tr { border-bottom: 1px solid #eef4fa; }
+    .label { font-weight: 600; display: block; margin-bottom: 4px; font-size: 14px;}
+    .unit { color: #0f2a3a; font-weight: 600; white-space: nowrap; }
+    .ref { color: var(--blue-itb); font-size: 12px; }
+    input[type="number"], input[readonly], input[type="text"], input[type="text"][readonly], select { width: 100%; border: 1px solid #d6e3ef; background: #fff; color: var(--ink); border-radius: 10px; padding: 10px 12px; min-height: 40px; outline: none; transition: 0.2s box-shadow, 0.2s border-color; font-size: 16px; }
+    input[readonly], input[type="text"][readonly] { background: #f6f9fd; color: #475569; }
+    input:focus, select:focus { border-color: var(--blue-itb); box-shadow: 0 0 0 4px var(--ring); }
+    input.input-error { border-color: var(--danger) !important; box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.25) !important; }
+    .chem-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 14px; align-items: start; }
+    .mini { display: flex; gap: 12px; align-items: flex-start; }
+    .mini > * { flex: 1; }
+    .matcol { display: flex; flex-direction: column; gap: 12px; }
+    .input-group { display: flex; }
+    .input-group input[type="number"] { border-right: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+    .input-group .unit { border: 1px solid #d6e3ef; border-left: 0; border-top-right-radius: 10px; border-bottom-right-radius: 10px; background: #f6f9fd; padding: 10px 12px; }
+    .eq-panel { border: 1px solid #dbe7f2; background: var(--card); color: var(--ink); border-radius: 12px; padding: 12px; }
+    .eq-title { font-weight: 700; color: var(--blue-itb); margin-bottom: 8px; }
+    .rxn { padding: 10px 12px; border: 1px dashed #c9d8e6; border-radius: 10px; margin-top: 8px; background: var(--stripe); }
+    .rxn small { display: block; color: #334155; margin-bottom: 4px; }
+    .rxn-eq { font-family: "Times New Roman", Georgia, serif; font-size: 16px; color: var(--ink); }
+    .rxn-eq .arrow { padding: 0 6px; font-weight: 700; }
+    .status { padding: 8px 12px; border-left: 4px solid #0ea5e9; background: #ebf8ff; color: #075985; border-radius: 10px; display: none; margin-top: 8px; }
+    .status.bad { border-left-color: var(--danger); background: #fff1f2; color: #be123c; }
+    .footnote { font-size: 12px; color: var(--muted); margin-top: 8px; }
+    .split { display: grid; grid-template-columns: 40% 60%; gap: 18px; }
+    .left, .right { display: flex; flex-direction: column; gap: 18px; }
+    .right { position: sticky; top: 12px; align-self: start; }
+    .estimation .card-header { text-transform: uppercase; }
+    .method-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; padding: 12px; }
+    .method-card { position: relative; min-height: 220px; border: 1px solid #dbe7f2; background: #fff; border-radius: 12px; overflow: hidden; }
+    .method-card .vlabel { background: var(--stripe); color: var(--blue-itb); padding: 8px 12px; font-weight: 700; text-align: center; border-bottom: 1px solid #e6eef6; }
+    .method-card .pad { padding: 10px 10px 40px 10px; height: 100%; color: var(--ink); }
+    .sevfoot { position: absolute; left: 0; right: 0; bottom: 0; height: 30px; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+    /* --- DAMAGE IMPACT STYLES --- */
+    .sevfoot.Insignificant { background-color: #D1FAE5; color: var(--ink); }
+    .sevfoot.Minor         { background-color: #A7F3D0; color: var(--ink); }
+    .sevfoot.Moderate      { background-color: #FDE68A; color: var(--ink); }
+    .sevfoot.Serious       { background-color: #fcaa4d; color: var(--ink); }
+    .sevfoot.Severe        { background-color: #d87575; color: #fff; }
+    .sevfoot.Major         { background-color: #e94a4a; color: #fff; }
+    .sevfoot.Catastrophic  { background-color: #920e0e; color: #fff; }
+    /* --- INJURY RISK CATEGORY STYLES --- */
+    .sevfoot.Minor-Injury    { background-color: #FACC15; color: var(--ink); }
+    .sevfoot.Moderate-Injury { background-color: #FDBA74; color: var(--ink); }
+    .sevfoot.Serious-Injury  { background-color: #FB7185; color: #fff; }
+    .sevfoot.Severe-Injury   { background-color: #EF4444; color: #fff; }
+    .sevfoot.Fatality        { background-color: #7F1D1D; color: #fff; }
+    .sevfoot.Unknown         { background-color: var(--muted); }
+    /* --- END STYLES --- */
+    .app-footer { margin-top: 20px; color: #fff; background-color: var(--blue-itb); width: 100vw; margin-left: calc(50% - 50vw); padding: 16px; border-top: 1px solid rgba(255, 255, 255, 0.25); }
+    .app-footer .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; align-items: start; max-width: 1280px; margin: 0 auto; }
+    .app-footer .credit { font-weight: 700; color: #e9f5ff; margin-bottom: 6px; text-align: center; }
+    .app-footer .dedication { font-size: 13px; line-height: 1.6; text-align: center; max-width: 960px; margin: 0 auto; }
+    .app-footer .actions { display: flex; gap: 10px; align-items: center; justify-content: flex-end; }
+    .app-footer .actions .btn { background: #fff; color: var(--blue-itb); }
+    .app-footer a { color: #fff; text-decoration: underline; }
+    /* CHART STYLES */
+    .chart-container { padding: 12px; background-color: var(--card); border-radius: 14px; }
+    #chart { width: 100%; height: 500px; }
+    .chart-note { margin-top: 4px; text-align: center; font-style: italic; color: var(--muted); font-size: 11px; }
+
+    /* --- RESPONSIVE DESIGN --- */
+    @media (max-width: 960px) {
+      .split { grid-template-columns: 1fr; }
+      .right { position: static; }
+      .title h1 { font-size: clamp(24px, 5vw, 32px); }
+    }
+    @media (max-width: 720px) {
+      body { font-size: 14px; }
+      .chem-grid { grid-template-columns: 1fr; }
+      .app-footer .grid { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+      .app-footer .actions { justify-content: center; }
+      .card-header, .label { font-size: 14px; }
+    }
+    @media (max-width: 480px) {
+      .card-header { flex-direction: column; gap: 8px; align-items: flex-start; }
+      /* Mobile Table Styles */
+      .card table, .card thead, .card tbody, .card th, .card td, .card tr { display: block; }
+      .card thead tr { position: absolute; top: -9999px; left: -9999px; }
+      .card tbody tr { border: 1px solid #ddd; border-radius: 8px; margin-bottom: 1rem; }
+      .card td { border: none; border-bottom: 1px solid #eee; position: relative; padding-left: 50%; text-align: right; }
+      .card td:before { position: absolute; top: 10px; left: 10px; width: 45%; padding-right: 10px; white-space: nowrap; text-align: left; font-weight: bold; }
+      /* Define labels for each column */
+      section[aria-labelledby="prop-head"] td:nth-of-type(1):before { content: "Property"; }
+      section[aria-labelledby="prop-head"] td:nth-of-type(2):before { content: "Value"; }
+      section[aria-labelledby="prop-head"] td:nth-of-type(3):before { content: "Unit"; }
+      section[aria-labelledby="prop-head"] td:nth-of-type(4):before { content: "Source"; }
+      section[aria-labelledby="param-head"] td:nth-of-type(1):before { content: "Parameter"; }
+      section[aria-labelledby="param-head"] td:nth-of-type(2):before { content: "Value"; }
+      section[aria-labelledby="param-head"] td:nth-of-type(3):before { content: "Unit"; }
+      section[aria-labelledby="param-head"] td:nth-of-type(4):before { content: "Source"; }
+    }
+  </style>
+</head>
 <body class="theme-itb full">
   <div class="wrap">
     <div class="banner title">
       <div class="brandbar">
-        <a href="https://virdanurlulu.github.io/" target="_blank" rel="noopener noreferrer" class="brand-logo-link" aria-label="Kunjungi beranda">
-          <img id="itbLogo" class="brand-logo" alt="Logo ITB" width="96" height="96" decoding="async" fetchpriority="high"
-               src="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/Logo_Institut_Teknologi_Bandung.webp"/>
+        <a href="https://virdanurlulu.github.io/" target="_blank" rel="noopener noreferrer" aria-label="Kunjungi beranda">
+          <img id="itbLogo" class="brand-logo" alt="Logo ITB" width="96" height="96">
         </a>
         <div class="brand-text">
           <h1>Simulation and Modeling of Explosion Effects Based on TNT Equivalence <span class="nowrap">using Javascript</span></h1>
-          <h2>Program Magister Teknik Kimia  -  Institut Teknologi Bandung</h2>
+          <h2>Program Magister Teknik Kimia - Institut Teknologi Bandung</h2>
         </div>
       </div>
     </div>
@@ -318,9 +232,8 @@
                 </div>
               </div>
               <div class="eq-panel">
-                <div class="eq-title">Representative Overall Reaction (Energy Basis)</div>
-                <div id="eq-text" class="eq-body">Pilih material untuk menampilkan persamaan reaksi representatif.</div>
-                <div class="eq-note">Catatan: Persamaan berikut bersifat <em>overall/representative</em> untuk tujuan neraca energi; komposisi produk nyata bergantung pada kondisi (tekanan, temperatur, oksigen, confinement).</div>
+                <div class="eq-title">Representative Overall Reaction</div>
+                <div id="eq-text" class="eq-body">Pilih material untuk menampilkan persamaan reaksi.</div>
               </div>
             </div>
           </div>
@@ -331,207 +244,87 @@
           <div style="padding:12px">
             <table>
               <thead>
-                <tr>
-                  <th style="width:36%">Properties</th>
-                  <th style="width:22%">Value</th>
-                  <th style="width:12%">Unit</th>
-                  <th>Literature</th>
-                </tr>
+                <tr><th>Properties</th><th>Value</th><th>Unit</th><th>Literature</th></tr>
               </thead>
               <tbody>
-                <tr>
-                  <td><label for="rho" class="label">Density ρ = m/V</label></td>
-                  <td><input id="rho" type="number" min="0" step="any" placeholder="kg/m³"/></td>
-                  <td class="unit">kg/m³</td>
-                  <td class="ref">@Literature, NIST</td>
-                </tr>
-                <tr>
-                  <td><label for="dh" class="label">ΔH<sub>explosion</sub></label></td>
-                  <td><input id="dh" type="number" min="0" step="any" placeholder="kJ/kg"/></td>
-                  <td class="unit">kJ/kg</td>
-                  <td class="ref">@Literature, NIST</td>
-                </tr>
-                <tr>
-                  <td><label for="pa" class="label">(kPa) Ambient Pressure</label></td>
-                  <td><input id="pa" type="number" min="0" step="any" placeholder="101.325"/></td>
-                  <td class="unit">kPa</td>
-                  <td class="ref">@Literature, NIST @20&nbsp;°C</td>
-                </tr>
-                <tr>
-                  <td><label for="eta" class="label">η<sub>E</sub> Explosion Efficiency</label></td>
-                  <td><input id="eta" type="number" min="0" max="1" step="any" placeholder="0–1"/></td>
-                  <td class="unit">–</td>
-                  <td class="ref">@Literature, Crowl &amp; Louvar; Alonso; Sadovski</td>
-                </tr>
-                <tr>
-                  <td><label for="e_tnt" class="label">E<sub>TNT</sub></label></td>
-                  <td><input id="e_tnt" type="number" min="0" step="any" placeholder="kJ/kg"/></td>
-                  <td class="unit">kJ/kg</td>
-                  <td class="ref">@Literature, Crowl &amp; Louvar; Alonso; Sadovski</td>
-                </tr>
+                <tr><td><label for="rho">Density ρ = m/V</label></td><td><input id="rho" type="number" min="0" step="any"/></td><td class="unit">kg/m³</td><td class="ref">@Literature</td></tr>
+                <tr><td><label for="dh">ΔH<sub>explosion</sub></label></td><td><input id="dh" type="number" step="any"/></td><td class="unit">kJ/kg</td><td class="ref">@Literature</td></tr>
+                <tr><td><label for="pa">Ambient Pressure</label></td><td><input id="pa" type="number" min="0" step="any"/></td><td class="unit">kPa</td><td class="ref">@Literature</td></tr>
+                <tr><td><label for="eta">η<sub>E</sub> Explosion Efficiency</label></td><td><input id="eta" type="number" min="0" max="1" step="any"/></td><td class="unit">–</td><td class="ref">@Literature</td></tr>
+                <tr><td><label for="e_tnt">E<sub>TNT</sub></label></td><td><input id="e_tnt" type="number" min="0" step="any"/></td><td class="unit">kJ/kg</td><td class="ref">@Literature</td></tr>
               </tbody>
             </table>
-            <div class="footnote">Catatan: Nilai default tidak diisikan agar Anda memasukkan referensi yang tepat. Form ini hanya memfasilitasi perhitungan berdasarkan input Anda.</div>
           </div>
         </section>
 
         <section class="card" aria-labelledby="param-head">
           <div id="param-head" class="card-header">Parameters</div>
-          
           <div style="padding:12px">
-            <table id="paramTable">
-              <thead>
-                <tr>
-                  <th style="width:36%">Parameters</th>
-                  <th style="width:22%">Value</th>
-                  <th style="width:12%">Unit</th>
-                  <th>Sources</th>
-                </tr>
-              </thead>
+            <table>
+              <thead><tr><th>Parameters</th><th>Value</th><th>Unit</th><th>Sources</th></tr></thead>
               <tbody>
-                <tr>
-                  <td class="label">(W) Mass Material</td>
-                  <td><input id="W_mass" type="number" readonly /></td>
-                  <td class="unit">kg</td>
-                  <td class="ref">@CCPS, Crowl &amp; Louvar</td>
-                </tr>
-                <tr>
-                  <td class="label">(E) Total Energy</td>
-                  <td><input id="E_total" type="number" readonly /></td>
-                  <td class="unit">kJ</td>
-                  <td class="ref">@CCPS, Crowl &amp; Louvar</td>
-                </tr>
-                <tr>
-                  <td class="label">(W) TNT Equivalent</td>
-                  <td><input id="W_tnt" type="number" readonly /></td>
-                  <td class="unit">kg</td>
-                  <td class="ref">@CCPS, Crowl &amp; Louvar</td>
-                </tr>
-                <tr>
-                  <td class="label">(Ze) Scaled Distance</td>
-                  <td><input id="Ze" type="number" readonly /></td>
-                  <td class="unit">m·kg<sup>−1/3</sup></td>
-                  <td class="ref">@Crowl &amp; Louvar</td>
-                </tr>
-                <tr>
-                  <td class="label">(Po/Pa) Overpressure Ratio</td>
-                  <td><input id="Ps" type="text" readonly placeholder="—"/></td>
-                  <td class="unit">–</td>
-                  <td class="ref">@Crowl &amp; Louvar</td>
-                </tr>
-                <tr>
-                  <td class="label">(Po) Peak side‑on Overpressure Crowl</td>
-                  <td><input id="Po_crowl" type="text" readonly placeholder="—"/></td>
-                  <td class="unit">kPa</td>
-                  <td class="ref">@Crowl method</td>
-                </tr>
-                <tr>
-                  <td class="label">(Po) Peak side‑on Overpressure Alonso</td>
-                  <td><input id="Po_alonso" type="text" readonly placeholder="—"/></td>
-                  <td class="unit">kPa</td>
-                  <td class="ref">@Alonso method</td>
-                </tr>
-                <tr>
-                  <td class="label">(Po) Peak side‑on Overpressure Sadovski</td>
-                  <td><input id="Po_sadovski" type="text" readonly placeholder="—"/></td>
-                  <td class="unit">kPa</td>
-                  <td class="ref">@Sadovski method</td>
-                </tr>
+                <tr><td>(W) Mass Material</td><td><input id="W_mass" type="text" readonly /></td><td class="unit">kg</td><td class="ref">@Calculated</td></tr>
+                <tr><td>(E) Total Energy</td><td><input id="E_total" type="text" readonly /></td><td class="unit">kJ</td><td class="ref">@Calculated</td></tr>
+                <tr><td>(W) TNT Equivalent</td><td><input id="W_tnt" type="text" readonly /></td><td class="unit">kg</td><td class="ref">@Calculated</td></tr>
+                <tr><td>(Ze) Scaled Distance</td><td><input id="Ze" type="text" readonly /></td><td class="unit">m·kg<sup>−1/3</sup></td><td class="ref">@Calculated</td></tr>
+                <tr><td>(Ps) Overpressure Ratio</td><td><input id="Ps" type="text" readonly /></td><td class="unit">–</td><td class="ref">@Calculated</td></tr>
+                <tr><td>(Po) Overpressure Crowl</td><td><input id="Po_crowl" type="text" readonly /></td><td class="unit">kPa</td><td class="ref">@Calculated</td></tr>
+                <tr><td>(Po) Overpressure Alonso</td><td><input id="Po_alonso" type="text" readonly /></td><td class="unit">kPa</td><td class="ref">@Calculated</td></tr>
+                <tr><td>(Po) Overpressure Sadovski</td><td><input id="Po_sadovski" type="text" readonly /></td><td class="unit">kPa</td><td class="ref">@Calculated</td></tr>
               </tbody>
             </table>
             <div id="msg" class="status" role="status" aria-live="polite"></div>
-            <div class="footnote">Perhitungan otomatis diaktifkan: <code class="badge">W = ρ · V</code>, <code class="badge">E = W · ΔH · η<sub>E</sub></code>, <code class="badge">W<sub>TNT</sub> = E / E<sub>TNT</sub></code>, <code class="badge">Ze = R / (W<sub>TNT</sub>)<sup>1/3</sup></code>, serta <code class="badge">Ps, Po</code> menggunakan korelasi aproksimasi berbasis kurva. Mohon validasi parameter & referensi Anda saat publikasi.</div>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="chart-head">
+          <div id="chart-head" class="card-header">
+            <span>Plot: Scaled Overpressure (Ps) vs Scaled Distance (ze)</span>
+            <button class="btn" id="btnExport">Ekspor PNG</button>
+          </div>
+          <div class="chart-container">
+            <div id="chart" role="img" aria-label="Grafik log–log Ps (Po/Pa) versus ze berdasarkan referensi Kinney &amp; Graham (1985)."></div>
+            <noscript><p>Aktifkan JavaScript untuk melihat grafik. Referensi: G. F. Kinney &amp; K. J. Graham (1985).</p></noscript>
+            <div class="chart-note">Source: G. F. Kinney &amp; K. J. Graham, <em>Explosive Shocks in Air</em>, Springer-Verlag, 1985.</div>
           </div>
         </section>
       </div>
+
       <aside class="right">
         <section class="card estimation" aria-labelledby="est-damage">
           <div id="est-damage" class="card-header">Estimation of Damage Structure and Process Equipment</div>
           <div class="method-grid">
-            <div class="method-card">
-              <div class="vlabel">CROWL</div>
-              <div class="pad" id="panel-damage-crowl" aria-label="Crowl damage panel">
-                <p><strong>Overpressure (Po):</strong> <span id="val-Po-crowl">—</span> kPa</p>
-                <p><strong>Efek:</strong></p>
-                <ul id="effects-crowl" style="padding-left: 20px;">
-                  <li>Kerusakan ringan pada jendela kaca (1.4 kPa)</li>
-                </ul>
-              </div>
-              <div class="sevfoot" id="sev-crowl">Unknown</div>
-            </div>
-            <div class="method-card">
-              <div class="vlabel">ALONSO</div>
-              <div class="pad" id="panel-damage-alonso" aria-label="Alonso damage panel">
-                <p><strong>Overpressure (Po):</strong> <span id="val-Po-alonso">—</span> kPa</p>
-                <p><strong>Efek:</strong></p>
-                <ul id="effects-alonso" style="padding-left: 20px;">
-                  <li>Kerusakan atap, dinding, dan jendela (7 kPa)</li>
-                </ul>
-              </div>
-              <div class="sevfoot" id="sev-alonso">Unknown</div>
-            </div>
-            <div class="method-card">
-              <div class="vlabel">SADOVSKI</div>
-              <div class="pad" id="panel-damage-sadovski" aria-label="Sadovski damage panel">
-                <p><strong>Overpressure (Po):</strong> <span id="val-Po-sadovski">—</span> kPa</p>
-                <p><strong>Efek:</strong></p>
-                <ul id="effects-sadovski" style="padding-left: 20px;">
-                  <li>Pecah jendela kaca (7 kPa)</li>
-                </ul>
-              </div>
-              <div class="sevfoot" id="sev-sadovski">Unknown</div>
-            </div>
+            <div class="method-card"><div class="vlabel">CROWL</div><div class="pad" id="panel-damage-crowl"><p><strong>Overpressure (Po):</strong> <span id="val-Po-crowl">—</span> kPa</p><p><strong>Efek:</strong></p><ul id="effects-crowl"><li>Menunggu input...</li></ul></div><div class="sevfoot" id="sev-crowl">Unknown</div></div>
+            <div class="method-card"><div class="vlabel">ALONSO</div><div class="pad" id="panel-damage-alonso"><p><strong>Overpressure (Po):</strong> <span id="val-Po-alonso">—</span> kPa</p><p><strong>Efek:</strong></p><ul id="effects-alonso"><li>Menunggu input...</li></ul></div><div class="sevfoot" id="sev-alonso">Unknown</div></div>
+            <div class="method-card"><div class="vlabel">SADOVSKI</div><div class="pad" id="panel-damage-sadovski"><p><strong>Overpressure (Po):</strong> <span id="val-Po-sadovski">—</span> kPa</p><p><strong>Efek:</strong></p><ul id="effects-sadovski"><li>Menunggu input...</li></ul></div><div class="sevfoot" id="sev-sadovski">Unknown</div></div>
           </div>
         </section>
         <section class="card estimation" aria-labelledby="est-injury">
           <div id="est-injury" class="card-header">Estimation of Injury Consequences</div>
           <div class="method-grid">
-            <div class="method-card">
-              <div class="vlabel">CROWL</div>
-              <div class="pad" id="panel-injury-crowl" aria-label="Crowl injury panel">
-                <p><strong>Overpressure (Po):</strong> <span id="val-Po-crowl-inj">—</span> kPa</p>
-                <p><strong>Efek:</strong></p>
-                <ul id="injury-effects-crowl" style="padding-left: 20px;">
-                  <li>Luka-luka kecil (14 kPa)</li>
-                </ul>
-              </div>
-              <div class="sevfoot" id="sev-injury-crowl">Unknown</div>
-            </div>
-            <div class="method-card">
-              <div class="vlabel">ALONSO</div>
-              <div class="pad" id="panel-injury-alonso" aria-label="Alonso injury panel">
-                <p><strong>Overpressure (Po):</strong> <span id="val-Po-alonso-inj">—</span> kPa</p>
-                <p><strong>Efek:</strong></p>
-                <ul id="injury-effects-alonso" style="padding-left: 20px;">
-                   <li>Luka ringan (7 kPa)</li>
-                </ul>
-              </div>
-              <div class="sevfoot" id="sev-injury-alonso">Unknown</div>
-            </div>
-            <div class="method-card">
-              <div class="vlabel">SADOVSKI</div>
-              <div class="pad" id="panel-injury-sadovski" aria-label="Sadovski injury panel">
-                <p><strong>Overpressure (Po):</strong> <span id="val-Po-sadovski-inj">—</span> kPa</p>
-                <p><strong>Efek:</strong></p>
-                <ul id="injury-effects-sadovski" style="padding-left: 20px;">
-                  <li>Luka-luka (14 kPa)</li>
-                </ul>
-              </div>
-              <div class="sevfoot" id="sev-injury-sadovski">Unknown</div>
-            </div>
+            <div class="method-card"><div class="vlabel">CROWL</div><div class="pad" id="panel-injury-crowl"><p><strong>Overpressure (Po):</strong> <span id="val-Po-crowl-inj">—</span> kPa</p><p><strong>Efek:</strong></p><ul id="injury-effects-crowl"><li>Menunggu input...</li></ul></div><div class="sevfoot" id="sev-injury-crowl">Unknown</div></div>
+            <div class="method-card"><div class="vlabel">ALONSO</div><div class="pad" id="panel-injury-alonso"><p><strong>Overpressure (Po):</strong> <span id="val-Po-alonso-inj">—</span> kPa</p><p><strong>Efek:</strong></p><ul id="injury-effects-alonso"><li>Menunggu input...</li></ul></div><div class="sevfoot" id="sev-injury-alonso">Unknown</div></div>
+            <div class="method-card"><div class="vlabel">SADOVSKI</div><div class="pad" id="panel-injury-sadovski"><p><strong>Overpressure (Po):</strong> <span id="val-Po-sadovski-inj">—</span> kPa</p><p><strong>Efek:</strong></p><ul id="injury-effects-sadovski"><li>Menunggu input...</li></ul></div><div class="sevfoot" id="sev-injury-sadovski">Unknown</div></div>
           </div>
         </section>
       </aside>
     </main>
 
-    <footer class="app-footer" role="contentinfo">
+    <footer class="app-footer">
       <div class="grid">
         <div>
-          <div class="credit">Copyright (c) 2025 by <a href="https://id.linkedin.com/in/virdanurlulu" target="_blank" rel="nofollow">Virda Nur Lu'lu</a></div>
-          <div class="dedication">This application is dedicated to my parents, whose persistent support and patient guidance throughout my journey with JavaScript. It is also presented to the academic community at <a href="https://che.itb.ac.id/" target="_blank" rel="nofollow">Institut Teknologi Bandung</a> as a contribution towards inspiring further advancements in JavaScript technology.</div>
+          <div class="credit">Copyright (c) 2025 by
+            <a href="https://id.linkedin.com/in/virdanurlulu" target="_blank" rel="nofollow noopener noreferrer">Virda Nur Lu'lu</a>
+          </div>
+          <div class="dedication">
+            This application is dedicated to my parents, whose persistent support and patient guidance throughout my journey with JavaScript.
+            It is also presented to the academic community at
+            <a href="https://che.itb.ac.id/" target="_blank" rel="nofollow noopener noreferrer">Institut Teknologi Bandung</a>
+            as a contribution towards inspiring further advancements in JavaScript technology.
+          </div>
         </div>
         <div class="actions">
-          <a class="btn primary" href="https://virdanurlulu.github.io/" target="_blank" rel="noopener noreferrer">Home</a>
+          <a class="btn" href="https://virdanurlulu.github.io/" target="_blank" rel="noopener noreferrer">Home</a>
           <button class="btn" id="toTop" type="button">Back to top</button>
         </div>
       </div>
@@ -539,292 +332,352 @@
   </div>
 
   <script>
-    const $ = (id) => document.getElementById(id);
-    const fields = ['rho','vol','dh','eta','e_tnt','dist','pa'];
+    document.addEventListener("DOMContentLoaded", () => {
+      const $ = (id) => document.getElementById(id);
+      const fields = ["rho", "vol", "dh", "eta", "e_tnt", "dist", "pa"];
+      const inputFields = ["material", ...fields];
 
-    // ---- Logo loader with multiple fallbacks ----
-    const logoCandidates = [
-      'https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/Logo_Institut_Teknologi_Bandung.webp'
-    ];
-    function loadLogo(){
-      const img = document.getElementById('itbLogo');
-      if(!img) return;
-      let i = 0;
-      const fallbackData = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><circle cx="128" cy="128" r="120" fill="%230079c2"/><text x="50%" y="56%" font-family="Georgia, serif" font-size="88" text-anchor="middle" fill="white">ITB</text></svg>';
-      const tryNext = ()=>{
-        if(i >= logoCandidates.length){ img.onerror=null; img.src = fallbackData; return; }
-        const url = logoCandidates[i++] + (logoCandidates[i-1].includes('?') ? '' : '?v=1');
-        img.onerror = tryNext;
-        img.src = url;
-      };
-      tryNext();
-    }
-
-    // Back to top
-    function goTop(){ try{ window.scrollTo({top:0, behavior:'smooth'}); }catch(e){ window.scrollTo(0,0);} }
-
-    // Estimation Panels
-    const updateEstimationPanels = (PoCrowl, PoAlonso, PoSadovski) => {
-      const getSeverity = (Po) => {
-        if (Po >= 70) return 'Major';
-        if (Po >= 35) return 'Serious';
-        if (Po >= 14) return 'Moderate';
-        if (Po >= 1.4) return 'Minor';
-        return 'Unknown';
+      const presets = {
+        AN:  { rho: 1725,    dh:  2479,  e_tnt: 4500, eta: 0.35 },
+        LPG: { rho: 1.9,     dh: 50000,  e_tnt: 4500, eta: 0.03 },
+        H2:  { rho: 0.08375, dh: 130800, e_tnt: 4500, eta: 0.05 },
+        TNT: { rho: 1600,    dh:  4184,  e_tnt: 4184, eta: 1.0 }
       };
 
-      const updatePanel = (method, Po) => {
-        const sevFoot = $(`sev-${method}`);
-        const sevFootInjury = $(`sev-injury-${method}`);
-        const effectsDamageEl = $(`effects-${method}`);
-        const effectsInjuryEl = $(`injury-effects-${method}`);
+      const eqMap = {
+        AN:  [{ label: "Detonation", eq: '2 NH<sub>4</sub>NO<sub>3</sub>(s) <span class="arrow">→</span> 2 N<sub>2</sub>(g) + O<sub>2</sub>(g) + 4 H<sub>2</sub>O(g)' }],
+        LPG: [{ label: "Combustion (propane)", eq: 'C<sub>3</sub>H<sub>8</sub>(g) + 5 O<sub>2</sub>(g) <span class="arrow">→</span> 3 CO<sub>2</sub>(g) + 4 H<sub>2</sub>O(g)' }],
+        H2:  [{ label: "Combustion/explosion", eq: '2 H<sub>2</sub>(g) + O<sub>2</sub>(g) <span class="arrow">→</span> 2 H<sub>2</sub>O(g)' }],
+        TNT: [{ label: "Detonation", eq: '2 C<sub>7</sub>H<sub>5</sub>N<sub>3</sub>O<sub>6</sub>(s) <span class="arrow">→</span> 3 N<sub>2</sub>(g) + 5 H<sub>2</sub>O(g) + 7 CO(g) + 7 C(s)' }]
+      };
+
+      let chartController;
+
+      function debounce(func, delay = 400) {
+        let timeoutId;
+        return function(...args) {
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(() => { func.apply(this, args); }, delay);
+        };
+      }
+
+      function loadLogo() {
+        const img = $("itbLogo"); if (!img) return;
+        const fallback = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><circle cx="128" cy="128" r="120" fill="%230079c2"/><text x="50%" y="56%" font-family="Georgia, serif" font-size="88" text-anchor="middle" fill="white">ITB</text></svg>';
+        img.onerror = () => { img.onerror = null; img.src = fallback; };
+        img.src = "https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/Logo_Institut_Teknologi_Bandung.webp";
+      }
+
+      function goTop() { try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) { window.scrollTo(0, 0); } }
+
+      function initializeChart() {
+        const chartDom = document.getElementById('chart');
+        if (!chartDom) return null;
+        const chart = echarts.init(chartDom);
+        new ResizeObserver(() => chart.resize()).observe(chartDom);
+
+        const css = getComputedStyle(document.documentElement);
+        const CURVE_COLOR = '#DC2626';
+        const POINT_COLOR = (css.getPropertyValue('--blue-itb') || '#0079c2').trim();
+
+        const fPs = (ze) => (1616 * (1 + (ze/4.5)**2)) /
+          (Math.sqrt(1 + (ze/0.048)**2) * Math.sqrt(1 + (ze/0.32)**2) * Math.sqrt(1 + (ze/1.35)**2));
+        const logspace = (min, max, n=1000) =>
+          Array.from({length: n}, (_, i) => 10**(Math.log10(min) + (Math.log10(max) - Math.log10(min)) * i / (n-1)));
+        const refPairs = logspace(0.01, 100).map(z => [z, fPs(z)]);
+
+        const btn = $('btnExport');
+        if (btn) {
+          btn.addEventListener('click', () => {
+            const url = chart.getDataURL({ type: 'png', pixelRatio: 2, backgroundColor: '#FFFFFF' });
+            const a = document.createElement('a'); a.href = url; a.download = 'plot-ledakan.png'; a.click();
+          });
+        }
+
+        const baseOption = {
+            backgroundColor: 'transparent',
+            tooltip: {
+                confine: true, trigger: 'item',
+                formatter: p => {
+                    const v = Array.isArray(p.value) ? p.value : [];
+                    const zeV = Number.isFinite(v[0]) ? v[0].toPrecision(4) : '—';
+                    const psV = Number.isFinite(v[1]) ? v[1].toPrecision(4) : '—';
+                    return `<b>${p.seriesName}</b><br/>ze: ${zeV}<br/>Ps: ${psV}`;
+                },
+                backgroundColor: '#FFFFFF', borderColor: '#cccccc', borderWidth: 1, textStyle: { color: '#212121' }
+            },
+            xAxis: {
+                type: 'log', logBase: 10, min: 0.01, max: 100,
+                axisLine: { lineStyle: { color: '#94a3b8' } },
+                splitLine: { lineStyle: { color: 'rgba(0, 0, 0, 0.1)', width: 2 } },
+                minorSplitLine: { show: true, lineStyle: { color: 'rgba(0, 0, 0, 0.05)' } }
+            },
+            yAxis: {
+                type: 'log', logBase: 10, min: 0.01, max: 10000,
+                nameRotate: 90,
+                axisLine: { lineStyle: { color: '#94a3b8' } },
+                splitLine: { lineStyle: { color: 'rgba(0, 0, 0, 0.1)', width: 2 } },
+                minorSplitLine: { show: true, lineStyle: { color: 'rgba(0, 0, 0, 0.05)' } }
+            },
+            media: [
+                {
+                    query: { minWidth: 601 },
+                    option: {
+                        grid: { left: 72, right: 35, top: 80, bottom: 70 },
+                        title: { text: 'Scaled Overpressure vs Scaled Distance', subtext: 'Model Referensi Kinney & Graham (1985)', left: 'center', top: 10, textStyle: { color: '#212121', fontSize: 20 }, subtextStyle: { color: '#424242' }},
+                        xAxis: { name: 'Scaled Distance (ze)', nameLocation: 'middle', nameGap: 35, nameTextStyle: { color: '#212121', fontSize: 16, fontWeight: 'bold' }, axisLabel: { color: '#424242' }},
+                        yAxis: { name: 'Scaled Overpressure Ratio (Ps = Po/Pa, –)', nameLocation: 'middle', nameGap: 50, nameTextStyle: { color: '#212121', fontSize: 16, fontWeight: 'bold' }, axisLabel: { color: '#424242' }}
+                    }
+                },
+                {
+                    query: { maxWidth: 600 },
+                    option: {
+                        grid: { left: 55, right: 20, top: 70, bottom: 60 },
+                        title: { text: 'Ps vs ze', subtext: 'Kinney & Graham (1985)', left: 'center', top: 10, textStyle: { color: '#212121', fontSize: 16 }, subtextStyle: { color: '#424242', fontSize: 12 }},
+                        xAxis: { name: 'ze', nameLocation: 'middle', nameGap: 30, nameTextStyle: { color: '#212121', fontSize: 14, fontWeight: 'bold' }, axisLabel: { color: '#424242', fontSize: 10 }},
+                        yAxis: { name: 'Ps', nameLocation: 'middle', nameGap: 35, nameTextStyle: { color: '#212121', fontSize: 14, fontWeight: 'bold' }, axisLabel: { color: '#424242', fontSize: 10 }}
+                    }
+                }
+            ]
+        };
+        
+        chart.setOption(baseOption);
+
+        return {
+          plotResult: function(ze, ps) {
+            const materialSel = $('material');
+            const selectedOption = materialSel ? materialSel.options[materialSel.selectedIndex] : null;
+            const compound = (selectedOption && selectedOption.value) ? selectedOption.text : 'Hasil Kalkulasi';
+            const seriesData = (Number.isFinite(ze) && Number.isFinite(ps)) ? [[ze, ps]] : [];
+
+            chart.setOption({
+              series: [
+                {
+                  name: 'Kurva Referensi',
+                  type: 'line', showSymbol: false,
+                  lineStyle: { width: 2.5, color: CURVE_COLOR, shadowColor: 'rgba(0, 0, 0, 0.2)', shadowBlur: 5, shadowOffsetY: 2 },
+                  data: refPairs, zlevel: 1
+                },
+                {
+                  name: `Titik: ${compound}`, type: 'scatter', symbolSize: 12,
+                  itemStyle: { color: POINT_COLOR, borderColor: '#ffffff', borderWidth: 2, shadowColor: 'rgba(0,0,0,0.3)', shadowBlur: 5 },
+                  data: seriesData, zlevel: 2
+                }
+              ]
+            });
+          }
+        };
+      }
+
+      function updateEstimationPanels(PoCrowl, PoAlonso, PoSadovski) {
+        
+        const getDamageImpact = (Po) => {
+            if (Po > 76) return "Catastrophic";
+            if (Po > 55) return "Major";
+            if (Po > 40) return "Severe";
+            if (Po > 25) return "Serious";
+            if (Po > 9) return "Moderate";
+            if (Po > 2) return "Minor";
+            if (Po >= 0.14) return "Insignificant";
+            return "Unknown";
+        };
+
+        const getInjuryRisk = (Po) => {
+            if (Po > 100) return "Fatality";
+            if (Po >= 50) return "Severe Injury";
+            if (Po >= 30) return "Serious Injury";
+            if (Po >= 20) return "Moderate Injury";
+            if (Po > 0) return "Minor Injury";
+            return "Unknown";
+        };
 
         const damageEffects = {
-          'crowl': [
-            { threshold: 276, text: 'Dinding beton bertulang hancur' },
-            { threshold: 34.5, text: 'Kerusakan total pada bangunan non-permanen' },
-            { threshold: 7, text: 'Kerusakan struktural parsial pada bangunan' },
-            { threshold: 1.4, text: 'Kerusakan ringan pada jendela kaca' }
-          ],
-          'alonso': [
-            { threshold: 70, text: 'Kerusakan total pada bangunan industri' },
-            { threshold: 35, text: 'Kerusakan parah pada bangunan' },
-            { threshold: 21, text: 'Kerusakan besar pada pabrik kimia' },
-            { threshold: 7, text: 'Kerusakan atap, dinding, dan jendela' }
-          ],
-          'sadovski': [
-            { threshold: 70, text: 'Bangunan hancur total' },
-            { threshold: 35, text: 'Dinding runtuh' },
-            { threshold: 14, text: 'Kerusakan struktural ringan' },
-            { threshold: 7, text: 'Pecah jendela kaca' }
-          ]
+          crowl:   [{ threshold: 276, text: "Dinding beton hancur" }, { threshold: 34.5, text: "Kerusakan total bangunan" }, { threshold: 7, text: "Kerusakan parsial bangunan" }, { threshold: 1.4, text: "Jendela kaca pecah" }],
+          alonso:  [{ threshold: 70, text: "Kerusakan total" }, { threshold: 35, text: "Kerusakan parah" }, { threshold: 21, text: "Kerusakan besar" }, { threshold: 7, text: "Kerusakan atap/dinding" }],
+          sadovski:[{ threshold: 70, text: "Bangunan hancur total" }, { threshold: 35, text: "Dinding runtuh" }, { threshold: 14, text: "Kerusakan struktural ringan" }, { threshold: 7, text: "Jendela kaca pecah" }]
         };
-
         const injuryEffects = {
-          'crowl': [
-            { threshold: 70, text: 'Kematian 50%' },
-            { threshold: 34.5, text: 'Gendang telinga pecah' },
-            { threshold: 28, text: 'Luka berat dan mematikan' },
-            { threshold: 14, text: 'Luka-luka kecil' }
-          ],
-          'alonso': [
-            { threshold: 70, text: 'Kematian' },
-            { threshold: 35, text: 'Cedera serius/fatal' },
-            { threshold: 21, text: 'Gendang telinga pecah' },
-            { threshold: 7, text: 'Luka ringan' }
-          ],
-          'sadovski': [
-            { threshold: 70, text: 'Kematian' },
-            { threshold: 35, text: 'Gendang telinga pecah' },
-            { threshold: 28, text: 'Luka serius/fatal' },
-            { threshold: 14, text: 'Luka-luka' }
-          ]
+          crowl:   [{ threshold: 70, text: "Kematian 50%" }, { threshold: 34.5, text: "Gendang telinga pecah" }, { threshold: 28, text: "Luka berat/fatal" }, { threshold: 14, text: "Luka-luka kecil" }],
+          alonso:  [{ threshold: 70, text: "Kematian" }, { threshold: 35, text: "Cedera serius/fatal" }, { threshold: 21, text: "Gendang telinga pecah" }, { threshold: 7, text: "Luka ringan" }],
+          sadovski:[{ threshold: 70, text: "Kematian" }, { threshold: 35, text: "Gendang telinga pecah" }, { threshold: 28, text: "Luka serius/fatal" }, { threshold: 14, text: "Luka-luka" }]
         };
 
-        if (isNaN(Po)) {
-          const elA = $(`val-Po-${method}`);
-          const elB = $(`val-Po-${method}-inj`);
-          if (elA) elA.textContent = '—';
-          if (elB) elB.textContent = '—';
-          if (sevFoot) { sevFoot.textContent = 'Unknown'; sevFoot.className = 'sevfoot Unknown'; }
-          if (sevFootInjury) { sevFootInjury.textContent = 'Unknown'; sevFootInjury.className = 'sevfoot Unknown'; }
-          if (effectsDamageEl) effectsDamageEl.innerHTML = '<li>Menunggu input...</li>';
-          if (effectsInjuryEl) effectsInjuryEl.innerHTML = '<li>Menunggu input...</li>';
-          return;
-        }
+        ['crowl', 'alonso', 'sadovski'].forEach((method, i) => {
+          const Po = [PoCrowl, PoAlonso, PoSadovski][i];
+          const isPoValid = Number.isFinite(Po);
+          
+          // Elements
+          const valPoEl = $(`val-Po-${method}`);
+          const valPoInjEl = $(`val-Po-${method}-inj`);
+          const sevEl = $(`sev-${method}`);
+          const sevInjEl = $(`sev-injury-${method}`);
+          const effectsEl = $(`effects-${method}`);
+          const injuryEffectsEl = $(`injury-effects-${method}`);
 
-        const severity = getSeverity(Po);
-        const pretty = Po.toLocaleString('id-ID',{maximumFractionDigits:2});
-
-        const elA = $(`val-Po-${method}`);
-        const elB = $(`val-Po-${method}-inj`);
-        if (elA) elA.textContent = pretty;
-        if (elB) elB.textContent = pretty;
-
-        sevFoot.textContent = severity;
-        sevFootInjury.textContent = severity;
-        sevFoot.className = `sevfoot ${severity}`;
-        sevFootInjury.className = `sevfoot ${severity}`;
-
-        // Dynamically update effect lists
-        const applicableDamage = damageEffects[method].filter(e => Po >= e.threshold);
-        const applicableInjury = injuryEffects[method].filter(e => Po >= e.threshold);
-
-        if (effectsDamageEl) {
-          effectsDamageEl.innerHTML = applicableDamage.length > 0
-            ? applicableDamage.map(e => `<li style="color:var(--ink);">${e.text} (${e.threshold} kPa)</li>`).join('')
-            : '<li style="color:var(--ink);">Tidak ada efek signifikan pada level ini.</li>';
-        }
-        if (effectsInjuryEl) {
-          effectsInjuryEl.innerHTML = applicableInjury.length > 0
-            ? applicableInjury.map(e => `<li style="color:var(--ink);">${e.text} (${e.threshold} kPa)</li>`).join('')
-            : '<li style="color:var(--ink);">Tidak ada efek signifikan pada level ini.</li>';
-        }
-      };
-
-      updatePanel('crowl', PoCrowl);
-      updatePanel('alonso', PoAlonso);
-      updatePanel('sadovski', PoSadovski);
-    };
-
-    const calculateValues = () => {
-      const rho = parseFloat($("rho").value);
-      const vol = parseFloat($("vol").value);
-      const dh = parseFloat($("dh").value);
-      const eta = parseFloat($("eta").value);
-      const e_tnt = parseFloat($("e_tnt").value);
-      const dist = parseFloat($("dist").value);
-      const pa = parseFloat($("pa").value);
-
-      const resetAll = (msgText, bad=true) => {
-        ["W_mass","E_total","W_tnt","Ze","Ps","Po_crowl","Po_alonso","Po_sadovski"].forEach(id=> $(id).value = "");
-        const msg = $("msg");
-        msg.classList.toggle('bad', !!bad);
-        msg.textContent = msgText;
-        msg.style.display = 'block';
-        updateEstimationPanels(NaN, NaN, NaN);
-      };
-
-      const isAnyInputFilled = fields.some(id => $(id).value !== "");
-      if (!isAnyInputFilled) {
-          $("msg").style.display = 'none';
-          updateEstimationPanels(NaN, NaN, NaN);
-          return;
-      }
-
-      if (isNaN(rho) || isNaN(vol) || isNaN(dh) || isNaN(eta) || isNaN(e_tnt) || isNaN(dist) || isNaN(pa)) {
-        return resetAll('Harap isi semua properti yang dibutuhkan.');
-      }
-
-      const clamp01 = (x)=> isNaN(x) ? NaN : Math.max(0, Math.min(1, x));
-      const _eta = clamp01(eta);
-
-      const W_mass = rho * vol;
-      const E_total = W_mass * dh * _eta;
-
-      if (!(e_tnt > 0) || !(E_total > 0)) {
-        return resetAll('Periksa kembali ΔH, η, dan E_TNT (harus > 0).');
-      }
-
-      const W_tnt = E_total / e_tnt;
-      if (!(W_tnt > 0)) {
-        return resetAll('W_TNT tidak valid. Sesuaikan parameter.');
-      }
-
-      const Ze = dist > 0 ? (dist / Math.cbrt(W_tnt)) : NaN;
-      if (!Number.isFinite(Ze) || Ze <= 0) {
-        return resetAll('Jarak harus > 0 dan W_TNT masuk akal untuk menghitung Ze.');
-      }
-
-      $("W_mass").value = W_mass.toFixed(2);
-      $("E_total").value = E_total.toFixed(2);
-      $("W_tnt").value = W_tnt.toFixed(2);
-      $("Ze").value = Ze.toFixed(4);
-
-      // Crowl method
-      const computeOverpressureCrowl = (Ze) => {
-        const numerator = 1616 * (1 + Math.pow(Ze / 4.5, 2));
-        const term1_den = Math.sqrt(1 + Math.pow(Ze / 0.048, 2));
-        const term2_den = Math.sqrt(1 + Math.pow(Ze / 0.32, 2));
-        const term3_den = Math.sqrt(1 + Math.pow(Ze / 1.35, 2));
-        const denominator = term1_den * term2_den * term3_den;
-        return numerator / denominator;
-      }
-      
-      // Alonso method
-      const computeOverpressureAlonso = (Ze) => {
-        if (Ze >= 1 && Ze < 10) return 1.13 * Math.pow(10, 6) * Math.pow(Ze, -2.01);
-        if (Ze >= 10 && Ze <= 200) return 1.83 * Math.pow(10, 5) * Math.pow(Ze, -1.16);
-        return NaN;
-      }
-      
-      // Sadovski method
-      const computeOverpressureSadovski = (W_tnt, dist) => {
-        if (dist > 0 && W_tnt > 0) {
-          const ratioTerm = Math.cbrt(W_tnt) / dist;
-          return 0.085 * ratioTerm + 0.3 * Math.pow(ratioTerm, 2) + 0.8 * Math.pow(ratioTerm, 3);
-        }
-        return NaN;
-      }
-
-      const PoPa_crowl = computeOverpressureCrowl(Ze);
-      const Po_crowl = PoPa_crowl * pa; 
-      
-      // Rumus Alonso menghasilkan Pa, konversi ke kPa (/1000)
-      const Po_alonso = computeOverpressureAlonso(Ze) / 1000;
-      
-      // Rumus Sadovski menghasilkan MPa, konversi ke kPa (*1000)
-      const Po_sadovski = computeOverpressureSadovski(W_tnt, dist) * 1000; 
-
-      $("Ps").value = PoPa_crowl.toFixed(4);
-      $("Po_crowl").value = Po_crowl.toFixed(2);
-      $("Po_alonso").value = isNaN(Po_alonso) ? '' : Po_alonso.toFixed(2);
-      $("Po_sadovski").value = isNaN(Po_sadovski) ? '' : Po_sadovski.toFixed(2);
-
-      updateEstimationPanels(Po_crowl, Po_alonso, Po_sadovski);
-      
-      const msg = $("msg");
-      msg.classList.remove('bad');
-      msg.textContent = "Perhitungan berhasil diselesaikan.";
-      msg.style.display = 'block';
-    };
-
-    function compute() {
-      if ($('pa').value === '' || isNaN(parseFloat($('pa').value))) {
-          $('pa').value = '101.325';
-      }
-      calculateValues();
-    }
-
-    const presets = {
-      AN:  { rho: 1725, dh: 2479,  e_tnt: 4500, eta: 0.35  },
-      LPG: { rho: 37,   dh: 50000, e_tnt: 4500, eta: 0.03 },
-      H2:  { rho: 0.08375, dh: 130800,e_tnt: 4500, eta: 0.05 },
-      TNT: { rho: 1600, dh: 4184,  e_tnt: 4184, eta: 1.0   }
-    };
-
-    const eqMap = {
-      AN: [
-        {label:'Thermal decomposition (sub‑detonation)', eq:'NH<sub>4</sub>NO<sub>3</sub>(s) <span class="arrow">→</span> N<sub>2</sub>O(g) + 2 H<sub>2</sub>O(g)'},
-        {label:'Detonation (oxygen‑balanced approx.)', eq:'2 NH<sub>4</sub>NO<sub>3</sub>(s) <span class="arrow">→</span> 2 N<sub>2</sub>(g) + O<sub>2</sub>(g) + 4 H<sub>2</sub>O(g)'}
-      ],
-      LPG: [ {label:'Combustion proxy (propane)', eq:'C<sub>3</sub>H<sub>8</sub>(g) + 5 O<sub>2</sub>(g) <span class="arrow">→</span> 3 CO<sub>2</sub>(g) + 4 H<sub>2</sub>O(g)'} ],
-      H2: [ {label:'Combustion/explosion', eq:'2 H<sub>2</sub>(g) + O<sub>2</sub>(g) <span class="arrow">→</span> 2 H<sub>2</sub>O(g)'} ],
-      TNT: [ {label:'Detonation (oxygen‑deficient, typical overall)', eq:'2 C<sub>7</sub>H<sub>5</sub>N<sub>3</sub>O<sub>6</sub>(s) <span class="arrow">→</span> 3 N<sub>2</sub>(g) + 5 H<sub>2</sub>O(g) + 7 CO(g) + 7 C(s)'} ]
-    };
-
-    function renderEquation(material){
-      const box = $('eq-text');
-      if (!box) return;
-      if (!material || !eqMap[material]){ box.innerHTML = 'Pilih material untuk menampilkan persamaan reaksi representatif.'; return; }
-      const html = eqMap[material].map(item=>`<div class="rxn"><small>${item.label}</small><div class="rxn-eq">${item.eq}</div></div>`).join('');
-      box.innerHTML = html;
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      loadLogo();
-
-      $('toTop')?.addEventListener('click', goTop);
-
-      fields.forEach(id=> $(id)?.addEventListener('input', compute));
-
-      const materialSel = $("material");
-      if (materialSel){
-        materialSel.addEventListener('change', (e)=>{
-          const p = presets[e.target.value];
-          if (p){
-            $("rho").value = p.rho;  $("dh").value = p.dh; $("e_tnt").value = p.e_tnt; $("eta").value = p.eta;
-            compute();
+          if (!isPoValid) {
+            if (valPoEl) valPoEl.textContent = '—';
+            if (valPoInjEl) valPoInjEl.textContent = '—';
+            if (sevEl) { sevEl.textContent = "Unknown"; sevEl.className = "sevfoot Unknown"; }
+            if (sevInjEl) { sevInjEl.textContent = "Unknown"; sevInjEl.className = "sevfoot Unknown"; }
+            if (effectsEl) effectsEl.innerHTML = "<li>Menunggu input...</li>";
+            if (injuryEffectsEl) injuryEffectsEl.innerHTML = "<li>Menunggu input...</li>";
+            return;
           }
-          renderEquation(e.target.value);
-          const msg = $("msg");
-          msg.classList.remove('bad');
-          msg.textContent = 'Nilai contoh diisikan untuk pratinjau. Ganti dengan nilai dari literatur Anda.';
-          msg.style.display = 'block';
+
+          const prettyPo = Po.toLocaleString("id-ID", { maximumFractionDigits: 2 });
+          if (valPoEl) valPoEl.textContent = prettyPo;
+          if (valPoInjEl) valPoInjEl.textContent = prettyPo;
+
+          // Handle Damage Panel
+          const damageImpact = getDamageImpact(Po);
+          if (sevEl) { sevEl.textContent = damageImpact; sevEl.className = `sevfoot ${damageImpact}`; }
+          const applicableDamage = damageEffects[method].filter((e) => Po >= e.threshold);
+          if (effectsEl) effectsEl.innerHTML = applicableDamage.length > 0
+            ? applicableDamage.map((e) => `<li>${e.text} (${e.threshold} kPa)</li>`).join("")
+            : '<li>Tidak ada efek signifikan.</li>';
+            
+          // Handle Injury Panel
+          const injuryRisk = getInjuryRisk(Po);
+          if (sevInjEl) { sevInjEl.textContent = injuryRisk; sevInjEl.className = `sevfoot ${injuryRisk.replace(' ', '-')}`; }
+          const applicableInjury = injuryEffects[method].filter((e) => Po >= e.threshold);
+          if (injuryEffectsEl) injuryEffectsEl.innerHTML = applicableInjury.length > 0
+            ? applicableInjury.map((e) => `<li>${e.text} (${e.threshold} kPa)</li>`).join("")
+            : '<li>Tidak ada efek signifikan.</li>';
         });
       }
 
-      compute(); // Initial compute
+      function calculateValues() {
+        fields.forEach(id => $(id)?.classList.remove('input-error'));
+        let hasError = false;
+        const getFloat = (id) => {
+          const el = $(id);
+          const val = parseFloat(el.value);
+          if (isNaN(val)) { el.classList.add('input-error'); hasError = true; }
+          return val;
+        };
+        const [rho, vol, dh, eta, e_tnt, dist, pa] = fields.map(getFloat);
+
+        if (!(eta >= 0 && eta <= 1)) { $('eta').classList.add('input-error'); hasError = true; }
+        if (!(e_tnt > 0)) { $('e_tnt').classList.add('input-error'); hasError = true; }
+
+        const resetAll = (msgText) => {
+          ["W_mass", "E_total", "W_tnt", "Ze", "Ps", "Po_crowl", "Po_alonso", "Po_sadovski"].forEach(id => $(id).value = "");
+          const msg = $("msg"); if (msg) { msg.classList.add("bad"); msg.textContent = msgText; msg.style.display = "block"; }
+          updateEstimationPanels(NaN, NaN, NaN);
+          if (chartController) chartController.plotResult(NaN, NaN);
+        };
+
+        if (hasError) return resetAll("Harap isi properti dengan rentang yang benar.");
+
+        const W_mass = rho * vol;
+        const E_total = W_mass * dh * eta;
+        const W_tnt = E_total / e_tnt;
+        const Ze = dist > 0 && W_tnt > 0 ? dist / Math.cbrt(W_tnt) : NaN;
+
+        if (!Number.isFinite(Ze) || Ze <= 0) return resetAll("Hasil kalkulasi tidak valid (Ze tidak positif).");
+
+        $("W_mass").value = W_mass.toFixed(2);
+        $("E_total").value = E_total.toFixed(2);
+        $("W_tnt").value = W_tnt.toFixed(2);
+        $("Ze").value = Ze.toFixed(4);
+
+        const PoPa_crowl = (1616 * (1 + (Ze/4.5)**2)) /
+          (Math.sqrt(1 + (Ze/0.048)**2) * Math.sqrt(1 + (Ze/0.32)**2) * Math.sqrt(1 + (Ze/1.35)**2));
+        $("Ps").value = PoPa_crowl.toFixed(4);
+        if (chartController) chartController.plotResult(Ze, PoPa_crowl);
+
+        const Po_crowl = PoPa_crowl * pa;
+        const Po_alonso = ((z) =>
+          (z >= 1 && z < 10) ? 1.13e6 * z**-2.01 :
+          (z >= 10 && z <= 200) ? 1.83e5 * z**-1.16 : NaN)(Ze) / 1000;
+        const Po_sadovski = ((w, d) => (d > 0 && w > 0) ? (r => 0.085*r + 0.3*r**2 + 0.8*r**3)(Math.cbrt(w)/d) : NaN)(W_tnt, dist) * 1000;
+
+        $("Po_crowl").value = Po_crowl.toFixed(2);
+        $("Po_alonso").value = isNaN(Po_alonso) ? "" : Po_alonso.toFixed(2);
+        $("Po_sadovski").value = isNaN(Po_sadovski) ? "" : Po_sadovski.toFixed(2);
+
+        updateEstimationPanels(Po_crowl, Po_alonso, Po_sadovski);
+
+        if (isNaN(Po_alonso)) {
+          const el = $('effects-alonso')?.closest('.pad')?.querySelector('ul');
+          const injEl = $('injury-effects-alonso')?.closest('.pad')?.querySelector('ul');
+          if(el) el.innerHTML = '<li>Di luar domain valid Alonso (1 ≤ ze ≤ 200).</li>';
+          if(injEl) injEl.innerHTML = '<li>Di luar domain valid Alonso (1 ≤ ze ≤ 200).</li>';
+        }
+
+        const msg = $("msg");
+        msg.classList.remove("bad");
+        msg.textContent = "Perhitungan berhasil.";
+        msg.style.display = "block";
+
+        saveStateToURL();
+      }
+
+      function compute() {
+        if ($("pa").value === "" || isNaN(parseFloat($("pa").value))) $("pa").value = "101.325";
+        calculateValues();
+      }
+
+      function renderEquation(material) {
+        const box = $("eq-text"); if (!box) return;
+        if (!material || !eqMap[material]) { box.innerHTML = "Pilih material."; return; }
+        box.innerHTML = eqMap[material].map(item => `<div class="rxn"><small>${item.label}</small><div class="rxn-eq">${item.eq}</div></div>`).join("");
+      }
+
+      function saveStateToURL() {
+        const params = new URLSearchParams();
+        inputFields.forEach(id => {
+          const el = $(id);
+          if (el && el.value !== undefined && el.value !== "") params.set(id, el.value);
+        });
+        const q = params.toString();
+        const url = q ? `${window.location.pathname}?${q}` : window.location.pathname;
+        window.history.replaceState({}, '', url);
+      }
+
+      function loadStateFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let materialChanged = false;
+        params.forEach((val, key) => {
+          const el = $(key); if (el) { el.value = val; if (key === 'material') materialChanged = true; }
+        });
+
+        if (!params.has('material')) {
+          $('material').value = 'AN';
+          materialChanged = true;
+        }
+        if (!params.has('vol')) $('vol').value = '10';
+        if (!params.has('dist')) $('dist').value = '100';
+
+        if (materialChanged) {
+          $('material').dispatchEvent(new Event('change'));
+        } else {
+          compute();
+        }
+      }
+
+      // --- Init ---
+      chartController = initializeChart();
+      const debouncedCompute = debounce(compute, 400);
+      
+      inputFields.forEach(id => {
+        const el = $(id);
+        if (el && el.tagName === 'INPUT') el.addEventListener("input", debouncedCompute);
+      });
+
+      const materialSel = $("material");
+      materialSel.addEventListener("change", (e) => {
+        const p = presets[e.target.value];
+        if (p) Object.keys(p).forEach(key => $(key).value = p[key]);
+        renderEquation(e.target.value);
+        const msg = $("msg");
+        if (e.target.value) { msg.classList.remove("bad"); msg.textContent = "Nilai contoh diisikan."; msg.style.display = "block"; }
+        compute(); 
+      });
+
+      loadStateFromURL();
+      loadLogo();
+      $("toTop")?.addEventListener("click", goTop);
     });
   </script>
 </body>
