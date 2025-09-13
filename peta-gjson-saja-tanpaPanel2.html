@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Explosion Contour - Loading…</title>
+
+  <meta name="description" content="Kontur ledakan: impor/ekspor CSV, toolbar mini, localStorage, geodesik, fullscreen, QS read-only, label lokasi Latin.">
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+  <link rel="dns-prefetch" href="//unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <style>
+    :root{--ink:#0f172a;--muted:#64748b;--card:#fff;--bg:#f6f8fb}
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,Segoe UI,Roboto,Arial}
+    .wrap{max-width:1200px;margin:auto;padding:16px}
+    .card{background:var(--card);border-radius:14px;box-shadow:0 8px 24px rgba(2,8,20,.08);padding:14px}
+    h1{font-size:20px;margin:4px 0 12px}
+    #map{height:72vh;border-radius:14px;overflow:hidden}
+    .legend{position:absolute;z-index:1001;bottom:12px;left:12px;background:#fff;border-radius:10px;
+      box-shadow:0 6px 18px rgba(2,8,20,.15);padding:10px 12px;font:14px/1.2 system-ui,Segoe UI,Roboto,Arial}
+    .muted{color:var(--muted)}
+    @media (max-width:960px){#map{height:64vh}}
+
+    /* Fullscreen overlay */
+    #mapCard{position:relative}
+    .fs-btn{
+      position:absolute; z-index:1002; top:12px; right:12px;
+      background:rgba(255,255,255,.95); border:1px solid #e5e7eb; border-radius:10px;
+      padding:8px 10px; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(2,8,20,.12)
+    }
+    .fs-btn:active{transform:translateY(1px)}
+    .fs-host.fullscreen{position:fixed; inset:0; z-index:9999; margin:0; border-radius:0; padding:0; background:#000;}
+    .fs-host.fullscreen #map{height:100dvh; height:100vh; border-radius:0}
+    body.fs-lock{overflow:hidden}
+
+    /* Toolbar mini */
+    .toolbar{
+      position:absolute; z-index:1002; top:12px; left:12px;
+      background:#fff; border:1px solid #e5e7eb; border-radius:12px; box-shadow:0 6px 18px rgba(2,8,20,.14);
+      display:flex; align-items:center; gap:8px; padding:8px 10px; flex-wrap:wrap
+    }
+    .tb-btn{border:1px solid #e5e7eb; background:#fff; border-radius:10px; padding:8px 10px; cursor:pointer; font-weight:700}
+    .tb-btn:hover{background:#f8fafc}
+    .tb-input{width:120px; padding:8px 10px; border:1px solid #e5e7eb; border-radius:10px}
+    .tb-select{padding:8px 10px; border:1px solid #e5e7eb; border-radius:10px}
+    .sep{width:1px; height:28px; background:#e5e7eb; margin:0 2px}
+    .notice{font-size:12px; color:#64748b}
+
+    /* Hindari tumpang tindih control kiri-atas */
+    #map .leaflet-top.leaflet-left{ margin-top:64px; }
+
+    /* Label nama daerah */
+    .placelabel{
+      background:rgba(255,255,255,.95);
+      color:#0f172a; border:1px solid #e5e7eb; border-radius:8px;
+      box-shadow:0 2px 8px rgba(2,8,20,.12); padding:4px 6px; font-weight:600
+    }
+
+    /* Tebalkan kredit */
+    .leaflet-control-attribution span[title="Author"]{ font-weight:600; }
+
+    /* Tombol fullscreen mobile */
+    .fs-btn-mobile{ display:none; bottom:56px; right:12px; left:auto; top:auto; }
+    @media (max-width:640px){
+      #fsBtn{ display:none; }
+      #fsBtnMobile{ display:inline-flex; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1 id="pageTitle">Explosion Contour - Loading…</h1>
+
+    <div class="card fs-host" id="mapCard">
+      <!-- Fullscreen desktop -->
+      <button id="fsBtn" class="fs-btn" aria-pressed="false" title="Fullscreen (F)">⛶ Fullscreen</button>
+      <!-- Fullscreen mobile (muncul otomatis di layar kecil) -->
+      <button id="fsBtnMobile" class="fs-btn fs-btn-mobile" aria-pressed="false" title="Fullscreen">⛶ Fullscreen</button>
+
+      <!-- Toolbar mini -->
+      <div class="toolbar" role="region" aria-label="Kontrol peta">
+        <button id="btnPlay"   class="tb-btn" title="Play/Pause (Spasi)">▶ Play</button>
+        <!-- Replay dihapus -->
+        <button id="btnImport" class="tb-btn" title="Impor CSV rings (r,Po) — bisa sertakan baris pusat lat,lon">⬆ Import CSV</button>
+        <input id="fileIn" type="file" accept=".csv,text/csv" hidden>
+        <button id="btnExport" class="tb-btn" title="Ekspor dataset saat ini ke CSV">⬇ Export CSV</button>
+        <span class="sep" aria-hidden="true"></span>
+        <label class="notice" for="palSel">Palette</label>
+        <select id="palSel" class="tb-select" aria-label="Pilih palette">
+          <option value="bright">Cerah</option>
+          <option value="bluegreen">Biru–Hijau</option>
+          <option value="heat">Heat</option>
+        </select>
+        <span class="sep" aria-hidden="true"></span>
+        <button id="btnLabel" class="tb-btn" title="Tampilkan/sembunyikan label daerah di marker pusat">👁 Label: On</button>
+        <span class="sep" aria-hidden="true"></span>
+        <label class="notice" for="latIn">Lat</label>
+        <input id="latIn" class="tb-input" type="number" step="any" aria-label="Latitude">
+        <label class="notice" for="lonIn">Lon</label>
+        <input id="lonIn" class="tb-input" type="number" step="any" aria-label="Longitude">
+        <button id="btnApplyCoord" class="tb-btn" title="Terapkan koordinat">✔ Apply</button>
+      </div>
+
+      <div id="map" role="region" aria-label="Peta kontur ledakan"></div>
+      <div class="legend" id="legend" hidden></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+  // ======= BUILT-IN DEFAULTS =======
+  const BUILTIN_DEFAULTS = {
+    lat: 33.901436, lon: 35.519057,
+    csv:
+`49, 2042.348
+150, 159.4947
+300, 41.51972
+500, 19.59217
+1000, 8.648397
+3000, 2.768441`,
+    np: 90, iv: 250, os: 0.3, of: 0.2, sw: 0.3, pal: 'bright',
+    showLabel: true
+  };
+  const LS_KEY  = 'explosionContour:v1';
+  const RG_KEY  = 'explosionContour:revgeo:v2';
+
+  // ======= Parser & CSV =======
+  function parseNumberLoose(s){
+    if (s==null) return NaN;
+    s = String(s).trim().replace(/\s+/g,'').replace(/\u00A0/g,'');
+    if (/^\d{1,3}(\.\d{3})+,\d+$/.test(s)) s = s.replace(/\./g,'').replace(',', '.');
+    else if (/^\d+,\d+$/.test(s)) s = s.replace(',', '.');
+    else s = s.replace(/(?<=\d),(?=\d{3}(?:\D|$))/g, '');
+    return Number(s);
+  }
+  function extractNumbers(line){
+    const toks = String(line).match(/-?\d+(?:[.,]\d+)?/g) || [];
+    return toks.map(parseNumberLoose).filter(n=>Number.isFinite(n));
+  }
+  function parseData(text){
+    const out = [];
+    const rows = (text||'').split(/[\r\n]+/).map(r=>r.trim()).filter(Boolean);
+    for (const r of rows){
+      const nums = extractNumbers(r);
+      if (!nums.length) continue;
+      const rVal = nums[0];
+      const poVal = nums.length>1 ? nums[1] : null;
+      if (rVal > 0) out.push({ r: rVal, Po: (poVal!=null && Number.isFinite(poVal)) ? poVal : null });
+    }
+    out.sort((a,b)=>a.r-b.r);
+    return out;
+  }
+
+  // ======= QS read-only =======
+  function b64urlToStr(b64u){
+    try{
+      const b64 = b64u.replace(/-/g,'+').replace(/_/g,'/') + '==='.slice(b64u.length%4);
+      const bin = atob(b64);
+      const bytes = new Uint8Array(bin.length);
+      for (let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+      return new TextDecoder().decode(bytes);
+    }catch{ return ''; }
+  }
+  function readFromQS(){
+    const sp = new URLSearchParams(location.search);
+    if (!sp || [...sp].length===0) return {};
+    const obj = {};
+    if (sp.has('lat')) obj.lat = parseNumberLoose(sp.get('lat'));
+    if (sp.has('lon')) obj.lon = parseNumberLoose(sp.get('lon'));
+    if (sp.has('np'))  obj.np  = Math.max(16, Math.min(360, parseInt(sp.get('np'),10) || 0));
+    if (sp.has('iv'))  obj.iv  = Math.max(0, parseInt(sp.get('iv'),10) || 0);
+    if (sp.has('os'))  obj.os  = Math.max(0, Math.min(1, parseNumberLoose(sp.get('os'))));
+    if (sp.has('of'))  obj.of  = Math.max(0, Math.min(1, parseNumberLoose(sp.get('of'))));
+    if (sp.has('sw'))  obj.sw  = Math.max(0, parseNumberLoose(sp.get('sw')));
+    if (sp.has('pal')) {
+      const v = sp.get('pal').toLowerCase();
+      if (['bright','cerah','default'].includes(v)) obj.pal = 'bright';
+      else if (['bluegreen','biru-hijau','biru','hijau','bg'].includes(v)) obj.pal = 'bluegreen';
+      else if (['heat','panas'].includes(v)) obj.pal = 'heat';
+    }
+    if (sp.has('label')) {
+      const v = sp.get('label').toLowerCase();
+      obj.showLabel = !(v==='0' || v==='false' || v==='no' || v==='off');
+    }
+    if (sp.has('csvb64')) { const s = b64urlToStr(sp.get('csvb64')||''); if (s) obj.csv = s; }
+    else if (sp.has('csv')) { let v = sp.get('csv')||''; obj.csv = v.replace(/\|/g,'\n').replace(/;/g,'\n'); }
+    return Object.fromEntries(Object.entries(obj).filter(([,v])=>v!==undefined && v!==null && v!==''));
+  }
+
+  // ======= localStorage =======
+  function loadSaved(){
+    try { const o = JSON.parse(localStorage.getItem(LS_KEY) || 'null'); return (o && typeof o==='object') ? o : {}; }
+    catch{ return {}; }
+  }
+  function savePartial(patch){
+    settings = { ...settings, ...patch };
+    try { localStorage.setItem(LS_KEY, JSON.stringify(settings)); } catch {}
+  }
+
+  // ======= Compose settings (QS ➜ LS ➜ Built-in) =======
+  let settings = { ...BUILTIN_DEFAULTS, ...loadSaved(), ...readFromQS() };
+
+  // ======= Geodesic helpers =======
+  const R_EARTH = 6371008.8; // m
+  function destPoint(latDeg, lonDeg, distanceM, bearingDeg){
+    const φ1 = latDeg * Math.PI/180, λ1 = lonDeg * Math.PI/180;
+    const θ = bearingDeg * Math.PI/180, δ = distanceM / R_EARTH;
+    const sinφ1 = Math.sin(φ1), cosφ1 = Math.cos(φ1);
+    const sinδ = Math.sin(δ), cosδ = Math.cos(δ);
+    const sinφ2 = sinφ1*cosδ + cosφ1*sinδ*Math.cos(θ);
+    const φ2 = Math.asin(sinφ2);
+    const y = Math.sin(θ)*sinδ*cosφ1, x = cosδ - sinφ1*sinφ2;
+    let λ2 = λ1 + Math.atan2(y, x);
+    λ2 = ((λ2 + 3*Math.PI) % (2*Math.PI)) - Math.PI;
+    return [φ2 * 180/Math.PI, λ2 * 180/Math.PI];
+  }
+  function circleCoordsGeodesic(lat0, lon0, Rm, n=90){
+    const coords = [];
+    for(let i=0;i<=n;i++){
+      const bearing = 360 * i / n;
+      const [lat, lon] = destPoint(lat0, lon0, Rm, bearing);
+      coords.push([lat, lon]);
+    }
+    return coords;
+  }
+
+  // ======= Map init =======
+  const map = L.map('map', {
+    center:[settings.lat, settings.lon],
+    zoom: 14,
+    zoomControl: false
+  });
+  const canvasRenderer = L.canvas({ padding: 0.3 });
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{
+    maxZoom:19, attribution:'Tiles © Esri'
+  }).addTo(map);
+  L.control.scale({imperial:false}).addTo(map);
+  L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+  // === Credit di samping "Leaflet" ===
+  const creditHTML =
+    `<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a> · ` +
+    `<span title="Author">Credit by Virda Nur Lu&#39;lu</span>`;
+  map.attributionControl.setPrefix(creditHTML);
+
+  // ======= Palettes =======
+  const palettes = {
+    bright: ["#FF0000","#FFA500","#FFFF00","#00FF00","#00FFFF","#0000FF","#FF00FF","#800080","#FFC0CB","#A52A2A"],
+    bluegreen: ["#203a8f","#2d6cdf","#3fb6ff","#27c3a4","#15a371","#0f7a54","#0b533b","#083b2c"],
+    heat: ["#4b0d0d","#7a1f0e","#ad3510","#e65a0d","#ff8c00","#ffb200","#ffd000","#ffe680"]
+  };
+
+  // ======= Reverse Geocoding (Latin/EN, cache, fallback) =======
+  function esc(s){ return String(s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+  function isRTL(str){ return /[\u0590-\u05FF\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/.test(str); }
+  function rgKey(lat, lon){ return `${lat.toFixed(5)},${lon.toFixed(5)}`; }
+  function rgLoadCache(){ try{ return JSON.parse(localStorage.getItem(RG_KEY)||'{}'); }catch{ return {}; } }
+  function rgSaveCache(obj){ try{ localStorage.setItem(RG_KEY, JSON.stringify(obj)); }catch{} }
+
+  async function fetchNominatimEN(lat, lon){
+    const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1&namedetails=1&accept-language=en`;
+    const r = await fetch(url, {headers:{'Accept':'application/json'}});
+    if (!r.ok) return '';
+    const j = await r.json();
+    const a = j.address || {};
+    const nd = j.namedetails || {};
+    const primary = nd['name:en'] || nd['official_name:en'] || nd['short_name:en']
+      || a.city || a.town || a.village || a.hamlet || a.municipality || a.county;
+    const state = a.state || a.region || a.province || a.state_district || '';
+    const country = a.country || '';
+    const joined = [primary, state, country].filter(Boolean).join(', ');
+    return joined || (j.display_name ? String(j.display_name).split(',').slice(0,3).join(', ') : '');
+  }
+
+  async function reverseGeocode(lat, lon){
+    const key = rgKey(lat, lon);
+    const cache = rgLoadCache();
+    const TTL = 30*24*3600*1000; // 30 hari
+    if (cache[key] && (Date.now()-cache[key].ts) < TTL) return cache[key].name;
+
+    try{
+      let name = await fetchNominatimEN(lat, lon);
+      if (name && !isRTL(name)) {
+        cache[key] = {name, ts: Date.now()}; rgSaveCache(cache);
+        return name;
+      }
+    }catch{}
+
+    try{
+      const r = await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=en`);
+      if (r.ok){
+        const j = await r.json();
+        if (j.results && j.results.length){
+          const g = j.results[0];
+          const name = [g.name, g.admin1, g.country].filter(Boolean).join(', ');
+          if (name){
+            cache[key] = {name, ts: Date.now()}; rgSaveCache(cache);
+            return name;
+          }
+        }
+      }
+    }catch{}
+
+    return '';
+  }
+
+  let centerMarker = null;
+  let placeName = '';
+
+  // ======= Heading updater =======
+  const titleEl = document.getElementById('pageTitle');
+  function setHeading(name){
+    const label = (name && name.trim()) ? name.trim() : `${settings.lat.toFixed(5)}, ${settings.lon.toFixed(5)}`;
+    const txt = `Explosion Contour - ${label}`;
+    titleEl.textContent = txt;
+    document.title = txt;
+  }
+
+  function setLabelButton(){
+    const b = document.getElementById('btnLabel');
+    b.textContent = (settings.showLabel ? '👁 Label: On' : '🚫 Label: Off');
+  }
+
+  function ensureCenterMarker(lat, lon, name){
+    if (!centerMarker){
+      centerMarker = L.circleMarker([lat, lon], {
+        renderer: canvasRenderer, radius: 5,
+        color:'#111', weight:1, fillColor:'#fff', fillOpacity:1
+      }).addTo(map);
+    } else {
+      centerMarker.setLatLng([lat, lon]);
+    }
+    const label = name ? `📍 ${esc(name)}` : `📍 ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+    if (settings.showLabel){
+      const t = centerMarker.getTooltip();
+      if (t) t.setContent(label);
+      else centerMarker.bindTooltip(label, {permanent:true, direction:'right', offset:[8,0], className:'placelabel'}).openTooltip();
+    } else {
+      if (centerMarker.getTooltip()) centerMarker.unbindTooltip();
+    }
+  }
+
+  async function refreshPlaceName(lat, lon){
+    placeName = await reverseGeocode(lat, lon);
+    ensureCenterMarker(lat, lon, placeName);
+    setHeading(placeName);
+    if (!document.getElementById('legend').hidden) refreshLegend();
+  }
+
+  // ======= Animasi =======
+  const RESPECT_REDUCED_MOTION = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let rings = parseData(settings.csv);
+  let tempLayers = [], finalLayer = null, idx = 0, playing = false, finished = false, timer = null;
+
+  function clearLayers(){
+    if (timer) { clearTimeout(timer); timer=null; }
+    tempLayers.forEach(l=>map.removeLayer(l)); tempLayers=[];
+    if (finalLayer){ map.removeLayer(finalLayer); finalLayer=null; }
+    const toRemove = [];
+    map.eachLayer(l=>{ if(l instanceof L.Polygon || l instanceof L.GeoJSON){ toRemove.push(l); } });
+    toRemove.forEach(l=>map.removeLayer(l));
+    document.getElementById('legend').hidden = true;
+  }
+
+  function refreshLegend(){
+    const s = settings;
+    const leg = document.getElementById('legend');
+    leg.innerHTML = `<b>Kontur Ledakan</b>
+      <div>Daerah: ${placeName ? esc(placeName) : '<span class="muted">memuat…</span>'}</div>
+      <div>Pusat: ${s.lat.toFixed(6)}, ${s.lon.toFixed(6)}</div>
+      <div>Rings: ${rings.map(x=>x.r).join(', ')} m</div>
+      <hr style="border:none;border-top:1px solid #e5e7eb;margin:8px 0">
+      <div class="muted">nPoints=${s.np}, interval=${RESPECT_REDUCED_MOTION?0:s.iv} ms</div>
+      <div class="muted">opacity awal=${s.os}, akhir=${s.of}, strokeW=${s.sw}, palette=${s.pal}</div>`;
+    leg.hidden = false;
+  }
+
+  function drawStep(){
+    if (!playing) return;
+    const ivUsed = RESPECT_REDUCED_MOTION ? 0 : Math.max(0, settings.iv|0);
+    if (idx < rings.length){
+      const d = rings[idx];
+      const coords = circleCoordsGeodesic(settings.lat, settings.lon, d.r, settings.np);
+      const pal = (palettes[settings.pal] || palettes.bright);
+      const layer = L.polygon(coords, {
+        renderer: canvasRenderer, color:"#000000", weight:settings.sw,
+        fillColor: pal[idx % pal.length], fillOpacity: settings.os
+      }).bindPopup(`<b>r = ${d.r} m</b>${d.Po!=null?`<br>Po: <code>${d.Po}</code>`:''}`).addTo(map);
+      tempLayers.push(layer);
+      if (idx===0){ try{ map.setView([settings.lat, settings.lon], 14); }catch(e){} }
+      idx++;
+      timer = setTimeout(drawStep, ivUsed);
+    } else {
+      tempLayers.forEach(l=>map.removeLayer(l)); tempLayers=[];
+      const pal = (palettes[settings.pal] || palettes.bright);
+      const reversed = rings.slice().reverse();
+      finalLayer = L.featureGroup(
+        reversed.map((d, irev)=>{
+          const coords = circleCoordsGeodesic(settings.lat, settings.lon, d.r, settings.np);
+          return L.polygon(coords, {
+            renderer: canvasRenderer, color:"#000000", weight:settings.sw,
+            fillColor: pal[(rings.length-1-irev) % pal.length], fillOpacity: settings.of
+          }).bindPopup(`<b>r = ${d.r} m</b>${d.Po!=null?`<br>Po: <code>${d.Po}</code>`:''}`);
+        })
+      ).addTo(map);
+      try{ map.fitBounds(finalLayer.getBounds(), {padding:[20,20]}); }catch(e){}
+      refreshLegend();
+      playing = false; finished = true; updatePlayLabel();
+    }
+  }
+
+  function play(){ if (finished){ replay(); return; } if (playing) return; playing = true; updatePlayLabel(); drawStep(); }
+  function pause(){ playing = false; if (timer) { clearTimeout(timer); timer=null; } updatePlayLabel(); }
+  function replay(){ pause(); clearLayers(); idx = 0; finished = false; rings = parseData(settings.csv); play(); }
+  function updatePlayLabel(){ document.getElementById('btnPlay').textContent = playing ? '⏸ Pause' : '▶ Play'; }
+
+  // ======= Fullscreen (desktop & mobile) =======
+  const fsBtn = document.getElementById('fsBtn'),
+        fsBtnMobile = document.getElementById('fsBtnMobile'),
+        mapCard = document.getElementById('mapCard');
+
+  function setFSLabel(on){
+    const txt = on ? '⛶ Exit Fullscreen' : '⛶ Fullscreen';
+    [fsBtn, fsBtnMobile].forEach(b=>{
+      if(!b) return;
+      b.textContent = txt;
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+  function enterFS(){
+    mapCard.classList.add('fullscreen'); document.body.classList.add('fs-lock');
+    if (mapCard.requestFullscreen) { mapCard.requestFullscreen().catch(()=>{}); }
+    else if (mapCard.webkitRequestFullscreen) { mapCard.webkitRequestFullscreen(); } // iOS Safari
+    setFSLabel(true);
+    setTimeout(()=>map.invalidateSize(), 180);
+  }
+  function exitFS(){
+    mapCard.classList.remove('fullscreen'); document.body.classList.remove('fs-lock');
+    if (document.fullscreenElement && document.exitFullscreen) { document.exitFullscreen().catch(()=>{}); }
+    else if (document.webkitFullscreenElement && document.webkitCancelFullScreen) { document.webkitCancelFullScreen(); }
+    setFSLabel(false);
+    setTimeout(()=>map.invalidateSize(), 180);
+  }
+  function toggleFS(){ mapCard.classList.contains('fullscreen') ? exitFS() : enterFS(); }
+
+  fsBtn?.addEventListener('click', (e)=>{ e.stopPropagation(); toggleFS(); });
+  fsBtnMobile?.addEventListener('click', (e)=>{ e.stopPropagation(); toggleFS(); });
+
+  document.addEventListener('fullscreenchange', ()=>{
+    // sinkronkan label; jangan panggil exitFS() lagi agar tidak berulang
+    const active = !!document.fullscreenElement || mapCard.classList.contains('fullscreen');
+    if (!document.fullscreenElement) { mapCard.classList.remove('fullscreen'); document.body.classList.remove('fs-lock'); }
+    setFSLabel(active);
+  });
+
+  document.addEventListener('keydown', (e)=>{
+    if (e.code === 'Space'){ e.preventDefault(); playing ? pause() : play(); }
+    if (e.key.toLowerCase() === 'f') { e.preventDefault(); toggleFS(); }
+    if (e.key === 'Escape' && mapCard.classList.contains('fullscreen')) { exitFS(); }
+  });
+
+  window.addEventListener('resize', ()=>{
+    if (mapCard.classList.contains('fullscreen')) {
+      clearTimeout(window.__fsRaf);
+      window.__fsRaf = setTimeout(()=>map.invalidateSize(), 120);
+    }
+  });
+
+  // ======= Import CSV (r,Po) =======
+  function cleanCSVText(txt){ return String(txt || '').replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n'); }
+  function extractCenterFromLines(lines){
+    for (let k = 0; k < Math.min(3, lines.length); k++){
+      const raw = lines[k];
+      const line = raw.replace(/#/g,' ').trim();
+      if (!line) continue;
+      const hasLabel = /lat/i.test(line) || /lon/i.test(line);
+      const nums = extractNumbers(line);
+      if ((hasLabel && nums.length >= 2) ||
+          (!hasLabel && nums.length >=2 && Math.abs(nums[0])<=90 && Math.abs(nums[1])<=180)){
+        const lat = nums[0], lon = nums[1];
+        if (Number.isFinite(lat) && Number.isFinite(lon)){
+          lines.splice(k,1);
+          return { lat, lon };
+        }
+      }
+    }
+    return null;
+  }
+  async function ingestCSVText(csvText){
+    const MAX_BYTES = 2 * 1024 * 1024; if (csvText.length > MAX_BYTES) throw new Error('File terlalu besar (>2MB).');
+    let text = cleanCSVText(csvText);
+    let lines = text.split('\n').map(s=>s.trim()).filter(s=>s && !/^#/.test(s));
+    const center = extractCenterFromLines(lines);
+    const body = lines.join('\n');
+    const arr = parseData(body);
+    if (!arr.length) throw new Error('CSV tidak berisi data r/Po yang valid.');
+    if (center){
+      settings.lat = center.lat; settings.lon = center.lon;
+      savePartial({ lat: center.lat, lon: center.lon });
+      map.setView([settings.lat, settings.lon], map.getZoom());
+      await refreshPlaceName(settings.lat, settings.lon);
+      document.getElementById('latIn').value = settings.lat;
+      document.getElementById('lonIn').value = settings.lon;
+    }
+    settings.csv = body; savePartial({ csv: body }); rings = arr; replay();
+  }
+
+  // ======= Export CSV (pusat + rings) =======
+  function fmt(n, d=6){ return Number(n).toFixed(d).replace(/\.?0+$/,''); }
+  function slug(s){
+    return String(s||'').toLowerCase()
+      .replace(/[^\w\s.-]+/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^[-.]+|[-.]+$/g,'');
+  }
+  function exportCSV(){
+    const arr = parseData(settings.csv);
+    const lines = [];
+    lines.push('lat, lon');
+    lines.push(`${fmt(settings.lat)}, ${fmt(settings.lon)}`);
+    lines.push('r, Po');
+    for (const d of arr){
+      lines.push(`${fmt(d.r)}${d.Po!=null?`, ${fmt(d.Po)}`:''}`);
+    }
+    const csv = '\uFEFF' + lines.join('\r\n'); // BOM untuk Excel
+    const name = slug(placeName || `${settings.lat.toFixed(5)}_${settings.lon.toFixed(5)}`) || 'location';
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `explosion-contour_${name}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 0);
+  }
+
+  // ======= Toolbar bindings =======
+  document.getElementById('palSel').value = settings.pal;
+  document.getElementById('latIn').value   = settings.lat;
+  document.getElementById('lonIn').value   = settings.lon;
+  setLabelButton();
+
+  document.getElementById('btnPlay').addEventListener('click', ()=>{ playing ? pause() : play(); });
+  document.getElementById('palSel').addEventListener('change', (e)=>{ const pal = e.target.value; savePartial({ pal }); replay(); });
+  document.getElementById('btnLabel').addEventListener('click', ()=>{
+    settings.showLabel = !settings.showLabel;
+    savePartial({ showLabel: settings.showLabel });
+    setLabelButton();
+    ensureCenterMarker(settings.lat, settings.lon, placeName);
+  });
+  document.getElementById('btnApplyCoord').addEventListener('click', async ()=>{
+    const lat = parseFloat(document.getElementById('latIn').value);
+    const lon = parseFloat(document.getElementById('lonIn').value);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) { alert('Koordinat tidak valid'); return; }
+    savePartial({ lat, lon });
+    settings.lat = lat; settings.lon = lon;
+    map.setView([lat, lon], map.getZoom());
+    setHeading('Loading…');
+    await refreshPlaceName(lat, lon);
+    replay();
+  });
+
+  // Import CSV handlers
+  const fileIn = document.getElementById('fileIn');
+  document.getElementById('btnImport').addEventListener('click', ()=> fileIn.click());
+  fileIn.addEventListener('change', async (e)=>{
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    try{ const text = await f.text(); await ingestCSVText(text); }
+    catch(err){ console.error(err); alert('Gagal mengimpor CSV: ' + (err && err.message ? err.message : err)); }
+    finally{ fileIn.value = ''; }
+  });
+
+  // Export CSV handler
+  document.getElementById('btnExport').addEventListener('click', exportCSV);
+
+  // ======= Start =======
+  (function init(){
+    setHeading('Loading…');
+    refreshPlaceName(settings.lat, settings.lon);
+    document.getElementById('btnPlay').textContent = '▶ Play';
+    setFSLabel(false);
+    play();
+  })();
+  </script>
+</body>
+</html>
