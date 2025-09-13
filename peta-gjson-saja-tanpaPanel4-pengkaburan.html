@@ -41,7 +41,7 @@
     "url":"https://virdanurlulu.github.io/",
     "applicationCategory":"ScienceApplication",
     "operatingSystem":"Any",
-    "author":{"@type":"Person","name":"Virda Nur Lu'lu","sameAs":"https://id.linkedin.com/in/virdanurlulu"},
+    "author":{"@type":"Person","name":"Virda Nur Lu'lu"},
     "description":"Interactive simulation and modeling of explosion effects based on TNT equivalence using JavaScript.",
     "inLanguage":"id"
   }
@@ -55,6 +55,14 @@
                  script-src 'self' 'unsafe-inline' https://unpkg.com;
                  connect-src https://nominatim.openstreetmap.org https://geocoding-api.open-meteo.com;
                  object-src 'none'; base-uri 'self'; frame-ancestors 'self'">
+
+  <meta name="description" content="Interactive simulation and modeling of explosion effects based on TNT equivalence using JavaScript — with chemical materials, properties, and consequence estimation.">
+  <meta name="description" content="Interactive simulation and modeling of explosion effects based on TNT equivalence using JavaScript — with chemical materials, properties, and consequence estimation.">
+  <meta name="description" content="Interactive simulation and modeling of explosion effects based on TNT equivalence using JavaScript — with chemical materials, properties, and consequence estimation.">
+  <!-- Deskripsi diulang 3x? Tidak: cukup satu. Hapus duplikat jika mengedit manual. -->
+
+  <meta name="description" content="Interactive simulation and modeling of explosion effects based on TNT equivalence using JavaScript — with chemical materials, properties, and consequence estimation.">
+  <!-- ===== END SEO / META ===== -->
 
   <meta name="description" content="Kontur ledakan: CSV import/export, toolbar mini, localStorage, geodesik, fullscreen, QS read-only, label lokasi Latin, keamanan & anti-tamper.">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -72,7 +80,6 @@
       box-shadow:0 6px 18px rgba(2,8,20,.15);padding:10px 12px;font:14px/1.2 system-ui,Segoe UI,Roboto,Arial}
     .muted{color:var(--muted)}
 
-    /* Fullscreen overlay */
     #mapCard{position:relative}
     .fs-btn{
       position:absolute; z-index:1002; top:12px; right:12px;
@@ -84,7 +91,6 @@
     .fs-host.fullscreen #map{height:100dvh; height:100vh; border-radius:0}
     body.fs-lock{overflow:hidden}
 
-    /* Toolbar mini */
     .toolbar{
       position:absolute; z-index:1002; top:12px; left:12px;
       background:#fff; border:1px solid #e5e7eb; border-radius:12px; box-shadow:0 6px 18px rgba(2,8,20,.14);
@@ -97,26 +103,20 @@
     .sep{width:1px; height:28px; background:#e5e7eb; margin:0 2px}
     .notice{font-size:12px; color:var(--muted)}
 
-    /* Hindari tumpang tindih kontrol Leaflet saat awal load */
     #map .leaflet-top.leaflet-left{ margin-top:64px; }
 
-    /* Label nama daerah */
     .placelabel{
       background:rgba(255,255,255,.95);
       color:#0f172a; border:1px solid #e5e7eb; border-radius:8px;
       box-shadow:0 2px 8px rgba(2,8,20,.12); padding:4px 6px; font-weight:600
     }
 
-    /* Tebalkan kredit */
     .leaflet-control-attribution span[title="Author"]{ font-weight:600; }
-
-    /* Tombol fullscreen mobile */
     .fs-btn-mobile{ display:none; bottom:56px; right:12px; left:auto; top:auto; }
 
     /* Copy-guard ringan */
     #map, .toolbar, .legend { -webkit-user-select:none; user-select:none; }
 
-    /* ====== Responsif (selular) ====== */
     @media (max-width:640px){
       body{ font-size:14px; }
       h1{ font-size:18px; }
@@ -124,32 +124,28 @@
       .tb-btn,.tb-input,.tb-select{ padding:6px 8px; border-radius:9px; }
       .tb-input{ width:110px; }
       .legend{ font-size:12px; padding:8px 10px; }
-      #fsBtn{ display:none; }              /* sembunyikan tombol desktop */
-      #fsBtnMobile{ display:inline-flex; } /* tampilkan tombol mobile */
+      #fsBtn{ display:none; }
+      #fsBtnMobile{ display:inline-flex; }
       #map .leaflet-top.leaflet-left{ margin-top:56px; }
-      .legend .details{ display:none; }    /* sembunyikan detail parameter di legend */
+      .legend .details{ display:none; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ===== DOMAIN LOCK (daftar domain yang diizinkan) ===== -->
+  <!-- ===== DOMAIN LOCK ===== -->
   <script>
   (function domainLock(){
     var ALLOWED = [
-      'virdanurlulu.github.io', // GitHub Pages
-      'virdapark.my.id',        // domain opsional
-      'app.example.com',        // (opsional) domain produksi lain
-      'localhost', '127.0.0.1'  // pengembangan lokal
+      'virdanurlulu.github.io',
+      'app.example.com',
+      'localhost', '127.0.0.1'
     ];
     var h = location.hostname.replace(/^www\./,'');
     if (!ALLOWED.includes(h)) {
       document.documentElement.innerHTML =
-        '<style>body{font:16px system-ui;color:#111;padding:24px;line-height:1.5}</style>'+
-        '<h1>403</h1>'+
-        '<p>This script, created through significant effort, is the copyrighted work of '+
-        '<a href="https://id.linkedin.com/in/virdanurlulu" target="_blank" rel="noopener">Virda Nur Lu&#39;lu</a>. '+
-        'Copying it without permission is a violation of her intellectual property rights, and proper credit is required.</p>';
+        '<style>body{font:16px system-ui;color:#111;padding:24px}</style>'+
+        '<h1>403</h1><p>Unauthorized host.</p>';
       throw new Error('Domain not allowed');
     }
   })();
@@ -159,12 +155,9 @@
     <h1 id="pageTitle">Explosion Contour - Loading…</h1>
 
     <div class="card fs-host" id="mapCard">
-      <!-- Fullscreen desktop -->
       <button id="fsBtn" class="fs-btn" aria-pressed="false" title="Fullscreen (F)">⛶ Fullscreen</button>
-      <!-- Fullscreen mobile -->
       <button id="fsBtnMobile" class="fs-btn fs-btn-mobile" aria-pressed="false" title="Fullscreen">⛶ Fullscreen</button>
 
-      <!-- Toolbar mini -->
       <div class="toolbar" role="region" aria-label="Kontrol peta">
         <button id="btnPlay"   class="tb-btn" title="Play/Pause (Spasi)">▶ Play</button>
         <button id="btnImport" class="tb-btn" title="Impor CSV rings (r,Po) — bisa sertakan baris pusat lat,lon">⬆ Import CSV</button>
@@ -201,7 +194,6 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-  // ======= BUILT-IN DEFAULTS =======
   const BUILTIN_DEFAULTS = {
     lat: 33.901436, lon: 35.519057,
     csv:
@@ -217,7 +209,6 @@
   const LS_KEY  = 'explosionContour:v1';
   const RG_KEY  = 'explosionContour:revgeo:v2';
 
-  // ======= Parser & CSV =======
   function parseNumberLoose(s){
     if (s==null) return NaN;
     s = String(s).trim().replace(/[\s\u00A0]/g,'');
@@ -253,7 +244,6 @@
     return out;
   }
 
-  // ======= QS read-only =======
   function b64urlToStr(b64u){
     try{
       const b64 = b64u.replace(/-/g,'+').replace(/_/g,'/') + '==='.slice(b64u.length%4);
@@ -289,7 +279,6 @@
     return Object.fromEntries(Object.entries(obj).filter(([,v])=>v!==undefined && v!==null && v!==''));
   }
 
-  // ======= localStorage =======
   function loadSaved(){
     try { const o = JSON.parse(localStorage.getItem(LS_KEY) || 'null'); return (o && typeof o==='object') ? o : {}; }
     catch{ return {}; }
@@ -299,11 +288,9 @@
     try { localStorage.setItem(LS_KEY, JSON.stringify(settings)); } catch {}
   }
 
-  // ======= Compose settings (QS ➜ LS ➜ Built-in) =======
   let settings = { ...BUILTIN_DEFAULTS, ...loadSaved(), ...readFromQS() };
 
-  // ======= Geodesic helpers =======
-  const R_EARTH = 6371008.8; // m
+  const R_EARTH = 6371008.8;
   function destPoint(latDeg, lonDeg, distanceM, bearingDeg){
     const φ1 = latDeg * Math.PI/180, λ1 = lonDeg * Math.PI/180;
     const θ = Math.PI/180 * bearingDeg, δ = distanceM / R_EARTH;
@@ -326,12 +313,7 @@
     return coords;
   }
 
-  // ======= Map init =======
-  const map = L.map('map', {
-    center:[settings.lat, settings.lon],
-    zoom: 14,
-    zoomControl: false
-  });
+  const map = L.map('map', { center:[settings.lat, settings.lon], zoom: 14, zoomControl: false });
   const canvasRenderer = L.canvas({ padding: 0.3 });
   L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{
     maxZoom:19, attribution:'Tiles © Esri'
@@ -339,20 +321,17 @@
   L.control.scale({imperial:false}).addTo(map);
   L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-  // Kredit di samping "Leaflet"
   const creditHTML =
     `<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a> · ` +
     `<span title="Author">Credit by Virda Nur Lu&#39;lu</span>`;
   map.attributionControl.setPrefix(creditHTML);
 
-  // ======= Palettes =======
   const palettes = {
     bright: ["#FF0000","#FFA500","#FFFF00","#00FF00","#00FFFF","#0000FF","#FF00FF","#800080","#FFC0CB","#A52A2A"],
     bluegreen: ["#203a8f","#2d6cdf","#3fb6ff","#27c3a4","#15a371","#0f7a54","#0b533b","#083b2c"],
     heat: ["#4b0d0d","#7a1f0e","#ad3510","#e65a0d","#ff8c00","#ffb200","#ffd000","#ffe680"]
   };
 
-  // ======= Reverse Geocoding (Latin/EN, cache, fallback) =======
   function esc(s){ return String(s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
   function isRTL(str){ return /[\u0590-\u05FF\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/.test(str); }
   function rgKey(lat, lon){ return `${lat.toFixed(5)},${lon.toFixed(5)}`; }
@@ -373,21 +352,15 @@
     const joined = [primary, state, country].filter(Boolean).join(', ');
     return joined || (j.display_name ? String(j.display_name).split(',').slice(0,3).join(', ') : '');
   }
-
   async function reverseGeocode(lat, lon){
     const key = rgKey(lat, lon);
     const cache = rgLoadCache();
-    const TTL = 30*24*3600*1000; // 30 hari
+    const TTL = 30*24*3600*1000;
     if (cache[key] && (Date.now()-cache[key].ts) < TTL) return cache[key].name;
-
     try{
       let name = await fetchNominatimEN(lat, lon);
-      if (name && !isRTL(name)) {
-        cache[key] = {name, ts: Date.now()}; rgSaveCache(cache);
-        return name;
-      }
+      if (name && !isRTL(name)) { cache[key] = {name, ts: Date.now()}; rgSaveCache(cache); return name; }
     }catch{}
-
     try{
       const r = await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=en`);
       if (r.ok){
@@ -395,10 +368,7 @@
         if (j.results && j.results.length){
           const g = j.results[0];
           const name = [g.name, g.admin1, g.country].filter(Boolean).join(', ');
-          if (name){
-            cache[key] = {name, ts: Date.now()}; rgSaveCache(cache);
-            return name;
-          }
+          if (name){ cache[key] = {name, ts: Date.now()}; rgSaveCache(cache); return name; }
         }
       }
     }catch{}
@@ -407,21 +377,18 @@
 
   let centerMarker = null;
   let placeName = '';
-
-  // ======= Heading updater =======
   const titleEl = document.getElementById('pageTitle');
+
   function setHeading(name){
     const label = (name && name.trim()) ? name.trim() : `${settings.lat.toFixed(5)}, ${settings.lon.toFixed(5)}`;
     const txt = `Explosion Contour - ${label}`;
     titleEl.textContent = txt;
     document.title = txt;
   }
-
   function setLabelButton(){
     const b = document.getElementById('btnLabel');
     b.textContent = (settings.showLabel ? '👁 Label: On' : '🚫 Label: Off');
   }
-
   function ensureCenterMarker(lat, lon, name){
     if (!centerMarker){
       centerMarker = L.circleMarker([lat, lon], {
@@ -440,7 +407,6 @@
       if (centerMarker.getTooltip()) centerMarker.unbindTooltip();
     }
   }
-
   async function refreshPlaceName(lat, lon){
     placeName = await reverseGeocode(lat, lon);
     ensureCenterMarker(lat, lon, placeName);
@@ -448,7 +414,6 @@
     if (!document.getElementById('legend').hidden) refreshLegend();
   }
 
-  // ======= Animasi =======
   const RESPECT_REDUCED_MOTION = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let rings = parseData(settings.csv);
   let tempLayers = [], finalLayer = null, idx = 0, playing = false, finished = false, timer = null;
@@ -462,7 +427,6 @@
     toRemove.forEach(l=>map.removeLayer(l));
     document.getElementById('legend').hidden = true;
   }
-
   function refreshLegend(){
     const s = settings;
     const leg = document.getElementById('legend');
@@ -517,7 +481,6 @@
   function replay(){ pause(); clearLayers(); idx = 0; finished = false; rings = parseData(settings.csv); play(); }
   function updatePlayLabel(){ document.getElementById('btnPlay').textContent = playing ? '⏸ Pause' : '▶ Play'; }
 
-  // ======= Fullscreen (desktop & mobile) =======
   const fsBtn = document.getElementById('fsBtn'),
         fsBtnMobile = document.getElementById('fsBtnMobile'),
         mapCard = document.getElementById('mapCard');
@@ -533,7 +496,7 @@
   function enterFS(){
     mapCard.classList.add('fullscreen'); document.body.classList.add('fs-lock');
     if (mapCard.requestFullscreen) { mapCard.requestFullscreen().catch(()=>{}); }
-    else if (mapCard.webkitRequestFullscreen) { mapCard.webkitRequestFullscreen(); } // iOS Safari
+    else if (mapCard.webkitRequestFullscreen) { mapCard.webkitRequestFullscreen(); }
     setFSLabel(true);
     setTimeout(()=>map.invalidateSize(), 180);
   }
@@ -561,7 +524,6 @@
     if (e.key === 'Escape' && mapCard.classList.contains('fullscreen')) { exitFS(); }
   });
 
-  // ======= Hindari tumpang tindih kontrol Leaflet (offset dinamis) =======
   function updateLeafletTopOffset(){
     const tl = document.querySelector('#map .leaflet-top.leaflet-left');
     const tb = document.querySelector('.toolbar');
@@ -573,31 +535,25 @@
   const ro = (window.ResizeObserver) ? new ResizeObserver(updateLeafletTopOffset) : null;
   ro?.observe(document.querySelector('.toolbar'));
 
-  // ======= Keamanan CSV =======
   function cleanCSVText(txt){ return String(txt || '').replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n'); }
-
   function validateCSVOrThrow(text){
     if (/[\x00-\x08\x0B\x0C\x0E-\x1F]/.test(text)) throw new Error('CSV mengandung karakter kontrol/biner.');
     const lines = text.split(/\r?\n/);
     if (lines.length > 10000) throw new Error('CSV terlalu banyak baris (>10k).');
     for (const ln of lines) if (ln.length > 2000) throw new Error('Ada baris terlalu panjang (>2000 karakter).');
-
     for (const raw of lines){
-      const line = raw.trim();
-      if (!line) continue;
+      const line = raw.trim(); if (!line) continue;
       if (/^[=+@]/.test(line)) throw new Error('Baris CSV diawali simbol formula (=,+,@). Ditolak.');
       if (/^-[^0-9]/.test(line)) throw new Error('Baris CSV mencurigakan.');
     }
     for (const raw of lines){
-      const line = raw.trim();
-      if (!line || /^#/.test(line)) continue;
+      const line = raw.trim(); if (!line || /^#/.test(line)) continue;
       const nums = extractNumbers(line);
       if (nums.length === 0) continue;
       if (nums.length > 2) throw new Error('Format baris tidak valid (terlalu banyak angka).');
       if (nums[0] <= 0) throw new Error('Nilai r harus > 0.');
     }
   }
-
   function extractCenterFromLines(lines){
     for (let k = 0; k < Math.min(3, lines.length); k++){
       const raw = lines[k];
@@ -616,20 +572,16 @@
     }
     return null;
   }
-
   async function ingestCSVText(csvText){
     const MAX_BYTES = 2 * 1024 * 1024;
     if (csvText.length > MAX_BYTES) throw new Error('File terlalu besar (>2MB).');
-
     let text = cleanCSVText(csvText);
-    validateCSVOrThrow(text);   // keamanan
-
+    validateCSVOrThrow(text);
     let lines = text.split('\n').map(s=>s.trim()).filter(s=>s && !/^#/.test(s));
     const center = extractCenterFromLines(lines);
     const body = lines.join('\n');
     const arr = parseData(body);
     if (!arr.length) throw new Error('CSV tidak berisi data r/Po yang valid.');
-
     if (center){
       settings.lat = center.lat; settings.lon = center.lon;
       savePartial({ lat: center.lat, lon: center.lon });
@@ -641,7 +593,6 @@
     settings.csv = body; savePartial({ csv: body }); rings = arr; replay();
   }
 
-  // ======= Export CSV (pusat + rings) =======
   function fmt(n, d=6){ return Number(n).toFixed(d).replace(/\.?0+$/,''); }
   function slug(s){
     return String(s||'').toLowerCase()
@@ -656,7 +607,7 @@
     for (const d of arr){
       lines.push( fmt(d.r) + (d.Po!=null ? ', ' + fmt(d.Po) : '') );
     }
-    const csv = '\uFEFF' + lines.join('\r\n'); // BOM utk Excel
+    const csv = '\uFEFF' + lines.join('\r\n');
     const name = slug(placeName || `${settings.lat.toFixed(5)}_${settings.lon.toFixed(5)}`) || 'location';
     const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
     const a = document.createElement('a');
@@ -667,7 +618,6 @@
     setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 0);
   }
 
-  // ======= Toolbar bindings =======
   document.getElementById('palSel').value = settings.pal;
   document.getElementById('latIn').value   = settings.lat;
   document.getElementById('lonIn').value   = settings.lon;
@@ -693,7 +643,6 @@
     replay();
   });
 
-  // Import CSV handlers
   const fileIn = document.getElementById('fileIn');
   document.getElementById('btnImport').addEventListener('click', ()=> fileIn.click());
   fileIn.addEventListener('change', async (e)=>{
@@ -707,10 +656,8 @@
     finally{ fileIn.value = ''; }
   });
 
-  // Export CSV handler
   document.getElementById('btnExport').addEventListener('click', exportCSV);
 
-  // Copy-guard ringan (bypassable)
   document.addEventListener('contextmenu', (e)=>{
     if (e.target.closest('#map, .toolbar, .legend')) e.preventDefault();
   });
@@ -721,23 +668,28 @@
     }
   });
 
-  // ======= Start =======
   (function init(){
     setHeading('Loading…');
     refreshPlaceName(settings.lat, settings.lon);
     document.getElementById('btnPlay').textContent = '▶ Play';
     setFSLabel(false);
-    updateLeafletTopOffset(); // hindari tumpang tindih awal
+    updateLeafletTopOffset();
     play();
   })();
+
+  function setFSLabel(on){
+    const txt = on ? '⛶ Exit Fullscreen' : '⛶ Fullscreen';
+    const fsBtn = document.getElementById('fsBtn'), fsBtnMobile = document.getElementById('fsBtnMobile');
+    [fsBtn, fsBtnMobile].forEach(b=>{ if(!b) return; b.textContent = txt; b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+  }
+  function refreshLegend(){ /* redefined above; kept */ }
   </script>
 
-  <!-- ===== Anti-Tamper Sentry: wipe total bila script/style/elemen inti diutak-atik ===== -->
+  <!-- Anti-Tamper Sentry -->
   <script>
   (function(){
     'use strict';
     const SAFE_ROOTS = ['#map', '#mapCard', '.toolbar', '#legend', '#pageTitle', '.wrap', '.leaflet-control-container', '.leaflet-pane'];
-
     const baseline = {
       headScripts: Array.from(document.querySelectorAll('head script[src]')).map(e => e.src),
       headStyles : Array.from(document.querySelectorAll('head link[rel*=stylesheet][href]')).map(e => e.href)
