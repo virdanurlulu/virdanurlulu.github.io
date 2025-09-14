@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overpressure vs Distance Chart</title>
+    <!-- Import the Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Basic styling for the page */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+        }
+        /* Container for the chart to give it a card-like appearance */
+        .chart-container {
+            width: 90%;
+            max-width: 900px;
+            padding: 25px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chart-container">
+        <!-- The canvas element where the chart will be drawn -->
+        <canvas id="overpressureChart"></canvas>
+    </div>
+
+    <script>
+        // --- DATA FOR THE CHART ---
+        // You can replace these with your actual data for each curve.
+
+        // Data now formatted as {x, y} pairs for a linear axis
+        const crowlData = [
+            {x: 200, y: 50.00}, {x: 400, y: 28.00}, {x: 600, y: 18.00}, {x: 800, y: 12.00}, {x: 1000, y: 9.50},
+            {x: 1500, y: 6.00}, {x: 2000, y: 4.50}, {x: 2500, y: 3.80}, {x: 3000, y: 3.20}, {x: 4000, y: 2.30}, {x: 5000, y: 1.90}
+        ];
+        const alonsoData = [
+            {x: 200, y: 37.00}, {x: 400, y: 20.00}, {x: 600, y: 13.00}, {x: 800, y: 8.00}, {x: 1000, y: 6.00},
+            {x: 1500, y: 3.50}, {x: 2000, y: 2.50}, {x: 2500, y: 2.00}, {x: 3000, y: 1.60}, {x: 4000, y: 1.30}, {x: 5000, y: 1.10}
+        ];
+        const sadovskiData = [
+            {x: 200, y: 25.00}, {x: 400, y: 15.00}, {x: 600, y: 10.00}, {x: 800, y: 7.00}, {x: 1000, y: 5.00},
+            {x: 1500, y: 3.00}, {x: 2000, y: 2.20}, {x: 2500, y: 1.80}, {x: 3000, y: 1.50}, {x: 4000, y: 1.20}, {x: 5000, y: 1.00}
+        ];
+
+
+        // --- CHART CONFIGURATION ---
+
+        // Get the canvas element from the HTML
+        const ctx = document.getElementById('overpressureChart').getContext('2d');
+
+        // Create the chart instance
+        const overpressureChart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'line',
+
+            // The data for our dataset
+            data: {
+                datasets: [
+                    {
+                        label: 'Crowl',
+                        data: crowlData,
+                        borderColor: 'rgb(255, 99, 132)', // Red
+                        borderWidth: 2.5,
+                        tension: 0.4, // This makes the line curved
+                        pointRadius: 0 // Hides the data points on the line
+                    },
+                    {
+                        label: 'Alonso',
+                        data: alonsoData,
+                        borderColor: 'rgb(54, 162, 235)', // Blue
+                        borderWidth: 2.5,
+                        tension: 0.4,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Sadovski',
+                        data: sadovskiData,
+                        borderColor: 'rgb(75, 192, 192)', // Cyan/Green
+                        borderWidth: 2.5,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }
+                ]
+            },
+
+            // Configuration options
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    // Chart Title Configuration
+                    title: {
+                        display: true,
+                        text: 'Overpressure vs Distance',
+                        font: {
+                            size: 20,
+                            weight: 'bold'
+                        },
+                        padding: {
+                            top: 10,
+                            bottom: 30
+                        }
+                    },
+                    // Legend configuration updated to use line style
+                    legend: {
+                        display: true,
+                        position: 'top', // Position the legend at the top
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'line',
+                        }
+                    }
+                },
+                // Axis Configuration
+                scales: {
+                    x: {
+                        type: 'linear', // Set the axis type to handle numbers correctly
+                        min: 0, // Start the axis from 0
+                        title: {
+                            display: true,
+                            text: 'Distance [m]',
+                            font: {
+                                size: 14,
+                                weight: '500'
+                            }
+                        },
+                        grid: {
+                            drawOnChartArea: true,
+                        }
+                    },
+                    y: {
+                        beginAtZero: true, // This ensures the y-axis starts at 0
+                        // By removing the 'max' property, the maximum is now automatic
+                        title: {
+                            display: true,
+                            text: 'Overpressure [kPa]',
+                            font: {
+                                size: 14,
+                                weight: '500'
+                            }
+                        },
+                        grid: {
+                            drawOnChartArea: true,
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
+
+
