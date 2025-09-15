@@ -1036,35 +1036,36 @@
 
       function makeDraggable(panel, handle) {
           let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-          
-          const dragMouseDown = (e) => {
-              e.preventDefault();
-              let currentEvent = e.type.startsWith('touch') ? e.touches[0] : e;
-              if (!currentEvent) return;
+          let isDragging = false;
+
+          const dragStart = (e) => {
+              isDragging = true;
+              panel.style.transition = 'none'; // Disable transition on drag start
               
+              const rect = panel.getBoundingClientRect();
+              panel.style.width = rect.width + 'px';
+              panel.style.left = rect.left + 'px';
+              panel.style.transform = 'none';
+
+              let currentEvent = e.type.startsWith('touch') ? e.touches[0] : e;
               pos3 = currentEvent.clientX;
               pos4 = currentEvent.clientY;
               
-              panel.style.width = panel.offsetWidth + 'px';
-              panel.style.transform = 'none';
-
-              document.addEventListener('mouseup', closeDragElement);
+              document.addEventListener('mouseup', dragEnd);
               document.addEventListener('mousemove', elementDrag);
-              document.addEventListener('touchend', closeDragElement);
+              document.addEventListener('touchend', dragEnd);
               document.addEventListener('touchmove', elementDrag, { passive: false });
               document.body.classList.add('dragging');
           };
           
-          handle.addEventListener('mousedown', dragMouseDown);
-          handle.addEventListener('touchstart', dragMouseDown, { passive: false });
+          handle.addEventListener('mousedown', dragStart);
+          handle.addEventListener('touchstart', dragStart, { passive: false });
 
           function elementDrag(e) {
-              if (e.type === 'touchmove') {
-                  e.preventDefault();
-              }
+              if (!isDragging) return;
+              if (e.type === 'touchmove') e.preventDefault();
+              
               let currentEvent = e.type.startsWith('touch') ? e.touches[0] : e;
-              if (!currentEvent) return;
-
               pos1 = pos3 - currentEvent.clientX;
               pos2 = pos4 - currentEvent.clientY;
               pos3 = currentEvent.clientX;
@@ -1075,10 +1076,13 @@
               panel.style.bottom = 'auto'; 
           }
 
-          function closeDragElement() {
-              document.removeEventListener('mouseup', closeDragElement);
+          function dragEnd() {
+              if (!isDragging) return;
+              isDragging = false;
+              panel.style.transition = '';
+              document.removeEventListener('mouseup', dragEnd);
               document.removeEventListener('mousemove', elementDrag);
-              document.removeEventListener('touchend', closeDragElement);
+              document.removeEventListener('touchend', dragEnd);
               document.removeEventListener('touchmove', elementDrag);
               document.body.classList.remove('dragging');
           }
@@ -1293,7 +1297,7 @@
           }
       });
       
-      window.addEventListener('resize', () => {
+      window.addEventListener('resize', debounce(() => {
           if (isPanelHidden) {
               isPanelHidden = false;
               floatingPanel.classList.remove('hidden');
@@ -1308,7 +1312,7 @@
               cardOriginalTop = materialCard.offsetTop + materialCard.offsetHeight;
           }
           window.dispatchEvent(new Event('scroll'));
-      });
+      }, 250));
       
       floatPanelCloseBtn.addEventListener('click', () => {
           isPanelHidden = true;
