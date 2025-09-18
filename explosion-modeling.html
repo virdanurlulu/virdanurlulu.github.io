@@ -1,137 +1,284 @@
 <!doctype html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Explosion Contour - Share Result</title>
+  <title>Explosion Contour Simulator</title>
 
-  <!-- SEO & Share preview (opsional, boleh ganti gambar) -->
-  <meta name="description" content="Input koordinat + data r/Po, render kontur ledakan, dan bagikan hasil lewat tautan yang menyimpan seluruh pengaturan.">
-  <meta property="og:title" content="Explosion Contour - Share Result">
-  <meta property="og:description" content="Input koordinat + data r/Po, render kontur ledakan, dan bagikan hasil lewat tautan yang menyimpan seluruh pengaturan.">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="https://raw.githubusercontent.com/virdanurlulu/virdanurlulu.github.io/refs/heads/main/img/ITB-Exlosion-Modeling-Simulation.webp">
-  <meta name="twitter:card" content="summary_large_image">
-
+  <meta name="description" content="Interactive tool to visualize explosion contours with customizable settings.">
   <link rel="preconnect" href="https://unpkg.com" crossorigin>
   <link rel="dns-prefetch" href="//unpkg.com">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
   <style>
-    :root{--ink:#0f172a;--muted:#64748b;--card:#fff;--bg:#f6f8fb;--brand:#1296d4}
+    :root{--ink:#0f172a;--muted:#64748b;--card:#fff;--bg:#f6f8fb;--brand:#1296d4;--brand-hover:#1082b9;}
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,Segoe UI,Roboto,Arial}
-    .wrap{max-width:1200px;margin:auto;padding:16px}
-    .grid{display:grid;gap:16px;grid-template-columns:360px 1fr}
+    body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,Segoe UI,Roboto,Arial; overflow: hidden;}
+    
+    .wrap{
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 16px;
+      max-width: 1800px;
+      height: 100vh;
+      margin: auto;
+      padding: 16px;
+    }
     .card{background:var(--card);border-radius:14px;box-shadow:0 8px 24px rgba(2,8,20,.08);padding:14px}
-    h1{font-size:20px;margin:4px 0 12px}
-    label{font-weight:600;font-size:14px}
-    input,textarea,select,button{width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:10px}
-    textarea{resize:vertical;min-height:140px}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .btn{background:var(--brand);color:#fff;border:none;font-weight:700;cursor:pointer}
-    .btn:disabled{opacity:.6;cursor:not-allowed}
-    #map{height:72vh;border-radius:14px;overflow:hidden}
-    .muted{color:var(--muted)}
-    .legend{position:absolute;z-index:1000;bottom:12px;left:12px;background:#fff;border-radius:10px;
+    
+    #settings-panel {
+      padding: 24px;
+      overflow-y: auto;
+    }
+    #map-card {
+      padding: 0;
+      height: calc(100vh - 32px);
+      display: flex;
+      flex-direction: column;
+    }
+    #map{flex-grow:1; border-radius:14px;overflow:hidden}
+
+    #settings-title {
+        display: none; /* Hidden on desktop */
+        font-size: 20px;
+        margin: 0 0 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #e5e7eb;
+        line-height: 1.3;
+    }
+    #settings-title small {
+        display: block;
+        font-size: 14px;
+        color: var(--muted);
+        font-weight: normal;
+        margin-top: 4px;
+    }
+
+    #map-title {
+        position: absolute;
+        top: 12px;
+        left: 58px; /* Space for zoom controls */
+        z-index: 1002;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 8px 14px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(2,8,20,.12);
+        max-width: 450px;
+        font-size: 16px;
+        font-weight: 700;
+        margin: 0;
+        line-height: 1.3;
+    }
+    #map-title small {
+        display: block;
+        font-size: 13px;
+        font-weight: 500;
+        margin-top: 3px;
+        color: var(--muted);
+    }
+    
+    .form-group{margin-bottom: 16px;}
+    label{font-weight:600;display:block;margin-bottom:6px;font-size:14px;}
+    .form-group small{font-size:12px;color:var(--muted);display:block;margin-top:4px;}
+    input[type="number"], textarea, select{
+      width:100%;
+      padding:10px;
+      border:1px solid #d1d5db;
+      border-radius:8px;
+      background:#f9fafb;
+      font-size:14px;
+    }
+    textarea{min-height:120px;font-family:monospace;resize:vertical;}
+    
+    #locationName {
+        font-weight: 500;
+        font-size: 14px;
+        padding-top: 4px;
+    }
+
+    .render-btn{
+      width:100%;
+      padding:12px;
+      background:var(--brand);
+      color:#fff;
+      border:none;
+      border-radius:10px;
+      font-size:16px;
+      font-weight:700;
+      cursor:pointer;
+      transition: background-color .2s;
+    }
+    .render-btn:hover{background: var(--brand-hover);}
+
+    .actions-group {
+        margin-top: 24px;
+    }
+    .io-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 12px;
+    }
+    .io-btn {
+        padding: 10px;
+        border: 1px solid #d1d5db;
+        background: #fff;
+        color: var(--ink);
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        transition: background-color .2s, border-color .2s;
+    }
+    .io-btn:hover {
+        background: #f9fafb;
+        border-color: #9ca3af;
+    }
+
+    .legend{position:absolute;z-index:1001;bottom:12px;left:12px;background:rgba(255,255,255,0.9);border-radius:10px;
       box-shadow:0 6px 18px rgba(2,8,20,.15);padding:10px 12px;font:14px/1.2 system-ui,Segoe UI,Roboto,Arial}
-    .legend b{display:block;margin-bottom:6px}
-    .sharebox{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px}
-    #shareurl{font-size:12px;color:#334155;word-break:break-all;background:#f8fafc}
-    @media (max-width:960px){.grid{grid-template-columns:1fr} #map{height:64vh}}
+    .legend .muted {font-size: 12px; color: var(--muted);}
+
+    /* Fullscreen overlay */
+    #map-card{position:relative}
+    .fs-btn{
+      position:absolute; z-index:1002; top:12px; right:12px;
+      background:rgba(255,255,255,.95); border:1px solid #e5e7eb; border-radius:10px;
+      padding:8px 10px; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(2,8,20,.12)
+    }
+    .fs-btn:active{transform:translateY(1px)}
+    .fs-host.fullscreen{position:fixed; inset:0; z-index:9999; margin:0; border-radius:0; padding:0; background:#000;}
+    .fs-host.fullscreen #map{height:100dvh; height:100vh; border-radius:0}
+    body.fs-lock{overflow:hidden}
+
+    @media (max-width:960px){
+      body{overflow:auto;}
+      .wrap{grid-template-columns:1fr; height:auto;}
+      #map-card{height:65vh;}
+      #map-title { display: none; }
+      #settings-title { display: block; }
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>Explosion Contour - Share Result</h1>
-    <div class="grid">
-      <!-- Panel Input -->
-      <div class="card" aria-label="Panel input parameter">
-        <div class="row">
-          <div>
-            <label for="lat">Latitude pusat (W2)</label>
-            <input id="lat" type="number" step="any" value="39.041475">
-          </div>
-          <div>
-            <label for="lon">Longitude pusat (X2)</label>
-            <input id="lon" type="number" step="any" value="117.74265">
-          </div>
-        </div>
-
-        <div style="margin-top:10px">
-          <label for="data">Data Distance (r, meter) &amp; Po (opsional)</label>
-          <textarea id="data" placeholder="Satu baris per ring: r, Po (atau r saja)"></textarea>
-          <div class="muted" style="margin-top:6px">
-            Contoh: <code>49, 2042.348</code> (pemisah: koma / titik koma / spasi / tab)
-          </div>
-        </div>
-
-        <div class="row" style="margin-top:10px">
-          <div>
-            <label for="npoints">nPoints (kepadatan lingkaran)</label>
-            <input id="npoints" type="number" min="16" max="360" step="1" value="90">
-          </div>
-          <div>
-            <label for="interval">Interval animasi (ms)</label>
-            <input id="interval" type="number" min="0" step="1" value="124">
-          </div>
-        </div>
-
-        <details style="margin-top:10px" open>
-          <summary>Advanced style</summary>
-          <div class="row" style="margin-top:8px">
-            <div><label for="opaStart">Opacity awal</label><input id="opaStart" type="number" step="0.01" min="0" max="1" value="0.22"></div>
-            <div><label for="opaFinal">Opacity final</label><input id="opaFinal" type="number" step="0.01" min="0" max="1" value="0.11"></div>
-          </div>
-          <div class="row" style="margin-top:8px">
-            <div><label for="strokeW">Stroke width</label><input id="strokeW" type="number" step="0.05" min="0" value="0.3"></div>
-            <div>
-              <label for="palette">Palette</label>
-              <select id="palette" aria-label="Palet warna">
-                <option value="bright" selected>Cerah (default)</option>
-                <option value="bluegreen">Biru–Hijau</option>
-                <option value="heat">Heat</option>
-              </select>
-            </div>
-          </div>
-        </details>
-
-        <div class="row" style="margin-top:10px">
-          <button id="render" class="btn">Render &amp; Animasi</button>
-          <button id="clear"  class="btn" style="background:#ef4444">Bersihkan</button>
-        </div>
-
-        <!-- Share link -->
-        <div class="sharebox">
-          <input id="shareurl" readonly placeholder="Share link akan muncul di sini…" aria-label="Share link" />
-          <button id="copy" class="btn" title="Salin link ke clipboard">Copy Share Link</button>
-        </div>
-        <div class="muted" style="margin-top:8px">
-          Link menyimpan: lat, lon, <b>seluruh teks r/Po</b> (apa adanya), <b>nPoints</b>, <b>interval</b>, <b>opacity awal/akhir</b>, <b>stroke width</b>, dan <b>palette</b>.
-        </div>
+    <div id="settings-panel" class="card">
+      <h1 id="settings-title">
+        Modeling and Visualization of Explosion Overpressure Contours
+        <small id="settings-subtitle">Loading location...</small>
+      </h1>
+      
+      <div class="form-group">
+        <label for="lat">Latitude</label>
+        <input type="number" id="lat" step="any">
+      </div>
+      <div class="form-group">
+        <label for="lon">Longitude</label>
+        <input type="number" id="lon" step="any">
+      </div>
+      
+      <div class="form-group">
+        <label for="csv">Radius (m), Pressure (kPa) Data</label>
+        <textarea id="csv" spellcheck="false"></textarea>
+        <small>One line per ring. Format: `radius, pressure`</small>
       </div>
 
-      <!-- Peta -->
-      <div class="card" style="position:relative">
-        <div id="map" role="region" aria-label="Peta kontur ledakan"></div>
-        <div class="legend" id="legend" hidden></div>
+      <div class="form-group">
+        <label for="np">Points Per Ring</label>
+        <input type="number" id="np" min="3" max="360">
+        <small>Higher values create smoother circles.</small>
       </div>
+      
+      <div class="form-group">
+        <label for="iv">Animation Interval (ms)</label>
+        <input type="number" id="iv" min="0">
+        <small>Delay between each ring's appearance.</small>
+      </div>
+      
+      <div class="form-group">
+        <label for="os">Initial Opacity</label>
+        <input type="number" id="os" min="0" max="1" step="0.05">
+      </div>
+      
+      <div class="form-group">
+        <label for="of">Final Opacity</label>
+        <input type="number" id="of" min="0" max="1" step="0.05">
+      </div>
+
+      <div class="form-group">
+        <label for="sw">Stroke Width</label>
+        <input type="number" id="sw" min="0" max="10" step="0.1">
+      </div>
+
+      <div class="form-group">
+        <label for="pal">Color Palette</label>
+        <select id="pal">
+          <option value="bright">Bright</option>
+          <option value="heat">Heat</option>
+          <option value="bluegreen">Blue-Green</option>
+        </select>
+      </div>
+      
+      <div class="actions-group">
+        <button id="renderBtn" class="render-btn">Render</button>
+        <div class="io-buttons">
+          <button id="importBtn" class="io-btn">Import CSV</button>
+          <button id="exportBtn" class="io-btn">Export CSV</button>
+        </div>
+        <input type="file" id="importFile" hidden accept=".csv,.txt">
+      </div>
+    </div>
+
+    <div class="card fs-host" id="map-card">
+      <h1 id="map-title">
+        Modeling and Visualization of Explosion Overpressure Contours
+        <small id="map-subtitle">Loading location...</small>
+      </h1>
+      <button id="fsBtn" class="fs-btn" aria-pressed="false" title="Fullscreen (F)">⛶ Fullscreen</button>
+      <div id="map" role="region" aria-label="Explosion contour map"></div>
+      <div class="legend" id="legend" hidden></div>
     </div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-  // ======= Judul sinkron (opsional) =======
-  (function syncTitle(){
-    const APP_TITLE = "Explosion Contour - Share Result";
-    document.title = APP_TITLE;
-    const h1 = document.querySelector('h1');
-    if (h1) h1.textContent = APP_TITLE;
-  })();
+  // ======= INITIAL SETTINGS =======
+  const initialSettings = {
+    lat: 33.901436,
+    lon: 35.519057,
+    csv: `49, 2042.348\n150, 159.4947\n300, 41.51972\n500, 19.59217\n1000, 8.648397\n3000, 2.768441`,
+    np: 90,
+    iv: 250,
+    os: 0.3,
+    of: 0.2,
+    sw: 0.3,
+    pal: 'bright'
+  };
+  
+  const ui = {
+      lat: document.getElementById('lat'),
+      lon: document.getElementById('lon'),
+      csv: document.getElementById('csv'),
+      np: document.getElementById('np'),
+      iv: document.getElementById('iv'),
+      os: document.getElementById('os'),
+      of: document.getElementById('of'),
+      sw: document.getElementById('sw'),
+      pal: document.getElementById('pal'),
+      renderBtn: document.getElementById('renderBtn'),
+      importBtn: document.getElementById('importBtn'),
+      exportBtn: document.getElementById('exportBtn'),
+      importFile: document.getElementById('importFile'),
+      fsBtn: document.getElementById('fsBtn'),
+      mapCard: document.getElementById('map-card'),
+      legend: document.getElementById('legend'),
+      mapSubtitle: document.getElementById('map-subtitle'),
+      settingsSubtitle: document.getElementById('settings-subtitle')
+  };
 
-  // ======= Basemap & Map init =======
-  const map = L.map('map', {center:[-6.2,106.8], zoom: 5, zoomControl:true});
+  // ======= Map Initialization =======
+  const map = L.map('map', {center:[initialSettings.lat, initialSettings.lon], zoom: 14, zoomControl:true});
   L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{
     maxZoom:19, attribution:'Tiles © Esri'
   }).addTo(map);
@@ -142,7 +289,6 @@
     bluegreen: ["#203a8f","#2d6cdf","#3fb6ff","#27c3a4","#15a371","#0f7a54","#0b533b","#083b2c"],
     heat: ["#4b0d0d","#7a1f0e","#ad3510","#e65a0d","#ff8c00","#ffb200","#ffd000","#ffe680"]
   };
-  const $ = id => document.getElementById(id);
 
   function parseData(text){
     const out = [];
@@ -150,9 +296,9 @@
     for(const r of rows){
       const parts = r.trim().split(/[,\t; ]+/).filter(Boolean);
       const rVal = Number((parts[0]||'').replace(',', '.'));
-      const poVal = parts.length>1 ? Number((parts[1]||'').replace(',', '.')) : null;
-      if(isFinite(rVal) && rVal>0){
-        out.push({r:rVal, Po: isFinite(poVal)?poVal:null});
+      const poVal = parts.length > 1 ? Number((parts[1]||'').replace(',', '.')) : null;
+      if(isFinite(rVal) && rVal > 0){
+        out.push({r:rVal, Po: isFinite(poVal) ? poVal : null});
       }
     }
     out.sort((a,b)=>a.r-b.r);
@@ -160,199 +306,200 @@
   }
 
   function circleCoords(lat0, lon0, R, n=90){
-    const latRad0 = lat0*Math.PI/180;
+    const latRad0 = lat0 * Math.PI / 180;
     const coords = [];
-    for(let i=0;i<=n;i++){
-      const th = 2*Math.PI*i/n;
-      const lat = lat0 + (R*Math.sin(th))/110574.0;
-      const lon = lon0 + (R*Math.cos(th))/(111320.0*Math.cos(latRad0));
-      coords.push([lat, lon]); // Leaflet LatLng order
+    for(let i=0; i<=n; i++){
+      const th = 2 * Math.PI * i / n;
+      const lat = lat0 + (R * Math.sin(th)) / 110574.0;
+      const lon = lon0 + (R * Math.cos(th)) / (111320.0 * Math.cos(latRad0));
+      coords.push([lat, lon]);
     }
     return coords;
   }
-
-  // ======= Base64 URL-safe encoder/decoder tanpa API deprecated =======
-  const b64url = (() => {
-    const te = new TextEncoder();
-    const td = new TextDecoder();
-    function toB64Url(str){
-      const bytes = te.encode(str);
-      let bin = "";
-      for(let i=0;i<bytes.length;i++){ bin += String.fromCharCode(bytes[i]); }
-      const b64 = btoa(bin);
-      return b64.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  
+  // ======= UI and Render Logic =======
+  function populateUI(settings) {
+    for (const key in settings) {
+        if (ui[key] && typeof settings[key] !== 'undefined') {
+            ui[key].value = settings[key];
+        }
     }
-    function fromB64Url(b64u){
-      const b64 = (b64u||'').replace(/-/g,'+').replace(/_/g,'/') + '==='.slice((b64u||'').length%4);
-      const bin = atob(b64);
-      const bytes = new Uint8Array(bin.length);
-      for(let i=0;i<bin.length;i++){ bytes[i] = bin.charCodeAt(i); }
-      return td.decode(bytes);
-    }
+  }
+  
+  function getSettingsFromUI() {
     return {
-      enc: obj => toB64Url(JSON.stringify(obj)),
-      dec: str => JSON.parse(fromB64Url(str))
-    };
-  })();
-
-  // ======= State & URL =======
-  function getState(){
-    return {
-      lat: parseFloat($('lat').value),
-      lon: parseFloat($('lon').value),
-      csv: $('data').value || '',               // seluruh teks r/Po disimpan apa adanya
-      np:  Math.max(16, Math.min(360, parseInt($('npoints').value||90,10))),
-      iv:  Math.max(0, parseInt($('interval').value||124,10)),
-      os:  Math.max(0, Math.min(1, parseFloat($('opaStart').value||0.22))),
-      of:  Math.max(0, Math.min(1, parseFloat($('opaFinal').value||0.11))),
-      sw:  Math.max(0, parseFloat($('strokeW').value||0.3)),
-      pal: $('palette').value || 'bright'
+      lat: parseFloat(ui.lat.value) || 0,
+      lon: parseFloat(ui.lon.value) || 0,
+      csv: ui.csv.value,
+      np: parseInt(ui.np.value, 10) || 90,
+      iv: parseInt(ui.iv.value, 10) || 250,
+      os: parseFloat(ui.os.value) || 0.3,
+      of: parseFloat(ui.of.value) || 0.2,
+      sw: parseFloat(ui.sw.value) || 0.3,
+      pal: ui.pal.value || 'bright'
     };
   }
-  function setState(s){
-    if(s.lat!=null) $('lat').value = s.lat;
-    if(s.lon!=null) $('lon').value = s.lon;
-    if(s.csv!=null) $('data').value = s.csv;
-    if(s.np!=null) $('npoints').value = s.np;
-    if(s.iv!=null) $('interval').value = s.iv;
-    if(s.os!=null) $('opaStart').value = s.os;
-    if(s.of!=null) $('opaFinal').value = s.of;
-    if(s.sw!=null) $('strokeW').value = s.sw;
-    if(s.pal!=null) $('palette').value = s.pal;
-  }
-  function makeShareURL(){
-    const q = b64url.enc(getState());
-    return `${location.origin}${location.pathname}?s=${q}`;
-  }
-  function loadFromURLIfAny(){
-    const sp = new URLSearchParams(location.search);
-    const s = sp.get('s');
-    if(!s) return false;
-    try{
-      const obj = b64url.dec(s);
-      setState(obj);
-      $('shareurl').value = `${location.origin}${location.pathname}?s=${s}`;
-      return true;
-    }catch(e){ console.warn('Gagal decode state dari URL', e); }
-    return false;
-  }
-  function updateURL(){
-    const url = makeShareURL();
-    history.replaceState(null, '', url);
-    $('shareurl').value = url;
+
+  async function fetchLocationName(lat, lon) {
+    try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=en`);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+        const address = data.address;
+        const name = data.display_name || 'Unknown location';
+        const locationString = [address.city, address.state, address.country].filter(Boolean).join(', ');
+        
+        return locationString || name;
+    } catch (error) {
+        console.error("Failed to fetch location name:", error);
+        return 'Failed to load location';
+    }
   }
 
-  // ======= Rendering =======
   let finalLayer = null;
   let animHandles = [];
   function clearMap(){
     animHandles.forEach(h => clearTimeout(h));
     animHandles = [];
     if(finalLayer){ map.removeLayer(finalLayer); finalLayer=null; }
-    // hapus polygon/geojson
     const toRemove = [];
-    map.eachLayer(l=>{ if(l instanceof L.Polygon || l instanceof L.GeoJSON){ toRemove.push(l);} });
-    toRemove.forEach(l=>map.removeLayer(l));
-    $('legend').hidden = true;
+    map.eachLayer(l => { if(l instanceof L.Polygon || l instanceof L.GeoJSON){ toRemove.push(l);} });
+    toRemove.forEach(l => map.removeLayer(l));
+    ui.legend.hidden = true;
   }
 
-  function render(){
+  async function renderMap(){
     clearMap();
-    const s = getState();
+    const s = getSettingsFromUI();
+    const locationName = await fetchLocationName(s.lat, s.lon);
+    ui.mapSubtitle.textContent = locationName;
+    ui.settingsSubtitle.textContent = locationName;
+    
     const rings = parseData(s.csv);
-    if(!isFinite(s.lat)||!isFinite(s.lon)){ alert('Lat/Lon tidak valid.'); return; }
-    if(!rings.length){ alert('Data r/Po kosong atau tidak valid.'); return; }
-
+    if (rings.length === 0) return;
+    
     const pal = (palettes[s.pal] || palettes.bright);
     const tempLayers = [];
 
-    // anim kecil -> besar
-    rings.forEach((d, idx)=>{
-      const t = setTimeout(()=>{
+    rings.forEach((d, idx) => {
+      const t = setTimeout(() => {
         const coords = circleCoords(s.lat, s.lon, d.r, s.np);
         const layer = L.polygon(coords, {
           color: "#000000",
           weight: s.sw,
           fillColor: pal[idx % pal.length],
           fillOpacity: s.os
-        }).bindPopup(`<b>r = ${d.r} m</b>${d.Po!=null?`<br>Po: <code>${d.Po}</code>`:''}`).addTo(map);
+        }).bindPopup(`<b>r = ${d.r} m</b>${d.Po!=null?`<br>Po: <code>${d.Po} kPa</code>`:''}`).addTo(map);
         tempLayers.push(layer);
-        if(idx===0){
-          try{ map.setView([s.lat,s.lon], 14); }catch(e){}
-        }
-      }, idx*s.iv);
+        if(idx === 0){ try{ map.setView([s.lat, s.lon], map.getZoom()); }catch(e){} }
+      }, idx * s.iv);
       animHandles.push(t);
     });
 
-    // setelah animasi: hapus temp, gambar semua (besar -> kecil), fit bounds, update URL
-    const tFinal = setTimeout(()=>{
-      tempLayers.forEach(l=>map.removeLayer(l));
+    const tFinal = setTimeout(() => {
+      tempLayers.forEach(l => map.removeLayer(l));
       const reversed = rings.slice().reverse();
       finalLayer = L.featureGroup(
-        reversed.map((d, idx)=>{
+        reversed.map((d, idx) => {
           const coords = circleCoords(s.lat, s.lon, d.r, s.np);
           return L.polygon(coords, {
             color: "#000000",
             weight: s.sw,
-            fillColor: pal[(rings.length-1-idx) % pal.length],
+            fillColor: pal[(rings.length - 1 - idx) % pal.length],
             fillOpacity: s.of
-          }).bindPopup(`<b>r = ${d.r} m</b>${d.Po!=null?`<br>Po: <code>${d.Po}</code>`:''}`);
+          }).bindPopup(`<b>r = ${d.r} m</b>${d.Po!=null?`<br>Po: <code>${d.Po} kPa</code>`:''}`);
         })
       ).addTo(map);
+      
       try{ map.fitBounds(finalLayer.getBounds(), {padding:[20,20]}); }catch(e){}
-      $('legend').innerHTML = `<b>Kontur Ledakan</b>
-        <div>Pusat: ${s.lat.toFixed(6)}, ${s.lon.toFixed(6)}</div>
-        <div>Rings: ${rings.map(x=>x.r).join(', ')} m</div>
-        <hr style="border:none;border-top:1px solid #e5e7eb;margin:8px 0">
-        <div class="muted">nPoints=${s.np}, interval=${s.iv} ms</div>
-        <div class="muted">opacity awal=${s.os}, akhir=${s.of}, strokeW=${s.sw}, palette=${s.pal}</div>`;
-      $('legend').hidden = false;
-
-      updateURL(); // pastikan semua point & angka Advanced terserap di share link
-    }, rings.length*s.iv + 300);
+      
+      const leg = ui.legend;
+      leg.innerHTML = `<b>Explosion Contour</b>
+        <div>Center: ${s.lat.toFixed(6)}, ${s.lon.toFixed(6)}</div>
+        <div>Rings: ${rings.map(x=>x.r).join(', ')} m</div>`;
+      leg.hidden = false;
+    }, rings.length * s.iv + 300);
     animHandles.push(tFinal);
   }
+  
+  ui.renderBtn.addEventListener('click', renderMap);
 
-  // ======= Wire UI =======
-  const inputs = ['lat','lon','data','npoints','interval','opaStart','opaFinal','strokeW','palette'];
-  inputs.forEach(id=>{
-    $(id).addEventListener('input', ()=>{ $('shareurl').value = makeShareURL(); history.replaceState(null,'', $('shareurl').value); });
-    $(id).addEventListener('change', ()=>{ $('shareurl').value = makeShareURL(); history.replaceState(null,'', $('shareurl').value); });
-  });
-
-  $('render').addEventListener('click', render);
-  $('clear').addEventListener('click', ()=>{
-    clearMap();
-    $('shareurl').value='';
-    history.replaceState(null,'',location.pathname);
-  });
-
-  $('copy').addEventListener('click', async ()=>{
-    const url = makeShareURL();
-    $('shareurl').value = url;
-    try{
-      await navigator.clipboard.writeText(url);
-      $('copy').textContent = 'Copied!';
-      setTimeout(()=>$('copy').textContent='Copy Share Link', 1200);
-    }catch(e){
-      prompt('Copy this link:', url);
-    }
-  });
-
-  // Prefill contoh kalau tidak ada state di URL
-  function prefillExample(){
-    $('data').value =
-`49, 2042.348
-150, 159.4947
-300, 41.51972
-500, 19.59217
-1000, 8.648397
-3000, 2.768441`;
+  // ======= Import/Export Functions =======
+  function exportCSV() {
+    const csvData = ui.csv.value;
+    const blob = new Blob([csvData], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'explosion-data.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 
-  if(!loadFromURLIfAny()){ prefillExample(); }
-  // Auto render
-  setTimeout(render, 80);
+  ui.importBtn.addEventListener('click', () => {
+    ui.importFile.click();
+  });
+
+  ui.importFile.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        ui.csv.value = e.target.result;
+        ui.importFile.value = ''; // Reset file input
+    };
+    reader.onerror = () => {
+      alert('Failed to read file.');
+      ui.importFile.value = '';
+    }
+    reader.readAsText(file);
+  });
+  
+  ui.exportBtn.addEventListener('click', exportCSV);
+
+  // ======= Fullscreen Controls =======
+  function enterFS(){
+    ui.mapCard.classList.add('fullscreen');
+    document.body.classList.add('fs-lock');
+    ui.fsBtn.setAttribute('aria-pressed','true');
+    ui.fsBtn.textContent = '⛶ Exit Fullscreen';
+    if (ui.mapCard.requestFullscreen) { ui.mapCard.requestFullscreen().catch(()=>{}); }
+    setTimeout(() => map.invalidateSize(), 200);
+  }
+  function exitFS(){
+    ui.mapCard.classList.remove('fullscreen');
+    document.body.classList.remove('fs-lock');
+    ui.fsBtn.setAttribute('aria-pressed','false');
+    ui.fsBtn.textContent = '⛶ Fullscreen';
+    if (document.fullscreenElement && document.exitFullscreen) {
+      document.exitFullscreen().catch(()=>{});
+    }
+    setTimeout(() => map.invalidateSize(), 200);
+  }
+  function toggleFS(){ ui.mapCard.classList.contains('fullscreen') ? exitFS() : enterFS(); }
+  ui.fsBtn.addEventListener('click', toggleFS);
+  document.addEventListener('keydown', (e) => {
+    if (e.key.toLowerCase() === 'f' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') { e.preventDefault(); toggleFS(); }
+    if (e.key === 'Escape' && ui.mapCard.classList.contains('fullscreen')) { exitFS(); }
+  });
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement && ui.mapCard.classList.contains('fullscreen')) { exitFS(); }
+  });
+  window.addEventListener('resize', () => {
+      clearTimeout(window.__fsRaf);
+      window.__fsRaf = setTimeout(() => map.invalidateSize(), 120);
+  });
+
+  // Initialize the application
+  populateUI(initialSettings);
+  setTimeout(renderMap, 80);
   </script>
 </body>
 </html>
+
+
+
+
