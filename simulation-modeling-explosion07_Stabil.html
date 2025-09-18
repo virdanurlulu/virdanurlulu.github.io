@@ -190,7 +190,27 @@
     @media (max-width: 1024px) { #floatingControlPanel { max-width: 500px; } .floating-panel-body { display: flex; flex-direction: column; align-items: stretch; } #floatPanelOutputs { border-left: none; border-top: 2px solid var(--stripe); padding-left: 0; padding-top: 12px; } #floatPanelOutputs .output-values { flex-direction: row; justify-content: space-around; } }
     @media (max-width: 960px) { .split { grid-template-columns: 1fr; } .right { position: static; } .title h1 { font-size: clamp(24px, 5vw, 32px); } }
     @media (max-width: 720px) { body { font-size: 14px; } .chem-grid { grid-template-columns: 1fr; } .app-footer .footer-content { gap: 16px; } .app-footer .credit, .app-footer .dedication { text-align: center; } .card-header, .label { font-size: 14px; } .btn-home-3d { font-size: 12px; padding: 4px 12px; box-shadow: 0 3px 0 var(--button-shadow); } .btn-home-3d:hover { transform: translateY(-2px); box-shadow: 0 5px 0 var(--button-shadow); } .btn-home-3d:active { transform: translateY(1px); box-shadow: 0 2px 0 var(--button-active-shadow); } .title h2 .sub-line1, .title h2 .sub-line2 { display: block; } }
-    @media (max-width: 480px) { .card-header { flex-direction: column; gap: 8px; align-items: flex-start; } .log-actions { justify-content: flex-start; } .table-wrapper { overflow-x: hidden; } table, thead, tbody, th, td, tr { display: block; } thead tr { position: absolute; top: -9999px; left: -9999px; } tbody tr { border: 1px solid #ddd; border-radius: 8px; margin-bottom: 1rem; padding: 8px; } td { border: none; border-bottom: 1px solid #eee; position: relative; padding-left: 50%; text-align: right; min-height: 36px; display: flex; align-items: center; justify-content: flex-end; word-break: break-word; } td:last-child { border-bottom: none; } td:before { content: attr(data-label); position: absolute; top: 50%; transform: translateY(-50%); left: 8px; width: 45%; padding-right: 10px; white-space: normal; text-align: left; font-weight: bold; color: var(--ink); } #logTable td:last-child { justify-content: center; padding: 8px; } #logTable td:last-child:before { content: "" !important; } .dropdown-menu { top: 12px; right: 12px; } .dropdown-toggle { padding: 6px 12px; font-size: 14px; } }
+    @media (max-width: 480px) { 
+        .card-header { flex-direction: column; gap: 8px; align-items: flex-start; } 
+        .log-actions { justify-content: flex-start; } 
+        .table-wrapper { overflow-x: hidden; } 
+        table, thead, tbody, th, td, tr { display: block; } 
+        thead tr { position: absolute; top: -9999px; left: -9999px; } 
+        tbody tr { border: 1px solid #ddd; border-radius: 8px; margin-bottom: 1rem; padding: 8px; } 
+        td { border: none; border-bottom: 1px solid #eee; position: relative; padding-left: 50%; text-align: right; min-height: 36px; display: flex; align-items: center; justify-content: flex-end; word-break: break-word; } 
+        td:last-child { border-bottom: none; } 
+        td:before { content: attr(data-label); position: absolute; top: 50%; transform: translateY(-50%); left: 8px; width: 45%; padding-right: 10px; white-space: normal; text-align: left; font-weight: bold; color: var(--ink); } 
+        #logTable td:last-child { justify-content: center; padding: 8px; } 
+        #logTable td:last-child:before { content: "" !important; } 
+        .dropdown-menu { top: 12px; right: 12px; } 
+        .dropdown-toggle { padding: 6px 12px; font-size: 14px; }
+
+        td[data-label="W TNT"],
+        td[data-label="ze"],
+        td[data-label="Ps"] {
+            display: none;
+        }
+    }
   </style>
 </head>
 <body class="theme-itb full">
@@ -378,7 +398,7 @@
     
   <div id="floatingControlPanel">
       <div class="floating-panel-header">
-          <h3>Panel Kontrol Cepat</h3>
+          <h3>Quick Control Panel</h3>
           <button id="floatPanelCloseBtn" class="floating-panel-close-btn" aria-label="Tutup panel kontrol">&times;</button>
       </div>
       <div class="floating-panel-body">
@@ -805,7 +825,7 @@
       }
 
       function calculateValues(isInitialLoad = false) {
-        const btnSave = $('btnSaveResultFloat');
+        const btnSaveFloat = $('btnSaveResultFloat');
         fields.forEach(id => $(id)?.classList.remove('input-error'));
         let hasError = false;
         const getFloat = (id) => {
@@ -825,7 +845,7 @@
           updateEstimationPanels(NaN, NaN, NaN);
           updateFloatingPanelOutputs(NaN, NaN, NaN, false);
           if (chartController) chartController.plotResult(NaN, NaN);
-          if (btnSave) btnSave.disabled = true;
+          if (btnSaveFloat) btnSaveFloat.disabled = true;
         };
 
         if (hasError) return resetAll("Harap isi properti dengan rentang yang benar.");
@@ -866,7 +886,7 @@
         }
 
         showStatusMessage("Perhitungan berhasil.");
-        if (btnSave) btnSave.disabled = false;
+        if (btnSaveFloat) btnSaveFloat.disabled = false;
 
         if (!isInitialLoad) {
           saveStateToURL();
@@ -1412,3 +1432,4 @@
   </script>
 </body>
 </html>
+
