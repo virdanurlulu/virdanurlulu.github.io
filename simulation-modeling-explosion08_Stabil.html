@@ -211,7 +211,6 @@
     @media (max-width: 1024px) { 
         .split { grid-template-columns: 1fr; } 
         .right { position: static; } 
-        #floatingControlPanel { max-width: 500px; } 
     }
     
     @media (max-width: 768px) and (orientation: portrait) {
@@ -223,16 +222,18 @@
         tbody tr { border: 1px solid #ddd; border-radius: 8px; margin-bottom: 1rem; padding: 8px; } 
         td { border: none; border-bottom: 1px solid #eee; position: relative; padding-left: 50%; text-align: right; min-height: 36px; display: flex; align-items: center; justify-content: flex-end; word-break: break-word; } 
         td:last-child { border-bottom: none; } 
-        td:before { content: attr(data-label); position: absolute; top: 50%; transform: translateY(-50%); left: 8px; width: 45%; padding-right: 10px; white-space: normal; text-align: left; font-weight: bold; color: var(--ink); } 
+        td:before { content: attr(data-label) " :"; position: absolute; top: 50%; transform: translateY(-50%); left: 8px; width: 45%; padding-right: 10px; white-space: normal; text-align: left; font-weight: bold; color: var(--ink); } 
         #logTable td:last-child { justify-content: center; padding: 8px; } 
         #logTable td:last-child:before { content: "" !important; } 
-        #floatingControlPanel { max-width: 360px; }
+        
+        /* Menyembunyikan kolom yang tidak diinginkan di mode potret */
+        td[data-label="ze"],
+        td[data-label="Ps"] {
+            display: none;
+        }
     }
 
     @media (max-width: 1024px) and (orientation: landscape) {
-        #floatingControlPanel {
-            max-width: 600px;
-        }
         .table-wrapper { 
           overflow-x: auto;
         }
@@ -315,12 +316,49 @@
         .log-actions { justify-content: flex-start; } 
         .dropdown-menu { top: 12px; right: 12px; } 
         .dropdown-toggle { padding: 6px 12px; font-size: 14px; }
-        td[data-label="W TNT (kg)"],
-        td[data-label="ze"],
-        td[data-label="Ps"],
-        td[data-label="ηE"],
-        td[data-label="E<sub>TNT</sub>"] {
-            display: none;
+    }
+    
+    /* Tambahan spesifik untuk perangkat seluler dengan layar sangat sempit dalam mode lanskap */
+    @media (max-height: 450px) and (orientation: landscape) {
+        .banner {
+            padding: 8px 12px; /* Perkecil padding atas/bawah */
+            display: flex; /* Gunakan flexbox untuk kontrol lebih baik */
+            align-items: center;
+            gap: 12px;
+        }
+        .brandbar {
+            flex-grow: 1; /* Biarkan brandbar mengisi ruang */
+            gap: 12px;
+        }
+        .brand-logo {
+            height: 40px; /* Perkecil logo */
+        }
+        .title h1 {
+            font-size: 14px; /* Perkecil font judul utama */
+            padding: 4px 8px;
+        }
+        .title h2 {
+            font-size: 10px; /* Perkecil font sub-judul */
+        }
+        .dropdown-menu {
+            position: static; /* Ubah posisi menu agar sejajar */
+            top: auto;
+            right: auto;
+        }
+        .dropdown-toggle {
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+        .app-footer {
+            padding: 12px 16px;
+        }
+        .footer-buttons {
+            gap: 6px;
+        }
+        .btn-home-3d {
+            padding: 1px 10px;
+            font-size: 10px;
+            box-shadow: 0 2px 0 var(--button-shadow);
         }
     }
   </style>
@@ -486,10 +524,10 @@
                             <th>Node</th>
                             <th>Material</th>
                             <th>ηE</th>
-                            <th>E<sub>TNT</sub></th>
-                            <th>Vol</th>
-                            <th>Dist</th>
-                            <th>W<sub>TNT</sub></th>
+                            <th>ETNT</th>
+                            <th>Volume</th>
+                            <th>Distance</th>
+                            <th>WTNT</th>
                             <th>ze</th>
                             <th>Ps</th>
                             <th>Crowl</th>
@@ -567,6 +605,8 @@
       const $ = (id) => document.getElementById(id);
       const fields = ["rho", "vol", "dh", "eta", "e_tnt", "dist", "pa"];
       const inputFields = ["material", ...fields];
+
+      let isPageLoaded = false; // Flag to prevent premature execution
 
       const presets = {
         AN:  { rho: 1725,    dh:  2479,  e_tnt: 4500, eta: 0.35 },
@@ -1004,7 +1044,18 @@
         const Po_alonso = ((z) =>
           (z >= 1 && z < 10) ? 1.13e6 * z**-2.01 :
           (z >= 10 && z <= 200) ? 1.83e5 * z**-1.16 : NaN)(Ze) / 1000;
-        const Po_sadovski = ((w, d) => (d > 0 && w > 0) ? (r => 0.085*r + 0.3*r**2 + 0.8*r**3)(Math.cbrt(w)/d) : NaN)(W_tnt, dist) * 1000;
+        
+        // PERBAIKAN: Formula Sadovski diinterpretasikan sebagai Scaled Overpressure (Ps),
+        // kemudian dikonversi ke Overpressure (Po) dengan mengalikannya dengan tekanan ambien (pa),
+        // untuk konsistensi dengan metode Crowl.
+        const Ps_sadovski = ((w, d) => {
+            if (!(d > 0 && w > 0)) return NaN;
+            const r = Math.cbrt(w) / d; // r adalah kebalikan dari ze (1/ze)
+            // Formula ini menghitung Ps berdasarkan r
+            return 0.085 * r + 0.3 * r**2 + 0.8 * r**3;
+        })(W_tnt, dist);
+
+        const Po_sadovski = Ps_sadovski * pa;
 
         $("Po_crowl").value = Po_crowl.toFixed(3);
         $("Po_alonso").value = isNaN(Po_alonso) ? "" : Po_alonso.toFixed(3);
@@ -1067,10 +1118,19 @@
           }
           compute(true);
         } else {
-          $('material').value = 'AN';
-          $('vol').value = '10';
-          $('dist').value = '100';
-          $('material').dispatchEvent(new Event('init-load'));
+          // Atur kondisi default jika tidak ada parameter URL
+          const materialEl = $('material');
+          if (materialEl) {
+              materialEl.value = 'AN'; // Materi default
+              const p = presets[materialEl.value];
+              if (p) Object.keys(p).forEach(key => $(key).value = p[key]);
+              renderEquation(materialEl.value);
+              
+              // Nilai default untuk input utama agar ada hasil kalkulasi awal
+              $('vol').value = '10';
+              $('dist').value = '100';
+              compute(true); // isInitialLoad = true, mencegah penulisan ke URL
+          }
         }
       }
       
@@ -1095,15 +1155,15 @@
                 <td data-label="Node">${index + 1}</td>
                 <td data-label="Material">${log.material}</td>
                 <td data-label="ηE">${log.eta}</td>
-                <td data-label="E<sub>TNT</sub>">${log.e_tnt}</td>
-                <td data-label="Vol">${log.vol}</td>
-                <td data-label="Dist">${log.dist}</td>
-                <td data-label="W<sub>TNT</sub>">${log.w_tnt}</td>
+                <td data-label="ETNT (kJ/kg)">${log.e_tnt}</td>
+                <td data-label="Volume (m³)">${log.vol}</td>
+                <td data-label="Distance (m)">${log.dist}</td>
+                <td data-label="WTNT (kg)">${log.w_tnt}</td>
                 <td data-label="ze">${log.ze}</td>
                 <td data-label="Ps">${log.ps}</td>
-                <td data-label="Crowl">${log.po_crowl}</td>
-                <td data-label="Alonso">${log.po_alonso}</td>
-                <td data-label="Sadovski">${log.po_sadovski}</td>
+                <td data-label="Crowl (kPa)">${log.po_crowl}</td>
+                <td data-label="Alonso (kPa)">${log.po_alonso}</td>
+                <td data-label="Sadovski (kPa)">${log.po_sadovski}</td>
                 <td class="col-action">
                     <button class="btn-delete" data-index="${index}" title="Delete this line">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
@@ -1451,6 +1511,7 @@
                   }
                   
                   const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+                  // PERBAIKAN: Mengganti 'e_nt' menjadi 'e_tnt' agar sesuai dengan data yang diekspor.
                   const requiredHeaders = ['material', 'eta', 'e_tnt', 'vol', 'dist', 'w_tnt', 'ze', 'ps', 'po_crowl', 'po_alonso', 'po_sadovski'];
                   const missingHeaders = requiredHeaders.filter(rh => !headers.includes(rh));
 
@@ -1508,16 +1569,6 @@
           reader.readAsText(file);
       });
       
-      const materialCard = $('materialCard');
-      const floatPanelCollapseBtn = $('floatPanelCollapseBtn');
-      let cardOriginalTop = 0;
-      if (materialCard) {
-          setTimeout(() => {
-              cardOriginalTop = materialCard.offsetTop + materialCard.offsetHeight;
-              handlePanelVisibility(); // Perbaikan: Panggil setelah posisi kartu dihitung
-          }, 100);
-      }
-
       function setupCollapsePanel() {
         const panel = $('floatingControlPanel');
         const collapseBtn = $('floatPanelCollapseBtn');
@@ -1565,9 +1616,15 @@
         }, 100));
       }
       
+      const materialCard = $('materialCard');
       function handlePanelVisibility() {
-          // Perilaku yang konsisten untuk semua perangkat: tampilkan/sembunyikan berdasarkan posisi scroll
-          if (window.scrollY > cardOriginalTop && cardOriginalTop > 0) {
+          if (!isPageLoaded) return; // Do not run until page has settled
+          const floatingPanel = $('floatingControlPanel');
+          if (!materialCard || !floatingPanel) return;
+          const cardRect = materialCard.getBoundingClientRect();
+          // Tampilkan panel ketika bagian bawah kartu material sudah tergulir melewati bagian atas viewport.
+          // Memberi sedikit buffer (20px) agar tidak terlalu mendadak.
+          if (cardRect.bottom < 20) {
               syncFloatingPanelInputs();
               floatingPanel.classList.add('visible');
           } else {
@@ -1579,7 +1636,8 @@
       
       const updateOnResizeOrRotate = () => {
           handlePanelVisibility();
-          if (!floatingPanel.classList.contains('collapsed')) {
+          const floatingPanel = $('floatingControlPanel');
+          if (floatingPanel && !floatingPanel.classList.contains('collapsed')) {
               floatingPanel.style.width = '';
           }
       };
@@ -1594,12 +1652,17 @@
       updateOverpressureChartFromLog();
       loadStateFromURL();
       setupCollapsePanel();
-      // Panggilan awal dipindahkan ke setTimeout untuk memastikan keandalan
+      
+      // Delay execution to ensure layout is stable, preventing the panel from appearing prematurely on mobile.
+      setTimeout(() => {
+          isPageLoaded = true;
+          // Run once after delay to handle reloads on a scrolled page
+          handlePanelVisibility();
+      }, 250);
 
     });
   </script>
 </body>
 </html>
-
 
 
