@@ -217,7 +217,7 @@
         #floatPanelOutputs .output-values { flex-direction: row; justify-content: space-around; } 
     }
     
-    @media (max-width: 768px) {
+    @media (max-width: 768px) and (orientation: portrait) {
         .chem-grid { grid-template-columns: 1fr; }
         .table-wrapper { overflow-x: hidden; } 
         table, thead, tbody, th, td, tr { display: block; } 
@@ -230,6 +230,76 @@
         #logTable td:last-child { justify-content: center; padding: 8px; } 
         #logTable td:last-child:before { content: "" !important; } 
         #floatingControlPanel.visible { display: none; }
+    }
+
+    @media (max-width: 1024px) and (orientation: landscape) {
+        #floatingControlPanel {
+            max-width: 600px;
+        }
+        .table-wrapper { 
+          overflow-x: auto;
+        }
+        
+        #logTable, #logTable thead, #logTable tbody, #logTable tr, #logTable th, #logTable td {
+            display: revert;
+        }
+
+        #logTable thead tr:not(.unit-row) {
+            position: static;
+        }
+
+        #logTable tbody tr {
+            border: none;
+            border-radius: 0;
+            margin-bottom: 0;
+            padding: 0;
+            border-bottom: 1px solid #eef4fa;
+        }
+        
+        #logTable tbody tr:nth-child(even) {
+            background: #fbfdff;
+        }
+
+        #logTable td {
+            border: none;
+            position: static;
+            padding-left: 8px;
+            text-align: left;
+            min-height: auto;
+            justify-content: flex-start;
+            word-break: normal;
+        }
+        
+        #logTable td:before {
+            display: none;
+        }
+        
+        /* Penyesuaian untuk layar lanskap kecil seperti iPhone 5/SE */
+        .banner {
+            padding: 12px 16px;
+            min-height: auto;
+        }
+        .brand-logo {
+            height: 48px;
+        }
+        .title h1 {
+            font-size: clamp(16px, 2.5vw, 20px);
+            max-width: none;
+        }
+        .title h2 {
+            font-size: 11px;
+        }
+        .app-footer {
+            padding: 16px;
+        }
+        .footer-buttons {
+            gap: 8px;
+        }
+        .btn-home-3d {
+            padding: 2px 12px;
+            font-size: 11px;
+            box-shadow: 0 3px 0 var(--button-shadow);
+        }
     }
 
     @media (max-width: 720px) { 
@@ -1232,6 +1302,7 @@
               if (!isDragging) return;
               isDragging = false;
               panel.style.transition = '';
+              panel.style.width = ''; // Perbaikan: Atur ulang lebar agar responsif
               document.removeEventListener('mouseup', dragEnd);
               document.removeEventListener('mousemove', elementDrag);
               document.removeEventListener('touchend', dragEnd);
@@ -1446,102 +1517,104 @@
       if (materialCard) {
           setTimeout(() => {
               cardOriginalTop = materialCard.offsetTop + materialCard.offsetHeight;
+              handlePanelVisibility(); // Perbaikan: Panggil setelah posisi kartu dihitung
           }, 100);
       }
 
       function setupCollapsePanel() {
         const panel = $('floatingControlPanel');
         const collapseBtn = $('floatPanelCollapseBtn');
-        const logHeaderTarget = $('log-head');
+        const header = panel.querySelector('.floating-panel-header');
 
         const setDockedPosition = () => {
-            if (!logHeaderTarget) return;
-            const headerRect = logHeaderTarget.getBoundingClientRect();
-            const logActions = logHeaderTarget.querySelector('.log-actions');
-            const actionsRect = logActions.getBoundingClientRect();
-
-            const panelSize = 44;
-            const targetTop = headerRect.top + (headerRect.height / 2) - (panelSize / 2);
-            const targetRight = window.innerWidth - actionsRect.left + 10;
-            
+            if (!materialCard) return;
+            const materialCardRect = materialCard.getBoundingClientRect();
+            let targetTop = Math.max(20, materialCardRect.top);
             panel.style.setProperty('--target-top', `${targetTop}px`);
-            panel.style.setProperty('--target-right', `${targetRight}px`);
         };
 
-        const toggleCollapse = () => {
-            const isCollapsing = !panel.classList.contains('collapsed');
+        collapseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isCollapsed = panel.classList.toggle('collapsed');
             
-            if (isCollapsing) {
-                setDockedPosition();
+            if (isCollapsed) {
+                const rect = panel.getBoundingClientRect();
+                panel.style.setProperty('--target-top', `${rect.top}px`);
+                panel.style.setProperty('--target-right', `${window.innerWidth - rect.right}px`);
+            } else {
+                panel.style.width = ''; // Atur ulang lebar
             }
-            
-            panel.classList.toggle('collapsed');
-            localStorage.setItem('panelCollapsed', isCollapsing);
-            collapseBtn.innerHTML = isCollapsing ? '▼' : '▲';
-        };
+        });
 
-        collapseBtn.addEventListener('click', toggleCollapse);
-
-        const isCollapsed = localStorage.getItem('panelCollapsed') === 'true';
-        if (isCollapsed) {
-            panel.classList.add('collapsed');
-            collapseBtn.innerHTML = '▼';
-            setTimeout(setDockedPosition, 100);
-        } else {
-            collapseBtn.innerHTML = '▲';
-        }
-
-        window.addEventListener('resize', debounce(() => {
-            if (panel.classList.contains('collapsed')) {
-                setDockedPosition();
+        header.addEventListener('click', (e) => {
+            // Hanya perluas jika diciutkan dan klik bukan pada tombol itu sendiri
+            if (panel.classList.contains('collapsed') && e.target !== collapseBtn && !collapseBtn.contains(e.target)) {
+                 panel.classList.remove('collapsed');
+                 panel.style.width = '';
             }
-        }, 100));
+        });
+        
         window.addEventListener('scroll', debounce(() => {
             if (panel.classList.contains('collapsed')) {
                 setDockedPosition();
             }
         }, 100));
+
+        window.addEventListener('resize', debounce(() => {
+             if (panel.classList.contains('collapsed')) {
+                const rect = panel.getBoundingClientRect();
+                panel.style.setProperty('--target-right', `${window.innerWidth - rect.right}px`);
+             }
+        }, 100));
       }
       
-      window.addEventListener('scroll', () => {
-          if(window.innerWidth <= 960) {
+      function handlePanelVisibility() {
+          const isMobilePortrait = window.matchMedia("(max-width: 768px) and (orientation: portrait)").matches;
+          const isMobileLandscape = window.matchMedia("(max-width: 1024px) and (orientation: landscape)").matches; // Perbaikan: Aturan lebih umum
+
+          if (isMobilePortrait) {
               floatingPanel.classList.remove('visible');
               return;
           }
+
+          if (isMobileLandscape) {
+              // Untuk lanskap seluler, selalu tampilkan panel
+              syncFloatingPanelInputs();
+              floatingPanel.classList.add('visible');
+              return;
+          }
           
+          // Perilaku default untuk desktop: tampilkan/sembunyikan berdasarkan posisi scroll
           if(window.scrollY > cardOriginalTop && cardOriginalTop > 0) {
               syncFloatingPanelInputs();
               floatingPanel.classList.add('visible');
           } else {
               floatingPanel.classList.remove('visible');
           }
-      });
+      }
+
+      window.addEventListener('scroll', handlePanelVisibility);
       
-      window.addEventListener('resize', debounce(() => {
+      const updateOnResizeOrRotate = () => {
+          handlePanelVisibility();
           if (!floatingPanel.classList.contains('collapsed')) {
               floatingPanel.style.width = '';
-              floatingPanel.style.top = '';
-              floatingPanel.style.left = '50%';
-              floatingPanel.style.bottom = '20px';
-              floatingPanel.style.transform = 'translateX(-50%)';
           }
-          
-          if (materialCard) {
-              cardOriginalTop = materialCard.offsetTop + materialCard.offsetHeight;
-          }
-          window.dispatchEvent(new Event('scroll'));
-      }, 250));
-      
-      loadLog();
-      loadStateFromURL();
+      };
+
+      window.addEventListener('resize', debounce(updateOnResizeOrRotate, 100));
+      window.addEventListener('orientationchange', updateOnResizeOrRotate);
+
       loadLogo();
-      setupCollapsePanel();
-      $("toTop")?.addEventListener("click", goTop);
+      toTopBtn.addEventListener('click', goTop);
+      loadLog();
       renderLogTable();
       updateOverpressureChartFromLog();
-      syncFloatingPanelInputs();
+      loadStateFromURL();
+      setupCollapsePanel();
+      // Panggilan awal dipindahkan ke setTimeout untuk memastikan keandalan
+
     });
   </script>
 </body>
 </html>
-
