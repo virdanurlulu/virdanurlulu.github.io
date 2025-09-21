@@ -1,136 +1,188 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preview - Thesis Proposal Seminar Virda Nur Lu'lu</title>
-    <style>
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            overflow: hidden; background-color: #000;
-            font-family: Arial, sans-serif; color: white;
-        }
-        #slideshow-frame {
-            width: 100vw; height: 100vh; border: none;
-            display: none; /* Disembunyikan sampai benar-benar siap ditampilkan */
-        }
-        #mobile-back-btn, #start-overlay, #rotate-device-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 10000;
-            display: flex; justify-content: center; align-items: center;
-            text-align: center;
-        }
-        #mobile-back-btn {
-            display: none; top: 15px; right: 15px;
-            width: auto; height: auto;
-            padding: 10px 20px; background-color: rgba(0, 0, 0, 0.7);
-            border: 1px solid white; border-radius: 8px;
-            cursor: pointer; font-size: 16px;
-            -webkit-tap-highlight-color: transparent;
-        }
-        #mobile-back-btn:hover { background-color: rgba(255, 255, 255, 0.2); }
-        #start-overlay {
-            flex-direction: column; background-color: #000; z-index: 10001;
-        }
-        #start-btn {
-            font-size: 1.2em; padding: 15px 30px; cursor: pointer;
-            border: 2px solid white; background-color: transparent;
-            color: white; border-radius: 10px; margin-top: 20px;
-        }
-        #rotate-device-overlay {
-            display: none; /* Disembunyikan secara default */
-            background-color: rgba(0, 0, 0, 0.95);
-        }
-        
-        /* Media query hanya untuk menampilkan tombol back di perangkat sentuh */
-        @media (hover: none) and (pointer: coarse) {
-            #mobile-back-btn.active {
-                display: block;
-            }
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preview – Seminar Proposal Tesis Virda Nur Lu'lu</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    color: #fff;
+    font-family: Arial, sans-serif;
+  }
+  .wrap {
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  .viewer {
+    width: min(1100px, 96vw);
+    aspect-ratio: 16/9;
+    background: #111;
+    position: relative;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  
+  /* === PENYEMPURNAAN TAMPILAN AWAL === */
+
+  @keyframes gradient-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  @keyframes pulse-animation {
+    0% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+    }
+    70% {
+      transform: scale(1.05);
+      box-shadow: 0 0 0 20px rgba(59, 130, 246, 0);
+    }
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+    }
+  }
+
+  #start-overlay {
+    position: absolute;
+    inset: 0;
+    cursor: pointer;
+    transition: opacity 0.5s ease;
+    display: grid;
+    place-items: center;
+    /* Latar belakang gradien animasi */
+    background: linear-gradient(-45deg, #0f172a, #1e293b, #334155, #475569);
+    background-size: 400% 400%;
+    animation: gradient-animation 15s ease infinite;
+  }
+  
+  #start-btn {
+    background: #2563eb;
+    border: none;
+    color: #fff;
+    padding: 16px 32px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: bold;
+    /* Animasi denyut (pulse) */
+    animation: pulse-animation 2.5s infinite;
+    transition: transform 0.2s ease;
+  }
+
+  #start-btn:hover {
+    transform: scale(1.1); /* Efek membesar saat disentuh mouse */
+  }
+  
+  #start-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #exit-fs-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 2147483647;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.7);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 38px;
+    text-align: center;
+    cursor: pointer;
+    display: none;
+  }
+  #exit-fs-btn.visible {
+    display: block;
+  }
+</style>
 </head>
 <body>
-    <div id="start-overlay">
-        <h2>Thesis Proposal Seminar</h2>
-        <p>Virda Nur Lu'lu</p>
-        <button id="start-btn">Mulai Presentasi</button>
-    </div>
 
+<div class="wrap">
+  <div class="viewer" id="viewer">
     <iframe 
-        id="slideshow-frame" 
-        data-src="https://view.officeapps.live.com/op/view.aspx?src=https://virdanurlulu.github.io/paper/seminar-tesis-virda-nur-lulu.ppsx"
-        title="Presentation Viewer">
+      id="slides-frame" 
+      title="Presentasi" 
+      allow="fullscreen; autoplay; encrypted-media; picture-in-picture; web-share">
     </iframe>
-
-    <button id="mobile-back-btn">Back</button>
-
-    <div id="rotate-device-overlay">
-        <p>🔄<br><br>Please rotate your device to landscape mode.</p>
+    <div id="start-overlay">
+      <button id="start-btn">Mulai Presentasi</button>
     </div>
+    <button id="exit-fs-btn" title="Keluar dari Layar Penuh" aria-label="Keluar dari Layar Penuh">&times;</button>
+  </div>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const homeUrl = 'https://virdanurlulu.github.io/';
-            const startOverlay = document.getElementById('start-overlay');
-            const startButton = document.getElementById('start-btn');
-            const rotateOverlay = document.getElementById('rotate-device-overlay');
-            const slideshowFrame = document.getElementById('slideshow-frame');
-            const backButton = document.getElementById('mobile-back-btn');
+<script>
+(function() {
+  const SLIDES_URL = "https://docs.google.com/presentation/d/1c6Hj7uNhM-ZuXHQPQAxl5EbpRojnjvlV/embed?start=true&loop=false&delayms=3000&rm=minimal";
 
-            let presentationLoaded = false;
-            const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  const viewer = document.getElementById('viewer');
+  const overlay = document.getElementById('start-overlay');
+  const startBtn = document.getElementById('start-btn');
+  const iframe = document.getElementById('slides-frame');
+  const exitBtn = document.getElementById('exit-fs-btn');
 
-            // Fungsi untuk memuat presentasi
-            function loadPresentation() {
-                if (!presentationLoaded && slideshowFrame.dataset.src) {
-                    presentationLoaded = true;
-                    slideshowFrame.src = slideshowFrame.dataset.src; // Set 'src' untuk memulai loading
-                    slideshowFrame.style.display = 'block';
-                    if (isMobile) {
-                        backButton.classList.add('active');
-                    }
-                }
-            }
+  startBtn.addEventListener('click', () => {
+    iframe.src = SLIDES_URL;
+    overlay.classList.add('hidden');
 
-            // Fungsi untuk memeriksa orientasi dan mengambil tindakan
-            function handleOrientation() {
-                // Cek apakah layar lanskap (lebar > tinggi)
-                const isLandscape = window.innerWidth > window.innerHeight;
+    // === PERUBAHAN DI SINI ===
+    // Langsung tampilkan tombol keluar untuk respons instan
+    exitBtn.classList.add('visible');
 
-                if (isLandscape) {
-                    rotateOverlay.style.display = 'none'; // Sembunyikan pesan rotasi
-                    loadPresentation(); // Muat presentasi
-                } else {
-                    rotateOverlay.style.display = 'flex'; // Tampilkan pesan rotasi
-                }
-            }
+    if (viewer.requestFullscreen) {
+      viewer.requestFullscreen();
+    } else if (viewer.webkitRequestFullscreen) {
+      viewer.webkitRequestFullscreen();
+    } else if (viewer.msRequestFullscreen) {
+      viewer.msRequestFullscreen();
+    }
 
-            // Event listener untuk tombol 'Mulai'
-            startButton.addEventListener('click', function() {
-                startOverlay.style.display = 'none'; // Sembunyikan overlay awal
+    screen.orientation?.lock('landscape').catch(error => {
+      console.log("Tidak dapat mengunci orientasi:", error);
+    });
+  });
+  
+  exitBtn.addEventListener('click', () => {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    }
+  });
 
-                if (isMobile) {
-                    // Coba masuk ke fullscreen untuk pengalaman terbaik
-                    document.documentElement.requestFullscreen().catch(err => {
-                        console.warn("Fullscreen request failed:", err);
-                    });
-                    
-                    // Langsung cek orientasi setelah tombol ditekan
-                    handleOrientation();
-                    // Dengarkan perubahan orientasi di masa mendatang
-                    window.addEventListener('orientationchange', handleOrientation);
-                } else {
-                    // Untuk desktop, langsung muat saja
-                    loadPresentation();
-                }
-            });
-
-            // Event listener untuk tombol Escape & Back
-            document.addEventListener('keydown', e => { if (e.key === 'Escape') window.location.href = homeUrl; });
-            backButton.addEventListener('click', () => { window.location.href = homeUrl; });
-        });
-    </script>
+  document.addEventListener('fullscreenchange', () => {
+    // Logika ini tetap penting untuk menyembunyikan tombol saat pengguna keluar dengan tombol Esc
+    if (!document.fullscreenElement) {
+      exitBtn.classList.remove('visible');
+    }
+  });
+})();
+</script>
 
 </body>
 </html>
