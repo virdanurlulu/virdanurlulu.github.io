@@ -1,119 +1,128 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Preview - Seminar Proposal Tesis Virda Nur Lu'lu</title>
-    <style>
-        /* CSS untuk tampilan utama dan responsif */
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden; /* Mencegah scrolling pada halaman */
-            background-color: #000;
-        }
-
-        #slideshow-frame {
-            width: 100vw;
-            height: 100vh;
-            border: none;
-        }
-
-        /* Tombol 'cancel' untuk kembali ke Home di perangkat seluler */
-        #mobile-cancel-btn {
-            display: none; /* Sembunyikan secara default */
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            z-index: 9999;
-            padding: 10px 20px;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: 1px solid white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: Arial, sans-serif;
-            font-size: 16px;
-            -webkit-tap-highlight-color: transparent; /* Hilangkan highlight biru saat disentuh */
-        }
-
-        #mobile-cancel-btn:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        /* Pesan overlay untuk meminta pengguna memutar layar */
-        #rotate-device-overlay {
-            display: none; /* Sembunyikan secara default */
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.95);
-            color: white;
-            z-index: 10000;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            font-family: Arial, sans-serif;
-            font-size: 1.2em;
-        }
-        
-        /* Media Query untuk perangkat seluler (smartphone dan tablet) */
-        @media (hover: none) and (pointer: coarse) {
-            #mobile-cancel-btn {
-                display: block; /* Tampilkan tombol cancel */
-            }
-
-            /* Tampilkan pesan overlay HANYA saat dalam mode potret */
-            @media (orientation: portrait) {
-                #rotate-device-overlay {
-                    display: flex;
-                }
-                /* Sembunyikan slide dan tombol saat overlay aktif */
-                #slideshow-frame, #mobile-cancel-btn {
-                    display: none; 
-                }
-            }
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<title>Preview - Seminar Proposal Tesis Virda Nur Lu'lu</title>
+<style>
+  :root { --radius: 14px; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background:#000; color:#fff; font-family: Arial, sans-serif; }
+  .page { min-height: 100svh; display: grid; place-items: center; padding: 24px; }
+  .card {
+    width: min(960px, 94vw);
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  }
+  .thumb {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: #111 center/cover no-repeat;
+  }
+  .thumb::after {
+    content: "Preview";
+    position: absolute; left: 12px; top: 12px;
+    font-size: 12px; letter-spacing: .08em;
+    padding: 6px 10px; border-radius: 999px;
+    background: rgba(0,0,0,.55); border: 1px solid rgba(255,255,255,.25);
+  }
+  .card-body { padding: 16px 16px 18px; display: grid; gap: 12px; }
+  .title { font-weight: 700; font-size: clamp(16px, 2.4vw, 20px); }
+  .desc { color: #cbd5e1; font-size: 14px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .btn {
+    appearance: none; border: 1px solid rgba(255,255,255,.25);
+    background: rgba(255,255,255,.06); color: #fff; cursor: pointer;
+    padding: 10px 14px; border-radius: 10px; font-weight: 600;
+  }
+  .btn.primary { background: #2563eb; border-color: #2563eb; }
+  .embed-wrap {
+    display: none; /* muncul setelah klik */
+    width: 100%; aspect-ratio: 16/9; position: relative; background: #000;
+    border-top: 1px dashed rgba(255,255,255,.15);
+  }
+  .embed-wrap iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+  .note { font-size: 12px; color: #9ca3af; }
+</style>
 </head>
 <body>
-
-    <iframe 
-        id="slideshow-frame" 
-        src="https://docs.google.com/gview?url=https://virdanurlulu.github.io/paper/seminar-tesis-virda-nur-lulu.ppsx&embedded=true" 
-        frameborder="0">
-    </iframe>
-
-    <button id="mobile-cancel-btn">Kembali</button>
-
-    <div id="rotate-device-overlay">
-        <p>🔄<br><br>Mohon putar perangkat Anda ke posisi lanskap<br>untuk melihat presentasi.</p>
+<div class="page">
+  <div class="card" id="ppt-card">
+    <!-- Ganti URL gambar di bawah bila punya poster slide-1; kalau tidak ada, kotak hitam saja -->
+    <div class="thumb" id="thumb"
+         style="background-image:url('https://virdanurlulu.github.io/paper/sempro-poster.jpg');">
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const homeUrl = 'https://virdanurlulu.github.io/';
-            const cancelButton = document.getElementById('mobile-cancel-btn');
+    <div class="card-body">
+      <div class="title">Seminar Proposal Tesis – Virda Nur Lu'lu</div>
+      <div class="desc">Klik <em>Lihat pratinjau</em> untuk menampilkan viewer 16:9 di halaman. Gunakan <em>Buka layar penuh</em> untuk pengalaman presentasi.</div>
+      <div class="actions">
+        <button class="btn primary" id="btn-preview">Lihat pratinjau</button>
+        <a class="btn" id="btn-full" target="_blank" rel="noopener"
+           href="https://view.officeapps.live.com/op/embed.aspx?src=https%3A%2F%2Fvirdanurlulu.github.io%2Fpaper%2Fseminar-tesis-virda-nur-lulu.ppsx&wdAr=1.7777777777777777">
+          Buka layar penuh
+        </a>
+        <a class="btn" id="btn-download" target="_blank" rel="noopener"
+           href="https://virdanurlulu.github.io/paper/seminar-tesis-virda-nur-lulu.ppsx">
+          Unduh .PPSX
+        </a>
+      </div>
 
-            // 1. Fungsi kembali ke Home saat tombol 'Escape' ditekan di desktop
-            document.addEventListener('keydown', function(event) {
-                if (event.key === 'Escape') {
-                    window.location.href = homeUrl;
-                }
-            });
+      <div class="embed-wrap" id="embed">
+        <iframe id="frame"
+          title="Preview PPSX"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen>
+        </iframe>
+      </div>
 
-            // 2. Fungsi kembali ke Home saat tombol 'Kembali' di seluler diklik
-            if (cancelButton) {
-                cancelButton.addEventListener('click', function() {
-                    window.location.href = homeUrl;
-                });
-            }
-        });
-    </script>
+      <div class="note">Tip: jika preview tidak tampil (koneksi lambat / diblokir), gunakan tombol <b>Buka layar penuh</b> atau <b>Unduh</b>.</div>
+    </div>
+  </div>
+</div>
 
+<script>
+  (function () {
+    const btnPreview = document.getElementById('btn-preview');
+    const embed = document.getElementById('embed');
+    const frame = document.getElementById('frame');
+    const thumb = document.getElementById('thumb');
+
+    const EMBED_URL =
+      "https://view.officeapps.live.com/op/embed.aspx?src=" +
+      encodeURIComponent("https://virdanurlulu.github.io/paper/seminar-tesis-virda-nur-lulu.ppsx") +
+      "&wdAr=1.7777777777777777";
+
+    let loadedOnce = false;
+
+    function showPreview() {
+      if (!loadedOnce) {
+        frame.src = EMBED_URL; // lazy load saat pertama kali klik
+        loadedOnce = true;
+      }
+      embed.style.display = 'block';
+      // smooth scroll ke area embed
+      setTimeout(() => {
+        embed.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 50);
+    }
+
+    btnPreview.addEventListener('click', showPreview);
+    // klik thumbnail juga bisa membuka pratinjau
+    thumb.addEventListener('click', showPreview);
+
+    // Fallback: jika gambar poster gagal, hilangkan background agar tidak menampilkan broken image
+    const testImg = new Image();
+    const bg = thumb.style.backgroundImage.replace(/^url\(["']?(.+?)["']?\)$/, '$1');
+    if (bg) {
+      testImg.onerror = () => { thumb.style.backgroundImage = 'none'; };
+      testImg.src = bg;
+    }
+  })();
+</script>
 </body>
 </html>
