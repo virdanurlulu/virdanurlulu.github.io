@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simulation & Modeling of Explosion Effects (TNT Equivalence)</title>
+
+  <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+  <link rel="canonical" href="https://virdanurlulu.github.io/">
+  <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
+  <link rel="dns-prefetch" href="//raw.githubusercontent.com">
+  <link rel="preload" as="image" href="/img/banner-itb1.webp">
+
+  <meta name="description" content="Interactive Simulation and Modeling of Explosion Effects Based on TNT Equivalence Using JavaScript: Incorporating Chemical Material Properties, Consequence Estimation, Pa–Ze Relationship, Overpressure–Distance Chart, and Visualization of Explosion Overpressure Contours.">
+  <meta name="author" content="Virda Nur Lu'lu">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#0079c2">
+  <meta name="color-scheme" content="light dark">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Master’s Program in Chemical Engineering, Bandung Institute of Technology">
+  <meta property="og:title" content="Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript">
+  <meta property="og:description" content="Interactive Simulation and Modeling of Explosion Effects Based on TNT Equivalence Using JavaScript: Incorporating Chemical Material Properties, Consequence Estimation, Pa–Ze Relationship, Overpressure–Distance Chart, and Visualization of Explosion Overpressure Contours.">
+  <meta property="og:url" content="https://virdanurlulu.github.io/">
+  <meta property="og:image" content="/img/ITB-Exlosion-Modeling-Simulation.webp">
+  <meta property="og:image:type" content="image/webp">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript">
+  <meta name="twitter:description" content="Interactive Simulation and Modeling of Explosion Effects Based on TNT Equivalence Using JavaScript: Incorporating Chemical Material Properties, Consequence Estimation, Pa–Ze Relationship, Overpressure–Distance Chart, and Visualization of Explosion Overpressure Contours.">
+  <meta name="twitter:image" content="/img/ITB-Exlosion-Modeling-Simulation.webp">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Explosion Effects Simulation & Modeling (TNT Equivalence)", 
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Web",
+    "url": "https://virdanurlulu.github.io/",
+    "image": "/img/ITB-Exlosion-Modeling-Simulation.webp",
+    "author": {"@type": "Person", "name": "Virda Nur Lu'lu", "sameAs": ["https://id.linkedin.com/in/virdanurlulu"]},
+    "inLanguage": "en",
+    "description": "Interactive Simulation and Modeling of Explosion Effects Based on TNT Equivalence Using JavaScript: Incorporating Chemical Material Properties, Consequence Estimation, Pa–Ze Relationship, Overpressure–Distance Chart, and Visualization of Explosion Overpressure Contours.",
+    "publisher": {"@type": "Organization", "name": "Bandung Institute of Technology", "url": "https://che.itb.ac.id/"}
+  }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+
+  <style>
+    :root {
+      --ink: #1e2b3b;
+      --muted: #64748b;
+      --card: #ffffff;
+      --bg: #f5f7fb;
+      --blue-itb: #0079c2;
+      --stripe: #eaf3fb;
+      --ring: rgba(0, 121, 194, 0.25);
+      --danger: #DC2626;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    body.dragging {
+        user-select: none;
+    }
+    .wrap { max-width: 1280px; margin: 32px auto; padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+    body.full .wrap { max-width: none; width: 100%; padding: 0; margin: 0 auto; }
+    body.full .banner, body.full .split { padding-left: max(20px, env(safe-area-inset-left)); padding-right: max(20px, env(safe-area-inset-right)); }
+    body.full .banner { border-radius: 0; padding-top: clamp(16px, 2.2vw, 24px); padding-bottom: clamp(16px, 2.2vw, 24px); margin-bottom: 18px; }
+    body.full .split { margin-top: 18px; }
+    .title { display: grid; gap: 6px; }
+    .title h1 { margin: 0; font-size: clamp(24px, 3.2vw, 44px); line-height: 1.25; font-family: Georgia, "Times New Roman", serif; color: #fff; padding: 6px 10px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); max-width: clamp(560px, 70vw, 62ch); }
+    @supports (text-wrap: balance) { .title h1 { text-wrap: balance; } }
+    .title h2 { margin: 0; font-size: clamp(12px, 1.2vw, 16px); font-weight: 600; color: #fff; }
+    .banner { position: relative; color: #fff; background-image: url("/img/banner-itb1.webp"); background-size: cover; background-position: center; padding: clamp(16px, 2.2vw, 24px) clamp(16px, 2.4vw, 28px); min-height: clamp(120px, 20vw, 240px); border-radius: 14px; box-shadow: 0 6px 20px rgba(2, 41, 77, 0.12); margin-bottom: 18px; }
+    .title h1, .title h2 { text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25); }
+    .brandbar { display: flex; align-items: center; gap: 16px; }
+    .brand-logo { height: clamp(56px, 6.5vw, 96px); width: auto; }
+    .nowrap { white-space: nowrap; }
+    .brand-text { display: flex; flex-direction: column; gap: 6px; }
+    .card { background: var(--card); border-radius: 14px; overflow: hidden; box-shadow: 0 4px 14px rgba(10, 34, 64, 0.08); margin-bottom: 18px; }
+    .card-header { background: var(--blue-itb); color: #e9f5ff; font-weight: 700; padding: 10px 14px; font-family: Georgia, "Times New Roman", serif; display: flex; justify-content: space-between; align-items: center; position: relative; }
+    .card-header .btn { padding: 6px 10px; font-size: 12px; background: #fff; color: var(--blue-itb); border: none; cursor: pointer; border-radius: 6px; transition: background-color 0.2s; }
+    .card-header .btn:disabled { background-color: #e0e0e0; color: #9e9e9e; cursor: not-allowed; }
+    .log-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 8px 10px; vertical-align: middle; text-align: left; font-size: 14px; }
+    thead th { background: var(--stripe); font-weight: 700; color: #294050; border-bottom: 1px solid #dbe7f2; }
+    tbody tr:nth-child(even) { background: #fbfdff; }
+    tbody tr { border-bottom: 1px solid #eef4fa; }
+    .label { font-weight: 600; display: block; margin-bottom: 4px; font-size: 14px;}
+    .ref { color: var(--blue-itb); font-size: 12px; }
+    input[type="number"], input[readonly], input[type="text"], input[type="text"][readonly], select { width: 100%; border: 1px solid #d6e3ef; background: #fff; color: var(--ink); border-radius: 10px; padding: 10px 12px; min-height: 40px; outline: none; transition: 0.2s box-shadow, 0.2s border-color; font-size: 16px; }
+    input[readonly], input[type="text"][readonly] { background: #f6f9fd; color: #475569; }
+    input:focus, select:focus { border-color: var(--blue-itb); box-shadow: 0 0 0 4px var(--ring); }
+    input.input-error { border-color: var(--danger) !important; box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.25) !important; }
+    .chem-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 14px; align-items: start; }
+    .mini { display: flex; gap: 12px; align-items: flex-start; }
+    .mini > * { flex: 1; }
+    .matcol { display: flex; flex-direction: column; gap: 12px; }
+    .eq-panel { border: 1px solid #dbe7f2; background: var(--card); color: var(--ink); border-radius: 12px; padding: 12px; }
+    .eq-title { font-weight: 700; color: var(--blue-itb); margin-bottom: 8px; }
+    .rxn { padding: 10px 12px; border: 1px dashed #c9d8e6; border-radius: 10px; margin-top: 8px; background: var(--stripe); }
+    .rxn small { display: block; color: #334155; margin-bottom: 4px; }
+    .rxn-eq { font-family: "Times New Roman", Georgia, serif; font-size: 16px; color: var(--ink); }
+    .rxn-eq .arrow { padding: 0 6px; font-weight: 700; }
+    .status { padding: 8px 12px; border-left: 4px solid #0ea5e9; background: #ebf8ff; color: #075985; border-radius: 10px; display: none; margin-top: 8px; }
+    .status.bad { border-left-color: var(--danger); background: #fff1f2; color: #be123c; }
+    .footnote { font-size: 12px; color: var(--muted); margin-top: 8px; }
+    .split { display: grid; grid-template-columns: 40% 60%; gap: 18px; }
+    .left, .right { display: flex; flex-direction: column; gap: 18px; }
+    .right { position: sticky; top: 12px; align-self: start; }
+    .method-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; padding: 12px; }
+    .method-card { position: relative; min-height: 220px; border: 1px solid #dbe7f2; background: #fff; border-radius: 12px; overflow: hidden; }
+    .method-card .vlabel { background: var(--stripe); color: var(--blue-itb); padding: 8px 12px; font-weight: 700; text-align: center; border-bottom: 1px solid #e6eef6; }
+    .method-card .pad { padding: 10px 10px 40px 10px; height: 100%; color: var(--ink); font-size: 14px; }
+    .sevfoot { position: absolute; left: 0; right: 0; bottom: 0; height: 30px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+    .damage-category { margin-top: 10px; }
+    .damage-category strong { color: var(--blue-itb); }
+    .damage-category ul { padding-left: 20px; margin-top: 5px; list-style-type: disc;}
+    .app-footer { margin-top: 20px; color: #fff; background-color: var(--blue-itb); width: 100vw; margin-left: calc(50% - 50vw); padding: 24px 16px; border-top: 1px solid rgba(255, 255, 255, 0.25); text-align: center; }
+    .app-footer .footer-content { max-width: 1280px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+    .app-footer .credit { font-weight: 700; color: #e9f5ff; }
+    .app-footer .dedication { font-size: 13px; line-height: 1.6; max-width: 960px; }
+    .app-footer a:not(.btn-home-3d) { color: #fff; text-decoration: none; }
+    .btn-home-3d { --button-bg-top: #CC00CC; --button-bg-bottom: #990099; --button-shadow: #660066; --button-active-shadow: #440044; display: inline-flex; align-items: center; justify-content: center; padding: 1px 20px; font-size: 12px; font-weight: normal; color: #ffffff; background: linear-gradient(to bottom, var(--button-bg-top) 0%, var(--button-bg-bottom) 100%); border: none; border-radius: 8px; cursor: pointer; position: relative; outline: none; transform: translateY(0); transition: all 0.2s ease; box-shadow: 0 4px 0 var(--button-shadow); text-decoration: none; }
+    .btn-home-3d:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--button-shadow); }
+    .btn-home-3d:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--button-active-shadow); }
+    .footer-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+    .dropdown-menu { position: fixed; top: clamp(16px, 2.2vw, 24px); right: clamp(16px, 2.4vw, 28px); z-index: 1000; }
+    .dropdown-toggle { background-color: rgba(255, 255, 255, 0.9); color: var(--ink); padding: 8px 16px; font-size: 16px; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.2s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .dropdown-toggle:hover { background-color: #ffffff; }
+    .dropdown-content { display: none; position: absolute; right: 0; top: 110%; background-color: #ffffff; min-width: 220px; box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); border-radius: 8px; overflow: hidden; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s; }
+    .dropdown-menu.is-active .dropdown-content { display: block; opacity: 1; visibility: visible; transform: translateY(0); }
+    .dropdown-content a { color: var(--ink); padding: 12px 16px; text-decoration: none; display: block; transition: background-color 0.2s ease, color 0.2s ease; font-weight: 500; white-space: nowrap; }
+    .dropdown-content a:hover { background-color: var(--stripe); color: var(--blue-itb); }
+    .chart-container { padding: 12px; background-color: var(--card); border-radius: 14px; position: relative; }
+    #chart, #overpressureChart { width: 100%; height: 500px; }
+    .chart-note { margin-top: 4px; text-align: center; font-style: italic; color: var(--muted); font-size: 11px; }
+    #overpressureChartMsg { color: var(--muted); font-style: italic; padding: 20px; font-size: 14px; text-align: center; }
+    .table-wrapper { overflow-x: auto; }
+    #logTable { font-size: 12px; }
+    #logTable th, #logTable td { padding: 6px 8px; white-space: nowrap; }
+    #logTable .col-action { width: 40px; text-align: center; }
+    #logTable .log-placeholder td { text-align: center; color: var(--muted); padding: 20px; font-style: italic; }
+    .btn-delete { background: none; border: none; cursor: pointer; padding: 4px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; width: 24px; height: 24px; transition: background-color 0.2s;}
+    .btn-delete:hover { background-color: #fee2e2; }
+    .btn-delete svg { width: 14px; height: 14px; stroke: #ef4444; }
+    @keyframes fadeIn { from { background-color: #ebf8ff; } to { background-color: transparent; } }
+    .new-row-animation { animation: fadeIn 1.5s ease-out; }
+    #toTop { position: fixed; bottom: 20px; right: 20px; z-index: 1000; cursor: pointer; border-radius: 50%; width: 50px; height: 50px; padding: 0; display: flex; align-items: center; justify-content: center; background-color: var(--blue-itb); color: white; border: none; box-shadow: 0 4px 8px rgba(0,0,0,0.2); font-size: 24px; opacity: 0; visibility: hidden; transform: translateY(20px); transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s; }
+    #toTop.show { opacity: 1; visibility: visible; transform: translateY(0); }
+    #toTop:hover { background-color: #005a8c; }
+    
+    #floatingControlPanel { display: none; position: fixed; z-index: 1001; background-color: var(--card); border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); transition: all 0.4s ease-in-out; width: auto; max-width: 90%; left: 50%; bottom: 20px; transform: translateX(-50%); }
+    #floatingControlPanel.visible { display: block; }
+    .floating-panel-header { cursor: move; padding: 10px 14px; background-color: var(--blue-itb); color: white; border-top-left-radius: 14px; border-top-right-radius: 14px; display: flex; justify-content: space-between; align-items: center; }
+    .floating-panel-header h3 { margin: 0; font-size: 12px; font-family: Georgia, "Times New Roman", serif; transition: opacity 0.3s ease; }
+    .floating-panel-action-btn { width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,0.2); color: white; border: none; cursor: pointer; font-size: 14px; line-height: 1; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; }
+    .floating-panel-body { display: grid; grid-template-areas: "inputs outputs"; grid-template-columns: auto auto; gap: 16px; padding: 14px; align-items: start; max-height: 500px; overflow: hidden; transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out, opacity 0.4s ease-in-out;}
+    #floatingControlPanel.collapsed {
+        width: 44px !important;
+        height: 44px;
+        border-radius: 50%;
+        bottom: auto;
+        left: auto;
+        top: var(--target-top, 20px);
+        right: var(--target-right, 20px);
+        transform: none;
+        overflow: hidden;
+    }
+    #floatingControlPanel.collapsed .floating-panel-header { padding: 10px; cursor: pointer; }
+    #floatingControlPanel.collapsed h3, #floatingControlPanel.collapsed .floating-panel-body { display: none; }
+    #floatingControlPanel.collapsed #floatPanelCollapseBtn { transform: rotate(180deg); }
+    #floatPanelInputs { grid-area: inputs; display: flex; flex-direction: column; gap: 10px; }
+    #floatPanelOutputs { grid-area: outputs; display: flex; flex-direction: column; gap: 4px; padding-left: 16px; border-left: 2px solid var(--stripe); }
+    .floating-group { display: flex; flex-direction: column; }
+    #floatPanelOutputs .label { color: var(--muted); font-weight: normal; }
+    #floatPanelOutputs .output-values { display: flex; justify-content: space-between; gap: 16px; flex-direction: column; }
+    .floating-output-col { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 12px; }
+    .floating-output-col span:first-child { font-weight: 600; color: var(--muted); }
+    .floating-output-col span:last-child { font-family: monospace; color: var(--blue-itb); font-weight: bold; font-size: 16px; }
+
+    #floatingControlPanel .label { font-size: 11px; }
+    #floatingControlPanel input, #floatingControlPanel select { font-size: 11px; padding: 8px 10px; min-height: 25px; }
+    .floating-output-col span:last-child { font-size: 12px; }
+    #logTable .unit-row th { font-weight: normal; font-size: 10px; color: var(--muted); padding-top: 0; padding-bottom: 4px; }
+
+    /* Language Switcher Styles */
+    .lang-switcher {
+      position: absolute;
+      bottom: clamp(12px, 2vw, 16px);
+      right: clamp(16px, 2.4vw, 28px);
+      display: flex;
+      gap: 8px;
+      background-color: rgba(255, 255, 255, 0.2);
+      padding: 6px;
+      border-radius: 20px;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      z-index: 10;
+    }
+    .lang-btn {
+      border: none;
+      background-color: transparent;
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 16px;
+      transition: all 0.3s ease;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    .lang-btn:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+    .lang-btn.active {
+      background-color: #fff;
+      color: var(--blue-itb);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-shadow: none;
+    }
+
+
+    @media (max-width: 1024px) { 
+        .split { grid-template-columns: 1fr; } 
+        .right { position: static; } 
+    }
+    
+    @media (max-width: 768px) and (orientation: portrait) {
+        .chem-grid { grid-template-columns: 1fr; }
+        .table-wrapper { overflow-x: hidden; } 
+        table, thead, tbody, th, td, tr { display: block; } 
+        thead tr:not(.unit-row) { position: absolute; top: -9999px; left: -9999px; } 
+        thead .unit-row { display: none; }
+        tbody tr { border: 1px solid #ddd; border-radius: 8px; margin-bottom: 1rem; padding: 8px; } 
+        td { border: none; border-bottom: 1px solid #eee; position: relative; padding-left: 50%; text-align: right; min-height: 36px; display: flex; align-items: center; justify-content: flex-end; word-break: break-word; } 
+        td:last-child { border-bottom: none; } 
+        td:before { content: attr(data-label) " :"; position: absolute; top: 50%; transform: translateY(-50%); left: 8px; width: 45%; padding-right: 10px; white-space: normal; text-align: left; font-weight: bold; color: var(--ink); } 
+        #logTable td:last-child { justify-content: center; padding: 8px; } 
+        #logTable td:last-child:before { content: "" !important; } 
+        
+        td[data-label="ze"],
+        td[data-label="Ps"] {
+            display: none;
+        }
+    }
+
+    @media (max-width: 1024px) and (orientation: landscape) {
+        .table-wrapper { overflow-x: auto; }
+        #logTable, #logTable thead, #logTable tbody, #logTable tr, #logTable th, #logTable td { display: revert; }
+        #logTable thead tr:not(.unit-row) { position: static; }
+        #logTable tbody tr { border: none; border-radius: 0; margin-bottom: 0; padding: 0; border-bottom: 1px solid #eef4fa; }
+        #logTable tbody tr:nth-child(even) { background: #fbfdff; }
+        #logTable td { border: none; position: static; padding-left: 8px; text-align: left; min-height: auto; justify-content: flex-start; word-break: normal; }
+        #logTable td:before { display: none; }
+        .banner { padding: 12px 16px; min-height: auto; }
+        .brand-logo { height: 48px; }
+        .title h1 { font-size: clamp(16px, 2.5vw, 20px); max-width: none; }
+        .title h2 { font-size: 11px; }
+        .app-footer { padding: 16px; }
+        .footer-buttons { gap: 8px; }
+        .btn-home-3d { padding: 2px 12px; font-size: 11px; box-shadow: 0 3px 0 var(--button-shadow); }
+    }
+
+    @media (max-width: 720px) { 
+        body { font-size: 14px; } 
+        .app-footer .footer-content { gap: 16px; } 
+        .app-footer .credit, .app-footer .dedication { text-align: center; } 
+        .card-header, .label { font-size: 14px; } 
+        .btn-home-3d { font-size: 12px; padding: 4px 12px; box-shadow: 0 3px 0 var(--button-shadow); } 
+        .btn-home-3d:hover { transform: translateY(-2px); box-shadow: 0 5px 0 var(--button-shadow); } 
+        .btn-home-3d:active { transform: translateY(1px); box-shadow: 0 2px 0 var(--button-active-shadow); } 
+        .title h2 .sub-line1, .title h2 .sub-line2 { display: block; } 
+        .dropdown-menu { top: clamp(16px, 2.2vw, 24px); right: clamp(16px, 2.4vw, 28px); }
+    }
+    
+    @media (max-width: 480px) { 
+        .card-header { flex-direction: column; gap: 8px; align-items: flex-start; } 
+        .log-actions { justify-content: flex-start; } 
+        .dropdown-menu { top: 12px; right: 12px; } 
+        .dropdown-toggle { padding: 6px 12px; font-size: 14px; }
+    }
+    
+    @media (max-height: 450px) and (orientation: landscape) {
+        .banner { padding: 8px 12px; display: flex; align-items: center; gap: 12px; }
+        .brandbar { flex-grow: 1; gap: 12px; }
+        .brand-logo { height: 40px; }
+        .title h1 { font-size: 14px; padding: 4px 8px; }
+        .title h2 { font-size: 10px; }
+        .dropdown-menu { position: static; }
+        .dropdown-toggle { padding: 6px 10px; font-size: 12px; }
+        .app-footer { padding: 12px 16px; }
+        .footer-buttons { gap: 6px; }
+        .btn-home-3d { padding: 1px 10px; font-size: 10px; box-shadow: 0 2px 0 var(--button-shadow); }
+        .lang-switcher { bottom: 8px; right: 12px; padding: 4px; gap: 4px; }
+        .lang-btn { font-size: 11px; padding: 4px 8px; }
+    }
+  </style>
+</head>
+<body class="theme-itb full">
+  <div class="wrap">
+    <div class="banner title">
+      <div class="brandbar">
+        <a href="https://virdanurlulu.github.io/" target="_blank" rel="noopener noreferrer" aria-label="Visit homepage">
+          <img id="itbLogo" class="brand-logo" alt="Logo ITB" width="96" height="96">
+        </a>
+        <div class="brand-text">
+          <h1 data-lang-key="mainTitle">Simulation and Modeling of Explosion Effects Based on TNT Equivalence <span class="nowrap">using Javascript</span></h1>
+          <h2>
+            <span class="sub-line1" data-lang-key="mainSubtitle1">Master’s Program in Chemical Engineering, </span>
+            <span class="sub-line2" data-lang-key="mainSubtitle2">Bandung Institute of Technology</span>
+          </h2>
+        </div>
+      </div>
+
+      <div class="dropdown-menu">
+        <button class="dropdown-toggle" data-lang-key="menu">Menu &#9776;</button>
+        <div class="dropdown-content">
+          <a href="/" data-lang-key="menuHome">Home</a>
+          <a href="/html/simulation-modeling-visualisation-explosion.html" data-lang-key="menuApp">Simulation & Modeling Application</a>
+          <a href="#" data-lang-key="menuGuide">Simulation Guide (coming soon)</a>
+          <a href="/html/presentation-slide.html" data-lang-key="menuPresentation">Presentation</a>
+          <a href="#" data-lang-key="menuJournal">Journal & Conference (coming soon)</a>
+          <a href="/html/bibliography_sim_modeling_explosion.html" data-lang-key="menuBibliography">Bibliography</a>
+        </div>
+      </div>
+      
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="en" aria-label="Switch to English">EN</button>
+        <button class="lang-btn" data-lang="id" aria-label="Ganti ke Bahasa Indonesia">ID</button>
+      </div>
+    </div>
+
+    <main class="split" role="main">
+      <div class="left">
+        <section class="card" id="materialCard" aria-labelledby="mat-head">
+          <div id="mat-head" class="card-header" data-lang-key="cardHeaderMaterial">Chemical Material</div>
+          <div style="padding:14px">
+            <div class="chem-grid">
+              <div class="matcol">
+                <div>
+                  <label for="material" class="label" data-lang-key="labelSelectMaterial">Select Material</label>
+                  <select id="material">
+                    <option value="" data-lang-key="optionSelect">— Select —</option>
+                    <option value="AN">Ammonium Nitrate (AN)</option>
+                    <option value="LPG">Propane (LPG)</option>
+                    <option value="H2">Hydrogen (H₂)</option>
+                  </select>
+                </div>
+                <div class="mini">
+                  <div>
+                    <label for="vol" class="label" data-lang-key="labelVolume">Volume (m³)</label>
+                    <input id="vol" type="number" min="0" step="any" placeholder="e.g., 12.5" aria-label="Volume" />
+                  </div>
+                  <div>
+                    <label for="dist" class="label" data-lang-key="labelDistance">Distance (m)</label>
+                    <input id="dist" type="number" min="0" step="any" placeholder="e.g., 150" aria-label="Distance" />
+                  </div>
+                </div>
+              </div>
+              <div class="eq-panel">
+                <div class="eq-title" data-lang-key="eqTitle">Representative Overall Reaction</div>
+                <div id="eq-text" class="eq-body" data-lang-key="eqBodyDefault">Select a material to display the reaction equation.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="prop-head">
+          <div id="prop-head" class="card-header" data-lang-key="cardHeaderProperties">Properties</div>
+          <div style="padding:12px">
+            <table>
+              <thead>
+                <tr><th data-lang-key="propTblHeader1">Properties</th><th data-lang-key="propTblHeader2">Value</th><th data-lang-key="propTblHeader3">Unit</th><th data-lang-key="propTblHeader4">Literature</th></tr>
+              </thead>
+              <tbody>
+                <tr><td data-label="Properties"><label for="rho">Density ρ = m/V</label></td><td data-label="Value"><input id="rho" type="number" min="0" step="any"/></td><td data-label="Unit" class="unit">kg/m³</td><td data-label="Source" class="ref">@Literature</td></tr>
+                <tr><td data-label="Properties"><label for="dh">ΔH<sub>explosion</sub></label></td><td data-label="Value"><input id="dh" type="number" step="any"/></td><td data-label="Unit" class="unit">kJ/kg</td><td data-label="Source" class="ref">@Literature</td></tr>
+                <tr><td data-label="Properties" data-lang-key="ambientPressure">Ambient Pressure</td><td data-label="Value"><input id="pa" type="number" min="0" step="any"/></td><td data-label="Unit" class="unit">kPa</td><td data-label="Source" class="ref">@Literature</td></tr>
+                <tr><td data-label="Properties"><label for="eta">η<sub>E</sub> Explosion Efficiency</label></td><td data-label="Value"><input id="eta" type="number" min="0" max="1" step="any"/></td><td data-label="Unit" class="unit">–</td><td data-label="Source" class="ref">@Literature</td></tr>
+                <tr><td data-label="Properties"><label for="e_tnt">E<sub>TNT</sub></label></td><td data-label="Value"><input id="e_tnt" type="number" min="0" step="any"/></td><td data-label="Unit" class="unit">kJ/kg</td><td data-label="Source" class="ref">@Literature</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="param-head">
+          <div id="param-head" class="card-header" data-lang-key="cardHeaderParameters">Parameters</div>
+          <div style="padding:12px">
+            <table>
+              <thead><tr><th data-lang-key="paramTblHeader1">Parameters</th><th data-lang-key="paramTblHeader2">Value</th><th data-lang-key="paramTblHeader3">Unit</th><th data-lang-key="paramTblHeader4">Sources</th></tr></thead>
+              <tbody>
+                <tr><td data-label="Parameters" data-lang-key="paramMassMaterial">(W) Mass Material</td><td data-label="Value"><input id="W_mass" type="text" readonly /></td><td data-label="Unit" class="unit">kg</td><td data-label="Source" class="ref" data-lang-key="calculated">@Calculated</td></tr>
+                <tr><td data-label="Parameters" data-lang-key="paramTotalEnergy">(E) Total Energy</td><td data-label="Value"><input id="E_total" type="text" readonly /></td><td data-label="Unit" class="unit">kJ</td><td data-label="Source" class="ref" data-lang-key="calculated">@Calculated</td></tr>
+                <tr><td data-label="Parameters" data-lang-key="paramTntEquivalent">(W) TNT Equivalent</td><td data-label="Value"><input id="W_tnt" type="text" readonly /></td><td data-label="Unit" class="unit">kg</td><td data-label="Source" class="ref" data-lang-key="calculated">@Calculated</td></tr>
+                <tr><td data-label="Parameters" data-lang-key="paramScaledDistance">(Ze) Scaled Distance</td><td data-label="Value"><input id="Ze" type="text" readonly /></td><td data-label="Unit" class="unit">m·kg<sup>−1/3</sup></td><td data-label="Source" class="ref" data-lang-key="calculated">@Calculated</td></tr>
+                <tr><td data-label="Parameters" data-lang-key="paramScaledOverpressure">(Ps) Scaled Overpressure</td><td data-label="Value"><input id="Ps" type="text" readonly /></td><td data-label="Unit" class="unit">–</td><td data-label="Source" class="ref">@Crowl/Kinney</td></tr>
+                <tr><td data-label="Parameters" data-lang-key="paramPeakOverpressure">(Po) Peak side-on overpressure</td><td data-label="Value"><input id="Po_crowl" type="text" readonly /></td><td data-label="Unit" class="unit">kPa</td><td data-label="Source" class="ref">@Crowl</td></tr>
+                <tr><td data-label="Parameters" data-lang-key="paramPeakOverpressure">(Po) Peak side-on overpressure</td><td data-label="Value"><input id="Po_alonso" type="text" readonly /></td><td data-label="Unit" class="unit">kPa</td><td data-label="Source" class="ref">@Alonso</td></tr>
+                <tr><td data-label="Parameters" data-lang-key="paramPeakOverpressure">(Po) Peak side-on overpressure</td><td data-label="Value"><input id="Po_sadovski" type="text" readonly /></td><td data-label="Unit" class="unit">kPa</td><td data-label="Source" class="ref">@Sadovski</td></tr>
+              </tbody>
+            </table>
+            <div id="msg" class="status" role="status" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="chart-head">
+          <div id="chart-head" class="card-header">
+            <span data-lang-key="chart1Title">Scaled Overpressure vs Scaled Distance</span>
+            <button class="btn" id="btnExport" data-lang-key="btnExportPng">Export PNG</button>
+          </div>
+          <div class="chart-container">
+            <div id="chart" role="img" aria-label="Log-log plot of Ps (Po/Pa) versus ze based on Kinney &amp; Graham (1985)."></div>
+            <noscript><p data-lang-key="chartNoScript">Please enable JavaScript to display the chart. Reference: G. F. Kinney &amp; K. J. Graham (1985).</p></noscript>
+            <div class="chart-note" data-lang-key="chart1Note">Source: G. F. Kinney &amp; K. J. Graham, <em>Explosive Shocks in Air</em>, Springer-Verlag, 1985.</div>
+          </div>
+        </section>
+        
+        <section class="card" aria-labelledby="overpressure-chart-head">
+          <div id="overpressure-chart-head" class="card-header">
+            <span data-lang-key="chart2Title">Overpressure vs Distance</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="overpressureChart"></canvas>
+            <div id="overpressureChartMsg" class="chart-note" style="display: none; padding: 20px; font-size: 14px;"></div>
+            <noscript><p data-lang-key="chartNoScriptSimple">Please enable JavaScript to display the chart.</p></noscript>
+          </div>
+        </section>
+
+      </div>
+
+      <aside class="right">
+        <section class="card estimation" aria-labelledby="est-damage">
+          <div id="est-damage" class="card-header" data-lang-key="damageEstimationTitle">Estimation of Damage to Structures and Process Equipment</div>
+          <div class="method-grid">
+            <div class="method-card">
+              <div class="vlabel">CROWL</div>
+              <div class="pad" id="panel-damage-crowl">
+                <p><strong data-lang-key="overpressureLabel">Overpressure (Po):</strong> <span id="val-Po-crowl">—</span> kPa</p>
+                <div>
+                    <strong data-lang-key="damageDetailsLabel">Damage Details:</strong>
+                    <div class="damage-category">
+                        <strong data-lang-key="structuralLabel">Structural:</strong>
+                        <ul id="structural-damage-crowl"><li data-lang-key="awaitingInput">Awaiting input...</li></ul>
+                    </div>
+                    <div class="damage-category">
+                        <strong data-lang-key="processEqLabel">Process Equipment:</strong>
+                        <ul id="equipment-damage-crowl"><li data-lang-key="awaitingInput">Awaiting input...</li></ul>
+                    </div>
+                </div>
+              </div>
+              <div class="sevfoot" id="sev-crowl" data-lang-key="unknown">Unknown</div>
+            </div>
+            <div class="method-card">
+              <div class="vlabel">ALONSO</div>
+              <div class="pad" id="panel-damage-alonso">
+                <p><strong data-lang-key="overpressureLabel">Overpressure (Po):</strong> <span id="val-Po-alonso">—</span> kPa</p>
+                 <div>
+                    <strong data-lang-key="damageDetailsLabel">Damage Details:</strong>
+                    <div class="damage-category">
+                        <strong data-lang-key="structuralLabel">Structural:</strong>
+                        <ul id="structural-damage-alonso"><li data-lang-key="awaitingInput">Awaiting input...</li></ul>
+                    </div>
+                    <div class="damage-category">
+                        <strong data-lang-key="processEqLabel">Process Equipment:</strong>
+                        <ul id="equipment-damage-alonso"><li data-lang-key="awaitingInput">Awaiting input...</li></ul>
+                    </div>
+                </div>
+              </div>
+              <div class="sevfoot" id="sev-alonso" data-lang-key="unknown">Unknown</div>
+            </div>
+            <div class="method-card">
+              <div class="vlabel">SADOVSKI</div>
+              <div class="pad" id="panel-damage-sadovski">
+                <p><strong data-lang-key="overpressureLabel">Overpressure (Po):</strong> <span id="val-Po-sadovski">—</span> kPa</p>
+                 <div>
+                    <strong data-lang-key="damageDetailsLabel">Damage Details:</strong>
+                    <div class="damage-category">
+                        <strong data-lang-key="structuralLabel">Structural:</strong>
+                        <ul id="structural-damage-sadovski"><li data-lang-key="awaitingInput">Awaiting input...</li></ul>
+                    </div>
+                    <div class="damage-category">
+                        <strong data-lang-key="processEqLabel">Process Equipment:</strong>
+                        <ul id="equipment-damage-sadovski"><li data-lang-key="awaitingInput">Awaiting input...</li></ul>
+                    </div>
+                </div>
+              </div>
+              <div class="sevfoot" id="sev-sadovski" data-lang-key="unknown">Unknown</div>
+            </div>
+          </div>
+        </section>
+        <section class="card estimation" aria-labelledby="est-injury">
+          <div id="est-injury" class="card-header" data-lang-key="injuryEstimationTitle">Estimation of Injury Consequences</div>
+          <div class="method-grid">
+            <div class="method-card"><div class="vlabel">CROWL</div><div class="pad" id="panel-injury-crowl"><p><strong data-lang-key="overpressureLabel">Overpressure (Po):</strong> <span id="val-Po-crowl-inj">—</span> kPa</p><p><strong data-lang-key="effectsLabel">Effects:</strong></p><ul id="injury-effects-crowl"><li data-lang-key="awaitingInput">Awaiting input...</li></ul></div><div class="sevfoot" id="sev-injury-crowl" data-lang-key="unknown">Unknown</div></div>
+            <div class="method-card"><div class="vlabel">ALONSO</div><div class="pad" id="panel-injury-alonso"><p><strong data-lang-key="overpressureLabel">Overpressure (Po):</strong> <span id="val-Po-alonso-inj">—</span> kPa</p><p><strong data-lang-key="effectsLabel">Effects:</strong></p><ul id="injury-effects-alonso"><li data-lang-key="awaitingInput">Awaiting input...</li></ul></div><div class="sevfoot" id="sev-injury-alonso" data-lang-key="unknown">Unknown</div></div>
+            <div class="method-card"><div class="vlabel">SADOVSKI</div><div class="pad" id="panel-injury-sadovski"><p><strong data-lang-key="overpressureLabel">Overpressure (Po):</strong> <span id="val-Po-sadovski-inj">—</span> kPa</p><p><strong data-lang-key="effectsLabel">Effects:</strong></p><ul id="injury-effects-sadovski"><li data-lang-key="awaitingInput">Awaiting input...</li></ul></div><div class="sevfoot" id="sev-injury-sadovski" data-lang-key="unknown">Unknown</div></div>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="log-head">
+            <div id="log-head" class="card-header">
+                <span data-lang-key="logTitle">Simulation Log</span>
+                <div class="log-actions">
+                    <button class="btn" id="btnSortLog" data-lang-key="btnSort">Sort</button>
+                    <button class="btn" id="btnExportLog" data-lang-key="btnExportCsv">Export CSV</button>
+                    <button class="btn" id="btnImportLog" data-lang-key="btnImportCsv">Import CSV</button>
+                    <input type="file" id="importFile" accept=".csv" style="display: none;" />
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table id="logTable">
+                    <thead>
+                        <tr>
+                            <th data-lang-key="logTblH1">Node</th>
+                            <th data-lang-key="logTblH2">Material</th>
+                            <th>ηE</th>
+                            <th>ETNT</th>
+                            <th data-lang-key="logTblH5">Volume</th>
+                            <th data-lang-key="logTblH6">Distance</th>
+                            <th>WTNT</th>
+                            <th>ze</th>
+                            <th>Ps</th>
+                            <th>Crowl</th>
+                            <th>Alonso</th>
+                            <th>Sadovski</th>
+                            <th class="col-action">-</th>
+                        </tr>
+                        <tr class="unit-row">
+                           <th></th><th></th><th></th><th>(kJ/kg)</th><th>(m³)</th><th>(m)</th><th>(kg)</th><th>(m·kg<sup>−1/3</sup>)</th><th></th><th>(kPa)</th><th>(kPa)</th><th>(kPa)</th><th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="logTbody"></tbody>
+                </table>
+            </div>
+            <div style="padding: 0 14px 14px;">
+                <p class="footnote" data-lang-key="logFootnote">Click "Save" to log the calculation results. The last 10 entries will be stored in your browser.</p>
+            </div>
+        </section>
+      </aside>
+    </main>
+  </div>
+    
+  <div id="floatingControlPanel">
+      <div class="floating-panel-header">
+          <h3 data-lang-key="quickControlPanel">Quick Control Panel</h3>
+          <div class="panel-header-buttons">
+            <button id="floatPanelCollapseBtn" class="floating-panel-action-btn" aria-label="Collapse/Expand Panel">▲</button>
+          </div>
+      </div>
+      <div class="floating-panel-body">
+          <div id="floatPanelInputs">
+          </div>
+          <div id="floatPanelOutputs">
+          </div>
+      </div>
+  </div>
+
+  <footer class="app-footer">
+      <div class="footer-content">
+        <div class="footer-buttons">
+          <a class="btn-home-3d" href="/" target="_blank" rel="noopener noreferrer" data-lang-key="footerBtnHome">Home</a>
+          <a class="btn-home-3d" href="#" data-lang-key="footerBtnGuide">Guide</a>
+          <a class="btn-home-3d" href="#" data-lang-key="footerBtnPresentation">Presentation</a>
+          <a class="btn-home-3d" href="#" data-lang-key="footerBtnJournal">Journal</a>
+          <a class="btn-home-3d" href="https://id.linkedin.com/in/virdanurlulu" data-lang-key="footerBtnProfile">Profile</a>
+        </div>
+        <div class="credit" data-lang-key="footerCredit">Copyright © 2025 by
+          <a href="https://id.linkedin.com/in/virdanurlulu" target="_blank" rel="nofollow noopener noreferrer" style="text-decoration: none;">Virda Nur Lu'lu</a>
+        </div>
+        <div class="dedication" data-lang-key="footerDedication">
+          This application is dedicated to my parents for their persistent support and patient guidance throughout my JavaScript journey.
+          It is also presented to the academic community at
+          <a href="https://che.itb.ac.id/" target="_blank" rel="nofollow noopener noreferrer">Bandung Institute of Technology</a>
+          as a contribution towards inspiring further advancements in JavaScript technology.
+        </div>
+      </div>
+  </footer>
+
+  <button class="btn" id="toTop" type="button" aria-label="Back to Top">&#8679;</button>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const $ = (id) => document.getElementById(id);
+      const fields = ["rho", "vol", "dh", "eta", "e_tnt", "dist", "pa"];
+      const inputFields = ["material", ...fields];
+
+      let isPageLoaded = false;
+      let currentLang = 'en';
+
+      const translations = {
+        en: {
+          mainTitle: "Simulation and Modeling of Explosion Effects Based on TNT Equivalence <span class=\"nowrap\">using Javascript</span>",
+          mainSubtitle1: "Master’s Program in Chemical Engineering, ",
+          mainSubtitle2: "Bandung Institute of Technology",
+          menu: "Menu &#9776;",
+          menuHome: "Home",
+          menuApp: "Simulation & Modeling Application",
+          menuGuide: "Simulation Guide (coming soon)",
+          menuPresentation: "Presentation",
+          menuJournal: "Journal & Conference (coming soon)",
+          menuBibliography: "Bibliography",
+          cardHeaderMaterial: "Chemical Material",
+          labelSelectMaterial: "Select Material",
+          optionSelect: "— Select —",
+          labelVolume: "Volume (m³)",
+          labelDistance: "Distance (m)",
+          eqTitle: "Representative Overall Reaction",
+          eqBodyDefault: "Select a material to display the reaction equation.",
+          cardHeaderProperties: "Properties",
+          propTblHeader1: "Properties",
+          propTblHeader2: "Value",
+          propTblHeader3: "Unit",
+          propTblHeader4: "Literature",
+          ambientPressure: "Ambient Pressure",
+          cardHeaderParameters: "Parameters",
+          paramTblHeader1: "Parameters",
+          paramTblHeader2: "Value",
+          paramTblHeader3: "Unit",
+          paramTblHeader4: "Sources",
+          paramMassMaterial: "(W) Mass Material",
+          paramTotalEnergy: "(E) Total Energy",
+          paramTntEquivalent: "(W) TNT Equivalent",
+          paramScaledDistance: "(Ze) Scaled Distance",
+          paramScaledOverpressure: "(Ps) Scaled Overpressure",
+          paramPeakOverpressure: "(Po) Peak side-on overpressure",
+          calculated: "@Calculated",
+          chart1Title: "Scaled Overpressure vs Scaled Distance",
+          btnExportPng: "Export PNG",
+          chartNoScript: "Please enable JavaScript to display the chart. Reference: G. F. Kinney &amp; K. J. Graham (1985).",
+          chart1Note: "Source: G. F. Kinney &amp; K. J. Graham, <em>Explosive Shocks in Air</em>, Springer-Verlag, 1985.",
+          chart2Title: "Overpressure vs Distance",
+          chartNoScriptSimple: "Please enable JavaScript to display the chart.",
+          damageEstimationTitle: "Estimation of Damage to Structures and Process Equipment",
+          overpressureLabel: "Overpressure (Po):",
+          damageDetailsLabel: "Damage Details:",
+          structuralLabel: "Structural:",
+          processEqLabel: "Process Equipment:",
+          awaitingInput: "Awaiting input...",
+          unknown: "Unknown",
+          injuryEstimationTitle: "Estimation of Injury Consequences",
+          effectsLabel: "Effects:",
+          logTitle: "Simulation Log",
+          btnSort: "Sort",
+          btnExportCsv: "Export CSV",
+          btnImportCsv: "Import CSV",
+          logTblH1: "Node",
+          logTblH2: "Material",
+          logTblH5: "Volume",
+          logTblH6: "Distance",
+          logFootnote: "Click \"Save\" to log the calculation results. The last 10 entries will be stored in your browser.",
+          quickControlPanel: "Quick Control Panel",
+          footerBtnHome: "Home",
+          footerBtnGuide: "Guide",
+          footerBtnPresentation: "Presentation",
+          footerBtnJournal: "Journal",
+          footerBtnProfile: "Profile",
+          footerCredit: "Copyright © 2025 by <a href=\"https://id.linkedin.com/in/virdanurlulu\" target=\"_blank\" rel=\"nofollow noopener noreferrer\" style=\"text-decoration: none;\">Virda Nur Lu'lu</a>",
+          footerDedication: "This application is dedicated to my parents for their persistent support and patient guidance throughout my JavaScript journey. It is also presented to the academic community at <a href=\"https://che.itb.ac.id/\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">Bandung Institute of Technology</a> as a contribution towards inspiring further advancements in JavaScript technology.",
+          // Dynamic messages
+          statusSuccess: "The calculation has been completed successfully.",
+          statusError: "Ensure that the property is entered within the appropriate range",
+          statusInvalidZe: "The calculation outcome is invalid (Ze is non-positive)",
+          statusDefaultLoaded: "Default values have been loaded.",
+          logPlaceholder: "No simulation data are available.",
+          noExportData: "No log data are available for export.",
+          importSuccess: "Log data from CSV file imported successfully!",
+          importError: "The file could not be imported: ",
+          importErrorEmpty: "CSV file is invalid or empty.",
+          importErrorMissingCols: "Required columns are missing: ",
+          importErrorNoData: "No valid data could be retrieved from the CSV file.",
+          saveLogBtn: "Save",
+          floatingPanelLabelPo: "Overpressure (Po)",
+          // Damage categories
+          catastrophic: "Catastrophic",
+          major: "Major",
+          severe: "Severe",
+          serious: "Serious",
+          moderate: "Moderate",
+          minor: "Minor",
+          insignificant: "Insignificant",
+          // Injury categories
+          invalidInput: "Invalid Input",
+          noEffect: "No Effect Reported",
+          minorInjury: "Minor Injury",
+          moderateInjury: "Moderate Injury",
+          seriousInjury: "Serious Injury",
+          severeInjury: "Severe Injury",
+          fatality: "Fatality",
+          // Damage descriptions (HTML allowed)
+          damage_struct_1: "<li>Accidental glass damage [1].</li>",
+          damage_struct_2: "<li>Minor glass breakage and light architectural damage such as displacement of roof tiles and falling plaster [1].</li>",
+          damage_struct_3: "<li>Widespread glass shattering and significant damage to non-structural elements like doors, windows, and roofs [1].</li>",
+          damage_struct_4: "<li>Collapse of unreinforced concrete walls or cement blocks [2].</li>",
+          damage_struct_5: "<li>Frame-less steel panels destroyed; oil storage tanks ruptured (20.7 kPa - ≤25 kPa) [2].</li>",
+          damage_struct_6: "<li>Frame-less steel panels destroyed; oil storage tanks ruptured (25 kPa - 27.6 kPa) [2].</li>",
+          damage_struct_7: "<li>Extensive damage to non-structural elements such as brick facades, roofs, and ceilings [1].</li>",
+          damage_struct_8: "<li>Near-total destruction of residential houses (34.5 kPa - ≤40 kPa) [2].</li>",
+          damage_struct_9: "<li>Near-total destruction of residential houses (40 kPa - 48.2 kPa) [2].</li>",
+          damage_struct_10: "<li>Heavy damage to non-structural elements leading to ceiling collapse [1].</li>",
+          damage_struct_11: "<li>8-12 inch thick unreinforced brick panels fail from shear or bending (48.2 kPa - ≤55 kPa) [2].</li>",
+          damage_struct_12: "<li>8-12 inch thick unreinforced brick panels fail from shear or bending (55 kPa - 55.1 kPa) [2].</li>",
+          damage_struct_13: "<li>Partial collapse of non-structural elements and significant damage to concrete columns [1].</li>",
+          damage_struct_14: "<li>Near-total collapse of all building elements, including heavy damage to load-bearing concrete columns [1].</li>",
+          damage_struct_none: "<li>No significant structural damage predicted.</li>",
+          // Injury descriptions
+          injury_effects_1_primary: "No serious injuries; eardrum damage is insignificant.",
+          injury_effects_1_secondary: "Glass begins to break at 3–5 kPa, where fragments can cause skin/eye injuries.",
+          injury_effects_1_conclusion: "Primary injuries are unlikely, but a risk of secondary injuries from glass fragments persists.",
+          injury_effects_2_primary: "Minor contusions.",
+          injury_effects_2_secondary: "Moderate structural damage may cause ceiling collapse and falling of small objects.",
+          injury_effects_2_conclusion: "A combination of minor contusions and secondary injuries from fragments/debris.",
+          injury_effects_3_primary: "Eardrum rupture, moderate contusions.",
+          injury_effects_3_secondary: "More extensive structural damage creates flying debris, which may cause bone fractures.",
+          injury_effects_3_conclusion: "Injury severity is increased due to the combined effects of the blast wave and flying debris.",
+          injury_effects_4_primary: "Serious and potentially fatal internal contusions.",
+          injury_effects_4_secondary: "Most buildings are likely to be completely destroyed, creating entrapment scenarios under the rubble.",
+          injury_effects_4_conclusion: "The combination of internal injuries and entrapment is potentially highly fatal.",
+          injury_effects_5_primary: "Extremely high mortality rate for unprotected individuals; 90%–100% fatality.",
+          injury_effects_5_secondary: "Total building collapse; large debris moving at high velocity.",
+          injury_effects_5_conclusion: "The interaction between the blast wave and structural failure poses an extremely high risk of fatality.",
+          injury_effects_none_primary: "No significant effects reported.",
+          injury_effects_none_conclusion: "No injuries are anticipated.",
+          // Alonso warning
+          alonsoWarning: "<li class='extrapolation-warning' style='color: var(--danger); font-weight: bold;'>Warning: Result is extrapolated beyond the valid Alonso model range (1 ≤ ze ≤ 200).</li>"
+        },
+        id: {
+          mainTitle: "Simulasi dan Pemodelan Efek Ledakan Berbasis Ekuivalensi TNT <span class=\"nowrap\">menggunakan Javascript</span>",
+          mainSubtitle1: "Program Magister Teknik Kimia, ",
+          mainSubtitle2: "Institut Teknologi Bandung",
+          menu: "Menu &#9776;",
+          menuHome: "Beranda",
+          menuApp: "Aplikasi Simulasi & Pemodelan",
+          menuGuide: "Panduan Simulasi (segera hadir)",
+          menuPresentation: "Presentasi",
+          menuJournal: "Jurnal & Konferensi (segera hadir)",
+          menuBibliography: "Bibliografi",
+          cardHeaderMaterial: "Bahan Kimia",
+          labelSelectMaterial: "Pilih Bahan",
+          optionSelect: "— Pilih —",
+          labelVolume: "Volume (m³)",
+          labelDistance: "Jarak (m)",
+          eqTitle: "Representasi Reaksi Keseluruhan",
+          eqBodyDefault: "Pilih bahan untuk menampilkan persamaan reaksi.",
+          cardHeaderProperties: "Properti",
+          propTblHeader1: "Properti",
+          propTblHeader2: "Nilai",
+          propTblHeader3: "Satuan",
+          propTblHeader4: "Literatur",
+          ambientPressure: "Tekanan Sekitar",
+          cardHeaderParameters: "Parameter",
+          paramTblHeader1: "Parameter",
+          paramTblHeader2: "Nilai",
+          paramTblHeader3: "Satuan",
+          paramTblHeader4: "Sumber",
+          paramMassMaterial: "(W) Massa Bahan",
+          paramTotalEnergy: "(E) Energi Total",
+          paramTntEquivalent: "(W) Ekuivalen TNT",
+          paramScaledDistance: "(Ze) Jarak Skala",
+          paramScaledOverpressure: "(Ps) Tekanan Berlebih Skala",
+          paramPeakOverpressure: "(Po) Puncak tekanan berlebih",
+          calculated: "@Terhitung",
+          chart1Title: "Tekanan Berlebih Skala vs Jarak Skala",
+          btnExportPng: "Ekspor PNG",
+          chartNoScript: "Mohon aktifkan JavaScript untuk menampilkan grafik. Referensi: G. F. Kinney &amp; K. J. Graham (1985).",
+          chart1Note: "Sumber: G. F. Kinney &amp; K. J. Graham, <em>Explosive Shocks in Air</em>, Springer-Verlag, 1985.",
+          chart2Title: "Tekanan Berlebih vs Jarak",
+          chartNoScriptSimple: "Mohon aktifkan JavaScript untuk menampilkan grafik.",
+          damageEstimationTitle: "Estimasi Kerusakan pada Struktur dan Peralatan Proses",
+          overpressureLabel: "Tekanan Berlebih (Po):",
+          damageDetailsLabel: "Detail Kerusakan:",
+          structuralLabel: "Struktural:",
+          processEqLabel: "Peralatan Proses:",
+          awaitingInput: "Menunggu masukan...",
+          unknown: "Tidak Diketahui",
+          injuryEstimationTitle: "Estimasi Konsekuensi Cedera",
+          effectsLabel: "Efek:",
+          logTitle: "Log Simulasi",
+          btnSort: "Urutkan",
+          btnExportCsv: "Ekspor CSV",
+          btnImportCsv: "Impor CSV",
+          logTblH1: "Node",
+          logTblH2: "Bahan",
+          logTblH5: "Volume",
+          logTblH6: "Jarak",
+          logFootnote: "Klik \"Simpan\" untuk mencatat hasil perhitungan. 10 entri terakhir akan disimpan di browser Anda.",
+          quickControlPanel: "Panel Kontrol Cepat",
+          footerBtnHome: "Beranda",
+          footerBtnGuide: "Panduan",
+          footerBtnPresentation: "Presentasi",
+          footerBtnJournal: "Jurnal",
+          footerBtnProfile: "Profil",
+          footerCredit: "Hak Cipta © 2025 oleh <a href=\"https://id.linkedin.com/in/virdanurlulu\" target=\"_blank\" rel=\"nofollow noopener noreferrer\" style=\"text-decoration: none;\">Virda Nur Lu'lu</a>",
+          footerDedication: "Aplikasi ini didedikasikan untuk orang tua saya atas dukungan dan bimbingan mereka yang tak henti-hentinya selama perjalanan saya belajar JavaScript. Aplikasi ini juga dipersembahkan kepada komunitas akademik di <a href=\"https://che.itb.ac.id/\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">Institut Teknologi Bandung</a> sebagai kontribusi untuk menginspirasi kemajuan lebih lanjut dalam teknologi JavaScript.",
+          // Dynamic messages
+          statusSuccess: "Perhitungan telah berhasil diselesaikan.",
+          statusError: "Pastikan properti dimasukkan dalam rentang yang sesuai",
+          statusInvalidZe: "Hasil perhitungan tidak valid (Ze bukan positif)",
+          statusDefaultLoaded: "Nilai default telah dimuat.",
+          logPlaceholder: "Tidak ada data simulasi yang tersedia.",
+          noExportData: "Tidak ada data log yang tersedia untuk diekspor.",
+          importSuccess: "Data log dari file CSV berhasil diimpor!",
+          importError: "File tidak dapat diimpor: ",
+          importErrorEmpty: "File CSV tidak valid atau kosong.",
+          importErrorMissingCols: "Kolom yang dibutuhkan tidak ada: ",
+          importErrorNoData: "Tidak ada data valid yang dapat diambil dari file CSV.",
+          saveLogBtn: "Simpan",
+          floatingPanelLabelPo: "Tekanan Berlebih (Po)",
+          // Damage categories
+          catastrophic: "Bencana",
+          major: "Besar",
+          severe: "Parah",
+          serious: "Serius",
+          moderate: "Sedang",
+          minor: "Kecil",
+          insignificant: "Tidak Berarti",
+          // Injury categories
+          invalidInput: "Input Tidak Valid",
+          noEffect: "Tidak Ada Efek",
+          minorInjury: "Cedera Ringan",
+          moderateInjury: "Cedera Sedang",
+          seriousInjury: "Cedera Serius",
+          severeInjury: "Cedera Parah",
+          fatality: "Kematian",
+          // Damage descriptions
+          damage_struct_1: "<li>Kerusakan kaca yang tidak disengaja [1].</li>",
+          damage_struct_2: "<li>Pecahan kaca kecil dan kerusakan arsitektur ringan seperti pergeseran genteng dan plester yang jatuh [1].</li>",
+          damage_struct_3: "<li>Pecahan kaca yang luas dan kerusakan signifikan pada elemen non-struktural seperti pintu, jendela, dan atap [1].</li>",
+          damage_struct_4: "<li>Runtuhnya dinding beton tak bertulang atau balok semen [2].</li>",
+          damage_struct_5: "<li>Panel baja tanpa rangka hancur; tangki penyimpanan minyak pecah (20.7 kPa - ≤25 kPa) [2].</li>",
+          damage_struct_6: "<li>Panel baja tanpa rangka hancur; tangki penyimpanan minyak pecah (25 kPa - 27.6 kPa) [2].</li>",
+          damage_struct_7: "<li>Kerusakan ekstensif pada elemen non-struktural seperti fasad bata, atap, dan langit-langit [1].</li>",
+          damage_struct_8: "<li>Hampir seluruh rumah tinggal hancur (34.5 kPa - ≤40 kPa) [2].</li>",
+          damage_struct_9: "<li>Hampir seluruh rumah tinggal hancur (40 kPa - 48.2 kPa) [2].</li>",
+          damage_struct_10: "<li>Kerusakan berat pada elemen non-struktural yang menyebabkan langit-langit runtuh [1].</li>",
+          damage_struct_11: "<li>Panel bata tak bertulang setebal 8-12 inci gagal karena geser atau lentur (48.2 kPa - ≤55 kPa) [2].</li>",
+          damage_struct_12: "<li>Panel bata tak bertulang setebal 8-12 inci gagal karena geser atau lentur (55 kPa - 55.1 kPa) [2].</li>",
+          damage_struct_13: "<li>Keruntuhan parsial elemen non-struktural dan kerusakan signifikan pada kolom beton [1].</li>",
+          damage_struct_14: "<li>Hampir seluruh elemen bangunan runtuh, termasuk kerusakan berat pada kolom beton penahan beban [1].</li>",
+          damage_struct_none: "<li>Tidak ada kerusakan struktural signifikan yang diprediksi.</li>",
+          // Injury descriptions
+          injury_effects_1_primary: "Tidak ada cedera serius; kerusakan gendang telinga tidak signifikan.",
+          injury_effects_1_secondary: "Kaca mulai pecah pada 3–5 kPa, di mana pecahan dapat menyebabkan cedera kulit/mata.",
+          injury_effects_1_conclusion: "Cedera primer tidak mungkin terjadi, tetapi risiko cedera sekunder dari pecahan kaca tetap ada.",
+          injury_effects_2_primary: "Memar ringan.",
+          injury_effects_2_secondary: "Kerusakan struktural sedang dapat menyebabkan langit-langit runtuh dan jatuhnya benda-benda kecil.",
+          injury_effects_2_conclusion: "Kombinasi memar ringan dan cedera sekunder dari pecahan/puing.",
+          injury_effects_3_primary: "Gendang telinga pecah, memar sedang.",
+          injury_effects_3_secondary: "Kerusakan struktural yang lebih luas menciptakan puing-puing terbang, yang dapat menyebabkan patah tulang.",
+          injury_effects_3_conclusion: "Tingkat keparahan cedera meningkat karena efek gabungan dari gelombang ledakan dan puing-puing terbang.",
+          injury_effects_4_primary: "Memar internal yang serius dan berpotensi fatal.",
+          injury_effects_4_secondary: "Sebagian besar bangunan kemungkinan besar akan hancur total, menciptakan skenario terperangkap di bawah reruntuhan.",
+          injury_effects_4_conclusion: "Kombinasi cedera internal dan terperangkap berpotensi sangat fatal.",
+          injury_effects_5_primary: "Tingkat kematian yang sangat tinggi untuk individu yang tidak terlindungi; 90%–100% fatalitas.",
+          injury_effects_5_secondary: "Keruntuhan total bangunan; puing-puing besar bergerak dengan kecepatan tinggi.",
+          injury_effects_5_conclusion: "Interaksi antara gelombang ledakan dan kegagalan struktural menimbulkan risiko kematian yang sangat tinggi.",
+          injury_effects_none_primary: "Tidak ada efek signifikan yang dilaporkan.",
+          injury_effects_none_conclusion: "Tidak ada cedera yang diantisipasi.",
+          alonsoWarning: "<li class='extrapolation-warning' style='color: var(--danger); font-weight: bold;'>Peringatan: Hasil diekstrapolasi di luar rentang valid model Alonso (1 ≤ ze ≤ 200).</li>"
+        }
+      };
+      
+      const presets = {
+        AN:  { rho: 1725,    dh:  2479,  e_tnt: 4500, eta: 0.35 },
+        LPG: { rho: 1.9,     dh: 50000,  e_tnt: 4500, eta: 0.03 },
+        H2:  { rho: 0.08375, dh: 130800, e_tnt: 4500, eta: 0.05 }
+      };
+
+      const eqMap = {
+        AN:  [{ labelKey: "detonation", eq: '2 NH<sub>4</sub>NO<sub>3</sub>(s) <span class="arrow">→</span> 2 N<sub>2</sub>(g) + O<sub>2</sub>(g) + 4 H<sub>2</sub>O(g)' }],
+        LPG: [{ labelKey: "combustion", eq: 'C<sub>3</sub>H<sub>8</sub>(g) + 5 O<sub>2</sub>(g) <span class="arrow">→</span> 3 CO<sub>2</sub>(g) + 4 H<sub>2</sub>O(g)' }],
+        H2:  [{ labelKey: "combustionExplosion", eq: '2 H<sub>2</sub>(g) + O<sub>2</sub>(g) <span class="arrow">→</span> 2 H<sub>2</sub>O(g)' }]
+      };
+      
+      const eqLabels = {
+        en: { detonation: "Detonation", combustion: "Combustion (propane)", combustionExplosion: "Combustion/explosion" },
+        id: { detonation: "Detonasi", combustion: "Pembakaran (propana)", combustionExplosion: "Pembakaran/ledakan" }
+      };
+      
+      const materialAbbreviationMap = {
+        'Ammonium Nitrate (AN)': 'AN',
+        'Propane (LPG)': 'LPG',
+        'Hydrogen (H₂)': 'H₂'
+      };
+      
+      const citations = {
+        1: "Wang et al., 2023",
+        2: "Clancey, 1972; Crowl & Louvar, 2011",
+        3: "Clancey, 1972; CCPS, 2000"
+      };
+
+      function switchLanguage(lang) {
+        if (!['en', 'id'].includes(lang)) lang = 'en';
+        currentLang = lang;
+        localStorage.setItem('userLang', lang);
+        document.documentElement.lang = lang;
+        
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.lang === lang);
+        });
+
+        document.querySelectorAll('[data-lang-key]').forEach(el => {
+            const key = el.dataset.langKey;
+            const translation = translations[lang][key];
+            if (translation !== undefined) {
+                el.innerHTML = translation;
+            }
+        });
+
+        // Update elements that require re-calculation or re-initialization
+        renderEquation($('material').value);
+        compute(true); // Recompute to update panels with new language
+        
+        // Re-initialize charts to update titles and labels
+        if (chartController) chartController.destroy();
+        chartController = initializeChart();
+        if(chartController) chartController.plotResult(parseFloat($("Ze").value), parseFloat($("Ps").value));
+
+        if (overpressureChartController && overpressureChartController.chartInstance) {
+            overpressureChartController.chartInstance.destroy();
+        }
+        overpressureChartController = initializeOverpressureChart();
+        updateOverpressureChartFromLog();
+
+        // Update table placeholder
+        renderLogTable();
+      }
+
+      function getDamageDescriptions(kPa) {
+        let html = '';
+        if (kPa >= 0.14 && kPa <= 2) html += translations[currentLang].damage_struct_1;
+        if (kPa > 2 && kPa <= 9) html += translations[currentLang].damage_struct_2;
+        if (kPa > 9 && kPa <= 25) html += translations[currentLang].damage_struct_3;
+        if (kPa >= 13.8 && kPa <= 20.7) html += translations[currentLang].damage_struct_4;
+        if (kPa > 20.7 && kPa <= 25) html += translations[currentLang].damage_struct_5;
+        if (kPa > 25 && kPa <= 27.6) html += translations[currentLang].damage_struct_6;
+        if (kPa > 25 && kPa <= 40) html += translations[currentLang].damage_struct_7;
+        if (kPa >= 34.5 && kPa <= 40) html += translations[currentLang].damage_struct_8;
+        if (kPa > 40 && kPa <= 48.2) html += translations[currentLang].damage_struct_9;
+        if (kPa > 40 && kPa <= 55) html += translations[currentLang].damage_struct_10;
+        if (kPa > 48.2 && kPa <= 55) html += translations[currentLang].damage_struct_11;
+        if (kPa > 55 && kPa <= 55.1) html += translations[currentLang].damage_struct_12;
+        if (kPa > 55 && kPa <= 76) html += translations[currentLang].damage_struct_13;
+        if (kPa > 76) html += translations[currentLang].damage_struct_14;
+
+        // Replace citation placeholders
+        return html.replace(/\[(\d+)\]/g, (match, p1) => `(${citations[p1]})`);
+      }
+      
+      const overpressureDamageLevels = [
+        { minPo: 0.14, maxPo: 0.21, description: "Annoying noise (137 dB if low frequency, 10–15 Hz)", citation_ref: 2, },
+        { minPo: 0.21, maxPo: 0.28, description: "Breakage of large windows previously under stress", citation_ref: 2, },
+        { minPo: 0.28, maxPo: 0.69, description: "Loud noise (143 dB), sonic boom, glass failure", citation_ref: 2, },
+        { minPo: 0.69, maxPo: 1.03, description: "Small windows break due to pressure", citation_ref: 2, },
+        { minPo: 1.03, maxPo: 2.07, description: "Typical pressure to break glass", citation_ref: 2, },
+        { minPo: 2.07, maxPo: 2.76, description: '"Safe distance," 95% probability of no serious damage below this level, projectile limit, minor ceiling damage, 10% window breakage', citation_ref: 2, },
+        { minPo: 2.76, maxPo: 4.8, description: "Limited minor structural damage", citation_ref: 2, },
+        { minPo: 4.8, maxPo: 6.9, description: "Minor structural damage to houses", citation_ref: 2, },
+        { minPo: 6.9, maxPo: 9, description: "Partial house collapse, uninhabitable", citation_ref: 2, },
+        { minPo: 9, maxPo: 13.8, description: "Slight distortion of coated steel frames", citation_ref: 2, },
+        { minPo: 13.8, maxPo: 15.8, description: "Partial collapse of roof and walls", citation_ref: 2, },
+        { minPo: 15.8, maxPo: 17.2, description: "Lower limit of serious structural damage", citation_ref: 2, },
+        { minPo: 17.2, maxPo: 20.7, description: "50% of brick walls collapse", citation_ref: 2, },
+        { minPo: 20.7, maxPo: 25, description: "Heavy machinery (3,000 lb) slightly damaged in industrial buildings; steel frames distorted or detached from foundation", citation_ref: 2, },
+        { minPo: 25, maxPo: 34.5, description: "Light industrial structures collapse", citation_ref: 2, },
+        { minPo: 34.5, maxPo: 48.2, description: "Utility poles break; 40,000 lb hydraulic equipment slightly damaged", citation_ref: 2, },
+        { minPo: 48.2, maxPo: 62, description: "Freight train cars completely destroyed", citation_ref: 2, },
+        { minPo: 62, maxPo: 68.9, description: "Fully loaded train cars totally destroyed", citation_ref: 2, },
+        { minPo: 68.9, maxPo: Infinity, description: "Likely total damage to structures; 7,000 lb equipment displaced and severely damaged; 12,000 lb machinery still present ", citation_ref: 2, },
+      ];
+      
+      const processEquipmentDamage = [
+          { po: 0, max_po: 3.45, description: "No significant damage recorded", citation_ref: 3 },
+          { po: 3.46, description: "Control house steel roof. Windows and gauges broken. Cooling tower. Louvers fall off (1.37855 - 2.44738 kPa).", citation_ref: 3 },
+          { po: 6.89, description: "Control house steel roof. Switchgear is damaged from roof collapse. Control house concrete roof. Windows broken. Tank (cone) roof. Roof collapses.", citation_ref: 3 },
+          { po: 10.34, description: "Control house steel roof. Roof collapses. Control house concrete roof. Frame deforms. Instruments. Are damaged. Windows and gauges broken.", citation_ref: 3 },
+          { po: 13.79, description: "Control house concrete roof. Roof collapses. Instruments. Are damaged. Windows and gauges broken. Fire heater. Brick cracks. Filter. Debris - missile damage occurs.", citation_ref: 3 },
+          { po: 17.24, description: "Fire heater. Unit moves and pipes break.", citation_ref: 3 },
+          { po: 20.68, description: "Tank (cone roof). Unit uplifts (half tilted). Instruments. Unit is damaged. Unit moves and pipes break. Controls are damaged. Cooling tower. Frame collapses. Control house steel roof. Block walls fall. Pine supports. Unit moves and pipes break.", citation_ref: 3 },
+          { po: 24.13, description: "Cooling tower. Frame collapses. Pine supports. Frame deforms.", citation_ref: 3 },
+          { po: 27.58, description: "Reactor (chemical). Unit moves and pipes break.", citation_ref: 3 },
+          { po: 31.03, description: "Filter. Inner parts are damaged. Utilities (gas regulatory). Controls are damaged. Utilities (electronic transformer). Debris - missile damage occurs.", citation_ref: 3 },
+          { po: 34.47, description: "Fire heater. Unit overturns or is destroyed. Reactor (chemical). Frame deforms. Electric motor. Debris - missile damage occurs. Blower. Unit is on foundation.", citation_ref: 3 },
+          { po: 37.92, description: "Fractionation column. Frame cracks.", citation_ref: 3 },
+          { po: 41.37, description: "Instrument cubicle. Unit overturns or is destroyed. Pine supports. Piping breaks. Frame collapses. Fractionation column. Unit moves and pipes break.", citation_ref: 3 },
+          { po: 44.82, description: "Tank (cone roof). Unit uplifts (0.9 tilted). Reactor (chemical). Unit is destroyed. Fractionation column. Unit moves and pipes break. Extraction column. Unit moves and pipes break.", citation_ref: 3 },
+          { po: 48.26, description: "Reactor (cracking). Unit moves and pipes break. Fractionation column. Unit overturns or is destroyed.", citation_ref: 3 },
+          { po: 51.71, description: "Generator. Unit overturns or is destroyed. Utilities (electronic transformer). Unit moves and pipes break. Heat exchanger. Unit moves and pipes break.", citation_ref: 3 },
+          { po: 55.16, description: "Tank sphere. Unit moves and pipes break.", citation_ref: 3 },
+          { po: 62.05, description: "Reactor (chemical). Unit overturns or is destroyed. Electric motor. Unit moves and pipes break. Extraction column. Unit overturns or is destroyed. Heat exchanger. Unit overturns or is destroyed.", citation_ref: 3 },
+          { po: 65.5, description: "Filter. Unit uplifts (0.9 tilted).", citation_ref: 3 },
+          { po: 68.95, description: "Utilities (electronic transformer). Unit overturns or is destroyed. Utilities (gas regulatory). Controls are damaged. Case is damaged. Steam turbine. Piping breaks. Case is damaged.", citation_ref: 3 },
+          { po: 82.74, description: "Filter. Unit overturns or is destroyed. Reactor (cracking). Unit overturns or is destroyed. Steam turbine. Unit overturns or is destroyed. Steam turbine. Controls are damaged.", citation_ref: 3 },
+          { po: 96.53, description: "Steam turbine. Piping breaks. Tank sphere. Unit moves and pipes break. Pressure vessel (vertical). Unit overturns or is destroyed.", citation_ref: 3 },
+          { po: 110.32, description: "Tank sphere. Unit overturns or is destroyed. Pump. Unit moves on foundation.", citation_ref: 3 },
+          { po: 137.9, description: "Tank (floating roof). Roof collapses. Reactor (cracking). Unit overturns or is destroyed. Steam turbine. Unit moves on foundation.", citation_ref: 3 }
+      ];
+
+      const defaultLogData = [
+          { material: 'AN', eta: '0.35', e_tnt: '4500', vol: '1734.8209', dist: '1500', w_tnt: '576999.986', ze: '18.018', ps: '0.097', po_crowl: '9.857', po_alonso: '6.395', po_sadovski: '5.778' },
+          { material: 'AN', eta: '0.35', e_tnt: '4500', vol: '1734.8209', dist: '1000', w_tnt: '576999.986', ze: '12.012', ps: '0.156', po_crowl: '15.813', po_alonso: '10.235', po_sadovski: '9.617' },
+          { material: 'AN', eta: '0.35', e_tnt: '4500', vol: '1734.8209', dist: '700', w_tnt: '576999.986', ze: '8.408', ps: '0.250', po_crowl: '25.310', po_alonso: '15.647', po_sadovski: '15.698' },
+          { material: 'AN', eta: '0.35', e_tnt: '4500', vol: '1734.8209', dist: '500', w_tnt: '576999.986', ze: '6.006', ps: '0.419', po_crowl: '42.468', po_alonso: '30.771', po_sadovski: '26.163' },
+          { material: 'AN', eta: '0.35', e_tnt: '4500', vol: '1734.8209', dist: '300', w_tnt: '576999.986', ze: '3.604', ps: '1.096', po_crowl: '111.073', po_alonso: '85.912', po_sadovski: '63.387' }
+      ];
+
+      let chartController;
+      let overpressureChartController; 
+      let simulationLog = [];
+
+      function debounce(func, delay = 250) {
+        let timeoutId;
+        return function(...args) {
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(() => { func.apply(this, args); }, delay);
+        };
+      }
+
+      function showStatusMessage(messageKey, isError = false, extraText = "") {
+          const msgEl = $("msg");
+          if (!msgEl) return;
+          const message = (translations[currentLang][messageKey] || messageKey) + extraText;
+          msgEl.textContent = message;
+          msgEl.classList.toggle("bad", isError);
+          msgEl.style.display = 'block';
+          
+          setTimeout(() => {
+              if (msgEl.textContent === message) {
+                  msgEl.style.display = 'none';
+              }
+          }, 5000);
+      }
+
+      function loadLogo() {
+        const img = $("itbLogo"); if (!img) return;
+        const fallback = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><circle cx="128" cy="128" r="120" fill="%230079c2"/><text x="50%" y="56%" font-family="Georgia, serif" font-size="88" text-anchor="middle" fill="white">ITB</text></svg>';
+        img.onerror = () => { img.onerror = null; img.src = fallback; };
+        img.src = "/img/Logo_Institut_Teknologi_Bandung.webp";
+      }
+
+      function goTop() { try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) { window.scrollTo(0, 0); } }
+
+      function initializeChart() {
+        const chartDom = document.getElementById('chart');
+        if (!chartDom) return null;
+        const chart = echarts.init(chartDom);
+        new ResizeObserver(() => chart.resize()).observe(chartDom);
+
+        const css = getComputedStyle(document.documentElement);
+        const BLUE   = (css.getPropertyValue('--blue-itb') || '#0079c2').trim();
+        const DANGER = (css.getPropertyValue('--danger')   || '#DC2626').trim();
+
+        const fPs = (ze) => (1616 * (1 + (ze/4.5)**2)) /
+          (Math.sqrt(1 + (ze/0.048)**2) * Math.sqrt(1 + (ze/0.32)**2) * Math.sqrt(1 + (ze/1.35)**2));
+        const logspace = (min, max, n=1000) =>
+          Array.from({length: n}, (_, i) => 10**(Math.log10(min) + (Math.log10(max) - Math.log10(min)) * i / (n-1)));
+        const refPairs = logspace(0.01, 100).map(z => [z, fPs(z)]);
+
+        const btn = $('btnExport');
+        if (btn) {
+          btn.addEventListener('click', () => {
+            const url = chart.getDataURL({ type: 'png', pixelRatio: 2, backgroundColor: '#FFFFFF' });
+            const a = document.createElement('a'); a.href = url; a.download = 'plot-explosion-ps-vs-ze.png'; a.click();
+          });
+        }
+        
+        const titleText = currentLang === 'id' ? 'Tekanan Berlebih Skala vs Jarak Skala' : 'Scaled Overpressure vs Scaled Distance';
+        const subText = currentLang === 'id' ? 'Model Referensi: Kinney & Graham (1985)' : 'Reference Model: Kinney & Graham (1985)';
+        const xAxisName = currentLang === 'id' ? 'Jarak Skala (ze)' : 'Scaled Distance (ze)';
+        const yAxisName = currentLang === 'id' ? 'Rasio Tekanan Berlebih Skala (Ps = Po/Pa, –)' : 'Scaled Overpressure Ratio (Ps = Po/Pa, –)';
+        
+        const baseOption = {
+            backgroundColor: 'transparent',
+            tooltip: {
+                confine: true, trigger: 'item',
+                formatter: p => {
+                    const v = Array.isArray(p.value) ? p.value : [];
+                    const zeV = Number.isFinite(v[0]) ? v[0].toPrecision(4) : '—';
+                    const psV = Number.isFinite(v[1]) ? v[1].toPrecision(4) : '—';
+                    return `<b>${p.seriesName}</b><br/>ze: ${zeV}<br/>Ps: ${psV}`;
+                },
+                backgroundColor: '#FFFFFF', borderColor: '#cccccc', borderWidth: 1, textStyle: { color: '#212121' }
+            },
+            xAxis: { type: 'log', logBase: 10, min: 0.01, max: 100, axisLine: { lineStyle: { color: '#94a3b8' } }, splitLine: { lineStyle: { color: 'rgba(0, 0, 0, 0.1)', width: 2 } }, minorSplitLine: { show: true, lineStyle: { color: 'rgba(0, 0, 0, 0.05)' } } },
+            yAxis: { type: 'log', logBase: 10, min: 0.01, max: 10000, nameRotate: 90, axisLine: { lineStyle: { color: '#94a3b8' } }, splitLine: { lineStyle: { color: 'rgba(0, 0, 0, 0.1)', width: 2 } }, minorSplitLine: { show: true, lineStyle: { color: 'rgba(0, 0, 0, 0.05)' } } },
+            media: [
+                {
+                    query: { minWidth: 601 },
+                    option: {
+                        grid: { left: 72, right: 35, top: 80, bottom: 70 },
+                        title: { text: titleText, subtext: subText, left: 'center', top: 10, textStyle: { color: '#212121', fontSize: 20 }, subtextStyle: { color: '#424242' }},
+                        xAxis: { name: xAxisName, nameLocation: 'middle', nameGap: 35, nameTextStyle: { color: '#212121', fontSize: 16, fontWeight: 'bold' }, axisLabel: { color: '#424242' }},
+                        yAxis: { name: yAxisName, nameLocation: 'middle', nameGap: 50, nameTextStyle: { color: '#212121', fontSize: 16, fontWeight: 'bold' }, axisLabel: { color: '#424242' }}
+                    }
+                },
+                {
+                    query: { maxWidth: 600 },
+                    option: {
+                        grid: { left: 55, right: 20, top: 70, bottom: 60 },
+                        title: { text: 'Ps vs ze', subtext: 'Crowl (2011), Kinney & Graham (1985)', left: 'center', top: 10, textStyle: { color: '#212121', fontSize: 16 }, subtextStyle: { color: '#424242', fontSize: 12 }},
+                        xAxis: { name: 'ze (m·kg−1/3', nameLocation: 'middle', nameGap: 30, nameTextStyle: { color: '#212121', fontSize: 14, fontWeight: 'bold' }, axisLabel: { color: '#424242', fontSize: 10 }},
+                        yAxis: { name: 'Ps', nameLocation: 'middle', nameGap: 35, nameTextStyle: { color: '#212121', fontSize: 14, fontWeight: 'bold' }, axisLabel: { color: '#424242', fontSize: 10 }}
+                    }
+                }
+            ]
+        };
+        
+        chart.setOption(baseOption);
+
+        return {
+          plotResult: function(ze, ps) {
+            const materialSel = $('material');
+            const selectedOption = materialSel ? materialSel.options[materialSel.selectedIndex] : null;
+            const compound = (selectedOption && selectedOption.value) ? selectedOption.text : (currentLang === 'id' ? 'Hasil Perhitungan' : 'Calculation Results');
+            const seriesData = (Number.isFinite(ze) && Number.isFinite(ps)) ? [[ze, ps]] : [];
+
+            chart.setOption({
+              series: [
+                { name: currentLang === 'id' ? 'Kurva Referensi' : 'Reference Curve', type: 'line', showSymbol: false, lineStyle: { width: 2.5, color: BLUE, shadowColor: 'rgba(0, 0, 0, 0.2)', shadowBlur: 5, shadowOffsetY: 2 }, data: refPairs, zlevel: 1 },
+                { name: `${currentLang === 'id' ? 'Titik' : 'Point'}: ${compound}`, type: 'scatter', symbolSize: 12, itemStyle: { color: DANGER, borderColor: '#ffffff', borderWidth: 2, shadowColor: 'rgba(0,0,0,0.3)', shadowBlur: 5 }, data: seriesData, zlevel: 2 }
+              ]
+            });
+          },
+          destroy: () => chart.dispose()
+        };
+      }
+      
+      function initializeOverpressureChart() {
+          const ctx = document.getElementById('overpressureChart');
+          if (!ctx) return null;
+
+          const titleText = currentLang === 'id' ? 'Tekanan Berlebih vs Jarak' : 'Overpressure vs Distance';
+          const xLabel = currentLang === 'id' ? 'Jarak [m]' : 'Distance [m]';
+          const yLabel = currentLang === 'id' ? 'Tekanan Berlebih [kPa]' : 'Overpressure [kPa]';
+
+          const chart = new Chart(ctx, {
+              type: 'line',
+              data: { datasets: [ { label: 'Crowl', data: [], borderColor: 'rgb(255, 99, 132)', borderWidth: 2.5, tension: 0.4, pointRadius: 3, pointHoverRadius: 5 }, { label: 'Alonso', data: [], borderColor: 'rgb(54, 162, 235)', borderWidth: 2.5, tension: 0.4, pointRadius: 3, pointHoverRadius: 5 }, { label: 'Sadovski', data: [], borderColor: 'rgb(75, 192, 192)', borderWidth: 2.5, tension: 0.4, pointRadius: 3, pointHoverRadius: 5 } ] },
+              options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: titleText, font: { size: 20, weight: 'bold' }, padding: { top: 10, bottom: 20 } }, legend: { display: true, position: 'top', labels: { usePointStyle: true, pointStyle: 'line' } } }, scales: { x: { type: 'linear', title: { display: true, text: xLabel, font: { size: 14, weight: '500' } }, grid: { drawOnChartArea: true, color: 'rgba(0, 0, 0, 0.05)', }, }, y: { title: { display: true, text: yLabel, font: { size: 14, weight: '500' } }, grid: { drawOnChartArea: true, color: 'rgba(0, 0, 0, 0.05)', }, } } }
+          });
+          
+          return { chartInstance: chart };
+      }
+      
+      function updateOverpressureChartFromLog() {
+          if (!overpressureChartController || !overpressureChartController.chartInstance) return;
+
+          const chart = overpressureChartController.chartInstance;
+          const msgEl = $('overpressureChartMsg');
+          const canvasEl = $('overpressureChart');
+          
+          canvasEl.style.display = 'block';
+          msgEl.style.display = 'none';
+
+          if (simulationLog.length === 0) {
+              chart.data.datasets.forEach(dataset => { dataset.data = []; });
+              chart.options.scales.x.min = 0; chart.options.scales.x.max = 3000;
+              chart.options.scales.y.min = 0; chart.options.scales.y.max = 100;
+              chart.update(); return;
+          }
+
+          const crowlPoints = [], alonsoPoints = [], sadovskiPoints = [], allYValues = [], allXValues = [];
+          simulationLog.forEach(log => {
+              const dist = parseFloat(log.dist); if (isNaN(dist)) return; allXValues.push(dist);
+              const poCrowl = parseFloat(log.po_crowl); if (!isNaN(poCrowl)) { crowlPoints.push({ x: dist, y: poCrowl }); allYValues.push(poCrowl); }
+              const poAlonso = parseFloat(log.po_alonso); if (!isNaN(poAlonso)) { alonsoPoints.push({ x: dist, y: poAlonso }); allYValues.push(poAlonso); }
+              const poSadovski = parseFloat(log.po_sadovski); if (!isNaN(poSadovski)) { sadovskiPoints.push({ x: dist, y: poSadovski }); allYValues.push(poSadovski); }
+          });
+
+          const sortByX = (a, b) => a.x - b.x;
+          chart.data.datasets[0].data = crowlPoints.sort(sortByX);
+          chart.data.datasets[1].data = alonsoPoints.sort(sortByX);
+          chart.data.datasets[2].data = sadovskiPoints.sort(sortByX);
+          
+          if (allYValues.length > 0) {
+              const minX = Math.min(...allXValues), maxX = Math.max(...allXValues);
+              const minY = Math.min(...allYValues), maxY = Math.max(...allYValues);
+              chart.options.scales.x.min = minX > 0 ? minX * 0.95 : 0; chart.options.scales.x.max = maxX * 1.05;
+              chart.options.scales.y.min = minY > 0 ? minY * 0.95 : 0; chart.options.scales.y.max = maxY * 1.05;
+          } else {
+              chart.options.scales.x.min = 0; chart.options.scales.x.max = 3000;
+              chart.options.scales.y.min = 0; chart.options.scales.y.max = 100;
+          }
+          chart.update();
+      }
+
+      function getImpactCategory(Po) {
+        const lang = currentLang;
+        if (Po > 76) return { name: translations[lang].catastrophic, color: "#991B1B", textColor: "#FFFFFF" };
+        if (Po > 55) return { name: translations[lang].major, color: "#F87171", textColor: "#FFFFFF" };
+        if (Po > 40) return { name: translations[lang].severe, color: "#FCA5A5", textColor: "var(--ink)" };
+        if (Po > 25) return { name: translations[lang].serious, color: "#FCD34D", textColor: "var(--ink)" };
+        if (Po > 9) return { name: translations[lang].moderate, color: "#FDE68A", textColor: "var(--ink)" };
+        if (Po > 2) return { name: translations[lang].minor, color: "#A7F3D0", textColor: "var(--ink)" };
+        if (Po >= 0.14) return { name: translations[lang].insignificant, color: "#D1FAE5", textColor: "var(--ink)" };
+        return { name: translations[lang].unknown, color: "var(--muted)", textColor: "#FFFFFF" };
+      }
+
+      function getInjuryRiskCategory(Po) {
+          const poValue = parseFloat(Po); const lang = currentLang;
+          if (isNaN(poValue)) return { name: translations[lang].invalidInput, color: "var(--muted)", textColor: "#FFFFFF" };
+          if (poValue < 0.14) return { name: translations[lang].noEffect, color: "#D1FAE5", textColor: "var(--ink)" };
+          if (poValue <= 20) return { name: translations[lang].minorInjury, color: "#FACC15", textColor: "var(--ink)" };
+          if (poValue <= 30) return { name: translations[lang].moderateInjury, color: "#FDBA74", textColor: "var(--ink)" };
+          if (poValue <= 50) return { name: translations[lang].seriousInjury, color: "#FB7185", textColor: "#FFFFFF" };
+          if (poValue <= 100) return { name: translations[lang].severeInjury, color: "#EF4444", textColor: "#FFFFFF" };
+          return { name: translations[lang].fatality, color: "#7F1D1D", textColor: "#FFFFFF" };
+      }
+
+      function updateEstimationPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated = false) {
+          const findClosestLowerEntry = (kPa, dataArray) => {
+              let closest = null;
+              for (const item of dataArray) {
+                  if (item.po <= kPa) {
+                      if (!closest || item.po > closest.po) closest = item;
+                  }
+              }
+              return closest;
+          };
+          
+          const updateEffectsList = (Po, structuralListEl, equipmentListEl) => {
+              if (!structuralListEl || !equipmentListEl) return;
+              const structuralDescriptions1 = getDamageDescriptions(Po);
+              const structuralDescriptions2 = overpressureDamageLevels.find(range => Po >= range.minPo && Po < range.maxPo);
+              let structuralHtml = structuralDescriptions1;
+              if (structuralDescriptions2) {
+                  structuralHtml += `<li>${structuralDescriptions2.description} (${citations[structuralDescriptions2.citation_ref]})</li>`;
+              }
+              structuralListEl.innerHTML = structuralHtml === '' ? translations[currentLang].damage_struct_none : structuralHtml;
+
+              const equipmentDamage = findClosestLowerEntry(Po, processEquipmentDamage);
+              if (equipmentDamage) {
+                  equipmentListEl.innerHTML = `<li>${equipmentDamage.description} (${citations[equipmentDamage.citation_ref]})</li>`;
+              } else {
+                  equipmentListEl.innerHTML = '<li>' + (translations[currentLang].damage_struct_none || 'No significant equipment damage predicted.') + '</li>';
+              }
+          };
+
+          ['crowl', 'alonso', 'sadovski'].forEach((method, i) => {
+              const Po = [PoCrowl, PoAlonso, PoSadovski][i];
+              const isPoValid = Number.isFinite(Po);
+              const valPoEl = $(`val-Po-${method}`), sevEl = $(`sev-${method}`);
+              const structuralListEl = $(`structural-damage-${method}`), equipmentListEl = $(`equipment-damage-${method}`);
+
+              if (!isPoValid) {
+                  if (valPoEl) valPoEl.textContent = '—';
+                  const unknownImpact = getImpactCategory(NaN);
+                  if (sevEl) { sevEl.textContent = unknownImpact.name; sevEl.style.backgroundColor = unknownImpact.color; sevEl.style.color = unknownImpact.textColor; }
+                  if (structuralListEl) structuralListEl.innerHTML = `<li data-lang-key="awaitingInput">${translations[currentLang].awaitingInput}</li>`;
+                  if (equipmentListEl) equipmentListEl.innerHTML = `<li data-lang-key="awaitingInput">${translations[currentLang].awaitingInput}</li>`;
+              } else {
+                  const impact = getImpactCategory(Po);
+                  const prettyPo = Po.toLocaleString(currentLang === 'id' ? 'id-ID' : 'en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+                  if (valPoEl) valPoEl.textContent = prettyPo;
+                  if (sevEl) { sevEl.textContent = impact.name; sevEl.style.backgroundColor = impact.color; sevEl.style.color = impact.textColor; }
+                  updateEffectsList(Po, structuralListEl, equipmentListEl);
+              }
+
+              if (method === 'alonso' && structuralListEl) {
+                  const existingWarning = structuralListEl.querySelector('.extrapolation-warning');
+                  if (existingWarning) existingWarning.remove();
+                  if (isAlonsoExtrapolated) structuralListEl.insertAdjacentHTML('afterbegin', translations[currentLang].alonsoWarning);
+              }
+          });
+      }
+
+      function getInjuryEffects(Po) {
+        const poValue = parseFloat(Po); const lang = currentLang;
+        if (isNaN(poValue) || poValue < 0) return { primary: translations[lang].awaitingInput, secondary: "", conclusion: "" };
+        if (poValue >= 0.14 && poValue < 20) return { primary: translations[lang].injury_effects_1_primary, secondary: translations[lang].injury_effects_1_secondary, conclusion: translations[lang].injury_effects_1_conclusion };
+        if (poValue >= 20 && poValue <= 30) return { primary: translations[lang].injury_effects_2_primary, secondary: translations[lang].injury_effects_2_secondary, conclusion: translations[lang].injury_effects_2_conclusion };
+        if (poValue > 30 && poValue <= 50) return { primary: translations[lang].injury_effects_3_primary, secondary: translations[lang].injury_effects_3_secondary, conclusion: translations[lang].injury_effects_3_conclusion };
+        if (poValue > 50 && poValue <= 100) return { primary: translations[lang].injury_effects_4_primary, secondary: translations[lang].injury_effects_4_secondary, conclusion: translations[lang].injury_effects_4_conclusion };
+        if (poValue > 100) return { primary: translations[lang].injury_effects_5_primary, secondary: translations[lang].injury_effects_5_secondary, conclusion: translations[lang].injury_effects_5_conclusion };
+        return { primary: translations[lang].injury_effects_none_primary, secondary: "", conclusion: translations[lang].injury_effects_none_conclusion };
+      }
+
+      function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski) {
+        const updatePanel = (method, Po) => {
+          const isPoValid = Number.isFinite(Po);
+          const prettyPo = isPoValid ? Po.toLocaleString(currentLang === 'id' ? 'id-ID' : 'en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 }) : "—";
+          const valPoEl = $(`val-Po-${method}-inj`), effectsListEl = $(`injury-effects-${method}`), sevFootEl = $(`sev-injury-${method}`);
+          if (!valPoEl || !effectsListEl || !sevFootEl) return;
+          valPoEl.textContent = prettyPo;
+          const effects = getInjuryEffects(Po);
+          effectsListEl.innerHTML = `<li><strong>${translations[currentLang].structuralLabel}:</strong> ${effects.primary}</li>
+            ${effects.secondary ? `<li><strong>${translations[currentLang].processEqLabel}:</strong> ${effects.secondary}</li>` : ''}
+            ${effects.conclusion ? `<li><strong>${currentLang === 'id' ? 'Kesimpulan' : 'Conclusion'}:</strong> ${effects.conclusion}</li>` : ''}`;
+          const severity = getInjuryRiskCategory(Po);
+          sevFootEl.textContent = severity.name; sevFootEl.style.backgroundColor = severity.color; sevFootEl.style.color = severity.textColor;
+        };
+        ['crowl', 'alonso', 'sadovski'].forEach(m => updatePanel(m, [PoCrowl, PoAlonso, PoSadovski][['crowl', 'alonso', 'sadovski'].indexOf(m)]));
+      }
+
+      function calculateValues(isInitialLoad = false) {
+        const btnSaveFloat = $('btnSaveResultFloat');
+        fields.forEach(id => $(id)?.classList.remove('input-error'));
+        let hasError = false;
+        const getFloat = (id) => { const el = $(id); const val = parseFloat(el.value); if (isNaN(val)) { el.classList.add('input-error'); hasError = true; } return val; };
+        const [rho, vol, dh, eta, e_tnt, dist, pa] = fields.map(getFloat);
+        if (!(eta >= 0 && eta <= 1)) { $('eta').classList.add('input-error'); hasError = true; }
+        if (!(e_tnt > 0)) { $('e_tnt').classList.add('input-error'); hasError = true; }
+
+        const resetAll = (msgKey) => {
+          ["W_mass", "E_total", "W_tnt", "Ze", "Ps", "Po_crowl", "Po_alonso", "Po_sadovski"].forEach(id => $(id).value = "");
+          showStatusMessage(msgKey, true);
+          updateEstimationPanels(NaN, NaN, NaN); updateInjuryPanels(NaN, NaN, NaN);
+          updateFloatingPanelOutputs(NaN, NaN, NaN, false);
+          if (chartController) chartController.plotResult(NaN, NaN); if (btnSaveFloat) btnSaveFloat.disabled = true;
+        };
+
+        if (hasError) return resetAll("statusError");
+
+        const W_mass = rho * vol; const E_total = W_mass * dh * eta; const W_tnt = E_total / e_tnt;
+        const Ze = dist > 0 && W_tnt > 0 ? dist / Math.cbrt(W_tnt) : NaN;
+        if (!Number.isFinite(Ze) || Ze <= 0) return resetAll("statusInvalidZe");
+
+        $("W_mass").value = W_mass.toFixed(3); $("E_total").value = E_total.toFixed(3);
+        $("W_tnt").value = W_tnt.toFixed(3); $("Ze").value = Ze.toFixed(3);
+
+        const PoPa_crowl = (1616 * (1 + (Ze/4.5)**2)) / (Math.sqrt(1 + (Ze/0.048)**2) * Math.sqrt(1 + (Ze/0.32)**2) * Math.sqrt(1 + (Ze/1.35)**2));
+        $("Ps").value = PoPa_crowl.toFixed(3); if (chartController) chartController.plotResult(Ze, PoPa_crowl);
+
+        const Po_crowl = PoPa_crowl * pa; const isAlonsoExtrapolated = Ze < 1 || Ze > 200;
+        const Po_alonso = ((z) => { if (z < 10) return 1.13e6 * z**-2.01; return 1.83e5 * z**-1.16; })(Ze) / 1000;
+        const Po_sadovski = ((w, d) => { if (!(d > 0 && w > 0)) return NaN; const r = Math.cbrt(w) / d; return (0.085 * r + 0.3 * r**2 + 0.8 * r**3) * 1000; })(W_tnt, dist);
+
+        $("Po_crowl").value = Po_crowl.toFixed(3); $("Po_alonso").value = isNaN(Po_alonso) ? "" : Po_alonso.toFixed(3); $("Po_sadovski").value = isNaN(Po_sadovski) ? "" : Po_sadovski.toFixed(3);
+
+        updateEstimationPanels(Po_crowl, Po_alonso, Po_sadovski, isAlonsoExtrapolated);
+        updateInjuryPanels(Po_crowl, Po_alonso, Po_sadovski);
+        updateFloatingPanelOutputs(Po_crowl, Po_alonso, Po_sadovski, true);
+
+        showStatusMessage("statusSuccess"); if (btnSaveFloat) btnSaveFloat.disabled = false;
+        if (!isInitialLoad) saveStateToURL();
+      }
+
+      function compute(isInitialLoad = false) { if ($("pa").value === "" || isNaN(parseFloat($("pa").value))) $("pa").value = "101.325"; calculateValues(isInitialLoad); }
+
+      function renderEquation(material) {
+        const box = $("eq-text"); if (!box) return;
+        if (!material || !eqMap[material]) { box.innerHTML = translations[currentLang].eqBodyDefault; return; }
+        box.innerHTML = eqMap[material].map(item => `<div class="rxn"><small>${eqLabels[currentLang][item.labelKey]}</small><div class="rxn-eq">${item.eq}</div></div>`).join("");
+      }
+
+      function saveStateToURL() { try { const params = new URLSearchParams(); inputFields.forEach(id => { const el = $(id); if (el && el.value) params.set(id, el.value); }); const q = params.toString(); window.history.replaceState({}, '', q ? `${window.location.pathname}?${q}` : window.location.pathname); } catch (error) { console.warn("Could not save state to URL:", error.message); } }
+
+      function loadStateFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        let hasParams = params.has('material');
+        if (hasParams) {
+          params.forEach((val, key) => { const el = $(key); if (el) el.value = val; });
+          if ($('material').value) renderEquation($('material').value);
+          compute(true);
+        } else {
+          const materialEl = $('material');
+          if (materialEl) {
+              materialEl.value = 'AN'; const p = presets.AN;
+              if (p) Object.keys(p).forEach(key => $(key).value = p[key]);
+              renderEquation('AN'); $('vol').value = '10'; $('dist').value = '100'; compute(true);
+          }
+        }
+      }
+      
+      function renderLogTable() {
+        const logTbody = $('logTbody'); if (!logTbody) return;
+        logTbody.innerHTML = ''; 
+        if (simulationLog.length === 0) {
+            logTbody.innerHTML = `<tr class="log-placeholder"><td colspan="13">${translations[currentLang].logPlaceholder}</td></tr>`;
+            return;
+        }
+        simulationLog.forEach((log, index) => {
+            const row = document.createElement('tr');
+            if (log.isNew) { row.classList.add('new-row-animation'); delete log.isNew; }
+            row.innerHTML = `<td data-label="Node">${index + 1}</td><td data-label="Material">${log.material}</td><td data-label="ηE">${log.eta}</td><td data-label="ETNT (kJ/kg)">${log.e_tnt}</td><td data-label="Volume (m³)">${log.vol}</td><td data-label="Distance (m)">${log.dist}</td><td data-label="WTNT (kg)">${log.w_tnt}</td><td data-label="ze">${log.ze}</td><td data-label="Ps">${log.ps}</td><td data-label="Crowl (kPa)">${log.po_crowl}</td><td data-label="Alonso (kPa)">${log.po_alonso}</td><td data-label="Sadovski (kPa)">${log.po_sadovski}</td><td class="col-action"><button class="btn-delete" data-index="${index}" title="Delete this line"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button></td>`;
+            logTbody.appendChild(row);
+        });
+      }
+
+      function saveLogToLocalStorage() { if(simulationLog.length > 0) localStorage.setItem('explosionSimLog', JSON.stringify(simulationLog)); else localStorage.removeItem('explosionSimLog'); }
+      function loadLog() { const savedLog = localStorage.getItem('explosionSimLog'); if (savedLog) { try { const parsedLog = JSON.parse(savedLog); if (Array.isArray(parsedLog)) { simulationLog = parsedLog; return; } } catch (e) { console.error("Failed to load log:", e); } } simulationLog = [...defaultLogData]; }
+      
+      const toTopBtn = $('toTop'); if (toTopBtn) window.addEventListener('scroll', () => toTopBtn.classList.toggle('show', window.scrollY > 200));
+      const dropdown = document.querySelector('.dropdown-menu');
+      if (dropdown) { const toggle = dropdown.querySelector('.dropdown-toggle'); if (toggle) toggle.addEventListener('click', e => { e.stopPropagation(); dropdown.classList.toggle('is-active'); }); document.addEventListener('click', e => { if (dropdown.classList.contains('is-active') && !dropdown.contains(e.target)) dropdown.classList.remove('is-active'); }); }
+      
+      function setupFloatingPanel() {
+        const floatInputs = $('floatPanelInputs'), floatOutputs = $('floatPanelOutputs');
+        floatInputs.innerHTML = `<div class="floating-group material"><label for="float_material" class="label" data-lang-key="labelSelectMaterial">${translations[currentLang].labelSelectMaterial}</label><select id="float_material"></select></div><div class="floating-group volume"><label for="float_vol" class="label" data-lang-key="labelVolume">${translations[currentLang].labelVolume}</label><input id="float_vol" type="number" min="0" step="any" /></div><div class="floating-group distance"><label for="float_dist" class="label" data-lang-key="labelDistance">${translations[currentLang].labelDistance}</label><input id="float_dist" type="number" min="0" step="any" /></div>`;
+        floatOutputs.innerHTML = `<label class="label" data-lang-key="floatingPanelLabelPo">${translations[currentLang].floatingPanelLabelPo}</label><div class="output-values"><div class="floating-output-col"><span>Crowl</span><span id="float_po_crowl">—</span></div><div class="floating-output-col"><span>Alonso</span><span id="float_po_alonso">—</span></div><div class="floating-output-col"><span>Sadovski</span><span id="float_po_sadovski">—</span></div></div><div style="margin-top: 12px;"><button class="btn" id="btnSaveResultFloat" disabled style="width: 100%;" data-lang-key="saveLogBtn">${translations[currentLang].saveLogBtn}</button></div>`;
+        const originalSelect = $('material'), floatSelect = $('float_material'); floatSelect.innerHTML = originalSelect.innerHTML;
+        const syncValues = (source, target) => { if (source.value !== target.value) { target.value = source.value; const changeEvent = new Event('change', { bubbles: true }); const inputEvent = new Event('input', { bubbles: true }); target.dispatchEvent(changeEvent); target.dispatchEvent(inputEvent); } };
+        ['material', 'vol', 'dist'].forEach(id => { const original = $(id), float = $(`float_${id}`); original.addEventListener('input', () => { if(float.value !== original.value) float.value = original.value; }); original.addEventListener('change', () => { if(float.value !== original.value) float.value = original.value; }); float.addEventListener('input', () => syncValues(float, original)); float.addEventListener('change', () => syncValues(float, original)); });
+      }
+
+      function syncFloatingPanelInputs() { $('float_material').value = $('material').value; $('float_vol').value = $('vol').value; $('float_dist').value = $('dist').value; }
+      function updateFloatingPanelOutputs(crowl, alonso, sadovski, enabled) {
+          const floatCrowl = $('float_po_crowl'), floatAlonso = $('float_po_alonso'), floatSadovski = $('float_po_sadovski'), btnSaveFloat = $('btnSaveResultFloat');
+          if(floatCrowl) floatCrowl.textContent = isNaN(crowl) ? '—' : crowl.toFixed(3); if(floatAlonso) floatAlonso.textContent = isNaN(alonso) ? '—' : alonso.toFixed(3); if(floatSadovski) floatSadovski.textContent = isNaN(sadovski) ? '—' : sadovski.toFixed(3); if(btnSaveFloat) btnSaveFloat.disabled = !enabled;
+      }
+
+      function makeDraggable(panel, handle) { let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0, isDragging = false; const dragStart = (e) => { if (panel.classList.contains('collapsed')) return; isDragging = true; panel.style.transition = 'none'; const rect = panel.getBoundingClientRect(); panel.style.width = rect.width + 'px'; panel.style.left = rect.left + 'px'; panel.style.transform = 'none'; let currentEvent = e.type.startsWith('touch') ? e.touches[0] : e; pos3 = currentEvent.clientX; pos4 = currentEvent.clientY; document.addEventListener('mouseup', dragEnd); document.addEventListener('mousemove', elementDrag); document.addEventListener('touchend', dragEnd); document.addEventListener('touchmove', elementDrag, { passive: false }); document.body.classList.add('dragging'); }; handle.addEventListener('mousedown', dragStart); handle.addEventListener('touchstart', dragStart, { passive: false }); function elementDrag(e) { if (!isDragging) return; if (e.type === 'touchmove') e.preventDefault(); let currentEvent = e.type.startsWith('touch') ? e.touches[0] : e; if (!currentEvent.clientX) return; pos1 = pos3 - currentEvent.clientX; pos2 = pos4 - currentEvent.clientY; pos3 = currentEvent.clientX; pos4 = currentEvent.clientY; panel.style.top = (panel.offsetTop - pos2) + "px"; panel.style.left = (panel.offsetLeft - pos1) + "px"; panel.style.bottom = 'auto'; } function dragEnd() { if (!isDragging) return; isDragging = false; panel.style.transition = ''; panel.style.width = ''; document.removeEventListener('mouseup', dragEnd); document.removeEventListener('mousemove', elementDrag); document.removeEventListener('touchend', dragEnd); document.removeEventListener('touchmove', elementDrag); document.body.classList.remove('dragging'); } }
+      
+      const floatingPanel = $('floatingControlPanel'); setupFloatingPanel(); makeDraggable(floatingPanel, floatingPanel.querySelector('.floating-panel-header'));
+      
+      const debouncedCompute = debounce(() => compute(false), 250);
+      inputFields.forEach(id => { const el = $(id); if (el && el.tagName === 'INPUT') el.addEventListener("input", debouncedCompute); });
+      const materialSel = $("material"); materialSel.addEventListener("change", () => { const p = presets[materialSel.value]; if (p) Object.keys(p).forEach(key => $(key).value = p[key]); renderEquation(materialSel.value); showStatusMessage("statusDefaultLoaded"); compute(false); });
+      materialSel.addEventListener("init-load", () => { const p = presets[materialSel.value]; if (p) Object.keys(p).forEach(key => $(key).value = p[key]); renderEquation(materialSel.value); compute(true); });
+
+      const saveAction = () => { if ($('btnSaveResultFloat').disabled) return; const selOpt = materialSel.options[materialSel.selectedIndex]; const newLog = { material: materialAbbreviationMap[selOpt.text] || selOpt.text, eta: $('eta').value, e_tnt: $('e_tnt').value, vol: $('vol').value, dist: $('dist').value, w_tnt: $('W_tnt').value, ze: $('Ze').value, ps: $('Ps').value, po_crowl: $('Po_crowl').value || 'N/A', po_alonso: $('Po_alonso').value || 'N/A', po_sadovski: $('Po_sadovski').value || 'N/A', isNew: true }; if (JSON.stringify(simulationLog) === JSON.stringify(defaultLogData)) simulationLog = []; simulationLog.unshift(newLog); if (simulationLog.length > 10) simulationLog.pop(); renderLogTable(); updateOverpressureChartFromLog(); saveLogToLocalStorage(); };
+      $('btnSaveResultFloat').addEventListener('click', saveAction);
+
+      $('logTbody').addEventListener('click', (e) => { const btn = e.target.closest('.btn-delete'); if (btn) { const idx = parseInt(btn.dataset.index, 10); if (!isNaN(idx)) { simulationLog.splice(idx, 1); renderLogTable(); updateOverpressureChartFromLog(); saveLogToLocalStorage(); } } });
+      $('btnSortLog').addEventListener('click', () => { if (simulationLog.length > 1) { simulationLog.sort((a, b) => parseFloat(a.dist) - parseFloat(b.dist)); renderLogTable(); updateOverpressureChartFromLog(); saveLogToLocalStorage(); } });
+      const btnExportLog = $('btnExportLog'), btnImportLog = $('btnImportLog'), importFileInput = $('importFile');
+      btnExportLog.addEventListener('click', () => { if (simulationLog.length === 0) { showStatusMessage('noExportData', true); return; } const headers = Object.keys(simulationLog[0]).filter(k => k !== 'isNew'); const csvRows = [headers.join(',')]; simulationLog.forEach(log => { const vals = headers.map(h => `"${('' + log[h]).replace(/"/g, '""')}"`); csvRows.push(vals.join(',')); }); const csvStr = csvRows.join('\n'); const blob = new Blob([csvStr], { type: 'text/csv;charset=utf-8;' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'simulation-log.csv'; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); });
+      btnImportLog.addEventListener('click', () => importFileInput.click());
+      importFileInput.addEventListener('change', (e) => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (re) => { try { const csv = re.target.result; const lines = csv.split(/\r\n|\n/).filter(line => line.trim()); if (lines.length < 2) throw new Error(translations[currentLang].importErrorEmpty); const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, '')); const reqH = ['material', 'eta', 'e_tnt', 'vol', 'dist', 'w_tnt', 'ze', 'ps', 'po_crowl', 'po_alonso', 'po_sadovski']; const missingH = reqH.filter(rh => !headers.includes(rh)); if (missingH.length > 0) throw new Error(`${translations[currentLang].importErrorMissingCols} ${missingH.join(', ')}`); const importedData = []; for(let i = 1; i < lines.length; i++) { const vals = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/"/g, '')); if (vals.length !== headers.length) continue; const logEntry = {}; headers.forEach((h, idx) => { logEntry[h] = vals[idx]; }); importedData.push(logEntry); } if (importedData.length === 0) throw new Error(translations[currentLang].importErrorNoData); simulationLog = importedData.slice(0, 10); if (simulationLog.length > 0) { const first = simulationLog[0]; const findMatVal = abbr => { const opts = $('material').options; for (let i = 0; i < opts.length; i++) if (materialAbbreviationMap[opts[i].text] === abbr) return opts[i].value; return ''; }; $('material').value = findMatVal(first.material); $('vol').value = first.vol; $('dist').value = first.dist; compute(true); } renderLogTable(); updateOverpressureChartFromLog(); saveLogToLocalStorage(); showStatusMessage('importSuccess'); } catch (err) { showStatusMessage('importError', true, err.message); } finally { importFileInput.value = ''; } }; reader.readAsText(file); });
+      
+      function setupCollapsePanel() {
+        const panel = $('floatingControlPanel'), collapseBtn = $('floatPanelCollapseBtn'), header = panel.querySelector('.floating-panel-header');
+        collapseBtn.addEventListener('click', e => { e.stopPropagation(); const isCollapsed = panel.classList.toggle('collapsed'); if (isCollapsed) { const rect = panel.getBoundingClientRect(); panel.style.setProperty('--target-top', `${rect.top}px`); panel.style.setProperty('--target-right', `${window.innerWidth - rect.right}px`); } else panel.style.width = ''; });
+        header.addEventListener('click', e => { if (panel.classList.contains('collapsed') && e.target !== collapseBtn && !collapseBtn.contains(e.target)) { panel.classList.remove('collapsed'); panel.style.width = ''; } });
+      }
+      
+      const materialCard = $('materialCard');
+      function handlePanelVisibility() { if (!isPageLoaded || !materialCard || !floatingPanel) return; const cardRect = materialCard.getBoundingClientRect(); if (cardRect.bottom < 20) { syncFloatingPanelInputs(); floatingPanel.classList.add('visible'); } else floatingPanel.classList.remove('visible'); }
+      window.addEventListener('scroll', handlePanelVisibility);
+      const updateOnResize = () => { handlePanelVisibility(); if (floatingPanel && !floatingPanel.classList.contains('collapsed')) floatingPanel.style.width = ''; };
+      window.addEventListener('resize', debounce(updateOnResize, 100)); window.addEventListener('orientationchange', updateOnResize);
+
+      // --- Initialization ---
+      loadLogo(); toTopBtn.addEventListener('click', goTop); loadLog();
+      chartController = initializeChart();
+      overpressureChartController = initializeOverpressureChart();
+      
+      document.querySelector('.lang-switcher').addEventListener('click', (e) => {
+        if (e.target.matches('.lang-btn')) switchLanguage(e.target.dataset.lang);
+      });
+      
+      const savedLang = localStorage.getItem('userLang') || 'en';
+      switchLanguage(savedLang);
+      
+      loadStateFromURL(); setupCollapsePanel();
+      
+      setTimeout(() => { isPageLoaded = true; handlePanelVisibility(); }, 250);
+
+    });
+  </script>
+</body>
+</html>
+
