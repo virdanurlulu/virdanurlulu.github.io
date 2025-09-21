@@ -59,6 +59,29 @@
     opacity: 0;
     pointer-events: none;
   }
+
+  /* === CSS BARU UNTUK TOMBOL KELUAR === */
+  #exit-fs-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 2147483647; /* z-index tertinggi agar di atas iframe */
+    background: rgba(0,0,0,0.6);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.7);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 38px;
+    text-align: center;
+    cursor: pointer;
+    display: none; /* Sembunyi secara default */
+  }
+  #exit-fs-btn.visible {
+    display: block; /* Tampil saat dibutuhkan */
+  }
 </style>
 </head>
 <body>
@@ -74,6 +97,8 @@
     <div id="start-overlay">
       <button id="start-btn">Mulai Presentasi</button>
     </div>
+
+    <button id="exit-fs-btn" title="Keluar dari Layar Penuh" aria-label="Keluar dari Layar Penuh">&times;</button>
   </div>
 </div>
 
@@ -85,6 +110,9 @@
   const overlay = document.getElementById('start-overlay');
   const startBtn = document.getElementById('start-btn');
   const iframe = document.getElementById('slides-frame');
+  
+  // === Elemen Tombol Keluar Baru ===
+  const exitBtn = document.getElementById('exit-fs-btn');
 
   startBtn.addEventListener('click', () => {
     iframe.src = SLIDES_URL;
@@ -101,6 +129,30 @@
     screen.orientation?.lock('landscape').catch(error => {
       console.log("Tidak dapat mengunci orientasi:", error);
     });
+  });
+
+  // === LOGIKA JAVASCRIPT BARU UNTUK TOMBOL KELUAR ===
+  
+  // 1. Event listener untuk keluar dari fullscreen saat tombol 'X' diklik
+  exitBtn.addEventListener('click', () => {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) { /* Safari */
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) { /* IE11 */
+      document.msExitFullscreen();
+    }
+  });
+
+  // 2. Event listener untuk mendeteksi perubahan mode fullscreen
+  document.addEventListener('fullscreenchange', () => {
+    // Jika ada elemen yang sedang fullscreen, tampilkan tombol keluar
+    if (document.fullscreenElement) {
+      exitBtn.classList.add('visible');
+    } else {
+      // Jika tidak ada, sembunyikan tombol keluar
+      exitBtn.classList.remove('visible');
+    }
   });
 })();
 </script>
