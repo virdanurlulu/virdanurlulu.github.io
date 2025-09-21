@@ -3,26 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Ganti judul sesuai dengan halaman Anda -->
+  <!-- Replace with your page's title -->
   <title>Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript</title>
 
-  <!-- Ganti dengan path ikon Anda -->
+  <!-- Replace with your icon's path -->
   <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
-  <!-- Ganti dengan URL kanonis halaman Anda -->
+  <!-- Replace with your page's canonical URL -->
   <link rel="canonical" href="https://virdanurlulu.github.io/">
   <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
   <link rel="dns-prefetch" href="//raw.githubusercontent.com">
-  <!-- Ganti dengan gambar preload yang relevan -->
+  <!-- Replace with a relevant preload image -->
   <link rel="preload" as="image" href="/img/banner-itb1.webp">
 
-  <!-- Ganti meta tag SEO agar sesuai dengan konten halaman Anda -->
+  <!-- Replace SEO meta tags to match your page content -->
   <meta name="description" content="Interactive web application for the simulation and modeling of explosion effects based on TNT equivalence.">
   <meta name="author" content="Virda Nur Lu'lu">
   <meta name="robots" content="index,follow">
   <meta name="theme-color" content="#0079c2">
   <meta name="color-scheme" content="light dark">
 
-  <!-- Ganti Properti Open Graph (OG) -->
+  <!-- Replace Open Graph (OG) Properties -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Master’s Program in Chemical Engineering, Bandung Institute of Technology">
   <meta property="og:title" content="Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript">
@@ -31,13 +31,13 @@
   <meta property="og:image" content="/img/ITB-Exlosion-Modeling-Simulation.webp">
   <meta property="og:image:type" content="image/webp">
 
-  <!-- Ganti Properti Twitter Card -->
+  <!-- Replace Twitter Card Properties -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript">
   <meta name="twitter:description" content="Interactive web application for the simulation and modeling of explosion effects based on TNT equivalence.">
   <meta name="twitter:image" content="/img/ITB-Exlosion-Modeling-Simulation.webp">
 
-  <!-- Ganti Skrip LD+JSON -->
+  <!-- Replace LD+JSON Script -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -54,12 +54,8 @@
   }
   </script>
 
-  <!-- Tambahkan pustaka JavaScript pihak ketiga di sini jika diperlukan -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js" defer></script> -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script> -->
-
   <style>
-    /* CSS Styles - Tidak diubah dari skrip asli */
+    /* CSS Styles - Unchanged from the original script */
     :root {
       --ink: #1e2b3b;
       --muted: #64748b;
@@ -136,16 +132,16 @@
     #floatingControlPanel .label { font-size: 11px; }
     #floatingControlPanel input, #floatingControlPanel select { font-size: 11px; padding: 8px 10px; min-height: 25px; }
 
-    /* Media Queries - Tidak diubah */
+    /* Media Queries - Unchanged */
     @media (max-width: 1024px) {
       .split { grid-template-columns: 1fr; }
       .right { position: static; }
     }
     @media (max-width: 768px) and (orientation: portrait) {
-      /* Gaya spesifik untuk mode potret seluler */
+      /* Specific styles for mobile portrait mode */
     }
     @media (max-width: 1024px) and (orientation: landscape) {
-      /* Gaya spesifik untuk lanskap tablet */
+      /* Specific styles for tablet landscape */
     }
     @media (max-width: 720px) {
       body { font-size: 14px; }
@@ -180,12 +176,12 @@
   <div class="wrap">
     <header class="banner title" role="banner">
       <div class="brandbar">
-        <!-- Ganti link beranda dan path logo -->
-        <a href="https://virdanurlulu.github.io/" target="_blank" rel="noopener noreferrer" aria-label="Kunjungi beranda">
-          <img id="itbLogo" class="brand-logo" alt="Logo ITB" width="96" height="96">
+        <!-- Replace homepage link and logo path -->
+        <a href="https://virdanurlulu.github.io/" target="_blank" rel="noopener noreferrer" aria-label="Visit homepage">
+          <img id="itbLogo" class="brand-logo" alt="ITB Logo" width="96" height="96">
         </a>
         <div class="brand-text">
-          <!-- Ganti judul dan subjudul header -->
+          <!-- Replace header title and subtitle -->
           <h1>Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript</h1>
           <h2>
             <span class="sub-line1">Thesis Master’s Program in Chemical Engineering, </span>
@@ -194,68 +190,70 @@
         </div>
       </div>
 
-      <nav class="dropdown-menu" aria-label="Navigasi Utama">
+      <nav class="dropdown-menu" aria-label="Main Navigation">
         <button class="dropdown-toggle">Menu &#9776;</button>
         <div class="dropdown-content">
-          <!-- Ganti link menu -->
-          <a href="/index.html">Beranda</a>
-          <a href="#">Halaman 1</a>
-          <a href="#">Halaman 2</a>
-          <a href="#">Halaman 3</a>
+          <!-- Replace menu links -->
+          <a href="/">Home</a>
+          <a href="/html/simulation-modeling-visualisation-explosion.html">Simulation & Modeling Application</a>
+          <a href="#">Simulation Guide (coming soon)</a>
+          <a href="#">Presentation (coming soon)</a>
+          <a href="#">Journal & Conference (coming soon)</a>
+          <a href="/html/bibliography_sim_modeling_explosion.html">Bibliography</a>
         </div>
       </nav>
     </header>
 
     <main class="split" role="main">
       <div class="left">
-        <!-- KONTEN UTAMA BAGIAN KIRI MASUK DI SINI -->
-        <section id="abstrak" class="card" aria-labelledby="abstrak-title">
-          <h2 id="abstrak-title" class="card-header">Abstrak</h2>
+        <!-- MAIN CONTENT FOR THE LEFT PANEL GOES HERE -->
+        <section id="abstract" class="card" aria-labelledby="abstract-title">
+          <h2 id="abstract-title" class="card-header">Abstract</h2>
           <div style="padding:14px">
-            <p>Konten untuk abstrak akan ditampilkan di sini ketika tautan yang sesuai diklik.</p>
+            <p>Content for the abstract will be displayed here upon clicking the corresponding link.</p>
           </div>
         </section>
 
-        <section id="kata-pengantar" class="card" aria-labelledby="pengantar-title">
-          <h2 id="pengantar-title" class="card-header">Kata Pengantar</h2>
+        <section id="foreword" class="card" aria-labelledby="foreword-title">
+          <h2 id="foreword-title" class="card-header">Foreword</h2>
           <div style="padding:14px">
-            <p>Konten untuk kata pengantar akan ditampilkan di sini.</p>
+            <p>Content for the foreword will be displayed here.</p>
           </div>
         </section>
 
-        <section id="pendahuluan" class="card" aria-labelledby="pendahuluan-title">
-          <h2 id="pendahuluan-title" class="card-header">Pendahuluan</h2>
+        <section id="introduction" class="card" aria-labelledby="introduction-title">
+          <h2 id="introduction-title" class="card-header">Introduction</h2>
           <div style="padding:14px">
-            <p>Konten untuk pendahuluan akan ditampilkan di sini.</p>
+            <p>Content for the introduction will be displayed here.</p>
           </div>
         </section>
 
-        <section id="tinjauan-pustaka" class="card" aria-labelledby="pustaka-title">
-          <h2 id="pustaka-title" class="card-header">Tinjauan Pustaka</h2>
+        <section id="literature-review" class="card" aria-labelledby="literature-title">
+          <h2 id="literature-title" class="card-header">Literature Review</h2>
           <div style="padding:14px">
-            <p>Konten untuk tinjauan pustaka akan ditampilkan di sini.</p>
+            <p>Content for the literature review will be displayed here.</p>
           </div>
         </section>
 
-        <section id="metodologi-penelitian" class="card" aria-labelledby="metodologi-title">
-          <h2 id="metodologi-title" class="card-header">Metodologi Penelitian</h2>
+        <section id="research-methodology" class="card" aria-labelledby="methodology-title">
+          <h2 id="methodology-title" class="card-header">Research Methodology</h2>
           <div style="padding:14px">
-            <p>Konten untuk metodologi penelitian akan ditampilkan di sini.</p>
+            <p>Content for the research methodology will be displayed here.</p>
           </div>
         </section>
       </div>
 
       <aside class="right">
-        <!-- KONTEN SAMPINGAN (SIDEBAR) MASUK DI SINI -->
+        <!-- SIDEBAR CONTENT GOES HERE -->
         <section class="card" aria-labelledby="toc-title">
-          <h2 id="toc-title" class="card-header">Daftar Isi</h2>
+          <h2 id="toc-title" class="card-header">Table of Contents</h2>
           <div style="padding:14px">
             <ul class="toc-list">
-              <li><a href="#abstrak">Abstrak</a></li>
-              <li><a href="#kata-pengantar">Kata Pengantar</a></li>
-              <li><a href="#pendahuluan">Pendahuluan</a></li>
-              <li><a href="#tinjauan-pustaka">Tinjauan Pustaka</a></li>
-              <li><a href="#metodologi-penelitian">Metodologi Penelitian</a></li>
+              <li><a href="#abstract">Abstract</a></li>
+              <li><a href="#foreword">Foreword</a></li>
+              <li><a href="#introduction">Introduction</a></li>
+              <li><a href="#literature-review">Literature Review</a></li>
+              <li><a href="#research-methodology">Research Methodology</a></li>
             </ul>
           </div>
         </section>
@@ -265,17 +263,17 @@
     
   <div id="floatingControlPanel">
       <div class="floating-panel-header">
-          <h3>Panel Kontrol Cepat</h3>
+          <h3>Quick Control Panel</h3>
           <div class="panel-header-buttons">
-            <button id="floatPanelCollapseBtn" class="floating-panel-action-btn" aria-label="Lipat/Buka Panel">▲</button>
+            <button id="floatPanelCollapseBtn" class="floating-panel-action-btn" aria-label="Collapse/Expand Panel">▲</button>
           </div>
       </div>
       <div class="floating-panel-body">
           <div id="floatPanelInputs">
-            <!-- Input untuk panel mengambang akan dibuat oleh JavaScript -->
+            <!-- Inputs for the floating panel will be generated by JavaScript -->
           </div>
           <div id="floatPanelOutputs">
-            <!-- Output untuk panel mengambang akan dibuat oleh JavaScript -->
+            <!-- Outputs for the floating panel will be generated by JavaScript -->
           </div>
       </div>
   </div>
@@ -283,35 +281,35 @@
   <footer class="app-footer">
       <div class="footer-content">
         <div class="footer-buttons">
-          <!-- Ganti link footer -->
-          <a class="btn-home-3d" href="/" target="_blank" rel="noopener noreferrer">Beranda</a>
-          <a class="btn-home-3d" href="#">Tentang</a>
-          <a class="btn-home-3d" href="#">Kontak</a>
-          <a class="btn-home-3d" href="https://id.linkedin.com/in/virdanurlulu">Profil</a>
+          <!-- Replace footer links -->
+          <a class="btn-home-3d" href="/" target="_blank" rel="noopener noreferrer">Home</a>
+          <a class="btn-home-3d" href="#">About</a>
+          <a class="btn-home-3d" href="#">Contact</a>
+          <a class="btn-home-3d" href="https://id.linkedin.com/in/virdanurlulu">Profile</a>
         </div>
         <div class="credit">Copyright © 2025 by
           <a href="https://id.linkedin.com/in/virdanurlulu" target="_blank" rel="nofollow noopener noreferrer" style="text-decoration: none;">Virda Nur Lu'lu</a>
         </div>
         <div class="dedication">
-          <!-- Ganti teks dedikasi footer -->
+          <!-- Replace footer dedication text -->
           This application is dedicated to my parents for their persistent support and patient guidance throughout my JavaScript journey. It is also presented to the academic community at <a href="https://che.itb.ac.id/" target="_blank" rel="nofollow noopener noreferrer">Institut Teknologi Bandung</a> as a contribution towards inspiring further advancements in JavaScript technology.
         </div>
       </div>
   </footer>
 
-  <button class="btn" id="toTop" type="button" aria-label="Kembali ke atas">&#8679;</button>
+  <button class="btn" id="toTop" type="button" aria-label="Back to top">&#8679;</button>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const $ = (id) => document.getElementById(id);
 
-      // --- Fungsi UI Dasar ---
+      // --- Basic UI Functions ---
 
       function loadLogo() {
         const img = $("itbLogo"); if (!img) return;
         const fallback = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><circle cx="128" cy="128" r="120" fill="%230079c2"/><text x="50%" y="56%" font-family="Georgia, serif" font-size="88" text-anchor="middle" fill="white">ITB</text></svg>';
         img.onerror = () => { img.onerror = null; img.src = fallback; };
-        // Ganti path logo Anda di sini
+        // Replace your logo path here
         img.src = "/img/Logo_Institut_Teknologi_Bandung.webp";
       }
 
@@ -358,18 +356,18 @@
         };
       }
 
-      // --- Fungsi Panel Mengambang (Floating Panel) ---
+      // --- Floating Panel Functions ---
       
       function setupFloatingPanel() {
         const floatInputs = $('floatPanelInputs');
         const floatOutputs = $('floatPanelOutputs');
         
         if (floatInputs) {
-            // Anda dapat mengisi konten default panel di sini jika diperlukan
-            floatInputs.innerHTML = `<p>Kontrol Cepat</p>`;
+            // You can populate default panel content here if needed
+            floatInputs.innerHTML = `<p>Quick Controls</p>`;
         }
         if (floatOutputs) {
-            floatOutputs.innerHTML = `<p>Hasil Cepat</p>`;
+            floatOutputs.innerHTML = `<p>Quick Results</p>`;
         }
       }
 
@@ -458,12 +456,12 @@
       
       function handlePanelVisibility() {
         const floatingPanel = $('floatingControlPanel');
-        // Ganti 'main' dengan ID elemen pemicu jika diperlukan
+        // Replace 'main' with a trigger element ID if needed
         const triggerElement = document.querySelector('main'); 
         if (!triggerElement || !floatingPanel) return;
 
         const triggerRect = triggerElement.getBoundingClientRect();
-        // Tampilkan panel ketika elemen pemicu digulir keluar dari pandangan
+        // Show the panel when the trigger element is scrolled out of view
         if (triggerRect.top < -200) { 
           floatingPanel.classList.add('visible');
         } else {
@@ -471,7 +469,7 @@
         }
       }
 
-      // --- Inisialisasi ---
+      // --- Initialization ---
       loadLogo();
       setupDropdownMenu();
       setupScrollToTopButton();
@@ -485,21 +483,11 @@
         window.addEventListener('resize', debounce(handlePanelVisibility, 100));
       }
       
-      // --- TAMBAHKAN JAVASCRIPT SPESIFIK HALAMAN ANDA DI SINI ---
-      console.log("Templat berhasil dimuat.");
+      // --- ADD YOUR PAGE-SPECIFIC JAVASCRIPT HERE ---
+      console.log("Template loaded successfully.");
       
     });
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
 
