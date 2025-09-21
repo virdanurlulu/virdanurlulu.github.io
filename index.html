@@ -53,6 +53,10 @@
     "publisher": {"@type": "Organization", "name": "Institut Teknologi Bandung", "url": "https://che.itb.ac.id/"}
   }
   </script>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU0KOVEMeaIJVTCohggkFr3LCgO8o9rXXC3dLrO82g0L+mcyn2I3NTG" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzYCACeUdcgtQLQR4ceL+a5EJei55C3yrfx" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
 
   <style>
     /* CSS Styles - Unchanged from the original script */
@@ -135,6 +139,61 @@
         background-color: var(--stripe);
         color: var(--blue-itb);
     }
+    .toc-list ul {
+        list-style-type: none;
+        padding-left: 20px;
+        margin: 5px 0;
+    }
+    .toc-list ul a {
+        font-weight: 400;
+        font-size: 0.9em;
+        color: var(--muted);
+    }
+    .responsive-table-wrapper {
+        overflow-x: auto;
+    }
+    .responsive-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px; /* Smaller font for mobile */
+    }
+    .responsive-table th, .responsive-table td {
+        border: 1px solid #ddd;
+        padding: 6px;
+        text-align: left;
+    }
+    .responsive-table th {
+        background-color: var(--stripe);
+    }
+    .equation {
+      display: block;
+      padding: 1em;
+      margin: 1em 0;
+      background-color: #f9f9f9;
+      border-left: 3px solid var(--blue-itb);
+      overflow-x: auto;
+    }
+    figure {
+        margin: 1.5em 0;
+        text-align: center;
+    }
+    figure img {
+        max-width: 100%;
+        height: auto;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 5px;
+    }
+    figcaption {
+        color: var(--muted);
+        font-size: 0.9em;
+        margin-top: 0.5em;
+        font-style: italic;
+    }
+    .flowchart {
+        width: 100%;
+        margin: 1.5em 0;
+    }
     #toTop { position: fixed; bottom: 20px; right: 20px; z-index: 1000; cursor: pointer; border-radius: 50%; width: 50px; height: 50px; padding: 0; display: flex; align-items: center; justify-content: center; background-color: var(--blue-itb); color: white; border: none; box-shadow: 0 4px 8px rgba(0,0,0,0.2); font-size: 24px; opacity: 0; visibility: hidden; transform: translateY(20px); transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s; }
     #toTop.show { opacity: 1; visibility: visible; transform: translateY(0); }
     #toTop:hover { background-color: #005a8c; }
@@ -165,6 +224,34 @@
     }
     @media (max-width: 768px) and (orientation: portrait) {
       /* Specific styles for mobile portrait mode */
+       .responsive-table, .responsive-table tbody, .responsive-table tr, .responsive-table td {
+        display: block;
+        width: 100%;
+      }
+      .responsive-table thead {
+        display: none;
+      }
+      .responsive-table tr {
+        margin-bottom: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      .responsive-table td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+        border: none;
+        border-bottom: 1px solid #eee;
+      }
+       .responsive-table td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 45%;
+        padding-left: 10px;
+        font-weight: bold;
+        text-align: left;
+      }
     }
     @media (max-width: 1024px) and (orientation: landscape) {
       /* Specific styles for tablet landscape */
@@ -236,37 +323,423 @@
         <section id="abstract" class="card" aria-labelledby="abstract-title">
           <h2 id="abstract-title" class="card-header">Abstract</h2>
           <div style="padding:14px">
-            <p>Content for the abstract will be displayed here upon clicking the corresponding link.</p>
+            <p>Chemical explosions in industrial facilities can cause severe harm to human safety, assets, and the environment. A widely used approach for estimating explosion impacts is the Trinitrotoluene (TNT) equivalent method, which converts the energy of hazardous substances into an equivalent TNT energy value. This study develops an automated simulation for explosion impact assessment based on the TNT equivalent method using JavaScript. The model incorporates three empirical approaches—Crowl and Louvar, Alonso, and Sadovski—to estimate overpressure and consequence distances for three hazardous substances: Ammonium Nitrate (AN), Liquefied Petroleum Gas (LPG), and Hydrogen (H₂). Model validation was carried out using real accident data and technical literature, ensuring the reliability of the simulation results to support comprehensive risk assessments. The proposed tool can be applied for preliminary evaluations, emergency scenario planning, and as a technical reference in the design of explosion mitigation systems for process industries.</p>
+            <p><strong>Keywords:</strong> Explosion impact, TNT equivalent, Overpressure, Hazardous substances, JavaScript simulation, Risk assessment, Process safety</p>
           </div>
         </section>
 
         <section id="foreword" class="card" aria-labelledby="foreword-title">
           <h2 id="foreword-title" class="card-header">Foreword</h2>
           <div style="padding:14px">
-            <p>Content for the foreword will be displayed here.</p>
+            <p>All praise and gratitude are extended to Allah SWT, whose blessings enabled the successful completion of this thesis research, entitled "Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript." This research was undertaken to fulfill the requirements for the Master of Science degree in the Chemical Engineering Program at the Bandung Institute of Technology.</p>
+            <p>The completion of this research was made possible through the invaluable support and guidance of several individuals. The author wishes to extend sincere gratitude to:</p>
+            <ol style="padding-left: 20px;">
+                <li style="margin-bottom: 10px;"><strong><a href="https://fti.itb.ac.id/staff-dosen-tetap/hary-devianto-st-meng-phd/" target="_blank" rel="noopener noreferrer">Ir. Hary Devianto, S.T, M.Eng., Ph.D., IPM, AER.</a></strong>, and <strong><a href="https://fti.itb.ac.id/staff-dosen-tetap/pramujo-widiatmoko-st-mt-dr-eng/" target="_blank" rel="noopener noreferrer">Dr. Eng. Ir. Pramujo Widiatmoko, S.T, M.T.</a></strong>, as the thesis supervisors, for their time, guidance, and invaluable expertise throughout the research and writing process.</li>
+                <li style="margin-bottom: 10px;">All lecturers and staff of the Chemical Engineering Master's Program at the Bandung Institute of Technology.</li>
+                <li style="margin-bottom: 10px;">All members of the Process Safety and Energetic Electrochemistry Laboratory (KPEE) ITB for their guidance and assistance during the laboratory familiarization process.</li>
+                <li style="margin-bottom: 10px;">The author's beloved parents and family for their unwavering support and encouragement during the preparation of this research report.</li>
+            </ol>
+            <p>The author welcomes any form of criticism, input, constructive suggestions, and inquiries from readers regarding this research. It is the author's sincere hope that this work will provide a meaningful contribution to the advancement of the chemical engineering field.</p>
+            <p style="text-align: right; margin-top: 20px;">Bandung, July 2025</p>
           </div>
         </section>
 
         <section id="introduction" class="card" aria-labelledby="introduction-title">
           <h2 id="introduction-title" class="card-header">Introduction</h2>
           <div style="padding:14px">
-            <p>Content for the introduction will be displayed here.</p>
+            <h3 id="background" style="margin-top: 0;">1.1 Background</h3>
+            <p>Process industries are characterized by significant fire and explosion hazards, primarily due to the flammable, reactive, and leak-prone nature of chemical substances under operational conditions. Failure to systematically identify and evaluate these potential hazards can lead to severe consequences for both human safety and industrial assets (Zaranejad et al., 2015). Chemical explosions can occur at any stage of the supply chain, from production to distribution and storage. Among the high-risk materials is ammonium nitrate (AN), widely utilized in the fertilizer and explosives industries. The storage of large quantities of such hazardous chemicals in densely populated areas elevates safety risks, as industrial warehouses and facilities are often located within high-density urban regions, making them vulnerable to major incidents. A majority of AN accidents occur during transportation (33%) and storage (29%), followed by manufacturing (28%) and processing (10%) (Yue et al., 2023).</p>
+            <p>Furthermore, accident and fatality data categorized by region and time period indicate that Europe and North America have recorded the highest number of fatalities from AN explosions, with over 900 and 600 deaths, respectively. The increasing number of incidents post-1950 highlights that AN explosions remain a significant issue in industrial safety to this day.</p>
+            <p>In addition to ammonium nitrate accidents, explosion incidents involving storage tanks of flammable chemicals such as Liquefied Petroleum Gas (LPG) also have significant impacts. Analysis of past incidents is crucial for identifying failure patterns and designing preventive measures. Based on research data from 242 storage tank accidents, fire and explosion were identified as the primary threats (Sarvestani et al., 2021).</p>
+            <p>Hydrogen is another critical focus in risk analysis, especially given its growing role as an alternative fuel. Its highly flammable nature and wide explosive range make it susceptible to incidents. Data from the U.S. Department of Energy indicate that out of 120 hydrogen accidents between 1999–2019, the most frequent occurrences were in laboratories (38.3%), refueling stations (10.6%), and commercial facilities (9.0%) (Yang et al., 2021). This underscores the need for meticulous risk assessment for hydrogen.</p>
+            <p>Predictive models for explosion impact based on the Trinitrotoluene (TNT) equivalent method have been widely used to estimate overpressure and consequence distances for various hazardous materials. This approach is straightforward, requiring only the energy and mass parameters of the substance for conversion into an equivalent TNT value. Empirical methods such as those by Crowl & Louvar, Sadovski, and Alonso have been applied in previous studies, including analyses of AN explosions in Beirut and Tianjin (Yu et al., 2021; Yu et al., 2022) and an evaluation of an LPG explosion by Bariha et al. (2016). However, manual calculations using these methods are not sufficiently efficient for complex and repetitive risk scenarios.</p>
+            <p>Alternatively, numerical simulation models are also employed to evaluate the impact of explosions from hazardous materials. ALOHA is a free software for simulating gas dispersion and thermal radiation, capable of estimating overpressure in Vapor Cloud Explosion (VCE) scenarios based on a Level of Concern (U.S. EPA & NOAA, 2013). PHAST offers a broader range of scenarios, including VCE and BLEVE, with impact contour visualization, though its geometric and spatial modeling is limited (DNV, 2024). Computational Fluid Dynamics (CFD) software like FLACS provides the most detailed simulations through three-dimensional modeling, accounting for obstacles, turbulence, and shock wave propagation dynamics, but it requires complex technical inputs, extensive computation time, and significant resources (I & Cheng, 2021).</p>
+            <p>This study aims to develop an automated simulation for explosion impact assessment based on the TNT equivalent method using JavaScript, implementing the Crowl & Louvar, Alonso, and Sadovski models. This tool is designed to calculate overpressure values and explosion consequence distances for three hazardous substances: ammonium nitrate, LPG, and hydrogen. The model will be validated against real-world incident data and technical literature to support risk mitigation efforts in industrial facilities.</p>
+
+            <h3 id="problem-statement">1.2 Problem Statement</h3>
+            <p>The calculation of explosion impacts for hazardous chemical substances such as ammonium nitrate, LPG, and hydrogen is a critical aspect of industrial risk assessment. The empirical TNT equivalent approach is frequently used due to its practicality and efficiency. However, there is a limitation in the form of automated applications that can systematically expedite the calculation of overpressure and explosion consequence distances. Therefore, this research is focused on addressing the following problems:</p>
+            <ol>
+              <li>What is the overpressure value (in kPa) generated from the explosion of Ammonium Nitrate, LPG, and Hydrogen after being converted to a TNT equivalent using the Crowl & Louvar, Sadovski, and Alonso methods in an automated system via JavaScript?</li>
+              <li>What are the explosion consequence distances (in meters) based on the overpressure values in relation to the level of damage to building facilities and the probability of fatalities?</li>
+              <li>Do the three empirical methods produce statistically significant differences in calculating overpressure values and impact distances for each substance (AN, LPG, Hydrogen), based on a Full Factorial Design analysis?</li>
+            </ol>
+
+            <h3 id="research-objectives">1.3 Research Objectives</h3>
+            <p>The objective of this research is to create an automated calculation simulation based on the TNT equivalent method using JavaScript by applying the Crowl & Louvar, Sadovski, and Alonso methods to model the explosion impact of hazardous materials such as Ammonium Nitrate, LPG, and Hydrogen. This simulation generates overpressure values and explosion consequence distances, which are then validated against data from real incidents and technical literature. The evaluation results are used to provide recommendations for risk mitigation efforts in industrial facilities.</p>
+            <p>Based on this objective, the specific research targets are as follows:</p>
+            <ol>
+              <li>To evaluate the overpressure values generated by the explosion of chemicals such as Ammonium Nitrate, LPG, and Hydrogen, converted to a TNT equivalent, using empirical methods (Crowl & Louvar, Sadovski, and Alonso) in an automated JavaScript system.</li>
+              <li>To determine the explosion consequence distances based on the simulated overpressure values in relation to damage to building facilities and the probability of fatalities.</li>
+              <li>To conduct a statistical significance analysis using Full Factorial Design and ANOVA to evaluate the influence of material, method, and input parameters on the resulting overpressure and impact distance.</li>
+            </ol>
+
+            <h3 id="scope-of-research">1.4 Scope of Research</h3>
+            <p>This research has a defined scope to limit the focus of the study and discussion in line with the intended objectives. The scope of this research includes the following aspects:</p>
+            <ol>
+              <li>This research exclusively uses an empirical model approach based on the Crowl & Louvar, Sadovski, and Alonso methods, without involving numerical simulations from CFD or PHAST software.</li>
+              <li>The chemical substances analyzed are limited to Ammonium Nitrate, LPG, and Hydrogen, with a focus on explosion scenarios resulting from the release of TNT equivalent energy.</li>
+              <li>The impact assessment includes the estimation of overpressure (in kPa) and consequence distance (in meters) in relation to the level of damage to building facilities and the potential for fatalities based on overpressure thresholds in confined and open spaces.</li>
+              <li>Model validation is performed by comparing simulation results with historical data from real incidents and technical literature.</li>
+            </ol>
           </div>
         </section>
 
         <section id="literature-review" class="card" aria-labelledby="literature-title">
           <h2 id="literature-title" class="card-header">Literature Review</h2>
           <div style="padding:14px">
-            <p>Content for the literature review will be displayed here.</p>
+            <h3 id="fire-and-explosion" style="margin-top: 0;">2.1 Fire and Explosion</h3>
+            <h4 id="fire-triangle">2.1.1 The Fire Triangle</h4>
+            <p>Fire, or combustion, is a rapid, exothermic oxidation process that occurs once a fuel reaches its ignition condition. Although fuels can be solid, liquid, or gas, the combustion process always takes place in the vapor phase. This means that liquid fuels must first vaporize, and solid fuels must undergo pyrolysis or sublimation into vapor before they can burn. For combustion to occur, three primary elements are required: a fuel, an oxidizer (typically oxygen), and an ignition source. These three elements are conceptually represented by the fire triangle (Crowl & Louvar, 2011).</p>
+            <p>The concept of the fire triangle illustrates that combustion can only occur when fuel, an oxidizer, and an ignition source are present in sufficient quantities. Consequently, a fire can be prevented if one of these three elements is absent or falls below a critical threshold. Specifically, a fire will not occur if there is no fuel or an insufficient amount, if an oxidizer (like oxygen) is absent or its concentration is too low, or if the energy from the ignition source is inadequate to initiate the combustion reaction.</p>
+            <p>In the context of the chemical industry, various types of fuels, oxidizers, and ignition sources can potentially trigger fires and explosions (Crowl & Louvar, 2011).</p>
+            <ul style="list-style-position: inside;">
+                <li><strong>Fuels:</strong>
+                    <ol style="padding-left: 20px;">
+                        <li>Flammable liquids such as gasoline, acetone, ether, and pentane;</li>
+                        <li>Solids such as plastics, wood dust, fibers, and metal particles;</li>
+                        <li>Gases such as acetylene, propane, carbon monoxide, and hydrogen.</li>
+                    </ol>
+                </li>
+                <li><strong>Oxidizers:</strong>
+                    <ol style="padding-left: 20px;">
+                        <li>Gases (e.g., oxygen, fluorine, and chlorine)</li>
+                        <li>Liquids (such as hydrogen peroxide, nitric acid, and perchloric acid)</li>
+                        <li>Solids (e.g., metal peroxides and ammonium nitrite).</li>
+                    </ol>
+                </li>
+                <li><strong>Ignition Sources:</strong>
+                    <p style="margin-left: 20px;">Ignition sources can include sparks, open flames, static electricity, or high heat sufficient to start the combustion reaction.</p>
+                </li>
+            </ul>
+            <h4 id="explosions">2.1.2 Explosions</h4>
+            <p>The behavior of explosions in the chemical industry is highly complex and influenced by various interacting physical and chemical parameters. Although numerous theoretical, semi-empirical, and empirical approaches have been developed to analyze this phenomenon, a comprehensive understanding of explosion characteristics has not yet been fully achieved. Therefore, any estimation of explosion impact must be interpreted with caution. In designing industrial process systems, the application of adequate safety factors is essential to anticipate uncertainties from calculation models and the complex dynamics of explosions.</p>
+            <p>The parameters that significantly influence explosion behavior are as follows:</p>
+            <ol>
+                <li>Ambient temperature,</li>
+                <li>Ambient pressure,</li>
+                <li>Composition of the explosive material,</li>
+                <li>Physical properties of the explosive material,</li>
+                <li>Ignition source: type, energy, and duration,</li>
+                <li>Geometry of surroundings: confined or unconfined,</li>
+                <li>Amount of combustible material,</li>
+                <li>Turbulence of the combustible material,</li>
+                <li>Time before ignition, and</li>
+                <li>Rate at which the combustible material is released.</li>
+            </ol>
+            <p>An explosion is a sudden and intense release of energy, with its destructive potential highly dependent on the rate of this energy release. If the energy is released slowly, the impact is limited. However, if the energy release occurs in a very short time, it can accumulate and create immense pressure in the vicinity, potentially causing significant damage. This released energy propagates through various mechanisms, such as blast waves, thermal radiation, projectiles, and acoustic energy. In the chemical industry environment, the blast wave is the primary mechanism most often responsible for structural damage and safety hazards.</p>
+            <p>Explosions in the gas phase cause rapid gas expansion, which pushes the surrounding air and forms a pressure wave that travels outward from the explosion's center. Under certain conditions, such as the rupture of a pressure vessel or the detonation of an explosive like TNT, a shock wave is formed and propagates at high speed. A crucial parameter for evaluating the impact of an explosion on infrastructure and personnel safety is the peak overpressure, which is the peak pressure exceeding atmospheric pressure. This value is used to assess the potential for structural damage and the risk to human life from exposure to the pressure wave (Crowl & Louvar, 2011).</p>
+            <p>According to Lees (2012), explosions in the process industry include the following types:</p>
+            <ol>
+                <li><strong>Physical Explosions:</strong> Mechanical failure, overpressure, underpressure, overtemperature, or undertemperature of a pressurized system.</li>
+                <li><strong>Condensed Phase Explosions:</strong> Involving powerful explosives such as high explosives, ammonium nitrate, organic peroxides, and sodium chlorate.</li>
+                <li><strong>Vapor Cloud Explosions (VCEs):</strong> Occur when a cloud of flammable vapor ignites after dispersing in the atmosphere.</li>
+                <li><strong>Boiling Liquid Expanding Vapor Explosions (BLEVEs):</strong> Typically occur in pressurized vessels containing a volatile liquid.</li>
+                <li><strong>Confined Explosions with Reaction:</strong> Such as vapor combustion in an enclosed space, reactor explosions, or explosions from other liquid-phase reactions.</li>
+                <li><strong>Vapor Escapes into, and Explosions in, Buildings (VEEBs):</strong> Posing additional risks due to the confined environment.</li>
+                <li><strong>Dust Explosions:</strong> Involving fine solid particles suspended in the air that ignite under specific conditions.</li>
+            </ol>
+            <h3 id="detonation-and-deflagration">2.2 Detonation and Deflagration</h3>
+            <p>Explosions in the chemical industry can occur through two primary mechanisms: deflagration and detonation. The difference between them lies in the propagation speed of the reaction and the characteristics of the pressure wave produced. Deflagration is a combustion process where the flame front moves at a subsonic speed, slower than the speed of sound in the gaseous medium (Crowl & Louvar, 2011). For a hydrocarbon-air mixture, the propagation speed of a deflagration is typically around 300 m/s (Lees, 2012). In a deflagration, energy from the reaction is transferred to the unburned gas mixture through heat conduction and radiation, causing gradual combustion. The peak pressure generated in a closed vessel can reach about 8 bar. The resulting pressure wave is broader, with a longer duration, and the pressure rise is more gradual compared to a detonation.</p>
+            <p>Conversely, detonation occurs when the flame front moves in the form of a shock wave at a supersonic speed, higher than the speed of sound in the hot combustion products (Crowl & Louvar, 2011). The propagation speed for a hydrocarbon-air mixture generally ranges from 2000–3000 m/s (Lees, 2012). Detonation causes a very sharp pressure spike, with peak pressures reaching 20 bar. In a detonation, the shock wave compresses the unburned gas ahead of the reaction front until it reaches its autoignition temperature, triggering instantaneous combustion.</p>
+            <p>Under certain conditions, a deflagration can transition into a detonation through a mechanism known as Deflagration to Detonation Transition (DDT). This transition often occurs in piping systems, where the energy from the deflagration reinforces the pressure wave, causing an adiabatic pressure rise that ultimately leads to a full detonation. This transition is rare in open spaces or large vessels but is more likely in confined geometries such as long pipes or narrow spaces.</p>
+            <h3 id="process-safety">2.3 Process Safety</h3>
+            <p>Several major accidents in the process industry have occurred due to the release of energy from explosions of hazardous materials such as LPG, ammonium nitrate, and hydrogen. Six major incidents serve as important references in this study. The data include the type of explosion, its cause, and its impact on facilities and human lives. These real-world fire and explosion incidents involving ammonium nitrate, LPG, and hydrogen are critical for understanding the risks.</p>
+            
+            <h3 id="tnt-equivalent-models">2.4 TNT Equivalent Models</h3>
+            <p>Each of these models has distinct characteristics and levels of conservatism in predicting overpressure from explosions.</p>
+            <h4 id="crowl-louvar-method">2.4.1 Crowl & Louvar Method</h4>
+            <p>To determine the TNT equivalence value, several equations are used, depending on the characteristics of the explosive material. Experiments with explosives have shown that the blast wave pressure can be predicted using an equivalent mass, denoted as $m_{TNT}$, and the distance from the explosion's epicenter, denoted as $R$ (Crowl & Louvar, 2011). The empirically derived scaling law is as follows:</p>
+            <div class="equation">$$Z_{e} = \frac{R}{m_{TNT}^{1/3}}$$</div>
+            <p>The correlation between the scaled distance ($Z_{e}$) and scaled overpressure ($P_{s}$) for a TNT explosion is shown in the equation above, where scaled overpressure ($P_{s}$) is the ratio of the peak side-on overpressure ($P_{o}$) to the ambient pressure ($P_{a}$).</p>
+            <div class="equation">$$P_{s} = \frac{P_{o}}{P_{a}}$$</div>
+            <p>TNT equivalence is a method used to equate the energy of an explosive substance to an equivalent mass of TNT. This approach assumes that the analyzed explosive has similar explosion characteristics to TNT if it releases the same amount of energy. The equivalent mass of TNT can be calculated using the following equation:</p>
+            <div class="equation">$$m_{TNT} = \frac{\eta M \Delta H_c}{E_{TNT}}$$</div>
+            <p>Where:</p>
+            <ul>
+                <li>$m_{TNT}$: equivalent mass of TNT (kg)</li>
+                <li>$\eta$: explosion efficiency</li>
+                <li>$M$: mass of the substance (kg)</li>
+                <li>$\Delta H_{c}$: heat of combustion (kJ/kg)</li>
+                <li>$E_{TNT}$: energy value of 1 kg of TNT, ranging from 4,230 to 4,836 kJ/kg (Wang et al., 2023)</li>
+            </ul>
+            <figure>
+                <img src="/img/ScaledOverpressure-vs-ScaledDistance.webp" alt="Graph of Scaled distance versus scaled overpressure for TNT explosions">
+                <figcaption>Figure 2.1: Correlation between Scaled Distance ($Z_{e}$) and Scaled Overpressure ($P_{s}$) (Crowl & Louvar, 2011, citing G. F. Kinney and K. J. Graham, Explosive Shocks in Air, 1985).</figcaption>
+            </figure>
+            <p>The data in Figure 2.1 can be represented by the following empirical equation:</p>
+            <div class="equation">$$ \frac{P_{o}}{P_{a}} = \frac{1616[1+(\frac{Z_{e}}{4.5})^{2}]}{\sqrt{1+(\frac{Z_{e}}{0.048})^{2}}\sqrt{1+(\frac{Z_{e}}{0.32})^{2}}\sqrt{1+(\frac{Z_{e}}{1.35})^{2}}} $$</div>
+
+            <h4 id="sadovski-method">2.4.2 Sadovski Method</h4>
+            <p>The Sadovski method is used to evaluate overpressure based on a series of TNT explosion experiments in open air. This model assumes a pseudo-spherical explosion center, allowing it to estimate the relationship between the mass of the explosive, the distance from the epicenter, and the overpressure (Jeremić & Bajić, 2006).</p>
+            <div class="equation">$$ P_{o} = 0.085 \left( \frac{m_{TNT}}{R^3} \right)^{1/3} + 0.3 \left( \frac{m_{TNT}}{R^3} \right)^{2/3} + 0.8 \left( \frac{m_{TNT}}{R^3} \right) $$</div>
+            <p>Where:</p>
+            <ul>
+                <li>$P_{o}$: Peak Side-on Overpressure (MPa)</li>
+                <li>$m_{TNT}$: mass of TNT (kg)</li>
+                <li>$R$: distance from the explosion center (m)</li>
+            </ul>
+            
+            <h4 id="alonso-method">2.4.3 Alonso Method</h4>
+            <p>The Alonso method employs a semi-empirical approach with a mathematical formulation based on a power-law relationship between scaled distance ($Z_{e}$) and peak side-on overpressure ($P_{o}$) (Díaz Alonso et al., 2006). Using this method, overpressure can be assessed using one of the two intervals provided in Table 2.1.</p>
+            <div class="responsive-table-wrapper">
+                <table class="responsive-table">
+                    <caption>Table 2.1: Relationship between Overpressure ($P_{o}$) vs. Scaled Distance ($Z_{e}$) in the Alonso Method</caption>
+                    <thead>
+                        <tr>
+                            <th>$Z_{e}$ Interval</th>
+                            <th>$P_{o}$ Interval (Pa)</th>
+                            <th>$P_{o}$ Equation (Pa)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-label="$Z_{e}$ Interval">$1 \le Z_{e} \le 10$</td>
+                            <td data-label="$P_{o}$ Interval (Pa)">$1.13 \times 10^{6} \ge P_{o} \ge 11,000$</td>
+                            <td data-label="$P_{o}$ Equation (Pa)">$P_{o} = 1.13 \times 10^{6} Z_{e}^{-2.01}$</td>
+                        </tr>
+                        <tr>
+                            <td data-label="$Z_{e}$ Interval">$10 \le Z_{e} \le 100$</td>
+                            <td data-label="$P_{o}$ Interval (Pa)">$11,000 \ge P_{o} \ge 400$</td>
+                            <td data-label="$P_{o}$ Equation (Pa)">$P_{o} = 1.83 \times 10^{5} Z_{e}^{-1.16}$</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>The Alonso method provides a more realistic estimation of overpressure, especially at greater distances, as it considers the decay characteristics of pressure with distance using a mathematical approach based on free-air explosion experimental data.</p>
+            
+            <h3 id="explosion-consequence-analysis">2.5 Explosion Consequence Analysis Based on Overpressure</h3>
+            <p>The estimation of an explosion's impact on structures and human safety is generally determined by the magnitude of the resulting overpressure. Overpressure is the primary parameter reflecting the intensity of the shock wave, and its value is directly proportional to the explosion's energy and the mass of the explosive material involved. The higher the overpressure value, the greater the level of damage to infrastructure and the risk to human life.</p>
+            <p>In the context of industrial explosions, the relationship between overpressure and consequence can be grouped into two main aspects: damage to buildings and technical facilities, and the potential for injury and severity to humans. Table 2.2 presents an estimation of building damage based on overpressure values in kilopascals (kPa), ranging from minor damage like broken glass to the total destruction of structures. Meanwhile, Table 2.3 shows the level of human injury due to overpressure, from minor injuries like bruises to death from an air-blast.</p>
+            
+            <div class="responsive-table-wrapper">
+                <table class="responsive-table">
+                    <caption>Table 2.2: Estimated Building Damage Impact Based on Overpressure</caption>
+                    <thead>
+                        <tr>
+                            <th>Overpressure (kPa)</th>
+                            <th>Damage to Facilities</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td data-label="Overpressure (kPa)">0.14</td><td data-label="Damage">Annoying noise (137 dB if low frequency, 10-15 Hz)</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">0.21</td><td data-label="Damage">Breakage of large, pre-stressed window panes</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">0.28</td><td data-label="Damage">Loud noise (143 dB), sonic boom, glass failure</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">0.69</td><td data-label="Damage">Breakage of small windows due to pressure</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">1.03</td><td data-label="Damage">Typical pressure for glass breakage</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">2.07</td><td data-label="Damage">"Safe distance" (95% probability of no serious damage below this value); projectile limit; some damage to house ceilings; 10% of windows broken</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">2.76</td><td data-label="Damage">Limited minor structural damage</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">3.4-6.9</td><td data-label="Damage">Large and small windows usually shattered; occasional damage to window frames</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">4.8</td><td data-label="Damage">Minor damage to house structures</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">6.9</td><td data-label="Damage">Partial collapse of houses, making them uninhabitable</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">6.9-13.8</td><td data-label="Damage">Corrugated asbestos shatters; steel or aluminum paneling, fasteners fail, followed by buckling; wooden panels (standard housing), fasteners fail, panels blow in</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">9.0</td><td data-label="Damage">Slight distortion of steel frame buildings</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">13.8</td><td data-label="Damage">Partial collapse of roof and walls of houses</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">13.8-20.7</td><td data-label="Damage">Unreinforced concrete or cement block walls shatter</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">15.8</td><td data-label="Damage">Lower limit of serious structural damage</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">17.2</td><td data-label="Damage">50% of brick walls of houses destroyed</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">20.7</td><td data-label="Damage">Heavy machinery (3,000 lb) in industrial buildings slightly damaged; steel buildings distorted and pulled from foundations</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">20.7-27.6</td><td data-label="Damage">Frameless, self-standing steel panel buildings destroyed; oil storage tanks rupture</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">27.6</td><td data-label="Damage">Cladding of light industrial buildings ruptures</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">34.5</td><td data-label="Damage">Wooden utility poles snap; tall hydraulic equipment (40,000 lb) in buildings slightly damaged</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">34.5-48.2</td><td data-label="Damage">Near-total destruction of houses</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">48.2</td><td data-label="Damage">Loaded freight cars completely destroyed</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">48.2-55.1</td><td data-label="Damage">Unreinforced brick panels, 8-12 in thick, fail by shear or flexure</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">62.0</td><td data-label="Damage">Fully loaded freight cars completely destroyed</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">68.9</td><td data-label="Damage">Probable total destruction of buildings; heavy machinery (7,000 lb) moved and badly damaged, very heavy machinery (12,000 lb) survives</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">2068</td><td data-label="Damage">Crater lip limit</td></tr>
+                    </tbody>
+                </table>
+                <p style="font-size: 0.8em; text-align: right; margin-top: 5px;">Source: Crowl & Louvar (2011), citing V. J. Clancey (1972).</p>
+            </div>
+
+            <div class="responsive-table-wrapper">
+                <table class="responsive-table">
+                    <caption>Table 2.3: Relationship between Fatalities and Overpressure from Air-blast</caption>
+                    <thead>
+                        <tr>
+                            <th>Overpressure (kPa)</th>
+                            <th>Injury Level</th>
+                            <th>Injury Condition</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td data-label="Overpressure (kPa)">20-30</td><td data-label="Injury Level">Mild</td><td data-label="Condition">Minor contusion</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">30-50</td><td data-label="Injury Level">Moderate</td><td data-label="Condition">Eardrum injury, moderate contusion, minor fractures, etc.</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">50-100</td><td data-label="Injury Level">Severe</td><td data-label="Condition">Serious internal contusion, even death</td></tr>
+                        <tr><td data-label="Overpressure (kPa)">&gt;100</td><td data-label="Injury Level">Extremely Severe</td><td data-label="Condition">Death</td></tr>
+                    </tbody>
+                </table>
+                <p style="font-size: 0.8em; text-align: right; margin-top: 5px;">Source: Wang et al. (2023).</p>
+            </div>
           </div>
         </section>
 
         <section id="research-methodology" class="card" aria-labelledby="methodology-title">
           <h2 id="methodology-title" class="card-header">Research Methodology</h2>
           <div style="padding:14px">
-            <p>Content for the research methodology will be displayed here.</p>
+            <h3 id="research-implementation" style="margin-top:0;">3.1 Research Implementation</h3>
+            <p>This study employs the TNT Equivalent approach to estimate the impact of explosions from hazardous materials, using empirical calculation models from three methods: the Crowl & Louvar method, the Alonso method, and the Sadovski method. The calculation models from these three methods are implemented into a program based on JavaScript. Figure 3.1 shows the overall flowchart of the explosion impact study and analysis process.</p>
+
+            <figure>
+              <svg class="flowchart" viewBox="0 0 400 650" style="background-color: #fff; border: 1px solid #ddd; border-radius: 8px;">
+                <!-- Define arrow marker -->
+                <defs>
+                  <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#333" />
+                  </marker>
+                </defs>
+              
+                <!-- Styles -->
+                <style>
+                  .flow-box { fill: #f0f8ff; stroke: var(--blue-itb); stroke-width: 1.5; }
+                  .flow-text { font-family: system-ui, sans-serif; font-size: 10px; text-anchor: middle; dominant-baseline: middle; }
+                  .flow-line { stroke: #333; stroke-width: 1.5; marker-end: url(#arrow); }
+                  .flow-line-dashed { stroke: #aaa; stroke-width: 1; marker-end: url(#arrow); stroke-dasharray: 4 2; }
+                  .flow-sim-box { fill: none; stroke: #888; stroke-width: 1; stroke-dasharray: 5,5; }
+                  .flow-sim-text { font-family: system-ui, sans-serif; font-size: 9px; fill: #555; }
+                  .flow-diamond { fill: #fffbe6; stroke: #f59e0b; stroke-width: 1.5; }
+                </style>
+              
+                <!-- Simulation Area -->
+                <rect x="25" y="145" width="350" height="300" rx="10" class="flow-sim-box" />
+                <text x="45" y="135" class="flow-sim-text" transform="rotate(-90 45,140)">JavaScript Simulation</text>
+              
+                <!-- Nodes -->
+                <ellipse cx="200" cy="30" rx="50" ry="15" class="flow-box" />
+                <text x="200" y="30" class="flow-text">Start</text>
+              
+                <path d="M 120,60 h160 v30 h-160 z" class="flow-box" />
+                <text x="200" y="75" class="flow-text">Data Collection and Validation</text>
+              
+                <rect x="120" y="105" width="160" height="30" rx="5" class="flow-box" />
+                <text x="200" y="120" class="flow-text">Determine Chemical Properties</text>
+                
+                <rect x="100" y="160" width="200" height="30" rx="5" class="flow-box" />
+                <text x="200" y="175" class="flow-text">Calculate Mass, Total Energy, TNT Equivalent</text>
+                
+                <rect x="100" y="230" width="200" height="30" rx="5" class="flow-box" />
+                <text x="200" y="245" class="flow-text">Calculate Overpressure (Crowl, Alonso, Sadovski)</text>
+
+                <rect x="100" y="280" width="200" height="30" rx="5" class="flow-box" />
+                <text x="200" y="295" class="flow-text">Generate Consequence Contour on Map</text>
+
+                <rect x="100" y="330" width="200" height="30" rx="5" class="flow-box" />
+                <text x="200" y="345" class="flow-text">Recommend Risk Mitigation Measures</text>
+
+                <path d="M 50 460 l 150 -25 l 150 25 l -150 25 z" class="flow-box" />
+                <text x="200" y="460" class="flow-text" style="font-size: 8.5px;">Simulation Results: Overpressure (Po),<tspan x="200" dy="10">Consequence Distance, Damage Analysis</tspan></text>
+                
+                <rect x="80" y="510" width="240" height="40" rx="5" class="flow-box" />
+                <text x="200" y="520" class="flow-text">Analysis & Interpretation of Comparative Results</text>
+                <text x="200" y="540" class="flow-text">for each validated chemical</text>
+
+                <rect x="160" y="580" width="80" height="30" rx="5" class="flow-box" />
+                <text x="200" y="595" class="flow-text">Analysis Report</text>
+
+                <!-- Diamonds -->
+                <path d="M300 195 l25 -20 l25 20 l-25 20 z" class="flow-diamond" />
+                <text x="325" y="195" class="flow-text" font-size="8">Validation</text>
+
+                <path d="M75 265 l25 -20 l25 20 l-25 20 z" class="flow-diamond" />
+                <text x="100" y="265" class="flow-text" font-size="8">Validation</text>
+                
+                <!-- Lines -->
+                <line x1="200" y1="45" x2="200" y2="60" class="flow-line" />
+                <line x1="200" y1="90" x2="200" y2="105" class="flow-line" />
+                <line x1="200" y1="135" x2="200" y2="160" class="flow-line" />
+                <line x1="200" y1="190" x2="200" y2="230" class="flow-line" />
+                <line x1="200" y1="260" x2="200" y2="280" class="flow-line" />
+                <line x1="200" y1="310" x2="200" y2="330" class="flow-line" />
+                <line x1="200" y1="360" x2="200" y2="447.5" class="flow-line" />
+                <line x1="200" y1="485" x2="200" y2="510" class="flow-line" />
+                <line x1="200" y1="550" x2="200" y2="580" class="flow-line" />
+
+                <!-- Validation Lines -->
+                <line x1="300" y1="175" x2="325" y2="175" class="flow-line" />
+                <path d="M 325 215 C 360 215, 360 82.5, 280 82.5" stroke="#333" stroke-width="1.5" fill="none" marker-end="url(#arrow)" />
+                <text x="340" y="140" class="flow-text" font-size="8">Invalid</text>
+
+                <path d="M 125 265 C 60 265, 60 82.5, 120 82.5" stroke="#333" stroke-width="1.5" fill="none" marker-end="url(#arrow)" />
+                 <text x="75" y="170" class="flow-text" font-size="8">Invalid</text>
+              </svg>
+              <figcaption>Figure 3.1: Flowchart for Simulation and Analysis of Explosion Impact Study based on TNT Equivalent using JavaScript</figcaption>
+            </figure>
+            <p>The flowchart in Figure 3.1 illustrates the systematic stages undertaken, from chemical data collection and determination of material property parameters to the analysis of explosion consequences. The entire process is calculated automatically using a JavaScript simulation and visualized through consequence distance contours against the resulting overpressure, overlaid on a satellite map automatically. Through this combined approach, the automated calculation is expected to provide a representative estimation of explosion hazards for the three substances (ammonium nitrate, LPG, and hydrogen), which can then be used to recommend risk mitigation efforts in industrial facilities. Additionally, this empirical TNT equivalent model is expected to evaluate the suitability of each method (Crowl & Louvar, Alonso, and Sadovski) for the characteristics of the materials analyzed.</p>
+            
+            <h3 id="tnt-calculation-steps">3.2 Steps in TNT Equivalent Calculation using JavaScript</h3>
+            <h4 id="data-collection">3.2.1 Data Collection and Input Validation</h4>
+            <p>The first step in the simulation is the collection and validation of input data. This data is gathered for each chemical analyzed, covering basic parameters such as:</p>
+            <ol>
+                <li>Volume of the substance ($m^3$),</li>
+                <li>Density ($\rho$),</li>
+                <li>Heat of explosion or heat of combustion ($\Delta H_c$),</li>
+                <li>Explosion efficiency ($\eta$),</li>
+                <li>TNT energy data,</li>
+                <li>Ambient pressure ($P_a$)</li>
+            </ol>
+            <p>All collected data will be sourced from journals or technical literature to ensure accuracy and consistency. Careful consideration is required in gathering data for the validation process, as errors in input parameters can cause significant deviations in the calculation of mass, total energy, and TNT equivalent. Thus, this stage forms the basis for the feasibility of subsequent steps.</p>
+
+            <h4 id="initial-calculations">3.2.2 Initial TNT Equivalent-Based Calculations</h4>
+            <p>Based on the selected chemical, the JavaScript program retrieves information regarding density, heat of combustion, and explosion efficiency from a predefined dataset validated from literature. The chemicals run in the simulation correspond to the available data, namely ammonium nitrate, LPG, and hydrogen.</p>
+            <p>After inputting the material properties, the next step is to calculate the mass of the substance based on its volume and density with the following formula:</p>
+            <div class="equation">$$m = V \times \rho$$</div>
+            <p>Where:</p>
+            <ul>
+                <li>$m$: mass of the substance (kg)</li>
+                <li>$V$: volume of the substance ($m^3$)</li>
+                <li>$\rho$: density ($kg/m^3$)</li>
+            </ul>
+            <p>The total energy can be calculated based on the heat of combustion ($\Delta H_c$) and the available explosion efficiency using the following formula:</p>
+            <div class="equation">$$E_{\text{total}} = m \times \Delta H_c \times \eta$$</div>
+            <p>Where:</p>
+            <ul>
+                <li>$m$: mass of the substance (kg)</li>
+                <li>$\Delta H_c$: heat of combustion (kJ/kg)</li>
+                <li>$\eta$: explosion efficiency</li>
+            </ul>
+            <p>Next, the TNT Equivalent ($m_{TNT}$) is calculated by converting the total energy into kg of TNT as follows:</p>
+            <div class="equation">$$m_{TNT} = \frac{E_{\text{total}}}{E_{TNT}}$$</div>
+            <p>Where:</p>
+            <ul>
+                <li>$m_{TNT}$: Equivalent mass of TNT (kg)</li>
+                <li>$E_{\text{total}}$: Total energy of the chemical (kJ)</li>
+                <li>$E_{TNT}$: Standard energy release of TNT (kJ/kg)</li>
+            </ul>
+            <p>In TNT equivalent calculations, the energy release during a TNT explosion ($E_{TNT}$) is used as a reference against the energy of other chemicals. According to the literature, the energy value of 1 kg of TNT ranges from 4,230 to 4,836 kJ/kg (Wang et al., 2023). Therefore, the determination of TNT energy will depend on the conditions of the explosion. This simulation will use an average or conservative value according to the validation conditions of the explosion event.</p>
+            <p>Subsequently, to determine the explosion consequence distance, the Scaled Distance ($Z_e$) parameter is used, which is the ratio of the distance to the cube root of the TNT equivalent mass:</p>
+            <div class="equation">$$Z_e = \frac{R}{m_{TNT}^{1/3}}$$</div>
+            <p>Where:</p>
+            <ul>
+                <li>$Z_e$: Scaled Distance ($m \cdot kg^{-1/3}$)</li>
+                <li>$R$: distance from the explosion center (m)</li>
+                <li>$m_{TNT}$: equivalent mass of TNT (kg)</li>
+            </ul>
+            <p>The Scaled Distance ($Z_e$) value becomes the primary reference for calculating overpressure and is used in the Crowl & Louvar, Alonso, and Sadovski methods in the next simulation stage. The calculation results, including mass, total energy, TNT equivalent mass, and scaled distance (Ze), are automatically saved and displayed for further analysis and validation.</p>
+            
+            <h3 id="empirical-model-calculation">3.3 Empirical Model Calculation</h3>
+            <p>After the basic calculations are completed, the next stage is the calculation using empirical models to evaluate the overpressure generated by the explosion. These models aim to calculate the Peak Side-on Overpressure ($P_o$) based on the characteristics of the explosive material. This study uses three approaches: the Crowl method, the Sadovski method, and the Alonso method. Each method provides a different approach to calculating the overpressure value.</p>
+            <p><em>(Note: The detailed equations for these methods are presented in Section 2.4 and are applied at this stage of the methodology.)</em></p>
+
+            <h3 id="data-validation">3.4 Data Validation Based on Overpressure Effect Consequences</h3>
+            <p>Validation of the overpressure results from the JavaScript application is performed by comparing the predicted overpressure values ($P_o$) against the consequence distances of explosion impacts. Accident records from fires and explosions involving ammonium nitrate, LPG, and hydrogen are compared with the actual consequences. One example used is the ammonium nitrate explosion at the Port of Tianjin in 2015, along with references from technical literature regarding the impact of overpressure on buildings and fatality probabilities.</p>
+            <p>Validation is conducted by comparing the simulated overpressure values with the effects of real explosion events on buildings and fatalities, as described in Table 2.2 and Table 2.3. A tangible example of explosion consequences is presented in Figure 3.2, which shows the Tianjin Port explosion event.</p>
+            <figure>
+                <img src="https://i.imgur.com/vHsl5V3.png" alt="Satellite images of Tianjin port before and after the explosion">
+                <figcaption>Figure 3.2: Aerial Photos of Tianjin Port Before and After the Explosion. Source: ABC News (2015)</figcaption>
+            </figure>
+            <p>Based on literature (Yu et al., 2022), visual data from the Tianjin Port explosion shows the level of damage to buildings based on the distance from the explosion center, as follows:</p>
+            <ul>
+                <li><strong>300 m:</strong> Buildings completely destroyed, windows and walls severely damaged.</li>
+                <li><strong>500 m:</strong> Large building structures sustained moderate to heavy damage.</li>
+                <li><strong>1000 m:</strong> Minor damage such as broken glass and light structural damage was clearly visible.</li>
+            </ul>
+             <figure>
+                <img src="https://i.imgur.com/lO3oY2y.png" alt="Damage to buildings at various distances from the Tianjin explosion">
+                <figcaption>Figure 3.3: Damage After the Explosion at Various Distances from the Epicenter.</figcaption>
+            </figure>
           </div>
         </section>
+
       </div>
 
       <aside class="right">
@@ -277,9 +750,41 @@
             <ul class="toc-list">
               <li><a href="#abstract">Abstract</a></li>
               <li><a href="#foreword">Foreword</a></li>
-              <li><a href="#introduction">Introduction</a></li>
-              <li><a href="#literature-review">Literature Review</a></li>
-              <li><a href="#research-methodology">Research Methodology</a></li>
+              <li>
+                <a href="#introduction">Introduction</a>
+                <ul>
+                  <li><a href="#background">1.1 Background</a></li>
+                  <li><a href="#problem-statement">1.2 Problem Statement</a></li>
+                  <li><a href="#research-objectives">1.3 Research Objectives</a></li>
+                  <li><a href="#scope-of-research">1.4 Scope of Research</a></li>
+                </ul>
+              </li>
+              <li>
+                <a href="#literature-review">Literature Review</a>
+                <ul>
+                    <li><a href="#fire-and-explosion">2.1 Fire and Explosion</a></li>
+                    <li><a href="#detonation-and-deflagration">2.2 Detonation and Deflagration</a></li>
+                    <li><a href="#process-safety">2.3 Process Safety</a></li>
+                    <li>
+                      <a href="#tnt-equivalent-models">2.4 TNT Equivalent Models</a>
+                      <ul>
+                        <li><a href="#crowl-louvar-method">2.4.1 Crowl & Louvar</a></li>
+                        <li><a href="#sadovski-method">2.4.2 Sadovski</a></li>
+                        <li><a href="#alonso-method">2.4.3 Alonso</a></li>
+                      </ul>
+                    </li>
+                    <li><a href="#explosion-consequence-analysis">2.5 Consequence Analysis</a></li>
+                </ul>
+              </li>
+              <li>
+                <a href="#research-methodology">Research Methodology</a>
+                <ul>
+                    <li><a href="#research-implementation">3.1 Research Implementation</a></li>
+                    <li><a href="#tnt-calculation-steps">3.2 TNT Calculation Steps</a></li>
+                    <li><a href="#empirical-model-calculation">3.3 Empirical Model Calculation</a></li>
+                    <li><a href="#data-validation">3.4 Data Validation</a></li>
+                </ul>
+              </li>
             </ul>
           </div>
         </section>
@@ -323,6 +828,19 @@
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const $ = (id) => document.getElementById(id);
+
+      // --- Render Math Equations ---
+      function renderMath() {
+        if (window.renderMathInElement) {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ],
+                throwOnError: false
+            });
+        }
+      }
 
       // --- Basic UI Functions ---
 
@@ -490,6 +1008,7 @@
       loadLogo();
       setupDropdownMenu();
       setupScrollToTopButton();
+      renderMath();
 
       const floatingPanel = $('floatingControlPanel');
       if (floatingPanel) {
