@@ -1,53 +1,25 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Preview – Seminar Proposal Tesis Virda Nur Lu'lu</title>
-<style>
-  html,body{margin:0;background:#000;color:#fff;font-family:Arial, sans-serif}
-  .wrap{min-height:100svh;display:grid;place-items:center;padding:20px}
-  .viewer{width:min(1100px,96vw);aspect-ratio:16/9;background:#111;position:relative;border:1px solid rgba(255,255,255,.2);border-radius:12px;overflow:hidden}
-  iframe,object{position:absolute;inset:0;width:100%;height:100%;border:0}
-  .topbar{position:absolute;inset:auto 0 0 0;display:flex;gap:10px;justify-content:center;padding:10px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.6))}
-  .btn{background:#2563eb;border:0;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;text-decoration:none}
-  .btn.ghost{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25)}
-  .status{position:absolute;left:12px;top:12px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.2);padding:6px 10px;border-radius:999px;font-size:12px}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <div class="viewer" id="viewer">
-    <div class="status" id="status">Menyiapkan preview…</div>
-    <iframe id="frame" title="Preview"></iframe>
-    <div class="topbar">
-      <a id="openFull" class="btn" target="_blank" rel="noopener">Buka layar penuh</a>
-      <a id="download" class="btn ghost" target="_blank" rel="noopener">Unduh file</a>
-    </div>
-  </div>
-</div>
-
 <script>
 (function(){
   // ========== CONFIG ==========
-  // URL jsDelivr diperbaiki untuk menunjuk ke repositori Anda
+  // Sekarang kita hanya fokus pada format .pptx yang lebih kompatibel
   const URL_PPTX_JSDELIVR = "https://cdn.jsdelivr.net/gh/virdanurlulu/virdanurlulu.github.io@main/paper/seminar-virda-2025-v1.pptx";
   const URL_PPTX_PAGES    = "https://virdanurlulu.github.io/paper/seminar-virda-2025-v1.pptx";
   const URL_PDF           = "https://virdanurlulu.github.io/paper/seminar-virda-2025-v1.pdf";
-  const URL_PPSX_PAGES    = "https://virdanurlulu.github.io/paper/seminar-tesis-virda-nur-lulu.ppsx"; // Menambahkan link PPSX
   // ================================================
 
   const office = (u)=>"https://view.officeapps.live.com/op/embed.aspx?src="+encodeURIComponent(u)+"&wdAr=1.7777777777777777";
   const gview  = (u)=>"https://docs.google.com/gview?embedded=true&url="+encodeURIComponent(u);
 
+  // Chain disederhanakan, menghapus upaya memuat .ppsx
   const chain = [
-    {name:"Office Viewer (PPSX)", src: office(URL_PPSX_PAGES), full: office(URL_PPSX_PAGES), dl: URL_PPSX_PAGES}, // Mencoba PPSX dulu karena ini format slideshow
     {name:"Office Viewer (jsDelivr)", src: office(URL_PPTX_JSDELIVR), full: office(URL_PPTX_JSDELIVR), dl: URL_PPTX_JSDELIVR},
     {name:"Office Viewer (GitHub Pages)", src: office(URL_PPTX_PAGES), full: office(URL_PPTX_PAGES), dl: URL_PPTX_PAGES},
     {name:"Google Viewer (PPTX)", src: gview(URL_PPTX_JSDELIVR), full: gview(URL_PPTX_JSDELIVR), dl: URL_PPTX_JSDELIVR},
     {name:"Google Viewer (PDF)", src: gview(URL_PDF), full: gview(URL_PDF), dl: URL_PDF},
     {name:"PDF Embed", src: URL_PDF, full: URL_PDF, dl: URL_PDF, type:"pdf"}
   ];
+
+  // ... sisa skrip lainnya tidak perlu diubah ...
 
   const frame = document.getElementById('frame');
   const status = document.getElementById('status');
@@ -71,7 +43,7 @@
       obj.data = opt.src;
       if(frame.parentNode) frame.parentNode.replaceChild(obj, frame);
     } else {
-      if(!frame.isConnected) location.reload(); // reset sederhana bila sudah terganti object
+      if(!frame.isConnected) location.reload();
       frame.src = opt.src;
     }
     openFull.href = opt.full;
@@ -79,12 +51,10 @@
 
     loaded = false;
     clearTimeout(timer);
-    timer = setTimeout(()=>{ if(!loaded) tryNext(); }, 6000); // 6s tanpa onload → lanjut
+    timer = setTimeout(()=>{ if(!loaded) tryNext(); }, 6000);
   }
 
   frame.addEventListener('load', function(){ loaded = true; status.textContent = "Berhasil dimuat."; });
   tryNext();
 })();
 </script>
-</body>
-</html>
