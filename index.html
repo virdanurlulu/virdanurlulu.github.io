@@ -114,6 +114,27 @@
     .split { display: grid; grid-template-columns: 70% 30%; gap: 18px; }
     .left, .right { display: flex; flex-direction: column; gap: 18px; }
     .right { position: sticky; top: 12px; align-self: start; }
+    .toc-list {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+    .toc-list li a {
+        display: block;
+        padding: 12px 14px;
+        text-decoration: none;
+        color: var(--ink);
+        border-bottom: 1px solid var(--stripe);
+        transition: background-color 0.2s ease, color 0.2s ease;
+        font-weight: 500;
+    }
+    .toc-list li:last-child a {
+        border-bottom: none;
+    }
+    .toc-list li a:hover {
+        background-color: var(--stripe);
+        color: var(--blue-itb);
+    }
     #toTop { position: fixed; bottom: 20px; right: 20px; z-index: 1000; cursor: pointer; border-radius: 50%; width: 50px; height: 50px; padding: 0; display: flex; align-items: center; justify-content: center; background-color: var(--blue-itb); color: white; border: none; box-shadow: 0 4px 8px rgba(0,0,0,0.2); font-size: 24px; opacity: 0; visibility: hidden; transform: translateY(20px); transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s; }
     #toTop.show { opacity: 1; visibility: visible; transform: translateY(0); }
     #toTop:hover { background-color: #005a8c; }
@@ -253,7 +274,7 @@
         <!-- SIDEBAR CONTENT GOES HERE -->
         <section class="card" aria-labelledby="toc-title">
           <h2 id="toc-title" class="card-header">Table of Contents</h2>
-          <div style="padding:14px">
+          <div>
             <ul class="toc-list">
               <li><a href="#abstract">Abstract</a></li>
               <li><a href="#foreword">Foreword</a></li>
@@ -496,4 +517,5 @@
   </script>
 </body>
 </html>
+
 
