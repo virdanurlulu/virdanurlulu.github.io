@@ -132,10 +132,16 @@
     #floatingControlPanel .label { font-size: 11px; }
     #floatingControlPanel input, #floatingControlPanel select { font-size: 11px; padding: 8px 10px; min-height: 25px; }
 
-    /* Media Queries - Unchanged */
+    /* Media Queries */
     @media (max-width: 1024px) {
-      .split { grid-template-columns: 1fr; }
-      .right { position: static; }
+      .split { 
+        display: flex;
+        flex-direction: column;
+      }
+      .right { 
+        position: static; 
+        order: -1;
+      }
     }
     @media (max-width: 768px) and (orientation: portrait) {
       /* Specific styles for mobile portrait mode */
