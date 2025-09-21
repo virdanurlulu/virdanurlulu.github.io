@@ -35,7 +35,6 @@
     height: 100%;
     border: 0;
   }
-  /* Style untuk Tombol Start Overlay */
   #start-overlay {
     position: absolute;
     inset: 0;
@@ -66,7 +65,11 @@
 
 <div class="wrap">
   <div class="viewer" id="viewer">
-    <iframe id="slides-frame" title="Presentasi" allow="fullscreen"></iframe>
+    <iframe 
+      id="slides-frame" 
+      title="Presentasi" 
+      allow="fullscreen; autoplay; encrypted-media; picture-in-picture; web-share">
+    </iframe>
 
     <div id="start-overlay">
       <button id="start-btn">Mulai Presentasi</button>
@@ -76,42 +79,29 @@
 
 <script>
 (function() {
-  // === KONFIGURASI LINK GOOGLE SLIDES ===
-  // Link yang Anda berikan, diubah ke format embed slideshow
   const SLIDES_URL = "https://docs.google.com/presentation/d/1c6Hj7uNhM-ZuXHQPQAxl5EbpRojnjvlV/embed?start=true&loop=false&delayms=3000&rm=minimal";
 
-  // Ambil elemen-elemen yang dibutuhkan dari halaman
   const viewer = document.getElementById('viewer');
   const overlay = document.getElementById('start-overlay');
   const startBtn = document.getElementById('start-btn');
   const iframe = document.getElementById('slides-frame');
 
-  // Tambahkan event listener ke tombol start
   startBtn.addEventListener('click', () => {
-    // 1. Muat presentasi di iframe
     iframe.src = SLIDES_URL;
-
-    // 2. Sembunyikan overlay
     overlay.classList.add('hidden');
 
-    // 3. Minta untuk masuk ke mode layar penuh (fullscreen)
-    // Ini diperlukan agar kita bisa mencoba mengunci orientasi
     if (viewer.requestFullscreen) {
       viewer.requestFullscreen();
-    } else if (viewer.webkitRequestFullscreen) { /* Safari */
+    } else if (viewer.webkitRequestFullscreen) {
       viewer.webkitRequestFullscreen();
-    } else if (viewer.msRequestFullscreen) { /* IE11 */
+    } else if (viewer.msRequestFullscreen) {
       viewer.msRequestFullscreen();
     }
 
-    // 4. Setelah masuk fullscreen, coba kunci orientasi ke landscape
-    // Ini adalah 'permintaan', bukan 'paksaan', dan mungkin tidak bekerja di semua browser/perangkat
     screen.orientation?.lock('landscape').catch(error => {
-      // Tidak perlu menampilkan error ke pengguna, karena ini adalah fitur tambahan
       console.log("Tidak dapat mengunci orientasi:", error);
     });
   });
-
 })();
 </script>
 
