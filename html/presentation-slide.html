@@ -5,110 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Preview - Thesis Proposal Seminar Virda Nur Lu'lu</title>
     <style>
-        /* CSS Reset dan Pengaturan Dasar */
         body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #000;
-            font-family: Arial, sans-serif;
-            color: white;
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; background-color: #000;
+            font-family: Arial, sans-serif; color: white;
         }
-
-        /* Iframe untuk slideshow (disembunyikan di awal) */
         #slideshow-frame {
-            width: 100vw;
-            height: 100vh;
-            border: none;
-            display: none; /* Disembunyikan sampai tombol start ditekan */
+            width: 100vw; height: 100vh; border: none;
+            display: none; /* Disembunyikan sampai benar-benar siap ditampilkan */
         }
-
-        /* Tombol 'Back' untuk perangkat mobile */
+        #mobile-back-btn, #start-overlay, #rotate-device-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10000;
+            display: flex; justify-content: center; align-items: center;
+            text-align: center;
+        }
         #mobile-back-btn {
-            display: none;
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            z-index: 9999;
-            padding: 10px 20px;
-            background-color: rgba(0, 0, 0, 0.7);
-            border: 1px solid white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
+            display: none; top: 15px; right: 15px;
+            width: auto; height: auto;
+            padding: 10px 20px; background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid white; border-radius: 8px;
+            cursor: pointer; font-size: 16px;
             -webkit-tap-highlight-color: transparent;
         }
-
-        #mobile-back-btn:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-        
-        /* === BAGIAN BARU: Overlay untuk tombol Start === */
+        #mobile-back-btn:hover { background-color: rgba(255, 255, 255, 0.2); }
         #start-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            z-index: 10001;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
+            flex-direction: column; background-color: #000; z-index: 10001;
         }
-
         #start-btn {
-            font-size: 1.2em;
-            padding: 15px 30px;
-            cursor: pointer;
-            border: 2px solid white;
-            background-color: transparent;
-            color: white;
-            border-radius: 10px;
-            margin-top: 20px;
+            font-size: 1.2em; padding: 15px 30px; cursor: pointer;
+            border: 2px solid white; background-color: transparent;
+            color: white; border-radius: 10px; margin-top: 20px;
         }
-
-        /* Pesan overlay untuk meminta rotasi layar */
         #rotate-device-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            display: none; /* Disembunyikan secara default */
             background-color: rgba(0, 0, 0, 0.95);
-            z-index: 10000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            font-size: 1.2em;
         }
         
-        /* Media Query untuk Perangkat Sentuh (Mobile & Tablet) */
+        /* Media query hanya untuk menampilkan tombol back di perangkat sentuh */
         @media (hover: none) and (pointer: coarse) {
-            #mobile-back-btn {
+            #mobile-back-btn.active {
                 display: block;
-            }
-        }
-
-        /* Media Query HANYA untuk Perangkat Sentuh dalam mode Potrait */
-        @media (hover: none) and (pointer: coarse) and (orientation: portrait) {
-            #rotate-device-overlay {
-                display: flex;
-            }
-            #slideshow-frame, #mobile-back-btn {
-                display: none; 
             }
         }
     </style>
 </head>
 <body>
-
     <div id="start-overlay">
         <h2>Thesis Proposal Seminar</h2>
         <p>Virda Nur Lu'lu</p>
@@ -117,67 +59,76 @@
 
     <iframe 
         id="slideshow-frame" 
-        src="https://view.officeapps.live.com/op/view.aspx?src=https://virdanurlulu.github.io/paper/seminar-tesis-virda-nur-lulu.ppsx">
+        data-src="https://view.officeapps.live.com/op/view.aspx?src=https://virdanurlulu.github.io/paper/seminar-tesis-virda-nur-lulu.ppsx"
+        title="Presentation Viewer">
     </iframe>
 
     <button id="mobile-back-btn">Back</button>
 
     <div id="rotate-device-overlay">
-        <p>🔄<br><br>Please rotate your device to landscape mode<br>to view the presentation.</p>
+        <p>🔄<br><br>Please rotate your device to landscape mode.</p>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const homeUrl = 'https://virdanurlulu.github.io/';
-            const backButton = document.getElementById('mobile-back-btn');
-            const startButton = document.getElementById('start-btn');
             const startOverlay = document.getElementById('start-overlay');
+            const startButton = document.getElementById('start-btn');
+            const rotateOverlay = document.getElementById('rotate-device-overlay');
             const slideshowFrame = document.getElementById('slideshow-frame');
-            
-            // --- FUNGSI BARU UNTUK MENGUNCI ORIENTASI ---
-            async function startPresentation() {
-                // Sembunyikan tombol start
-                startOverlay.style.display = 'none';
-                
-                // Tampilkan slideshow
-                slideshowFrame.style.display = 'block';
+            const backButton = document.getElementById('mobile-back-btn');
 
-                // Hanya jalankan di perangkat sentuh
-                const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-                if (isMobile) {
-                    try {
-                        // 1. Minta mode Fullscreen (ini meningkatkan kemungkinan lock orientation berhasil)
-                        await document.documentElement.requestFullscreen();
-                        
-                        // 2. Coba kunci orientasi ke landscape
-                        await screen.orientation.lock('landscape');
-                        
-                    } catch (err) {
-                        console.warn("Gagal mengunci orientasi atau masuk ke fullscreen:", err);
-                        // Jika gagal, CSS overlay akan tetap menjadi solusi utama
+            let presentationLoaded = false;
+            const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+            // Fungsi untuk memuat presentasi
+            function loadPresentation() {
+                if (!presentationLoaded && slideshowFrame.dataset.src) {
+                    presentationLoaded = true;
+                    slideshowFrame.src = slideshowFrame.dataset.src; // Set 'src' untuk memulai loading
+                    slideshowFrame.style.display = 'block';
+                    if (isMobile) {
+                        backButton.classList.add('active');
                     }
                 }
             }
 
-            // Tambahkan event listener ke tombol start
-            startButton.addEventListener('click', startPresentation);
+            // Fungsi untuk memeriksa orientasi dan mengambil tindakan
+            function handleOrientation() {
+                // Cek apakah layar lanskap (lebar > tinggi)
+                const isLandscape = window.innerWidth > window.innerHeight;
 
-            // --- Skrip yang sudah ada sebelumnya ---
-            document.addEventListener('keydown', function(event) {
-                if (event.key === 'Escape') {
-                    window.location.href = homeUrl;
+                if (isLandscape) {
+                    rotateOverlay.style.display = 'none'; // Sembunyikan pesan rotasi
+                    loadPresentation(); // Muat presentasi
+                } else {
+                    rotateOverlay.style.display = 'flex'; // Tampilkan pesan rotasi
+                }
+            }
+
+            // Event listener untuk tombol 'Mulai'
+            startButton.addEventListener('click', function() {
+                startOverlay.style.display = 'none'; // Sembunyikan overlay awal
+
+                if (isMobile) {
+                    // Coba masuk ke fullscreen untuk pengalaman terbaik
+                    document.documentElement.requestFullscreen().catch(err => {
+                        console.warn("Fullscreen request failed:", err);
+                    });
+                    
+                    // Langsung cek orientasi setelah tombol ditekan
+                    handleOrientation();
+                    // Dengarkan perubahan orientasi di masa mendatang
+                    window.addEventListener('orientationchange', handleOrientation);
+                } else {
+                    // Untuk desktop, langsung muat saja
+                    loadPresentation();
                 }
             });
 
-            if (backButton) {
-                backButton.addEventListener('click', function() {
-                    // Jika sedang fullscreen, keluar dulu
-                    if (document.fullscreenElement) {
-                        document.exitFullscreen();
-                    }
-                    window.location.href = homeUrl;
-                });
-            }
+            // Event listener untuk tombol Escape & Back
+            document.addEventListener('keydown', e => { if (e.key === 'Escape') window.location.href = homeUrl; });
+            backButton.addEventListener('click', () => { window.location.href = homeUrl; });
         });
     </script>
 
