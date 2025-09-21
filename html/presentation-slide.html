@@ -1,7 +1,6 @@
 <script>
 (function(){
   // ========== CONFIG ==========
-  // Sekarang kita hanya fokus pada format .pptx yang lebih kompatibel
   const URL_PPTX_JSDELIVR = "https://cdn.jsdelivr.net/gh/virdanurlulu/virdanurlulu.github.io@main/paper/seminar-virda-2025-v1.pptx";
   const URL_PPTX_PAGES    = "https://virdanurlulu.github.io/paper/seminar-virda-2025-v1.pptx";
   const URL_PDF           = "https://virdanurlulu.github.io/paper/seminar-virda-2025-v1.pdf";
@@ -10,11 +9,12 @@
   const office = (u)=>"https://view.officeapps.live.com/op/embed.aspx?src="+encodeURIComponent(u)+"&wdAr=1.7777777777777777";
   const gview  = (u)=>"https://docs.google.com/gview?embedded=true&url="+encodeURIComponent(u);
 
-  // Chain disederhanakan, menghapus upaya memuat .ppsx
+  // === PERUBAHAN UTAMA DI SINI ===
+  // Memprioritaskan link dari GitHub Pages karena Content-Type-nya benar.
   const chain = [
-    {name:"Office Viewer (jsDelivr)", src: office(URL_PPTX_JSDELIVR), full: office(URL_PPTX_JSDELIVR), dl: URL_PPTX_JSDELIVR},
     {name:"Office Viewer (GitHub Pages)", src: office(URL_PPTX_PAGES), full: office(URL_PPTX_PAGES), dl: URL_PPTX_PAGES},
-    {name:"Google Viewer (PPTX)", src: gview(URL_PPTX_JSDELIVR), full: gview(URL_PPTX_JSDELIVR), dl: URL_PPTX_JSDELIVR},
+    {name:"Office Viewer (jsDelivr)", src: office(URL_PPTX_JSDELIVR), full: office(URL_PPTX_JSDELIVR), dl: URL_PPTX_JSDELIVR},
+    {name:"Google Viewer (PPTX)", src: gview(URL_PPTX_PAGES), full: gview(URL_PPTX_PAGES), dl: URL_PPTX_PAGES},
     {name:"Google Viewer (PDF)", src: gview(URL_PDF), full: gview(URL_PDF), dl: URL_PDF},
     {name:"PDF Embed", src: URL_PDF, full: URL_PDF, dl: URL_PDF, type:"pdf"}
   ];
@@ -51,7 +51,7 @@
 
     loaded = false;
     clearTimeout(timer);
-    timer = setTimeout(()=>{ if(!loaded) tryNext(); }, 6000);
+    timer = setTimeout(()=>{ if(!loaded) tryNext(); }, 8000); // Timeout sedikit lebih lama
   }
 
   frame.addEventListener('load', function(){ loaded = true; status.textContent = "Berhasil dimuat."; });
