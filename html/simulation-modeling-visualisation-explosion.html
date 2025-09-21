@@ -1210,120 +1210,244 @@
       }
 
       function getInjuryRiskCategory(Po) {
-        if (Po > 100) return { name: "Fatality", color: "#7F1D1D", textColor: "#FFFFFF" };
-        if (Po > 50) return { name: "Severe Injury", color: "#EF4444", textColor: "#FFFFFF" };
-        if (Po > 30) return { name: "Serious Injury", color: "#FB7185", textColor: "#FFFFFF" };
-        if (Po >= 20) return { name: "Moderate Injury", color: "#FDBA74", textColor: "var(--ink)" };
-        if (isFinite(Po) && Po < 20) return { name: "Minor Injury", color: "#FACC15", textColor: "var(--ink)" };
-        return { name: "Unknown", color: "var(--muted)", textColor: "#FFFFFF" };
+          const poValue = parseFloat(Po);
+          if (isNaN(poValue)) {
+              return { name: "Invalid Input", color: "var(--muted)", textColor: "#FFFFFF" };
+          }
+
+          if (poValue < 0.14) {
+              return { name: "No Effect Reported", color: "#D1FAE5", textColor: "var(--ink)" };
+          } else if (poValue <= 20) {
+              return { name: "Minor Injury", color: "#FACC15", textColor: "var(--ink)" };
+          } else if (poValue <= 30) {
+              return { name: "Moderate Injury", color: "#FDBA74", textColor: "var(--ink)" };
+          } else if (poValue <= 50) {
+              return { name: "Serious Injury", color: "#FB7185", textColor: "#FFFFFF" };
+          } else if (poValue <= 100) {
+              return { name: "Severe Injury", color: "#EF4444", textColor: "#FFFFFF" };
+          } else { // > 100
+              return { name: "Fatality", color: "#7F1D1D", textColor: "#FFFFFF" };
+          }
       }
 
-      function updateEstimationPanels(PoCrowl, PoAlonso, PoSadovski) {
-        const injuryEffects = {
-          crowl:   [{ threshold: 70, text: "Kematian 50%" }, { threshold: 34.5, text: "Gendang telinga pecah" }, { threshold: 28, text: "Luka berat/fatal" }, { threshold: 14, text: "Luka-luka kecil" }],
-          alonso:  [{ threshold: 70, text: "Kematian" }, { threshold: 35, text: "Cedera serius/fatal" }, { threshold: 21, text: "Gendang telinga pecah" }, { threshold: 7, text: "Luka ringan" }],
-          sadovski:[{ threshold: 70, text: "Kematian" }, { threshold: 35, text: "Gendang telinga pecah" }, { threshold: 28, text: "Luka serius/fatal" }, { threshold: 14, text: "Luka-luka" }]
-        };
+      function updateEstimationPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated = false) {
+          const findClosestLowerEntry = (kPa, dataArray) => {
+              let closest = null;
+              for (const item of dataArray) {
+                  if (item.po <= kPa) {
+                      if (!closest || item.po > closest.po) {
+                          closest = item;
+                      }
+                  }
+              }
+              return closest;
+          };
+          
+          const updateEffectsList = (Po, panelId, structuralListEl, equipmentListEl) => {
+              if (!structuralListEl || !equipmentListEl) return;
 
-        const findClosestLowerEntry = (kPa, dataArray) => {
-            let closest = null;
-            for (const item of dataArray) {
-                if (item.po <= kPa) {
-                    if (!closest || item.po > closest.po) {
-                        closest = item;
-                    }
-                }
-            }
-            return closest;
-        };
-        
-        const updateEffectsList = (Po, panelId, structuralListEl, equipmentListEl) => {
-            if (!structuralListEl || !equipmentListEl) return;
+              // Structural Damage
+              const structuralDescriptions1 = getDamageDescriptions(Po);
+              const structuralDescriptions2 = overpressureDamageLevels.find(
+                (range) => Po >= range.minPo && Po < range.maxPo
+              );
+              
+              let structuralHtml = '';
+              if (structuralDescriptions1.length > 0) {
+                  structuralHtml += structuralDescriptions1.map(desc => `<li>${desc.replace(/\[(\d+)\]/g, (match, p1) => `(${citations[p1]})`)}</li>`).join('');
+              }
+              if (structuralDescriptions2) {
+                  structuralHtml += `<li>${structuralDescriptions2.description} (${citations[structuralDescriptions2.citation_ref]})</li>`;
+              }
 
-            // Structural Damage
-            const structuralDescriptions1 = getDamageDescriptions(Po);
-            const structuralDescriptions2 = overpressureDamageLevels.find(
-              (range) => Po >= range.minPo && Po < range.maxPo
-            );
-            
-            let structuralHtml = '';
-            if (structuralDescriptions1.length > 0) {
-                structuralHtml += structuralDescriptions1.map(desc => `<li>${desc.replace(/\[(\d+)\]/g, (match, p1) => `(${citations[p1]})`)}</li>`).join('');
-            }
-            if (structuralDescriptions2) {
-                structuralHtml += `<li>${structuralDescriptions2.description} (${citations[structuralDescriptions2.citation_ref]})</li>`;
-            }
+              if (structuralHtml === '') {
+                  structuralListEl.innerHTML = '<li>No significant structural damage predicted.</li>';
+              } else {
+                  structuralListEl.innerHTML = structuralHtml;
+              }
 
-            if (structuralHtml === '') {
-                structuralListEl.innerHTML = '<li>No significant structural damage predicted.</li>';
-            } else {
-                structuralListEl.innerHTML = structuralHtml;
-            }
+              // Process Equipment Damage
+              const equipmentDamage = findClosestLowerEntry(Po, processEquipmentDamage);
+              if (equipmentDamage) {
+                  equipmentListEl.innerHTML = `<li>${equipmentDamage.description} (${citations[equipmentDamage.citation_ref]})</li>`;
+              } else {
+                  equipmentListEl.innerHTML = '<li>No significant equipment damage predicted.</li>';
+              }
+          };
 
-            // Process Equipment Damage
-            const equipmentDamage = findClosestLowerEntry(Po, processEquipmentDamage);
-            if (equipmentDamage) {
-                equipmentListEl.innerHTML = `<li>${equipmentDamage.description} (${citations[equipmentDamage.citation_ref]})</li>`;
-            } else {
-                equipmentListEl.innerHTML = '<li>No significant equipment damage predicted.</li>';
-            }
-        };
+          ['crowl', 'alonso', 'sadovski'].forEach((method, i) => {
+              const Po = [PoCrowl, PoAlonso, PoSadovski][i];
+              const isPoValid = Number.isFinite(Po);
+              
+              const valPoEl = $(`val-Po-${method}`);
+              const sevEl = $(`sev-${method}`);
+              const structuralListEl = $(`structural-damage-${method}`);
+              const equipmentListEl = $(`equipment-damage-${method}`);
+
+              if (!isPoValid) {
+                  if (valPoEl) valPoEl.textContent = '—';
+                  
+                  const unknownImpact = getImpactCategory(NaN);
+
+                  if (sevEl) {
+                      sevEl.textContent = unknownImpact.name;
+                      sevEl.style.backgroundColor = unknownImpact.color;
+                      sevEl.style.color = unknownImpact.textColor;
+                  }
+                  if (structuralListEl) structuralListEl.innerHTML = "<li>Awaiting input...</li>";
+                  if (equipmentListEl) equipmentListEl.innerHTML = "<li>Awaiting input...</li>";
+              } else {
+                  const impact = getImpactCategory(Po);
+                  const prettyPo = Po.toLocaleString("en-US", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+                  
+                  if (valPoEl) valPoEl.textContent = prettyPo;
+
+                  if (sevEl) {
+                      sevEl.textContent = impact.name;
+                      sevEl.style.backgroundColor = impact.color;
+                      sevEl.style.color = impact.textColor;
+                  }
+                  
+                  updateEffectsList(Po, `panel-damage-${method}`, structuralListEl, equipmentListEl);
+              }
+
+              // Handle Alonso warning
+              if (method === 'alonso') {
+                  const listEl = $('structural-damage-alonso');
+                  if (!listEl) return;
+                  
+                  const existingWarning = listEl.querySelector('.extrapolation-warning');
+                  if (existingWarning) {
+                      existingWarning.remove();
+                  }
+                  if (isAlonsoExtrapolated) {
+                      const warningLi = document.createElement('li');
+                      warningLi.className = 'extrapolation-warning';
+                      warningLi.style.color = 'var(--danger)';
+                      warningLi.style.fontWeight = 'bold';
+                      warningLi.textContent = 'Warning: Result is extrapolated beyond the valid Alonso model range (1 ≤ ze ≤ 200).';
+                      listEl.prepend(warningLi);
+                  }
+              }
+          });
+      }
+
+      /*
+      ================================================================================
+      | SKRIP UNTUK ESTIMASI KONSEKUENSI CEDERA (Mulai)                               |
+      |------------------------------------------------------------------------------|
+      | Salin dan tempel (atau ganti) seluruh blok ini ke dalam skrip Anda.          |
+      ================================================================================
+      */
+
+      /**
+      * Mengklasifikasikan tingkat keparahan cedera berdasarkan nilai Peak Overpressure (Po).
+      * Fungsi ini mengembalikan objek detail berdasarkan data gambar.
+      * @param {number} Po - Nilai peak side-on overpressure dalam satuan kPa.
+      * @returns {object} Objek yang berisi Primary, Secondary/Tertiary, dan Conclusion effects.
+      */
+      function getInjuryEffects(Po) {
+        const poValue = parseFloat(Po);
+        if (isNaN(poValue) || poValue < 0) {
+          return {
+            primary: "Awaiting input...",
+            secondary: "",
+            conclusion: ""
+          };
+        }
+
+        if (poValue >= 0.14 && poValue < 20) {
+          return {
+            primary: "Tidak ada cedera serius; cedera gendang telinga tidak signifikan.",
+            secondary: "Kaca mulai pecah pada 3–5 kPa, sehingga pecahan dapat melukai kulit/mata.",
+            conclusion: "Cedera primer tidak mungkin terjadi, tetapi risiko cedera sekunder dari pecahan kaca tetap ada."
+          };
+        } else if (poValue >= 20 && poValue <= 30) {
+          return {
+            primary: "Memar ringan.",
+            secondary: "Kerusakan struktur tingkat sedang dapat menyebabkan bagian langit-langit runtuh dan benda-benda kecil jatuh.",
+            conclusion: "Kombinasi memar ringan dan cedera sekunder dari pecahan/puing-puing."
+          };
+        } else if (poValue > 30 && poValue <= 50) {
+          return {
+            primary: "Cedera gendang telinga, memar sedang.",
+            secondary: "Kerusakan struktural yang lebih luas menciptakan puing-puing beterbangan, yang dapat menyebabkan patah tulang.",
+            conclusion: "Tingkat keparahan cedera meningkat karena efek gabungan dari gelombang ledakan dan puing-puing yang beterbangan."
+          };
+        } else if (poValue > 50 && poValue <= 100) {
+          return {
+            primary: "Memar internal yang serius dan berpotensi fatal.",
+            secondary: "Sebagian besar bangunan kemungkinan besar akan hancur total, menciptakan situasi terperangkap di bawah reruntuhan.",
+            conclusion: "Gabungan cedera internal dan kondisi terperangkap berpotensi sangat fatal."
+          };
+        } else if (poValue > 100) {
+          return {
+            primary: "Tingkat kematian sangat tinggi bagi orang tanpa pelindung; 90% – 100% fatal.",
+            secondary: "Keruntuhan total bangunan; puing-puing besar bergerak dengan cepat.",
+            conclusion: "Interaksi antara gelombang ledakan dan kegagalan struktural menimbulkan risiko kematian yang sangat tinggi."
+          };
+        } else { // Untuk nilai di bawah 0.14 kPa
+          return {
+            primary: "Tidak ada efek signifikan yang dilaporkan.",
+            secondary: "",
+            conclusion: "Tidak ada cedera yang diperkirakan."
+          };
+        }
+      }
 
 
-        ['crowl', 'alonso', 'sadovski'].forEach((method, i) => {
-          const Po = [PoCrowl, PoAlonso, PoSadovski][i];
+      /**
+      * Fungsi utama untuk memperbarui semua panel estimasi konsekuensi cedera.
+      * Fungsi ini memanggil helper untuk setiap metode (Crowl, Alonso, Sadovski).
+      * @param {number} PoCrowl - Nilai Po dari metode Crowl.
+      * @param {number} PoAlonso - Nilai Po dari metode Alonso.
+      * @param {number} PoSadovski - Nilai Po dari metode Sadovski.
+      */
+      function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski) {
+        const $ = (id) => document.getElementById(id);
+
+        // Helper function untuk memperbarui satu panel
+        const updatePanel = (method, Po) => {
           const isPoValid = Number.isFinite(Po);
+          const prettyPo = isPoValid ? Po.toLocaleString("en-US", { minimumFractionDigits: 3, maximumFractionDigits: 3 }) : "—";
+
+          // Dapatkan elemen UI untuk metode ini
+          const valPoEl = $(`val-Po-${method}-inj`);
+          const effectsListEl = $(`injury-effects-${method}`);
+          const sevFootEl = $(`sev-injury-${method}`);
+
+          if (!valPoEl || !effectsListEl || !sevFootEl) return;
+
+          // Update nilai Po
+          valPoEl.textContent = prettyPo;
+
+          // Dapatkan dan tampilkan detail efek cedera
+          const effects = getInjuryEffects(Po);
+          effectsListEl.innerHTML = `
+            <li><strong>Primary Effects:</strong> ${effects.primary}</li>
+            ${effects.secondary ? `<li><strong>Secondary/Tertiary Effects:</strong> ${effects.secondary}</li>` : ''}
+            ${effects.conclusion ? `<li><strong>Conclusion:</strong> ${effects.conclusion}</li>` : ''}
+          `;
           
-          const valPoEl = $(`val-Po-${method}`);
-          const valPoInjEl = $(`val-Po-${method}-inj`);
-          const sevEl = $(`sev-${method}`);
-          const sevInjEl = $(`sev-injury-${method}`);
-          const structuralListEl = $(`structural-damage-${method}`);
-          const equipmentListEl = $(`equipment-damage-${method}`);
+          // Dapatkan dan terapkan kategori tingkat keparahan
+          const severity = getInjuryRiskCategory(Po);
+          sevFootEl.textContent = severity.name;
+          sevFootEl.style.backgroundColor = severity.color;
+          sevFootEl.style.color = severity.textColor;
+        };
 
-          if (!isPoValid) {
-            if (valPoEl) valPoEl.textContent = '—';
-            if (valPoInjEl) valPoInjEl.textContent = '—';
-            
-            const unknownImpact = getImpactCategory(NaN);
-            const unknownInjury = getInjuryRiskCategory(NaN);
-
-            if (sevEl) {
-                sevEl.textContent = unknownImpact.name;
-                sevEl.style.backgroundColor = unknownImpact.color;
-                sevEl.style.color = unknownImpact.textColor;
-            }
-            if (sevInjEl) {
-                sevInjEl.textContent = unknownInjury.name;
-                sevInjEl.style.backgroundColor = unknownInjury.color;
-                sevInjEl.style.color = unknownInjury.textColor;
-            }
-            if (structuralListEl) structuralListEl.innerHTML = "<li>Awaiting input...</li>";
-            if (equipmentListEl) equipmentListEl.innerHTML = "<li>Awaiting input...</li>";
-            return;
-          }
-
-          const impact = getImpactCategory(Po);
-          const risk = getInjuryRiskCategory(Po);
-          const prettyPo = Po.toLocaleString("en-US", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
-          
-          if (valPoEl) valPoEl.textContent = prettyPo;
-          if (valPoInjEl) valPoInjEl.textContent = prettyPo;
-
-          if (sevEl) {
-              sevEl.textContent = impact.name;
-              sevEl.style.backgroundColor = impact.color;
-              sevEl.style.color = impact.textColor;
-          }
-          if (sevInjEl) {
-              sevInjEl.textContent = risk.name;
-              sevInjEl.style.backgroundColor = risk.color;
-              sevInjEl.style.color = risk.textColor;
-          }
-          
-          updateEffectsList(Po, `panel-damage-${method}`, structuralListEl, equipmentListEl);
-        });
+        // Perbarui setiap panel
+        updatePanel('crowl', PoCrowl);
+        updatePanel('alonso', PoAlonso);
+        updatePanel('sadovski', PoSadovski);
       }
+
+      /*
+      ================================================================================
+      | SKRIP UNTUK ESTIMASI KONSEKUENSI CEDERA (Selesai)                             |
+      ================================================================================
+      */
+
 
       function calculateValues(isInitialLoad = false) {
         const btnSaveFloat = $('btnSaveResultFloat');
@@ -1344,6 +1468,7 @@
           ["W_mass", "E_total", "W_tnt", "Ze", "Ps", "Po_crowl", "Po_alonso", "Po_sadovski"].forEach(id => $(id).value = "");
           showStatusMessage(msgText, true);
           updateEstimationPanels(NaN, NaN, NaN);
+          updateInjuryPanels(NaN, NaN, NaN);
           updateFloatingPanelOutputs(NaN, NaN, NaN, false);
           if (chartController) chartController.plotResult(NaN, NaN);
           if (btnSaveFloat) btnSaveFloat.disabled = true;
@@ -1369,9 +1494,11 @@
         if (chartController) chartController.plotResult(Ze, PoPa_crowl);
 
         const Po_crowl = PoPa_crowl * pa;
-        const Po_alonso = ((z) =>
-          (z >= 1 && z < 10) ? 1.13e6 * z**-2.01 :
-          (z >= 10 && z <= 200) ? 1.83e5 * z**-1.16 : NaN)(Ze) / 1000;
+        const isAlonsoExtrapolated = Ze < 1 || Ze > 200;
+        const Po_alonso = ((z) => {
+            if (z < 10) return 1.13e6 * z**-2.01;
+            return 1.83e5 * z**-1.16;
+        })(Ze) / 1000;
         
         // Perhitungan Po_sadovski berdasarkan rumus dari lampiran (hasil dalam MPa), dikonversi ke kPa
         const Po_sadovski = ((w, d) => {
@@ -1384,13 +1511,9 @@
         $("Po_alonso").value = isNaN(Po_alonso) ? "" : Po_alonso.toFixed(3);
         $("Po_sadovski").value = isNaN(Po_sadovski) ? "" : Po_sadovski.toFixed(3);
 
-        updateEstimationPanels(Po_crowl, Po_alonso, Po_sadovski);
+        updateEstimationPanels(Po_crowl, Po_alonso, Po_sadovski, isAlonsoExtrapolated);
+        updateInjuryPanels(Po_crowl, Po_alonso, Po_sadovski);
         updateFloatingPanelOutputs(Po_crowl, Po_alonso, Po_sadovski, true);
-
-        if (isNaN(Po_alonso)) {
-          const el = $('structural-damage-alonso');
-          if (el) el.innerHTML = '<li>Calculation is outside the valid domain for the Alonso model (1 ≤ ze ≤ 200).</li>';
-        }
 
         showStatusMessage("The calculation has been completed successfully.");
         if (btnSaveFloat) btnSaveFloat.disabled = false;
@@ -1987,3 +2110,4 @@
   </script>
 </body>
 </html>
+
