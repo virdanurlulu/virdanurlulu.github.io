@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -39,9 +39,9 @@
     "url": "https://virdanurlulu.github.io/",
     "image": "/img/ITB-Exlosion-Modeling-Simulation.webp",
     "author": {"@type": "Person", "name": "Virda Nur Lu'lu", "sameAs": ["https://id.linkedin.com/in/virdanurlulu"]},
-    "inLanguage": "id",
+    "inLanguage": "en",
     "description": "Interactive Simulation and Modeling of Explosion Effects Based on TNT Equivalence Using JavaScript: Incorporating Chemical Material Properties, Consequence Estimation, Pa–Ze Relationship, Overpressure–Distance Chart, and Visualization of Explosion Overpressure Contours.",
-    "publisher": {"@type": "Organization", "name": "Institut Teknologi Bandung", "url": "https://che.itb.ac.id/"}
+    "publisher": {"@type": "Organization", "name": "Bandung Institute of Technology", "url": "https://che.itb.ac.id/"}
   }
   </script>
 
@@ -189,7 +189,7 @@
     .floating-output-col span:first-child { font-weight: 600; color: var(--muted); }
     .floating-output-col span:last-child { font-family: monospace; color: var(--blue-itb); font-weight: bold; font-size: 16px; }
 
-    /* Ukuran font lebih kecil untuk panel kontrol cepat */
+    /* Smaller font sizes for quick control panel */
     #floatingControlPanel .label {
         font-size: 11px;
     }
@@ -229,7 +229,7 @@
         #logTable td:last-child { justify-content: center; padding: 8px; } 
         #logTable td:last-child:before { content: "" !important; } 
         
-        /* Menyembunyikan kolom yang tidak diinginkan di mode potret */
+        /* Hide non-essential columns in portrait mode */
         td[data-label="ze"],
         td[data-label="Ps"] {
             display: none;
@@ -275,7 +275,7 @@
             display: none;
         }
         
-        /* Penyesuaian untuk layar lanskap kecil seperti iPhone 5/SE */
+        /* Adjustments for small landscape screens like iPhone 5/SE */
         .banner {
             padding: 12px 16px;
             min-height: auto;
@@ -321,30 +321,30 @@
         .dropdown-toggle { padding: 6px 12px; font-size: 14px; }
     }
     
-    /* Tambahan spesifik untuk perangkat seluler dengan layar sangat sempit dalam mode lanskap */
+    /* Specific overrides for very narrow mobile landscape devices */
     @media (max-height: 450px) and (orientation: landscape) {
         .banner {
-            padding: 8px 12px; /* Perkecil padding atas/bawah */
-            display: flex; /* Gunakan flexbox untuk kontrol lebih baik */
+            padding: 8px 12px; /* Reduce top/bottom padding */
+            display: flex; /* Use flexbox for better control */
             align-items: center;
             gap: 12px;
         }
         .brandbar {
-            flex-grow: 1; /* Biarkan brandbar mengisi ruang */
+            flex-grow: 1; /* Allow brandbar to fill space */
             gap: 12px;
         }
         .brand-logo {
-            height: 40px; /* Perkecil logo */
+            height: 40px; /* Shrink logo */
         }
         .title h1 {
-            font-size: 14px; /* Perkecil font judul utama */
+            font-size: 14px; /* Shrink main title font */
             padding: 4px 8px;
         }
         .title h2 {
-            font-size: 10px; /* Perkecil font sub-judul */
+            font-size: 10px; /* Shrink subtitle font */
         }
         .dropdown-menu {
-            position: static; /* Ubah posisi menu agar sejajar */
+            position: static; /* Change menu position to be inline */
             top: auto;
             right: auto;
         }
@@ -370,7 +370,7 @@
   <div class="wrap">
     <div class="banner title">
       <div class="brandbar">
-        <a href="https://virdanurlulu.github.io/" target="_blank" rel="noopener noreferrer" aria-label="Kunjungi beranda">
+        <a href="https://virdanurlulu.github.io/" target="_blank" rel="noopener noreferrer" aria-label="Visit homepage">
           <img id="itbLogo" class="brand-logo" alt="Logo ITB" width="96" height="96">
         </a>
         <div class="brand-text">
@@ -414,17 +414,17 @@
                 <div class="mini">
                   <div>
                     <label for="vol" class="label">Volume (m³)</label>
-                    <input id="vol" type="number" min="0" step="any" placeholder="cth 12.5" aria-label="Volume" />
+                    <input id="vol" type="number" min="0" step="any" placeholder="e.g., 12.5" aria-label="Volume" />
                   </div>
                   <div>
                     <label for="dist" class="label">Distance (m)</label>
-                    <input id="dist" type="number" min="0" step="any" placeholder="cth 150" aria-label="Distance" />
+                    <input id="dist" type="number" min="0" step="any" placeholder="e.g., 150" aria-label="Distance" />
                   </div>
                 </div>
               </div>
               <div class="eq-panel">
                 <div class="eq-title">Representative Overall Reaction</div>
-                <div id="eq-text" class="eq-body">Select Material to display the reaction equation.</div>
+                <div id="eq-text" class="eq-body">Select a material to display the reaction equation.</div>
               </div>
             </div>
           </div>
@@ -471,11 +471,11 @@
         <section class="card" aria-labelledby="chart-head">
           <div id="chart-head" class="card-header">
             <span>Scaled Overpressure vs Scaled Distance</span>
-            <button class="btn" id="btnExport">Ekspor PNG</button>
+            <button class="btn" id="btnExport">Export PNG</button>
           </div>
           <div class="chart-container">
-            <div id="chart" role="img" aria-label="Grafik log–log Ps (Po/Pa) versus ze berdasarkan referensi Kinney &amp; Graham (1985)."></div>
-            <noscript><p>Please enable JavaScript to display the chart. Referensi: G. F. Kinney &amp; K. J. Graham (1985).</p></noscript>
+            <div id="chart" role="img" aria-label="Log-log plot of Ps (Po/Pa) versus ze based on Kinney &amp; Graham (1985)."></div>
+            <noscript><p>Please enable JavaScript to display the chart. Reference: G. F. Kinney &amp; K. J. Graham (1985).</p></noscript>
             <div class="chart-note">Source: G. F. Kinney &amp; K. J. Graham, <em>Explosive Shocks in Air</em>, Springer-Verlag, 1985.</div>
           </div>
         </section>
@@ -495,7 +495,7 @@
 
       <aside class="right">
         <section class="card estimation" aria-labelledby="est-damage">
-          <div id="est-damage" class="card-header">Estimation of damage structure and process equipment</div>
+          <div id="est-damage" class="card-header">Estimation of Damage to Structures and Process Equipment</div>
           <div class="method-grid">
             <div class="method-card">
               <div class="vlabel">CROWL</div>
@@ -554,11 +554,11 @@
           </div>
         </section>
         <section class="card estimation" aria-labelledby="est-injury">
-          <div id="est-injury" class="card-header">Estimation of injury consequences</div>
+          <div id="est-injury" class="card-header">Estimation of Injury Consequences</div>
           <div class="method-grid">
-            <div class="method-card"><div class="vlabel">CROWL</div><div class="pad" id="panel-injury-crowl"><p><strong>Overpressure (Po):</strong> <span id="val-Po-crowl-inj">—</span> kPa</p><p><strong>Efek:</strong></p><ul id="injury-effects-crowl"><li>Menunggu input...</li></ul></div><div class="sevfoot" id="sev-injury-crowl">Unknown</div></div>
-            <div class="method-card"><div class="vlabel">ALONSO</div><div class="pad" id="panel-injury-alonso"><p><strong>Overpressure (Po):</strong> <span id="val-Po-alonso-inj">—</span> kPa</p><p><strong>Efek:</strong></p><ul id="injury-effects-alonso"><li>Menunggu input...</li></ul></div><div class="sevfoot" id="sev-injury-alonso">Unknown</div></div>
-            <div class="method-card"><div class="vlabel">SADOVSKI</div><div class="pad" id="panel-injury-sadovski"><p><strong>Overpressure (Po):</strong> <span id="val-Po-sadovski-inj">—</span> kPa</p><p><strong>Efek:</strong></p><ul id="injury-effects-sadovski"><li>Menunggu input...</li></ul></div><div class="sevfoot" id="sev-injury-sadovski">Unknown</div></div>
+            <div class="method-card"><div class="vlabel">CROWL</div><div class="pad" id="panel-injury-crowl"><p><strong>Overpressure (Po):</strong> <span id="val-Po-crowl-inj">—</span> kPa</p><p><strong>Effects:</strong></p><ul id="injury-effects-crowl"><li>Awaiting input...</li></ul></div><div class="sevfoot" id="sev-injury-crowl">Unknown</div></div>
+            <div class="method-card"><div class="vlabel">ALONSO</div><div class="pad" id="panel-injury-alonso"><p><strong>Overpressure (Po):</strong> <span id="val-Po-alonso-inj">—</span> kPa</p><p><strong>Effects:</strong></p><ul id="injury-effects-alonso"><li>Awaiting input...</li></ul></div><div class="sevfoot" id="sev-injury-alonso">Unknown</div></div>
+            <div class="method-card"><div class="vlabel">SADOVSKI</div><div class="pad" id="panel-injury-sadovski"><p><strong>Overpressure (Po):</strong> <span id="val-Po-sadovski-inj">—</span> kPa</p><p><strong>Effects:</strong></p><ul id="injury-effects-sadovski"><li>Awaiting input...</li></ul></div><div class="sevfoot" id="sev-injury-sadovski">Unknown</div></div>
           </div>
         </section>
 
@@ -610,7 +610,7 @@
                 </table>
             </div>
             <div style="padding: 0 14px 14px;">
-                <p class="footnote">Click "Save" to save the calculation results. A log of the last 10 entries will be stored in your browser</p>
+                <p class="footnote">Click "Save" to log the calculation results. The last 10 entries will be stored in your browser.</p>
             </div>
         </section>
       </aside>
@@ -621,7 +621,7 @@
       <div class="floating-panel-header">
           <h3>Quick Control Panel</h3>
           <div class="panel-header-buttons">
-            <button id="floatPanelCollapseBtn" class="floating-panel-action-btn" aria-label="Lipat/Buka Panel">▲</button>
+            <button id="floatPanelCollapseBtn" class="floating-panel-action-btn" aria-label="Collapse/Expand Panel">▲</button>
           </div>
       </div>
       <div class="floating-panel-body">
@@ -647,13 +647,13 @@
         <div class="dedication">
           This application is dedicated to my parents for their persistent support and patient guidance throughout my JavaScript journey.
           It is also presented to the academic community at
-          <a href="https://che.itb.ac.id/" target="_blank" rel="nofollow noopener noreferrer">Institut Teknologi Bandung</a>
+          <a href="https://che.itb.ac.id/" target="_blank" rel="nofollow noopener noreferrer">Bandung Institute of Technology</a>
           as a contribution towards inspiring further advancements in JavaScript technology.
         </div>
       </div>
   </footer>
 
-  <button class="btn" id="toTop" type="button" aria-label="Kembali ke atas">&#8679;</button>
+  <button class="btn" id="toTop" type="button" aria-label="Back to Top">&#8679;</button>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -688,81 +688,81 @@
       };
 
       /**
-      * Fungsi ini menemukan semua kemungkinan deskripsi kerusakan struktural
-      * berdasarkan nilai overpressure (tekanan berlebih) dalam kPa.
-      * @param {number} kPa - Nilai tekanan berlebih dalam kPa.
-      * @returns {string[]} Sebuah array yang berisi semua deskripsi kerusakan yang cocok.
-      * Mengembalikan array kosong jika tidak ada deskripsi yang cocok.
+      * This function finds all possible structural damage descriptions
+      * based on the overpressure value in kPa.
+      * @param {number} kPa - The overpressure value in kPa.
+      * @returns {string[]} An array containing all matching damage descriptions.
+      * Returns an empty array if no descriptions match.
       */
       function getDamageDescriptions(kPa) {
         const descriptions = [];
 
-        // Rentang: >= 0.14 dan <= 2 kPa
+        // Range: >= 0.14 and <= 2 kPa
         if (kPa >= 0.14 && kPa <= 2) {
           descriptions.push("Accidental glass damage [1].");
         }
 
-        // Rentang: > 2 dan <= 9 kPa
+        // Range: > 2 and <= 9 kPa
         if (kPa > 2 && kPa <= 9) {
           descriptions.push("Minor glass breakage and light architectural damage such as displacement of roof tiles and falling plaster [1].");
         }
 
-        // Rentang: > 9 dan <= 25 kPa
+        // Range: > 9 and <= 25 kPa
         if (kPa > 9 && kPa <= 25) {
           descriptions.push("Widespread glass shattering and significant damage to non-structural elements like doors, windows, and roofs [1].");
         }
 
-        // Rentang: >= 13.8 dan <= 20.7 kPa
+        // Range: >= 13.8 and <= 20.7 kPa
         if (kPa >= 13.8 && kPa <= 20.7) {
           descriptions.push("Collapse of unreinforced concrete walls or cement blocks [2].");
         }
 
-        // Rentang: > 20.7 dan <= 25 kPa
+        // Range: > 20.7 and <= 25 kPa
         if (kPa > 20.7 && kPa <= 25) {
           descriptions.push("Frame-less steel panels destroyed; oil storage tanks ruptured (20.7 kPa - ≤25 kPa) [2].");
         }
 
-        // Rentang: > 25 dan <= 27.6 kPa
+        // Range: > 25 and <= 27.6 kPa
         if (kPa > 25 && kPa <= 27.6) {
           descriptions.push("Frame-less steel panels destroyed; oil storage tanks ruptured (25 kPa - 27.6 kPa) [2].");
         }
 
-        // Rentang: > 25 dan <= 40 kPa
+        // Range: > 25 and <= 40 kPa
         if (kPa > 25 && kPa <= 40) {
           descriptions.push("Extensive damage to non-structural elements such as brick facades, roofs, and ceilings [1].");
         }
 
-        // Rentang: >= 34.5 dan <= 40 kPa
+        // Range: >= 34.5 and <= 40 kPa
         if (kPa >= 34.5 && kPa <= 40) {
           descriptions.push("Near-total destruction of residential houses (34.5 kPa - ≤40 kPa) [2].");
         }
 
-        // Rentang: > 40 dan <= 48.2 kPa
+        // Range: > 40 and <= 48.2 kPa
         if (kPa > 40 && kPa <= 48.2) {
           descriptions.push("Near-total destruction of residential houses (40 kPa - 48.2 kPa) [2].");
         }
 
-        // Rentang: > 40 dan <= 55 kPa
+        // Range: > 40 and <= 55 kPa
         if (kPa > 40 && kPa <= 55) {
           descriptions.push("Heavy damage to non-structural elements leading to ceiling collapse [1].");
         }
 
-        // Rentang: > 48.2 dan <= 55 kPa
+        // Range: > 48.2 and <= 55 kPa
         if (kPa > 48.2 && kPa <= 55) {
           descriptions.push("8-12 inch thick unreinforced brick panels fail from shear or bending (48.2 kPa - ≤55 kPa) [2].");
         }
 
-        // Rentang: > 55 dan <= 55.1 kPa
+        // Range: > 55 and <= 55.1 kPa
         if (kPa > 55 && kPa <= 55.1) {
           descriptions.push("8-12 inch thick unreinforced brick panels fail from shear or bending (55 kPa - 55.1 kPa) [2].");
         }
 
-        // Rentang: > 55 dan <= 76 kPa
+        // Range: > 55 and <= 76 kPa
         if (kPa > 55 && kPa <= 76) {
           descriptions.push("Partial collapse of non-structural elements and significant damage to concrete columns [1].");
         }
 
-        // Rentang: > 76 kPa
+        // Range: > 76 kPa
         if (kPa > 76) {
           descriptions.push("Near-total collapse of all building elements, including heavy damage to load-bearing concrete columns [1].");
         }
@@ -772,14 +772,14 @@
       
       /**
       * @typedef {object} overpressureDamageLevels
-      * @property {number} minPo - Nilai minimum rentang tekanan (inklusif).
-      * @property {number} maxPo - Nilai maksimum rentang tekanan (eksklusif).
-      * @property {string} description - Deskripsi efek pada rentang tekanan ini.
-      * @property {number} citation_ref - Referensi sitasi untuk data.
+      * @property {number} minPo - The minimum pressure range (inclusive).
+      * @property {number} maxPo - The maximum pressure range (exclusive).
+      * @property {string} description - Description of the effect at this pressure range.
+      * @property {number} citation_ref - Citation reference for the data.
       */
 
       /**
-      * Array yang berisi data tentang efek ledakan berdasarkan tekanan berlebih (Po).
+      * Array containing data on explosion effects based on overpressure (Po).
       * @type {overpressureDamageLevels[]}
       */
       const overpressureDamageLevels = [
@@ -997,7 +997,7 @@
         if (btn) {
           btn.addEventListener('click', () => {
             const url = chart.getDataURL({ type: 'png', pixelRatio: 2, backgroundColor: '#FFFFFF' });
-            const a = document.createElement('a'); a.href = url; a.download = 'plot-ledakan-ps-vs-ze.png'; a.click();
+            const a = document.createElement('a'); a.href = url; a.download = 'plot-explosion-ps-vs-ze.png'; a.click();
           });
         }
 
@@ -1031,7 +1031,7 @@
                     query: { minWidth: 601 },
                     option: {
                         grid: { left: 72, right: 35, top: 80, bottom: 70 },
-                        title: { text: 'Scaled Overpressure vs Scaled Distance', subtext: 'Model Referensi Kinney & Graham (1985)', left: 'center', top: 10, textStyle: { color: '#212121', fontSize: 20 }, subtextStyle: { color: '#424242' }},
+                        title: { text: 'Scaled Overpressure vs Scaled Distance', subtext: 'Reference Model: Kinney & Graham (1985)', left: 'center', top: 10, textStyle: { color: '#212121', fontSize: 20 }, subtextStyle: { color: '#424242' }},
                         xAxis: { name: 'Scaled Distance (ze)', nameLocation: 'middle', nameGap: 35, nameTextStyle: { color: '#212121', fontSize: 16, fontWeight: 'bold' }, axisLabel: { color: '#424242' }},
                         yAxis: { name: 'Scaled Overpressure Ratio (Ps = Po/Pa, –)', nameLocation: 'middle', nameGap: 50, nameTextStyle: { color: '#212121', fontSize: 16, fontWeight: 'bold' }, axisLabel: { color: '#424242' }}
                     }
@@ -1060,13 +1060,13 @@
             chart.setOption({
               series: [
                 {
-                  name: 'Kurva Referensi',
+                  name: 'Reference Curve',
                   type: 'line', showSymbol: false,
                   lineStyle: { width: 2.5, color: BLUE, shadowColor: 'rgba(0, 0, 0, 0.2)', shadowBlur: 5, shadowOffsetY: 2 },
                   data: refPairs, zlevel: 1
                 },
                 {
-                  name: `Titik: ${compound}`, type: 'scatter', symbolSize: 12,
+                  name: `Point: ${compound}`, type: 'scatter', symbolSize: 12,
                   itemStyle: { color: DANGER, borderColor: '#ffffff', borderWidth: 2, shadowColor: 'rgba(0,0,0,0.3)', shadowBlur: 5 },
                   data: seriesData, zlevel: 2
                 }
@@ -1334,17 +1334,17 @@
 
       /*
       ================================================================================
-      | SKRIP UNTUK ESTIMASI KONSEKUENSI CEDERA (Mulai)                               |
+      | SCRIPT FOR INJURY CONSEQUENCE ESTIMATION (Start)                             |
       |------------------------------------------------------------------------------|
-      | Salin dan tempel (atau ganti) seluruh blok ini ke dalam skrip Anda.          |
+      | Copy and paste (or replace) this entire block into your script.              |
       ================================================================================
       */
 
       /**
-      * Mengklasifikasikan tingkat keparahan cedera berdasarkan nilai Peak Overpressure (Po).
-      * Fungsi ini mengembalikan objek detail berdasarkan data gambar.
-      * @param {number} Po - Nilai peak side-on overpressure dalam satuan kPa.
-      * @returns {object} Objek yang berisi Primary, Secondary/Tertiary, dan Conclusion effects.
+      * Classifies the severity of injury based on the Peak Overpressure (Po) value.
+      * This function returns a detailed object based on graphical data.
+      * @param {number} Po - The peak side-on overpressure value in kPa.
+      * @returns {object} An object containing Primary, Secondary/Tertiary, and Conclusion effects.
       */
       function getInjuryEffects(Po) {
         const poValue = parseFloat(Po);
@@ -1358,70 +1358,70 @@
 
         if (poValue >= 0.14 && poValue < 20) {
           return {
-            primary: "Tidak ada cedera serius; cedera gendang telinga tidak signifikan.",
-            secondary: "Kaca mulai pecah pada 3–5 kPa, sehingga pecahan dapat melukai kulit/mata.",
-            conclusion: "Cedera primer tidak mungkin terjadi, tetapi risiko cedera sekunder dari pecahan kaca tetap ada."
+            primary: "No serious injuries; eardrum damage is insignificant.",
+            secondary: "Glass begins to break at 3–5 kPa, where fragments can cause skin/eye injuries.",
+            conclusion: "Primary injuries are unlikely, but a risk of secondary injuries from glass fragments persists."
           };
         } else if (poValue >= 20 && poValue <= 30) {
           return {
-            primary: "Memar ringan.",
-            secondary: "Kerusakan struktur tingkat sedang dapat menyebabkan bagian langit-langit runtuh dan benda-benda kecil jatuh.",
-            conclusion: "Kombinasi memar ringan dan cedera sekunder dari pecahan/puing-puing."
+            primary: "Minor contusions.",
+            secondary: "Moderate structural damage may cause ceiling collapse and falling of small objects.",
+            conclusion: "A combination of minor contusions and secondary injuries from fragments/debris."
           };
         } else if (poValue > 30 && poValue <= 50) {
           return {
-            primary: "Cedera gendang telinga, memar sedang.",
-            secondary: "Kerusakan struktural yang lebih luas menciptakan puing-puing beterbangan, yang dapat menyebabkan patah tulang.",
-            conclusion: "Tingkat keparahan cedera meningkat karena efek gabungan dari gelombang ledakan dan puing-puing yang beterbangan."
+            primary: "Eardrum rupture, moderate contusions.",
+            secondary: "More extensive structural damage creates flying debris, which may cause bone fractures.",
+            conclusion: "Injury severity is increased due to the combined effects of the blast wave and flying debris."
           };
         } else if (poValue > 50 && poValue <= 100) {
           return {
-            primary: "Memar internal yang serius dan berpotensi fatal.",
-            secondary: "Sebagian besar bangunan kemungkinan besar akan hancur total, menciptakan situasi terperangkap di bawah reruntuhan.",
-            conclusion: "Gabungan cedera internal dan kondisi terperangkap berpotensi sangat fatal."
+            primary: "Serious and potentially fatal internal contusions.",
+            secondary: "Most buildings are likely to be completely destroyed, creating entrapment scenarios under the rubble.",
+            conclusion: "The combination of internal injuries and entrapment is potentially highly fatal."
           };
         } else if (poValue > 100) {
           return {
-            primary: "Tingkat kematian sangat tinggi bagi orang tanpa pelindung; 90% – 100% fatal.",
-            secondary: "Keruntuhan total bangunan; puing-puing besar bergerak dengan cepat.",
-            conclusion: "Interaksi antara gelombang ledakan dan kegagalan struktural menimbulkan risiko kematian yang sangat tinggi."
+            primary: "Extremely high mortality rate for unprotected individuals; 90%–100% fatality.",
+            secondary: "Total building collapse; large debris moving at high velocity.",
+            conclusion: "The interaction between the blast wave and structural failure poses an extremely high risk of fatality."
           };
-        } else { // Untuk nilai di bawah 0.14 kPa
+        } else { // For values below 0.14 kPa
           return {
-            primary: "Tidak ada efek signifikan yang dilaporkan.",
+            primary: "No significant effects reported.",
             secondary: "",
-            conclusion: "Tidak ada cedera yang diperkirakan."
+            conclusion: "No injuries are anticipated."
           };
         }
       }
 
 
       /**
-      * Fungsi utama untuk memperbarui semua panel estimasi konsekuensi cedera.
-      * Fungsi ini memanggil helper untuk setiap metode (Crowl, Alonso, Sadovski).
-      * @param {number} PoCrowl - Nilai Po dari metode Crowl.
-      * @param {number} PoAlonso - Nilai Po dari metode Alonso.
-      * @param {number} PoSadovski - Nilai Po dari metode Sadovski.
+      * Main function to update all injury consequence estimation panels.
+      * It calls a helper for each method (Crowl, Alonso, Sadovski).
+      * @param {number} PoCrowl - Po value from the Crowl method.
+      * @param {number} PoAlonso - Po value from the Alonso method.
+      * @param {number} PoSadovski - Po value from the Sadovski method.
       */
       function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski) {
         const $ = (id) => document.getElementById(id);
 
-        // Helper function untuk memperbarui satu panel
+        // Helper function to update a single panel
         const updatePanel = (method, Po) => {
           const isPoValid = Number.isFinite(Po);
           const prettyPo = isPoValid ? Po.toLocaleString("en-US", { minimumFractionDigits: 3, maximumFractionDigits: 3 }) : "—";
 
-          // Dapatkan elemen UI untuk metode ini
+          // Get UI elements for this method
           const valPoEl = $(`val-Po-${method}-inj`);
           const effectsListEl = $(`injury-effects-${method}`);
           const sevFootEl = $(`sev-injury-${method}`);
 
           if (!valPoEl || !effectsListEl || !sevFootEl) return;
 
-          // Update nilai Po
+          // Update the Po value
           valPoEl.textContent = prettyPo;
 
-          // Dapatkan dan tampilkan detail efek cedera
+          // Get and display the injury effect details
           const effects = getInjuryEffects(Po);
           effectsListEl.innerHTML = `
             <li><strong>Primary Effects:</strong> ${effects.primary}</li>
@@ -1429,14 +1429,14 @@
             ${effects.conclusion ? `<li><strong>Conclusion:</strong> ${effects.conclusion}</li>` : ''}
           `;
           
-          // Dapatkan dan terapkan kategori tingkat keparahan
+          // Get and apply the severity category
           const severity = getInjuryRiskCategory(Po);
           sevFootEl.textContent = severity.name;
           sevFootEl.style.backgroundColor = severity.color;
           sevFootEl.style.color = severity.textColor;
         };
 
-        // Perbarui setiap panel
+        // Update each panel
         updatePanel('crowl', PoCrowl);
         updatePanel('alonso', PoAlonso);
         updatePanel('sadovski', PoSadovski);
@@ -1444,7 +1444,7 @@
 
       /*
       ================================================================================
-      | SKRIP UNTUK ESTIMASI KONSEKUENSI CEDERA (Selesai)                             |
+      | SCRIPT FOR INJURY CONSEQUENCE ESTIMATION (End)                               |
       ================================================================================
       */
 
@@ -1500,11 +1500,11 @@
             return 1.83e5 * z**-1.16;
         })(Ze) / 1000;
         
-        // Perhitungan Po_sadovski berdasarkan rumus dari lampiran (hasil dalam MPa), dikonversi ke kPa
+        // Calculation of Po_sadovski based on the appendix formula (result in MPa), converted to kPa
         const Po_sadovski = ((w, d) => {
             if (!(d > 0 && w > 0)) return NaN;
-            const r = Math.cbrt(w) / d; // r adalah istilah (m_TNT)^(1/3) / R
-            return (0.085 * r + 0.3 * r**2 + 0.8 * r**3) * 1000; // Konversi dari MPa ke kPa
+            const r = Math.cbrt(w) / d; // r is the term (m_TNT)^(1/3) / R
+            return (0.085 * r + 0.3 * r**2 + 0.8 * r**3) * 1000; // Convert from MPa to kPa
         })(W_tnt, dist);
 
         $("Po_crowl").value = Po_crowl.toFixed(3);
@@ -1530,7 +1530,7 @@
 
       function renderEquation(material) {
         const box = $("eq-text"); if (!box) return;
-        if (!material || !eqMap[material]) { box.innerHTML = "Select Material"; return; }
+        if (!material || !eqMap[material]) { box.innerHTML = "Select a material to display the reaction equation."; return; }
         box.innerHTML = eqMap[material].map(item => `<div class="rxn"><small>${item.label}</small><div class="rxn-eq">${item.eq}</div></div>`).join("");
       }
 
@@ -1564,18 +1564,18 @@
           }
           compute(true);
         } else {
-          // Atur kondisi default jika tidak ada parameter URL
+          // Set default conditions if no URL parameters are present
           const materialEl = $('material');
           if (materialEl) {
-              materialEl.value = 'AN'; // Materi default
+              materialEl.value = 'AN'; // Default material
               const p = presets[materialEl.value];
               if (p) Object.keys(p).forEach(key => $(key).value = p[key]);
               renderEquation(materialEl.value);
               
-              // Nilai default untuk input utama agar ada hasil kalkulasi awal
+              // Default values for primary inputs to provide an initial calculation
               $('vol').value = '10';
               $('dist').value = '100';
-              compute(true); // isInitialLoad = true, mencegah penulisan ke URL
+              compute(true); // isInitialLoad = true, prevents writing to URL
           }
         }
       }
@@ -1638,7 +1638,7 @@
                     return;
                 }
             } catch (e) {
-                console.error("Gagal memuat log dari local storage:", e);
+                console.error("Failed to load log from local storage:", e);
             }
         }
         simulationLog = [...defaultLogData]; 
@@ -1805,7 +1805,7 @@
               if (!isDragging) return;
               isDragging = false;
               panel.style.transition = '';
-              panel.style.width = ''; // Perbaikan: Atur ulang lebar agar responsif
+              panel.style.width = ''; // Reset width to be responsive
               document.removeEventListener('mouseup', dragEnd);
               document.removeEventListener('mousemove', elementDrag);
               document.removeEventListener('touchend', dragEnd);
@@ -1834,7 +1834,7 @@
         const p = presets[materialSel.value];
         if (p) Object.keys(p).forEach(key => $(key).value = p[key]);
         renderEquation(materialSel.value);
-        showStatusMessage("Nilai contoh diisikan.");
+        showStatusMessage("Default values have been loaded.");
         compute(false);
       });
 
@@ -1932,7 +1932,7 @@
           const url = URL.createObjectURL(dataBlob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = 'simulasi-log.csv';
+          a.download = 'simulation-log.csv';
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
@@ -1953,16 +1953,16 @@
                   const csv = e.target.result;
                   const lines = csv.split(/\r\n|\n/).filter(line => line.trim() !== '');
                   if (lines.length < 2) {
-                      throw new Error("File CSV tidak valid atau kosong.");
+                      throw new Error("CSV file is invalid or empty.");
                   }
                   
                   const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-                  // PERBAIKAN: Mengganti 'e_nt' menjadi 'e_tnt' agar sesuai dengan data yang diekspor.
+                  // FIX: Changed 'e_nt' to 'e_tnt' to match exported data.
                   const requiredHeaders = ['material', 'eta', 'e_tnt', 'vol', 'dist', 'w_tnt', 'ze', 'ps', 'po_crowl', 'po_alonso', 'po_sadovski'];
                   const missingHeaders = requiredHeaders.filter(rh => !headers.includes(rh));
 
                   if (missingHeaders.length > 0) {
-                      throw new Error(`Kolom yang dibutuhkan tidak ada: ${missingHeaders.join(', ')}`);
+                      throw new Error(`Required columns are missing: ${missingHeaders.join(', ')}`);
                   }
 
                   const importedData = [];
@@ -1979,7 +1979,7 @@
                   }
                   
                   if (importedData.length === 0) {
-                       throw new Error("TNo valid data could be retrieved from the CSV file.");
+                       throw new Error("No valid data could be retrieved from the CSV file.");
                   }
                   
                   simulationLog = importedData.slice(0, 10);
@@ -2004,7 +2004,7 @@
                   renderLogTable();
                   updateOverpressureChartFromLog();
                   saveLogToLocalStorage();
-                  showStatusMessage('Log data from the CSV file have been successfully imported!');
+                  showStatusMessage('Log data from CSV file imported successfully!');
 
               } catch (err) {
                   showStatusMessage('The file could not be imported: ' + err.message, true);
@@ -2036,12 +2036,12 @@
                 panel.style.setProperty('--target-top', `${rect.top}px`);
                 panel.style.setProperty('--target-right', `${window.innerWidth - rect.right}px`);
             } else {
-                panel.style.width = ''; // Atur ulang lebar
+                panel.style.width = ''; // Reset width
             }
         });
 
         header.addEventListener('click', (e) => {
-            // Hanya perluas jika diciutkan dan klik bukan pada tombol itu sendiri
+            // Only expand if collapsed and the click is not on the button itself
             if (panel.classList.contains('collapsed') && e.target !== collapseBtn && !collapseBtn.contains(e.target)) {
                  panel.classList.remove('collapsed');
                  panel.style.width = '';
@@ -2068,8 +2068,8 @@
           const floatingPanel = $('floatingControlPanel');
           if (!materialCard || !floatingPanel) return;
           const cardRect = materialCard.getBoundingClientRect();
-          // Tampilkan panel ketika bagian bawah kartu material sudah tergulir melewati bagian atas viewport.
-          // Memberi sedikit buffer (20px) agar tidak terlalu mendadak.
+          // Display the panel when the bottom of the material card has scrolled past the top of the viewport.
+          // Provides a small buffer (20px) to prevent abrupt appearance.
           if (cardRect.bottom < 20) {
               syncFloatingPanelInputs();
               floatingPanel.classList.add('visible');
