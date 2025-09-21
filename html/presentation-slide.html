@@ -29,17 +29,19 @@
 
 <script>
 (function(){
-  // ========== CONFIG (GANTI KE PUNYA KAMU) ==========
-  // Rekomendasi: ganti <user>/<repo>@<branch>/<path>/<file>.pptx
-  const URL_PPTX_JSDELIVR = "https://cdn.jsdelivr.net/gh/username/repo@main/paper/seminar-virda-2025-v1.pptx";
+  // ========== CONFIG ==========
+  // URL jsDelivr diperbaiki untuk menunjuk ke repositori Anda
+  const URL_PPTX_JSDELIVR = "https://cdn.jsdelivr.net/gh/virdanurlulu/virdanurlulu.github.io@main/paper/seminar-virda-2025-v1.pptx";
   const URL_PPTX_PAGES    = "https://virdanurlulu.github.io/paper/seminar-virda-2025-v1.pptx";
   const URL_PDF           = "https://virdanurlulu.github.io/paper/seminar-virda-2025-v1.pdf";
+  const URL_PPSX_PAGES    = "https://virdanurlulu.github.io/paper/seminar-tesis-virda-nur-lulu.ppsx"; // Menambahkan link PPSX
   // ================================================
 
   const office = (u)=>"https://view.officeapps.live.com/op/embed.aspx?src="+encodeURIComponent(u)+"&wdAr=1.7777777777777777";
   const gview  = (u)=>"https://docs.google.com/gview?embedded=true&url="+encodeURIComponent(u);
 
   const chain = [
+    {name:"Office Viewer (PPSX)", src: office(URL_PPSX_PAGES), full: office(URL_PPSX_PAGES), dl: URL_PPSX_PAGES}, // Mencoba PPSX dulu karena ini format slideshow
     {name:"Office Viewer (jsDelivr)", src: office(URL_PPTX_JSDELIVR), full: office(URL_PPTX_JSDELIVR), dl: URL_PPTX_JSDELIVR},
     {name:"Office Viewer (GitHub Pages)", src: office(URL_PPTX_PAGES), full: office(URL_PPTX_PAGES), dl: URL_PPTX_PAGES},
     {name:"Google Viewer (PPTX)", src: gview(URL_PPTX_JSDELIVR), full: gview(URL_PPTX_JSDELIVR), dl: URL_PPTX_JSDELIVR},
@@ -80,7 +82,7 @@
     timer = setTimeout(()=>{ if(!loaded) tryNext(); }, 6000); // 6s tanpa onload → lanjut
   }
 
-  frame.addEventListener('load', function(){ loaded = true; status.textContent = "Loaded."; });
+  frame.addEventListener('load', function(){ loaded = true; status.textContent = "Berhasil dimuat."; });
   tryNext();
 })();
 </script>
