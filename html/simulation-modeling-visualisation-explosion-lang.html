@@ -315,6 +315,11 @@
         #logTable td:last-child:before { 
             content: "" !important; 
         } 
+        
+        #logTable td[data-label="ze"],
+        #logTable td[data-label="Ps"] {
+            display: none;
+        }
     }
 
     /* Untuk Ponsel (Lanskap) & Layar Sangat Kecil */
@@ -1428,7 +1433,9 @@
         const Po_alonso = ((z) => { if (z < 10) return 1.13e6 * z**-2.01; return 1.83e5 * z**-1.16; })(Ze) / 1000;
         const Po_sadovski = ((w, d) => { if (!(d > 0 && w > 0)) return NaN; const r = Math.cbrt(w) / d; return (0.085 * r + 0.3 * r**2 + 0.8 * r**3) * 1000; })(W_tnt, dist);
 
-        $("Po_crowl").value = Po_crowl.toFixed(3); $("Po_alonso").value = isNaN(Po_alonso) ? "" : Po_alonso.toFixed(3); $("Po_sadovski").value = isNaN(Po_sadovski) ? "" : Po_sadovski.toFixed(3);
+        $("Po_crowl").value = Po_crowl.toFixed(3); 
+        $("Po_alonso").value = isNaN(Po_alonso) ? "" : Po_alonso.toFixed(3); 
+        $("Po_sadovski").value = isNaN(Po_sadovski) ? "" : Po_sadovski.toFixed(3);
 
         updateEstimationPanels(Po_crowl, Po_alonso, Po_sadovski, isAlonsoExtrapolated);
         updateInjuryPanels(Po_crowl, Po_alonso, Po_sadovski);
@@ -1475,7 +1482,7 @@
         simulationLog.forEach((log, index) => {
             const row = document.createElement('tr');
             if (log.isNew) { row.classList.add('new-row-animation'); delete log.isNew; }
-            row.innerHTML = `<td data-label="Node">${index + 1}</td><td data-label="Material">${log.material}</td><td data-label="ηE">${log.eta}</td><td data-label="ETNT (kJ/kg)">${log.e_tnt}</td><td data-label="Volume (m³)">${log.vol}</td><td data-label="Distance (m)">${log.dist}</td><td data-label="WTNT (kg)">${log.w_tnt}</td><td data-label="ze" style="display:none;">${log.ze}</td><td data-label="Ps" style="display:none;">${log.ps}</td><td data-label="Crowl (kPa)">${log.po_crowl}</td><td data-label="Alonso (kPa)">${log.po_alonso}</td><td data-label="Sadovski (kPa)">${log.po_sadovski}</td><td class="col-action"><button class="btn-delete" data-index="${index}" title="Delete this line"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button></td>`;
+            row.innerHTML = `<td data-label="Node">${index + 1}</td><td data-label="Material">${log.material}</td><td data-label="ηE">${log.eta}</td><td data-label="ETNT (kJ/kg)">${log.e_tnt}</td><td data-label="Volume (m³)">${log.vol}</td><td data-label="Distance (m)">${log.dist}</td><td data-label="WTNT (kg)">${log.w_tnt}</td><td data-label="ze">${log.ze}</td><td data-label="Ps">${log.ps}</td><td data-label="Crowl (kPa)">${log.po_crowl || 'N/A'}</td><td data-label="Alonso (kPa)">${log.po_alonso || 'N/A'}</td><td data-label="Sadovski (kPa)">${log.po_sadovski || 'N/A'}</td><td class="col-action"><button class="btn-delete" data-index="${index}" title="Delete this line"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button></td>`;
             logTbody.appendChild(row);
         });
       }
@@ -1553,3 +1560,4 @@
   </script>
 </body>
 </html>
+
