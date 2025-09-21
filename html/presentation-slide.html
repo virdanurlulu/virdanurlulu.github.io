@@ -3,21 +3,34 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Preview – Seminar Proposal Tesis Virda Nur Lu'lu</title>
+<title>Preview - Thesis Proposal Seminar - Virda Nur Lu'lu</title>
 <style>
+  /* Variabel warna dari menu */
+  :root {
+    --ink: #1e2b3b;
+    --blue-itb: #0079c2;
+    --stripe: #eaf3fb;
+  }
+  
   html, body {
     margin: 0;
     padding: 0;
     background: #000;
     color: #fff;
-    font-family: Arial, sans-serif;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    box-sizing: border-box;
   }
+  
+  *, *::before, *::after {
+    box-sizing: inherit;
+  }
+
+  /* === Gaya dari Skrip Presentasi === */
   .wrap {
     min-height: 100svh;
     display: grid;
     place-items: center;
     padding: 20px;
-    box-sizing: border-box;
   }
   .viewer {
     width: min(1100px, 96vw);
@@ -36,8 +49,6 @@
     border: 0;
   }
   
-  /* === PENYEMPURNAAN TAMPILAN AWAL === */
-
   @keyframes gradient-animation {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
@@ -45,18 +56,9 @@
   }
   
   @keyframes pulse-animation {
-    0% {
-      transform: scale(1);
-      box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
-    }
-    70% {
-      transform: scale(1.05);
-      box-shadow: 0 0 0 20px rgba(59, 130, 246, 0);
-    }
-    100% {
-      transform: scale(1);
-      box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
-    }
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(59, 130, 246, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
   }
 
   #start-overlay {
@@ -69,54 +71,81 @@
     background: linear-gradient(-45deg, #0f172a, #1e293b, #334155, #475569);
     background-size: 400% 400%;
     animation: gradient-animation 15s ease infinite;
+    z-index: 1001;
   }
-  
   #start-btn {
-    background: #2563eb;
-    border: none;
-    color: #fff;
-    padding: 16px 32px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-size: 1.2rem;
-    font-weight: bold;
+    background: #2563eb; border: none; color: #fff;
+    padding: 16px 32px; border-radius: 12px; cursor: pointer;
+    font-size: 1.2rem; font-weight: bold;
     animation: pulse-animation 2.5s infinite;
     transition: transform 0.2s ease;
   }
-
-  #start-btn:hover {
-    transform: scale(1.1);
-  }
-  
-  #start-overlay.hidden {
-    opacity: 0;
-    pointer-events: none;
-  }
-
+  #start-btn:hover { transform: scale(1.1); }
+  #start-overlay.hidden { opacity: 0; pointer-events: none; }
   #exit-fs-btn {
-    position: fixed; /* Diubah menjadi fixed agar posisinya relatif terhadap layar */
-    top: 15px;
-    right: 15px;
-    z-index: 2147483647;
-    background: rgba(0,0,0,0.6);
-    color: white;
-    border: 1px solid rgba(255,255,255,0.7);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    font-size: 24px;
-    font-weight: bold;
-    line-height: 38px;
-    text-align: center;
-    cursor: pointer;
-    display: none; /* Defaultnya tersembunyi */
+    position: fixed; top: 15px; right: 15px;
+    z-index: 2147483647; /* Z-index tertinggi agar di atas segalanya */
+    background: rgba(0,0,0,0.6); color: white;
+    border: 1px solid rgba(255,255,255,0.7); border-radius: 50%;
+    width: 40px; height: 40px; font-size: 24px; font-weight: bold;
+    line-height: 38px; text-align: center; cursor: pointer;
+    display: none;
   }
-  #exit-fs-btn.visible {
-    display: block;
+  #exit-fs-btn.visible { display: block; }
+
+  /* === Gaya dari Skrip Menu Dropdown === */
+  .dropdown-menu {
+    position: fixed; top: 20px; right: 20px;
+    z-index: 1000;
+  }
+  .dropdown-toggle {
+    background-color: rgba(255, 255, 255, 0.9); color: var(--ink);
+    padding: 8px 16px; font-size: 16px; font-weight: 600;
+    border: none; border-radius: 8px; cursor: pointer;
+    transition: background-color 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  .dropdown-toggle:hover { background-color: #ffffff; }
+  .dropdown-content {
+    display: none; opacity: 0; visibility: hidden;
+    position: absolute; right: 0; top: 110%;
+    background-color: #ffffff; min-width: 220px;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    border-radius: 8px; overflow: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+  }
+  .dropdown-menu.is-active .dropdown-content {
+    display: block; opacity: 1; visibility: visible;
+    transform: translateY(0);
+  }
+  .dropdown-content a {
+    color: var(--ink); padding: 12px 16px;
+    text-decoration: none; display: block;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    font-weight: 500; white-space: nowrap;
+  }
+  .dropdown-content a:hover {
+    background-color: var(--stripe); color: var(--blue-itb);
+  }
+  @media (max-width: 480px) {
+    .dropdown-menu { top: 12px; right: 12px; }
+    .dropdown-toggle { padding: 6px 12px; font-size: 14px; }
   }
 </style>
 </head>
 <body>
+
+<div class="dropdown-menu">
+  <button class="dropdown-toggle">Menu &#9776;</button>
+  <div class="dropdown-content">
+    <a href="#">Home</a>
+    <a href="#">SIM Guide (coming soon)</a>
+    <a href="#">Presentation (coming soon)</a>
+    <a href="#">Journal & Conference (coming soon)</a>
+    <a href="#">My Profile</a>
+  </div>
+</div>
 
 <div class="wrap">
   <div class="viewer" id="viewer">
@@ -134,57 +163,67 @@
 
 
 <script>
-(function() {
+document.addEventListener("DOMContentLoaded", () => {
+  // === Logika dari Skrip Presentasi ===
   const SLIDES_URL = "https://docs.google.com/presentation/d/1c6Hj7uNhM-ZuXHQPQAxl5EbpRojnjvlV/embed?start=true&loop=false&delayms=3000&rm=minimal";
-
   const overlay = document.getElementById('start-overlay');
   const startBtn = document.getElementById('start-btn');
   const iframe = document.getElementById('slides-frame');
   const exitBtn = document.getElementById('exit-fs-btn');
-  const rootEl = document.documentElement; // Target untuk fullscreen adalah seluruh halaman
+  const rootEl = document.documentElement;
 
-  startBtn.addEventListener('click', () => {
-    iframe.src = SLIDES_URL;
-    overlay.classList.add('hidden');
-
-    // PENYEMPURNAAN 1: Minta fullscreen untuk seluruh halaman (lebih imersif)
-    if (rootEl.requestFullscreen) {
-      rootEl.requestFullscreen();
-    } else if (rootEl.webkitRequestFullscreen) {
-      rootEl.webkitRequestFullscreen();
-    } else if (rootEl.msRequestFullscreen) {
-      rootEl.msRequestFullscreen();
-    }
-
-    // PENYEMPURNAAN 2: Hanya coba kunci orientasi di perangkat mobile
-    const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    if (isMobile) {
-      screen.orientation?.lock('landscape').catch(error => {
-        console.warn("Tidak dapat mengunci orientasi:", error);
-      });
-    }
-  });
+  if (startBtn) {
+    startBtn.addEventListener('click', () => {
+      iframe.src = SLIDES_URL;
+      overlay.classList.add('hidden');
+      if (rootEl.requestFullscreen) rootEl.requestFullscreen();
+      else if (rootEl.webkitRequestFullscreen) rootEl.webkitRequestFullscreen();
+      else if (rootEl.msRequestFullscreen) rootEl.msRequestFullscreen();
+      
+      const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      if (isMobile) {
+        screen.orientation?.lock('landscape').catch(error => {
+          console.warn("Gagal mengunci orientasi:", error);
+        });
+      }
+    });
+  }
   
-  exitBtn.addEventListener('click', () => {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen();
-    } else if (document.msExitFullscreen) {
-      document.msExitFullscreen();
-    }
-  });
+  if (exitBtn) {
+    exitBtn.addEventListener('click', () => {
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      else if (document.msExitFullscreen) document.msExitFullscreen();
+    });
+  }
 
-  // PENYEMPURNAAN 3: Logika tombol keluar dipusatkan di sini agar lebih andal
   document.addEventListener('fullscreenchange', () => {
-    // Jika ada elemen yang sedang fullscreen, tampilkan tombol keluar. Jika tidak, sembunyikan.
     if (document.fullscreenElement) {
       exitBtn.classList.add('visible');
     } else {
       exitBtn.classList.remove('visible');
     }
   });
-})();
+
+  // === Logika dari Skrip Menu Dropdown ===
+  const dropdown = document.querySelector('.dropdown-menu');
+  if (dropdown) {
+    const dropdownToggle = dropdown.querySelector('.dropdown-toggle');
+    
+    if (dropdownToggle) {
+      dropdownToggle.addEventListener('click', (event) => {
+        event.stopPropagation();
+        dropdown.classList.toggle('is-active');
+      });
+    }
+    
+    document.addEventListener('click', (event) => {
+      if (dropdown.classList.contains('is-active') && !dropdown.contains(event.target)) {
+        dropdown.classList.remove('is-active');
+      }
+    });
+  }
+});
 </script>
 
 </body>
