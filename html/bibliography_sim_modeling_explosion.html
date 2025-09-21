@@ -25,24 +25,82 @@
             font-family: 'Times New Roman', Times, serif;
             line-height: 1.6;
             margin: 0;
-            padding: 2rem;
             background-color: #f4f4f4;
             color: #333;
         }
+        
+        /* Navigation Menu Styles - Revised to match example */
+        .menu-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .menu-button {
+            background-color: #f8f9fa;
+            border: 1px solid #aaa;
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-family: Arial, sans-serif;
+        }
+        .menu-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            min-width: 240px; /* Adjusted width */
+            box-shadow: 0px 5px 15px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            list-style: none;
+            padding: 0;
+            margin-top: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            overflow: hidden;
+        }
+        .menu-dropdown a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-family: Arial, sans-serif;
+            text-align: left; /* Ensure text is left-aligned */
+        }
+        .menu-dropdown a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .bibliography-header {
+            background: #0073cf; /* Revised Blue from example */
+            padding: 2rem;
+            color: white;
+        }
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header-content h1 {
+            text-align: center;
+            color: #ffffff;
+            margin: 0;
+            border-bottom: 2px solid #ffffff;
+            padding-bottom: 0.5rem;
+            font-size: 2.2rem;
+        }
         .container {
             max-width: 800px;
-            margin: auto;
+            margin: 2rem auto;
             background: #fff;
             padding: 2rem;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid #2c3e50;
-            padding-bottom: 0.5rem;
         }
         #searchInput {
             width: 100%;
@@ -60,8 +118,8 @@
             box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
         }
         .reference-item {
-            margin-bottom: 1rem; /* Reduced spacing */
-            padding-bottom: 1rem; /* Reduced spacing */
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
             border-bottom: 1px solid #eee;
             position: relative;
             display: flex;
@@ -72,12 +130,12 @@
             border-bottom: none;
         }
         .reference-number {
-            min-width: 20px; /* Ensures alignment for numbers */
+            min-width: 20px;
         }
         .reference-item p {
             margin: 0;
             flex-grow: 1;
-            word-break: break-word; /* Helps with long URLs on small screens */
+            word-break: break-word;
         }
         .reference-item a {
             color: #3498db;
@@ -90,27 +148,28 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-            body {
-                padding: 1rem;
+            .bibliography-header {
+                padding: 1.5rem 1rem;
             }
             .container {
                 padding: 1.5rem;
+                margin: 1rem;
             }
-            h1 {
+            .header-content h1 {
                 font-size: 1.8rem;
             }
         }
-
         @media (max-width: 480px) {
-            body {
-                padding: 0.5rem;
+            .bibliography-header {
+                padding: 1.5rem 1rem;
             }
             .container {
                 padding: 1rem;
+                margin: 0;
                 border-radius: 0;
                 box-shadow: none;
             }
-            h1 {
+             .header-content h1 {
                 font-size: 1.5rem;
             }
             .reference-item p, .reference-number, .reference-item a {
@@ -140,7 +199,6 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
             transition: background-color 0.3s, opacity 0.3s;
         }
-
         #toTopBtn:hover {
             background-color: #34495e;
         }
@@ -148,13 +206,33 @@
 </head>
 <body>
 
-<div class="container">
-    <h1>Bibliography</h1>
-    <input type="text" id="searchInput" onkeyup="searchReferences()" placeholder="Search references (by author, year, title)...">
-    <div id="references">
-        <!-- Reference list will be dynamically inserted here by JavaScript -->
+<div class="menu-container">
+    <button class="menu-button" onclick="toggleMenu()">
+        Menu <span>&#9776;</span>
+    </button>
+    <div class="menu-dropdown" id="myDropdown">
+        <a href="https://virdanurlulu.github.io/">Home</a>
+        <a href="#coming-soon">SIM Guide (coming soon)</a>
+        <a href="#coming-soon">Presentation (coming soon)</a>
+        <a href="#coming-soon">Journal & Conference (coming soon)</a>
+        <a href="https://virdanurlulu.github.io/profile/">My Profile</a>
     </div>
 </div>
+
+<header class="bibliography-header">
+    <div class="header-content">
+        <h1 id="bibliography-heading">Bibliography</h1>
+    </div>
+</header>
+
+<main>
+    <section class="container" aria-label="Reference List">
+        <input type="text" id="searchInput" onkeyup="searchReferences()" placeholder="Search references (by author, year, title)...">
+        <div id="references">
+            <!-- Reference list will be dynamically inserted here by JavaScript -->
+        </div>
+    </section>
+</main>
 
 <!-- Back to Top Button -->
 <button id="toTopBtn" title="Go to top">▲</button>
@@ -206,6 +284,28 @@ const references = [
     { text: "Yue, Y., Gai, W., & Boustras, G. (2023). Exploration of the causes of ammonium nitrate explosions: Statistics and analysis of accidents over the past 100 years. <i>Safety Science</i>, 158, 105954. <a href='https://doi.org/10.1016/j.ssci.2022.105954' target='_blank' rel='nofollow'>[Link]</a>" },
     { text: "Zaranejad, A., Dept of. Sciences of Occupational Health, Tarbiat Modares University, Tehran, Iran., Ahmadi, O., & Dept. of Sciences of Occupational Health, Tarbiat Modares University, Tehran, Iran. (2015). Fire and explosion risk assessment in a chemical company by the application of DOW fire and explosion index. <i>Journal of Occupational Health and Epidemiology</i>, 4(3), 163-175. <a href='https://doi.org/10.18869/acadpub.johe.4.3.163' target='_blank' rel='nofollow'>[Link]</a>" }
 ];
+
+/**
+ * Toggles the visibility of the dropdown menu.
+ */
+function toggleMenu() {
+    document.getElementById("myDropdown").style.display = 
+        document.getElementById("myDropdown").style.display === 'block' ? 'none' : 'block';
+}
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+    if (!event.target.matches('.menu-button') && !event.target.parentElement.matches('.menu-button')) {
+        var dropdowns = document.getElementsByClassName("menu-dropdown");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.style.display === 'block') {
+                openDropdown.style.display = 'none';
+            }
+        }
+    }
+}
+
 
 /**
  * Renders a list of references into the DOM.
