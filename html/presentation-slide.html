@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Preview - Thesis Proposal Seminar Virda Nur Lu'lu</title>
+    <title>Preview - Seminar Proposal Tesis Virda Nur Lu'lu</title>
     <style>
-        /* CSS for the main and responsive layout */
+        /* CSS untuk tampilan utama dan responsif */
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden; /* Prevent scrolling on the page */
+            overflow: hidden; /* Mencegah scrolling pada halaman */
             background-color: #000;
         }
 
@@ -21,9 +21,9 @@
             border: none;
         }
 
-        /* 'Cancel' button to return Home on mobile devices */
+        /* Tombol 'cancel' untuk kembali ke Home di perangkat seluler */
         #mobile-cancel-btn {
-            display: none; /* Hidden by default */
+            display: none; /* Sembunyikan secara default */
             position: fixed;
             top: 15px;
             right: 15px;
@@ -36,16 +36,16 @@
             cursor: pointer;
             font-family: Arial, sans-serif;
             font-size: 16px;
-            -webkit-tap-highlight-color: transparent; /* Remove blue highlight on tap */
+            -webkit-tap-highlight-color: transparent; /* Hilangkan highlight biru saat disentuh */
         }
 
         #mobile-cancel-btn:hover {
             background-color: rgba(255, 255, 255, 0.2);
         }
 
-        /* Overlay message to ask the user to rotate their screen */
+        /* Pesan overlay untuk meminta pengguna memutar layar */
         #rotate-device-overlay {
-            display: none; /* Hidden by default */
+            display: none; /* Sembunyikan secara default */
             position: fixed;
             top: 0;
             left: 0;
@@ -61,18 +61,18 @@
             font-size: 1.2em;
         }
         
-        /* Media Query for mobile devices (smartphones and tablets) */
+        /* Media Query untuk perangkat seluler (smartphone dan tablet) */
         @media (hover: none) and (pointer: coarse) {
             #mobile-cancel-btn {
-                display: block; /* Show the cancel button */
+                display: block; /* Tampilkan tombol cancel */
             }
 
-            /* Show the overlay message ONLY when in portrait mode */
+            /* Tampilkan pesan overlay HANYA saat dalam mode potret */
             @media (orientation: portrait) {
                 #rotate-device-overlay {
                     display: flex;
                 }
-                /* Hide the slide and button when the overlay is active */
+                /* Sembunyikan slide dan tombol saat overlay aktif */
                 #slideshow-frame, #mobile-cancel-btn {
                     display: none; 
                 }
@@ -84,14 +84,14 @@
 
     <iframe 
         id="slideshow-frame" 
-        src="https://view.officeapps.live.com/op/view.aspx?src=https://virdanurlulu.github.io/paper/seminar-tesis-virda-nur-lulu.ppsx" 
+        src="https://docs.google.com/gview?url=https://virdanurlulu.github.io/paper/seminar-tesis-virda-nur-lulu.ppsx&embedded=true" 
         frameborder="0">
     </iframe>
 
-    <button id="mobile-cancel-btn">Back</button>
+    <button id="mobile-cancel-btn">Kembali</button>
 
     <div id="rotate-device-overlay">
-        <p>🔄<br><br>Please rotate your device to landscape mode<br>to view the presentation.</p>
+        <p>🔄<br><br>Mohon putar perangkat Anda ke posisi lanskap<br>untuk melihat presentasi.</p>
     </div>
 
     <script>
@@ -99,41 +99,19 @@
             const homeUrl = 'https://virdanurlulu.github.io/';
             const cancelButton = document.getElementById('mobile-cancel-btn');
 
-            // 1. Function to return Home when the 'Escape' key is pressed on desktop
+            // 1. Fungsi kembali ke Home saat tombol 'Escape' ditekan di desktop
             document.addEventListener('keydown', function(event) {
                 if (event.key === 'Escape') {
                     window.location.href = homeUrl;
                 }
             });
 
-            // 2. Function to return Home when the mobile 'Back' button is clicked
+            // 2. Fungsi kembali ke Home saat tombol 'Kembali' di seluler diklik
             if (cancelButton) {
                 cancelButton.addEventListener('click', function() {
                     window.location.href = homeUrl;
                 });
             }
-
-            // 3. Attempting to lock orientation to landscape on mobile devices.
-            // This feature may not be supported in all browsers,
-            // so we rely on the CSS overlay message as the primary solution.
-            function lockOrientation() {
-                try {
-                    if (screen.orientation && typeof screen.orientation.lock === 'function') {
-                        screen.orientation.lock('landscape').catch(err => {
-                            // Ignore errors, as the user might not grant permission
-                            // or the browser is not in fullscreen mode.
-                        });
-                    }
-                } catch (e) {
-                    console.error("Failed to lock orientation:", e);
-                }
-            }
-            
-            // Call the function when the page first loads on a mobile device
-            if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-                lockOrientation();
-            }
-
         });
     </script>
 
