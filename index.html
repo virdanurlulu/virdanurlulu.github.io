@@ -97,8 +97,29 @@
     .brand-logo { height: clamp(56px, 6.5vw, 96px); width: auto; }
     .nowrap { white-space: nowrap; }
     .brand-text { display: flex; flex-direction: column; gap: 6px; }
-    .card { background: var(--card); border-radius: 14px; overflow: hidden; box-shadow: 0 4px 14px rgba(10, 34, 64, 0.08); margin-bottom: 18px; }
-    .card-header { background: var(--blue-itb); color: #e9f5ff; font-weight: 700; padding: 10px 14px; font-family: Georgia, "Times New Roman", serif; display: flex; justify-content: space-between; align-items: center; position: relative; }
+    .card { 
+      background: var(--card); 
+      border-radius: 14px; 
+      overflow: hidden; 
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      margin-bottom: 18px; 
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+    .card-header { 
+      background: linear-gradient(to bottom, #0079c2, #005f99); 
+      color: #e9f5ff; 
+      font-weight: 700; 
+      padding: 10px 14px; 
+      font-family: Georgia, "Times New Roman", serif; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      position: relative; 
+    }
     .app-footer { margin-top: 20px; color: #fff; background-color: var(--blue-itb); width: 100vw; margin-left: calc(50% - 50vw); padding: 24px 16px; border-top: 1px solid rgba(255, 255, 255, 0.25); text-align: center; }
     .app-footer .footer-content { max-width: 1280px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 20px; }
     .app-footer .credit { font-weight: 700; color: #e9f5ff; }
@@ -147,17 +168,23 @@
     .toc-list ul {
         list-style-type: none;
         padding-left: 20px;
-        margin: 5px 0;
-        display: none; /* Hide sub-menu by default */
+        margin: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
     }
     .toc-list .submenu-toggle {
         cursor: pointer;
         padding: 12px 14px;
         font-weight: bold;
         user-select: none;
+        transition: transform 0.3s ease-out;
     }
     .toc-list li.open > ul {
-        display: block; /* Show sub-menu when parent is open */
+        max-height: 500px; /* Adjust if sub-menu is very long */
+    }
+    .toc-list li.open .submenu-toggle {
+        transform: rotate(45deg);
     }
     .toc-list ul a {
         font-weight: 400;
@@ -227,6 +254,18 @@
     #floatingControlPanel.collapsed .floating-panel-header { padding: 10px; cursor: pointer; }
     #floatingControlPanel.collapsed h3, #floatingControlPanel.collapsed .floating-panel-body { display: none; }
     #floatingControlPanel.collapsed #floatPanelCollapseBtn { transform: rotate(180deg); }
+
+    /* Animation for scroll */
+    .fade-in-on-scroll {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .fade-in-on-scroll.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
 
     /* Media Queries */
     @media (max-width: 1024px) {
@@ -340,7 +379,7 @@
     <main class="split" role="main">
       <div class="left">
         <!-- MAIN CONTENT FOR THE LEFT PANEL GOES HERE -->
-        <section id="abstract" class="card" aria-labelledby="abstract-title">
+        <section id="abstract" class="card fade-in-on-scroll" aria-labelledby="abstract-title">
           <h2 id="abstract-title" class="card-header">Abstract</h2>
           <div style="padding:14px">
             <p>Chemical explosions in industrial facilities can cause severe harm to human safety, assets, and the environment. A widely used approach for estimating explosion impacts is the Trinitrotoluene (TNT) equivalent method, which converts the energy of hazardous substances into an equivalent TNT energy value. This study develops an automated simulation for explosion impact assessment based on the TNT equivalent method using JavaScript. The model incorporates three empirical approaches—Crowl and Louvar, Alonso, and Sadovski—to estimate overpressure and consequence distances for three hazardous substances: Ammonium Nitrate (AN), Liquefied Petroleum Gas (LPG), and Hydrogen (H₂). Model validation was carried out using real accident data and technical literature, ensuring the reliability of the simulation results to support comprehensive risk assessments. The proposed tool can be applied for preliminary evaluations, emergency scenario planning, and as a technical reference in the design of explosion mitigation systems for process industries.</p>
@@ -348,7 +387,7 @@
           </div>
         </section>
 
-        <section id="foreword" class="card" aria-labelledby="foreword-title">
+        <section id="foreword" class="card fade-in-on-scroll" aria-labelledby="foreword-title">
           <h2 id="foreword-title" class="card-header">Foreword</h2>
           <div style="padding:14px">
             <p>All praise and gratitude are extended to Allah SWT, whose blessings enabled the successful completion of this thesis research, entitled "Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript." This research was undertaken to fulfill the requirements for the Master of Science degree in the Chemical Engineering Program at the Bandung Institute of Technology.</p>
@@ -364,7 +403,7 @@
           </div>
         </section>
 
-        <section id="introduction" class="card" aria-labelledby="introduction-title">
+        <section id="introduction" class="card fade-in-on-scroll" aria-labelledby="introduction-title">
           <h2 id="introduction-title" class="card-header">Introduction</h2>
           <div style="padding:14px">
             <h3 id="background" style="margin-top: 0;">1.1 Background</h3>
@@ -404,7 +443,7 @@
           </div>
         </section>
 
-        <section id="literature-review" class="card" aria-labelledby="literature-title">
+        <section id="literature-review" class="card fade-in-on-scroll" aria-labelledby="literature-title">
           <h2 id="literature-title" class="card-header">Literature Review</h2>
           <div style="padding:14px">
             <h3 id="fire-and-explosion" style="margin-top: 0;">2.1 Fire and Explosion</h3>
@@ -594,13 +633,13 @@
           </div>
         </section>
 
-        <section id="research-methodology" class="card" aria-labelledby="methodology-title">
+        <section id="research-methodology" class="card fade-in-on-scroll" aria-labelledby="methodology-title">
           <h2 id="methodology-title" class="card-header">Research Methodology</h2>
           <div style="padding:14px">
             <h3 id="research-implementation" style="margin-top:0;">3.1 Research Implementation</h3>
             <p>This study employs the TNT Equivalent approach to estimate the impact of explosions from hazardous materials, using empirical calculation models from three methods: the Crowl & Louvar method, the Alonso method, and the Sadovski method. The calculation models from these three methods are implemented into a program based on JavaScript. Figure 3.1 shows the overall flowchart of the explosion impact study and analysis process.</p>
 
-            <figure>
+            <figure style="width: 40%; margin-left: auto; margin-right: auto;">
               <svg class="flowchart" viewBox="0 0 400 650" style="background-color: #fff; border: 1px solid #ddd; border-radius: 8px;">
                 <!-- Define arrow marker -->
                 <defs>
@@ -935,19 +974,50 @@
         const tocLists = document.querySelectorAll('.toc-list');
         tocLists.forEach(tocList => {
             tocList.addEventListener('click', function(event) {
-                let target = event.target;
+                const target = event.target;
                 if (target.classList.contains('submenu-toggle')) {
-                    let parentLi = target.closest('li');
-                    if (parentLi) {
-                        parentLi.classList.toggle('open');
-                        if (parentLi.classList.contains('open')) {
-                            target.textContent = '−'; // Minus sign
-                        } else {
-                            target.textContent = '+';
+                    event.preventDefault();
+                    const clickedLi = target.closest('li');
+
+                    if (clickedLi) {
+                        // Find all sibling LIs that are open and close them
+                        const parentUl = clickedLi.parentElement;
+                        const openLis = parentUl.querySelectorAll(':scope > li.open');
+                        openLis.forEach(openLi => {
+                            if (openLi !== clickedLi) {
+                                openLi.classList.remove('open');
+                                const toggle = openLi.querySelector('.submenu-toggle');
+                                if (toggle) {
+                                    toggle.textContent = '+';
+                                }
+                            }
+                        });
+                        
+                        // Now toggle the clicked one
+                        const subMenu = clickedLi.querySelector('ul');
+                        if (subMenu) {
+                            clickedLi.classList.toggle('open');
+                            target.textContent = clickedLi.classList.contains('open') ? '−' : '+';
                         }
                     }
                 }
             });
+        });
+      }
+
+      function setupScrollAnimations() {
+        const animatedCards = document.querySelectorAll('.fade-in-on-scroll');
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1 });
+
+        animatedCards.forEach(card => {
+          observer.observe(card);
         });
       }
 
@@ -1064,8 +1134,8 @@
       loadLogo();
       setupDropdownMenu();
       setupScrollToTopButton();
-      setupTocAccordion();
       renderMath();
+      setupScrollAnimations();
 
       const floatingPanel = $('floatingControlPanel');
       if (floatingPanel) {
@@ -1076,6 +1146,9 @@
         window.addEventListener('resize', debounce(handlePanelVisibility, 100));
       }
       
+      // Setup accordion for both static and floating TOCs after they are in the DOM
+      setupTocAccordion();
+      
       // --- ADD YOUR PAGE-SPECIFIC JAVASCRIPT HERE ---
       console.log("Template loaded successfully.");
       
@@ -1083,8 +1156,5 @@
   </script>
 </body>
 </html>
-
-
-
 
 
