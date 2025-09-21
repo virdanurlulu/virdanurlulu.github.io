@@ -1,128 +1,96 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-<title>Preview - Seminar Proposal Tesis Virda Nur Lu'lu</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preview – Seminar Proposal Tesis Virda Nur Lu'lu</title>
 <style>
-  :root { --radius: 14px; }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; background:#000; color:#fff; font-family: Arial, sans-serif; }
-  .page { min-height: 100svh; display: grid; place-items: center; padding: 24px; }
-  .card {
-    width: min(960px, 94vw);
-    background: rgba(255,255,255,.06);
-    border: 1px solid rgba(255,255,255,.15);
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,.35);
-  }
-  .thumb {
-    position: relative;
-    aspect-ratio: 16 / 9;
-    background: #111 center/cover no-repeat;
-  }
-  .thumb::after {
-    content: "Preview";
-    position: absolute; left: 12px; top: 12px;
-    font-size: 12px; letter-spacing: .08em;
-    padding: 6px 10px; border-radius: 999px;
-    background: rgba(0,0,0,.55); border: 1px solid rgba(255,255,255,.25);
-  }
-  .card-body { padding: 16px 16px 18px; display: grid; gap: 12px; }
-  .title { font-weight: 700; font-size: clamp(16px, 2.4vw, 20px); }
-  .desc { color: #cbd5e1; font-size: 14px; }
-  .actions { display: flex; flex-wrap: wrap; gap: 10px; }
-  .btn {
-    appearance: none; border: 1px solid rgba(255,255,255,.25);
-    background: rgba(255,255,255,.06); color: #fff; cursor: pointer;
-    padding: 10px 14px; border-radius: 10px; font-weight: 600;
-  }
-  .btn.primary { background: #2563eb; border-color: #2563eb; }
-  .embed-wrap {
-    display: none; /* muncul setelah klik */
-    width: 100%; aspect-ratio: 16/9; position: relative; background: #000;
-    border-top: 1px dashed rgba(255,255,255,.15);
-  }
-  .embed-wrap iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
-  .note { font-size: 12px; color: #9ca3af; }
+  html,body{margin:0;background:#000;color:#fff;font-family:Arial, sans-serif}
+  .wrap{min-height:100svh;display:grid;place-items:center;padding:20px}
+  .viewer{width:min(1100px,96vw);aspect-ratio:16/9;background:#111;position:relative;border:1px solid rgba(255,255,255,.2);border-radius:12px;overflow:hidden}
+  iframe,object{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .topbar{position:absolute;inset:auto 0 0 0;display:flex;gap:10px;justify-content:center;padding:10px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.6))}
+  .btn{background:#2563eb;border:0;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer}
+  .btn.ghost{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25)}
+  .status{position:absolute;left:12px;top:12px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.2);padding:6px 10px;border-radius:999px;font-size:12px}
 </style>
 </head>
 <body>
-<div class="page">
-  <div class="card" id="ppt-card">
-    <!-- Ganti URL gambar di bawah bila punya poster slide-1; kalau tidak ada, kotak hitam saja -->
-    <div class="thumb" id="thumb"
-         style="background-image:url('https://virdanurlulu.github.io/paper/sempro-poster.jpg');">
-    </div>
-
-    <div class="card-body">
-      <div class="title">Seminar Proposal Tesis – Virda Nur Lu'lu</div>
-      <div class="desc">Klik <em>Lihat pratinjau</em> untuk menampilkan viewer 16:9 di halaman. Gunakan <em>Buka layar penuh</em> untuk pengalaman presentasi.</div>
-      <div class="actions">
-        <button class="btn primary" id="btn-preview">Lihat pratinjau</button>
-        <a class="btn" id="btn-full" target="_blank" rel="noopener"
-           href="https://view.officeapps.live.com/op/embed.aspx?src=https%3A%2F%2Fvirdanurlulu.github.io%2Fpaper%2Fseminar-tesis-virda-nur-lulu.ppsx&wdAr=1.7777777777777777">
-          Buka layar penuh
-        </a>
-        <a class="btn" id="btn-download" target="_blank" rel="noopener"
-           href="https://virdanurlulu.github.io/paper/seminar-tesis-virda-nur-lulu.ppsx">
-          Unduh .PPSX
-        </a>
-      </div>
-
-      <div class="embed-wrap" id="embed">
-        <iframe id="frame"
-          title="Preview PPSX"
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-          allowfullscreen>
-        </iframe>
-      </div>
-
-      <div class="note">Tip: jika preview tidak tampil (koneksi lambat / diblokir), gunakan tombol <b>Buka layar penuh</b> atau <b>Unduh</b>.</div>
+<div class="wrap">
+  <div class="viewer" id="viewer">
+    <div class="status" id="status">Trying Office Viewer (PPTX)…</div>
+    <iframe id="frame" title="Preview"></iframe>
+    <div class="topbar">
+      <a id="openFull" class="btn" target="_blank" rel="noopener">Buka layar penuh</a>
+      <a id="download" class="btn ghost" target="_blank" rel="noopener">Unduh file</a>
     </div>
   </div>
 </div>
 
 <script>
-  (function () {
-    const btnPreview = document.getElementById('btn-preview');
-    const embed = document.getElementById('embed');
-    const frame = document.getElementById('frame');
-    const thumb = document.getElementById('thumb');
+(function(){
+  // ======== CONFIG — ganti sesuai file kamu =========
+  const URL_PPTX = "https://virdanurlulu.github.io/paper/seminar-tesis-virda-nur-lulu.pptx";
+  const URL_PPSX = "https://virdanurlulu.github.io/paper/seminar-tesis-virda-nur-lulu.ppsx";
+  const URL_PDF  = "https://virdanurlulu.github.io/paper/seminar-tesis-virda-nur-lulu.pdf";
+  // ==================================================
 
-    const EMBED_URL =
-      "https://view.officeapps.live.com/op/embed.aspx?src=" +
-      encodeURIComponent("https://virdanurlulu.github.io/paper/seminar-tesis-virda-nur-lulu.ppsx") +
-      "&wdAr=1.7777777777777777";
+  const office = (u)=>"https://view.officeapps.live.com/op/embed.aspx?src="+encodeURIComponent(u)+"&wdAr=1.7777777777777777";
+  const gview  = (u)=>"https://docs.google.com/gview?embedded=true&url="+encodeURIComponent(u);
 
-    let loadedOnce = false;
+  const chain = [
+    {name:"Office Viewer (PPTX)", src: office(URL_PPTX), full: office(URL_PPTX), dl: URL_PPTX},
+    {name:"Office Viewer (PPSX)", src: office(URL_PPSX), full: office(URL_PPSX), dl: URL_PPSX},
+    {name:"Google Viewer (PPTX)", src: gview(URL_PPTX),  full: gview(URL_PPTX),  dl: URL_PPTX},
+    {name:"Google Viewer (PDF)",  src: gview(URL_PDF),   full: gview(URL_PDF),   dl: URL_PDF},
+    {name:"PDF Embed",            src: URL_PDF,          full: URL_PDF,          dl: URL_PDF, type:"pdf"}
+  ];
 
-    function showPreview() {
-      if (!loadedOnce) {
-        frame.src = EMBED_URL; // lazy load saat pertama kali klik
-        loadedOnce = true;
-      }
-      embed.style.display = 'block';
-      // smooth scroll ke area embed
-      setTimeout(() => {
-        embed.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 50);
+  const frame = document.getElementById('frame');
+  const status = document.getElementById('status');
+  const openFull = document.getElementById('openFull');
+  const download = document.getElementById('download');
+
+  let i = 0, ok = false, timer;
+
+  function tryNext(){
+    if(i>=chain.length){
+      status.textContent = "Gagal preview. Silakan unduh file.";
+      frame.remove();
+      return;
+    }
+    const opt = chain[i++];
+    status.textContent = "Trying "+opt.name+"…";
+
+    // untuk PDF terakhir pakai <object>
+    if(opt.type === "pdf"){
+      const obj = document.createElement('object');
+      obj.type = "application/pdf";
+      obj.data = opt.src;
+      frame.replaceWith(obj);
+    } else {
+      if(!frame.isConnected) location.reload(); // simple reset jika sudah diganti
+      frame.src = opt.src;
     }
 
-    btnPreview.addEventListener('click', showPreview);
-    // klik thumbnail juga bisa membuka pratinjau
-    thumb.addEventListener('click', showPreview);
+    openFull.href = opt.full;
+    download.href = opt.dl;
 
-    // Fallback: jika gambar poster gagal, hilangkan background agar tidak menampilkan broken image
-    const testImg = new Image();
-    const bg = thumb.style.backgroundImage.replace(/^url\(["']?(.+?)["']?\)$/, '$1');
-    if (bg) {
-      testImg.onerror = () => { thumb.style.backgroundImage = 'none'; };
-      testImg.src = bg;
-    }
-  })();
+    // kalau 6 detik tidak onload → anggap gagal, lanjut
+    clearTimeout(timer);
+    timer = setTimeout(()=>{
+      if(!ok){ tryNext(); }
+    }, 6000);
+  }
+
+  // sukses load (untuk tahap iframe)
+  frame.addEventListener('load', function(){
+    ok = true;
+    status.textContent = "Loaded.";
+  });
+
+  tryNext();
+})();
 </script>
 </body>
 </html>
