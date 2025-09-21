@@ -80,7 +80,7 @@
     .title h1 { margin: 0; font-size: clamp(24px, 3.2vw, 44px); line-height: 1.25; font-family: Georgia, "Times New Roman", serif; color: #fff; padding: 6px 10px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); max-width: clamp(560px, 70vw, 62ch); }
     @supports (text-wrap: balance) { .title h1 { text-wrap: balance; } }
     .title h2 { margin: 0; font-size: clamp(12px, 1.2vw, 16px); font-weight: 600; color: #fff; }
-    .banner { position: relative; color: #fff; background-image: url("/img/banner-itb1.webp"); background-size: cover; background-position: center; padding: clamp(16px, 2.2vw, 24px) clamp(16px, 2.4vw, 28px); min-height: clamp(120px, 20vw, 240px); border-radius: 14px; box-shadow: 0 6px 20px rgba(2, 41, 77, 0.12); margin-bottom: 18px; }
+    .banner { position: relative; color: #fff; background-image: url("https://placehold.co/1280x240/003366/FFFFFF?text=ITB+Banner&font=georgia"); background-size: cover; background-position: center; padding: clamp(16px, 2.2vw, 24px) clamp(16px, 2.4vw, 28px); min-height: clamp(120px, 20vw, 240px); border-radius: 14px; box-shadow: 0 6px 20px rgba(2, 41, 77, 0.12); margin-bottom: 18px; }
     .title h1, .title h2 { text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25); }
     .brandbar { display: flex; align-items: center; gap: 16px; }
     .brand-logo { height: clamp(56px, 6.5vw, 96px); width: auto; }
@@ -229,34 +229,97 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       text-shadow: none;
     }
-
-
+    
+    /* --- START: Responsive Styles --- */
+    
+    /* Untuk Tablet (Layar Sedang) */
     @media (max-width: 1024px) { 
-        .split { grid-template-columns: 1fr; } 
-        .right { position: static; } 
+        .split { 
+            grid-template-columns: 1fr; /* Ubah layout utama menjadi satu kolom */
+        } 
+        .right { 
+            position: static; /* Lepaskan panel kanan agar mengikuti alur dokumen */
+        } 
     }
     
-    @media (max-width: 768px) and (orientation: portrait) {
-        .chem-grid { grid-template-columns: 1fr; }
-        .table-wrapper { overflow-x: hidden; } 
-        table, thead, tbody, th, td, tr { display: block; } 
-        thead tr:not(.unit-row) { position: absolute; top: -9999px; left: -9999px; } 
-        thead .unit-row { display: none; }
-        tbody tr { border: 1px solid #ddd; border-radius: 8px; margin-bottom: 1rem; padding: 8px; } 
-        td { border: none; border-bottom: 1px solid #eee; position: relative; padding-left: 50%; text-align: right; min-height: 36px; display: flex; align-items: center; justify-content: flex-end; word-break: break-word; } 
-        td:last-child { border-bottom: none; } 
-        td:before { content: attr(data-label) " :"; position: absolute; top: 50%; transform: translateY(-50%); left: 8px; width: 45%; padding-right: 10px; white-space: normal; text-align: left; font-weight: bold; color: var(--ink); } 
-        #logTable td:last-child { justify-content: center; padding: 8px; } 
-        #logTable td:last-child:before { content: "" !important; } 
-        
-        td[data-label="ze"],
-        td[data-label="Ps"] {
-            display: none;
+    /* Untuk Ponsel (Potret) */
+    @media (max-width: 768px) {
+        body {
+            font-size: 15px; /* Sedikit perbesar font dasar untuk keterbacaan */
         }
+        .wrap {
+            margin: 0; /* Hapus margin agar konten memenuhi layar */
+        }
+        .split {
+            padding: 0 12px; /* Beri sedikit padding pada konten utama */
+        }
+        .chem-grid { 
+            grid-template-columns: 1fr; /* Jadikan grid input bahan kimia menjadi satu kolom */
+        }
+        .mini {
+            flex-direction: column; /* Tumpuk input Volume dan Jarak secara vertikal */
+        }
+        
+        /* Ubah tabel menjadi format kartu agar mudah dibaca di layar sempit */
+        .table-wrapper { overflow-x: hidden; } 
+        table, thead, tbody, th, td, tr { 
+            display: block; 
+        } 
+        thead tr:not(.unit-row) { 
+            position: absolute; 
+            top: -9999px; 
+            left: -9999px; 
+        } 
+        thead .unit-row { 
+            display: none; 
+        }
+        tbody tr { 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            margin-bottom: 1rem; 
+            padding: 8px; 
+            background: #fff;
+        } 
+        td { 
+            border: none; 
+            border-bottom: 1px solid #eee; 
+            position: relative; 
+            padding-left: 50%; 
+            text-align: right; 
+            min-height: 36px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: flex-end; 
+            word-break: break-word; 
+        } 
+        td:last-child { 
+            border-bottom: none; 
+        } 
+        td:before { 
+            content: attr(data-label) " :"; 
+            position: absolute; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            left: 8px; 
+            width: 45%; 
+            padding-right: 10px; 
+            white-space: normal; 
+            text-align: left; 
+            font-weight: bold; 
+            color: var(--ink); 
+        } 
+        #logTable td:last-child { 
+            justify-content: center; 
+            padding: 8px; 
+        } 
+        #logTable td:last-child:before { 
+            content: "" !important; 
+        } 
     }
 
+    /* Untuk Ponsel (Lanskap) & Layar Sangat Kecil */
     @media (max-width: 1024px) and (orientation: landscape) {
-        .table-wrapper { overflow-x: auto; }
+        .table-wrapper { overflow-x: auto; } /* Kembalikan scroll horizontal untuk tabel */
         #logTable, #logTable thead, #logTable tbody, #logTable tr, #logTable th, #logTable td { display: revert; }
         #logTable thead tr:not(.unit-row) { position: static; }
         #logTable tbody tr { border: none; border-radius: 0; margin-bottom: 0; padding: 0; border-bottom: 1px solid #eef4fa; }
@@ -271,7 +334,8 @@
         .footer-buttons { gap: 8px; }
         .btn-home-3d { padding: 2px 12px; font-size: 11px; box-shadow: 0 3px 0 var(--button-shadow); }
     }
-
+    
+    /* Penyesuaian Lanjutan untuk Layar Lebih Kecil */
     @media (max-width: 720px) { 
         body { font-size: 14px; } 
         .app-footer .footer-content { gap: 16px; } 
@@ -284,13 +348,25 @@
         .dropdown-menu { top: clamp(16px, 2.2vw, 24px); right: clamp(16px, 2.4vw, 28px); }
     }
     
+    /* Penyesuaian untuk Layar Paling Sempit */
     @media (max-width: 480px) { 
         .card-header { flex-direction: column; gap: 8px; align-items: flex-start; } 
         .log-actions { justify-content: flex-start; } 
         .dropdown-menu { top: 12px; right: 12px; } 
         .dropdown-toggle { padding: 6px 12px; font-size: 14px; }
+        .floating-panel-body {
+            grid-template-areas: "inputs" "outputs"; /* Tumpuk input & output di panel apung */
+            grid-template-columns: 1fr;
+        }
+        #floatPanelOutputs {
+            padding-left: 0;
+            border-left: none;
+            padding-top: 10px;
+            border-top: 2px solid var(--stripe);
+        }
     }
     
+    /* Penyesuaian untuk Ponsel dalam mode Lanskap */
     @media (max-height: 450px) and (orientation: landscape) {
         .banner { padding: 8px 12px; display: flex; align-items: center; gap: 12px; }
         .brandbar { flex-grow: 1; gap: 12px; }
@@ -305,6 +381,7 @@
         .lang-switcher { bottom: 8px; right: 12px; padding: 4px; gap: 4px; }
         .lang-btn { font-size: 11px; padding: 4px 8px; }
     }
+    /* --- END: Responsive Styles --- */
   </style>
 </head>
 <body class="theme-itb full">
@@ -379,6 +456,7 @@
         <section class="card" aria-labelledby="prop-head">
           <div id="prop-head" class="card-header" data-lang-key="cardHeaderProperties">Properties</div>
           <div style="padding:12px">
+            <div class="table-wrapper">
             <table>
               <thead>
                 <tr><th data-lang-key="propTblHeader1">Properties</th><th data-lang-key="propTblHeader2">Value</th><th data-lang-key="propTblHeader3">Unit</th><th data-lang-key="propTblHeader4">Literature</th></tr>
@@ -391,12 +469,14 @@
                 <tr><td data-label="Properties"><label for="e_tnt">E<sub>TNT</sub></label></td><td data-label="Value"><input id="e_tnt" type="number" min="0" step="any"/></td><td data-label="Unit" class="unit">kJ/kg</td><td data-label="Source" class="ref">@Literature</td></tr>
               </tbody>
             </table>
+            </div>
           </div>
         </section>
 
         <section class="card" aria-labelledby="param-head">
           <div id="param-head" class="card-header" data-lang-key="cardHeaderParameters">Parameters</div>
           <div style="padding:12px">
+             <div class="table-wrapper">
             <table>
               <thead><tr><th data-lang-key="paramTblHeader1">Parameters</th><th data-lang-key="paramTblHeader2">Value</th><th data-lang-key="paramTblHeader3">Unit</th><th data-lang-key="paramTblHeader4">Sources</th></tr></thead>
               <tbody>
@@ -410,6 +490,7 @@
                 <tr><td data-label="Parameters" data-lang-key="paramPeakOverpressure">(Po) Peak side-on overpressure</td><td data-label="Value"><input id="Po_sadovski" type="text" readonly /></td><td data-label="Unit" class="unit">kPa</td><td data-label="Source" class="ref">@Sadovski</td></tr>
               </tbody>
             </table>
+            </div>
             <div id="msg" class="status" role="status" aria-live="polite"></div>
           </div>
         </section>
@@ -1045,6 +1126,18 @@
         const img = $("itbLogo"); if (!img) return;
         const fallback = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><circle cx="128" cy="128" r="120" fill="%230079c2"/><text x="50%" y="56%" font-family="Georgia, serif" font-size="88" text-anchor="middle" fill="white">ITB</text></svg>';
         img.onerror = () => { img.onerror = null; img.src = fallback; };
+        // Use a placeholder for the main banner for better loading and error handling
+        const banner = document.querySelector('.banner');
+        if(banner) {
+            const bannerImg = new Image();
+            bannerImg.src = "/img/banner-itb1.webp";
+            bannerImg.onload = () => {
+                banner.style.backgroundImage = `url('/img/banner-itb1.webp')`;
+            };
+            bannerImg.onerror = () => {
+                banner.style.backgroundImage = `url('https://placehold.co/1280x240/003366/FFFFFF?text=Bandung+Institute+of+Technology&font=georgia')`;
+            };
+        }
         img.src = "/img/Logo_Institut_Teknologi_Bandung.webp";
       }
 
@@ -1277,12 +1370,12 @@
       function getInjuryEffects(Po) {
         const poValue = parseFloat(Po); const lang = currentLang;
         if (isNaN(poValue) || poValue < 0) return { primary: translations[lang].awaitingInput, secondary: "", conclusion: "" };
-        if (poValue >= 0.14 && poValue < 20) return { primary: translations[lang].injury_effects_1_primary, secondary: translations[lang].injury_effects_1_secondary, conclusion: translations[lang].injury_effects_1_conclusion };
-        if (poValue >= 20 && poValue <= 30) return { primary: translations[lang].injury_effects_2_primary, secondary: translations[lang].injury_effects_2_secondary, conclusion: translations[lang].injury_effects_2_conclusion };
-        if (poValue > 30 && poValue <= 50) return { primary: translations[lang].injury_effects_3_primary, secondary: translations[lang].injury_effects_3_secondary, conclusion: translations[lang].injury_effects_3_conclusion };
-        if (poValue > 50 && poValue <= 100) return { primary: translations[lang].injury_effects_4_primary, secondary: translations[lang].injury_effects_4_secondary, conclusion: translations[lang].injury_effects_4_conclusion };
-        if (poValue > 100) return { primary: translations[lang].injury_effects_5_primary, secondary: translations[lang].injury_effects_5_secondary, conclusion: translations[lang].injury_effects_5_conclusion };
-        return { primary: translations[lang].injury_effects_none_primary, secondary: "", conclusion: translations[lang].injury_effects_none_conclusion };
+        if (poValue >= 0.14 && poValue < 20) return { primary: translations[lang].injury_effects_1_primary, secondary: translations[lang].injury_effects_1_secondary, conclusion: translations[currentLang].injury_effects_1_conclusion };
+        if (poValue >= 20 && poValue <= 30) return { primary: translations[lang].injury_effects_2_primary, secondary: translations[lang].injury_effects_2_secondary, conclusion: translations[currentLang].injury_effects_2_conclusion };
+        if (poValue > 30 && poValue <= 50) return { primary: translations[lang].injury_effects_3_primary, secondary: translations[lang].injury_effects_3_secondary, conclusion: translations[currentLang].injury_effects_3_conclusion };
+        if (poValue > 50 && poValue <= 100) return { primary: translations[lang].injury_effects_4_primary, secondary: translations[lang].injury_effects_4_secondary, conclusion: translations[currentLang].injury_effects_4_conclusion };
+        if (poValue > 100) return { primary: translations[lang].injury_effects_5_primary, secondary: translations[lang].injury_effects_5_secondary, conclusion: translations[currentLang].injury_effects_5_conclusion };
+        return { primary: translations[lang].injury_effects_none_primary, secondary: "", conclusion: translations[currentLang].injury_effects_none_conclusion };
       }
 
       function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski) {
@@ -1382,7 +1475,7 @@
         simulationLog.forEach((log, index) => {
             const row = document.createElement('tr');
             if (log.isNew) { row.classList.add('new-row-animation'); delete log.isNew; }
-            row.innerHTML = `<td data-label="Node">${index + 1}</td><td data-label="Material">${log.material}</td><td data-label="ηE">${log.eta}</td><td data-label="ETNT (kJ/kg)">${log.e_tnt}</td><td data-label="Volume (m³)">${log.vol}</td><td data-label="Distance (m)">${log.dist}</td><td data-label="WTNT (kg)">${log.w_tnt}</td><td data-label="ze">${log.ze}</td><td data-label="Ps">${log.ps}</td><td data-label="Crowl (kPa)">${log.po_crowl}</td><td data-label="Alonso (kPa)">${log.po_alonso}</td><td data-label="Sadovski (kPa)">${log.po_sadovski}</td><td class="col-action"><button class="btn-delete" data-index="${index}" title="Delete this line"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button></td>`;
+            row.innerHTML = `<td data-label="Node">${index + 1}</td><td data-label="Material">${log.material}</td><td data-label="ηE">${log.eta}</td><td data-label="ETNT (kJ/kg)">${log.e_tnt}</td><td data-label="Volume (m³)">${log.vol}</td><td data-label="Distance (m)">${log.dist}</td><td data-label="WTNT (kg)">${log.w_tnt}</td><td data-label="ze" style="display:none;">${log.ze}</td><td data-label="Ps" style="display:none;">${log.ps}</td><td data-label="Crowl (kPa)">${log.po_crowl}</td><td data-label="Alonso (kPa)">${log.po_alonso}</td><td data-label="Sadovski (kPa)">${log.po_sadovski}</td><td class="col-action"><button class="btn-delete" data-index="${index}" title="Delete this line"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button></td>`;
             logTbody.appendChild(row);
         });
       }
@@ -1460,4 +1553,3 @@
   </script>
 </body>
 </html>
-
