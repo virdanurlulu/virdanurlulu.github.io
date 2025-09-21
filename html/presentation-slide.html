@@ -1,188 +1,185 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Preview – Seminar Proposal Tesis Virda Nur Lu'lu</title>
-<style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    background: #000;
-    color: #fff;
-    font-family: Arial, sans-serif;
-  }
-  .wrap {
-    min-height: 100svh;
-    display: grid;
-    place-items: center;
-    padding: 20px;
-    box-sizing: border-box;
-  }
-  .viewer {
-    width: min(1100px, 96vw);
-    aspect-ratio: 16/9;
-    background: #111;
-    position: relative;
-    border: 1px solid rgba(255,255,255,.2);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-  iframe {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
-  }
-  
-  /* === PENYEMPURNAAN TAMPILAN AWAL === */
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview - Thesis Proposal Seminar Virda Nur Lu'lu</title>
+    <style>
+        /* CSS Reset dan Pengaturan Dasar */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
 
-  @keyframes gradient-animation {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-  
-  @keyframes pulse-animation {
-    0% {
-      transform: scale(1);
-      box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
-    }
-    70% {
-      transform: scale(1.05);
-      box-shadow: 0 0 0 20px rgba(59, 130, 246, 0);
-    }
-    100% {
-      transform: scale(1);
-      box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
-    }
-  }
+        /* Iframe untuk slideshow (disembunyikan di awal) */
+        #slideshow-frame {
+            width: 100vw;
+            height: 100vh;
+            border: none;
+            display: none; /* Disembunyikan sampai tombol start ditekan */
+        }
 
-  #start-overlay {
-    position: absolute;
-    inset: 0;
-    cursor: pointer;
-    transition: opacity 0.5s ease;
-    display: grid;
-    place-items: center;
-    /* Latar belakang gradien animasi */
-    background: linear-gradient(-45deg, #0f172a, #1e293b, #334155, #475569);
-    background-size: 400% 400%;
-    animation: gradient-animation 15s ease infinite;
-  }
-  
-  #start-btn {
-    background: #2563eb;
-    border: none;
-    color: #fff;
-    padding: 16px 32px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-size: 1.2rem;
-    font-weight: bold;
-    /* Animasi denyut (pulse) */
-    animation: pulse-animation 2.5s infinite;
-    transition: transform 0.2s ease;
-  }
+        /* Tombol 'Back' untuk perangkat mobile */
+        #mobile-back-btn {
+            display: none;
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 9999;
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-  #start-btn:hover {
-    transform: scale(1.1); /* Efek membesar saat disentuh mouse */
-  }
-  
-  #start-overlay.hidden {
-    opacity: 0;
-    pointer-events: none;
-  }
+        #mobile-back-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* === BAGIAN BARU: Overlay untuk tombol Start === */
+        #start-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            z-index: 10001;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
 
-  #exit-fs-btn {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    z-index: 2147483647;
-    background: rgba(0,0,0,0.6);
-    color: white;
-    border: 1px solid rgba(255,255,255,0.7);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    font-size: 24px;
-    font-weight: bold;
-    line-height: 38px;
-    text-align: center;
-    cursor: pointer;
-    display: none;
-  }
-  #exit-fs-btn.visible {
-    display: block;
-  }
-</style>
+        #start-btn {
+            font-size: 1.2em;
+            padding: 15px 30px;
+            cursor: pointer;
+            border: 2px solid white;
+            background-color: transparent;
+            color: white;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        /* Pesan overlay untuk meminta rotasi layar */
+        #rotate-device-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 1.2em;
+        }
+        
+        /* Media Query untuk Perangkat Sentuh (Mobile & Tablet) */
+        @media (hover: none) and (pointer: coarse) {
+            #mobile-back-btn {
+                display: block;
+            }
+        }
+
+        /* Media Query HANYA untuk Perangkat Sentuh dalam mode Potrait */
+        @media (hover: none) and (pointer: coarse) and (orientation: portrait) {
+            #rotate-device-overlay {
+                display: flex;
+            }
+            #slideshow-frame, #mobile-back-btn {
+                display: none; 
+            }
+        }
+    </style>
 </head>
 <body>
 
-<div class="wrap">
-  <div class="viewer" id="viewer">
-    <iframe 
-      id="slides-frame" 
-      title="Presentasi" 
-      allow="fullscreen; autoplay; encrypted-media; picture-in-picture; web-share">
-    </iframe>
     <div id="start-overlay">
-      <button id="start-btn">Mulai Presentasi</button>
+        <h2>Thesis Proposal Seminar</h2>
+        <p>Virda Nur Lu'lu</p>
+        <button id="start-btn">Mulai Presentasi</button>
     </div>
-    <button id="exit-fs-btn" title="Keluar dari Layar Penuh" aria-label="Keluar dari Layar Penuh">&times;</button>
-  </div>
-</div>
 
-<script>
-(function() {
-  const SLIDES_URL = "https://docs.google.com/presentation/d/1c6Hj7uNhM-ZuXHQPQAxl5EbpRojnjvlV/embed?start=true&loop=false&delayms=3000&rm=minimal";
+    <iframe 
+        id="slideshow-frame" 
+        src="https://view.officeapps.live.com/op/view.aspx?src=https://virdanurlulu.github.io/paper/seminar-tesis-virda-nur-lulu.ppsx">
+    </iframe>
 
-  const viewer = document.getElementById('viewer');
-  const overlay = document.getElementById('start-overlay');
-  const startBtn = document.getElementById('start-btn');
-  const iframe = document.getElementById('slides-frame');
-  const exitBtn = document.getElementById('exit-fs-btn');
+    <button id="mobile-back-btn">Back</button>
 
-  startBtn.addEventListener('click', () => {
-    iframe.src = SLIDES_URL;
-    overlay.classList.add('hidden');
+    <div id="rotate-device-overlay">
+        <p>🔄<br><br>Please rotate your device to landscape mode<br>to view the presentation.</p>
+    </div>
 
-    // === PERUBAHAN DI SINI ===
-    // Langsung tampilkan tombol keluar untuk respons instan
-    exitBtn.classList.add('visible');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const homeUrl = 'https://virdanurlulu.github.io/';
+            const backButton = document.getElementById('mobile-back-btn');
+            const startButton = document.getElementById('start-btn');
+            const startOverlay = document.getElementById('start-overlay');
+            const slideshowFrame = document.getElementById('slideshow-frame');
+            
+            // --- FUNGSI BARU UNTUK MENGUNCI ORIENTASI ---
+            async function startPresentation() {
+                // Sembunyikan tombol start
+                startOverlay.style.display = 'none';
+                
+                // Tampilkan slideshow
+                slideshowFrame.style.display = 'block';
 
-    if (viewer.requestFullscreen) {
-      viewer.requestFullscreen();
-    } else if (viewer.webkitRequestFullscreen) {
-      viewer.webkitRequestFullscreen();
-    } else if (viewer.msRequestFullscreen) {
-      viewer.msRequestFullscreen();
-    }
+                // Hanya jalankan di perangkat sentuh
+                const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+                if (isMobile) {
+                    try {
+                        // 1. Minta mode Fullscreen (ini meningkatkan kemungkinan lock orientation berhasil)
+                        await document.documentElement.requestFullscreen();
+                        
+                        // 2. Coba kunci orientasi ke landscape
+                        await screen.orientation.lock('landscape');
+                        
+                    } catch (err) {
+                        console.warn("Gagal mengunci orientasi atau masuk ke fullscreen:", err);
+                        // Jika gagal, CSS overlay akan tetap menjadi solusi utama
+                    }
+                }
+            }
 
-    screen.orientation?.lock('landscape').catch(error => {
-      console.log("Tidak dapat mengunci orientasi:", error);
-    });
-  });
-  
-  exitBtn.addEventListener('click', () => {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen();
-    } else if (document.msExitFullscreen) {
-      document.msExitFullscreen();
-    }
-  });
+            // Tambahkan event listener ke tombol start
+            startButton.addEventListener('click', startPresentation);
 
-  document.addEventListener('fullscreenchange', () => {
-    // Logika ini tetap penting untuk menyembunyikan tombol saat pengguna keluar dengan tombol Esc
-    if (!document.fullscreenElement) {
-      exitBtn.classList.remove('visible');
-    }
-  });
-})();
-</script>
+            // --- Skrip yang sudah ada sebelumnya ---
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    window.location.href = homeUrl;
+                }
+            });
+
+            if (backButton) {
+                backButton.addEventListener('click', function() {
+                    // Jika sedang fullscreen, keluar dulu
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen();
+                    }
+                    window.location.href = homeUrl;
+                });
+            }
+        });
+    </script>
 
 </body>
 </html>
