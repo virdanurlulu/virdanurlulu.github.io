@@ -9,6 +9,7 @@
     <meta name="description" content="An interactive, searchable academic bibliography focusing on process safety, chemical engineering, and explosion analysis, including case studies like Tianjin, Beirut, and Feyzin.">
     <meta name="keywords" content="bibliography, references, process safety, chemical engineering, explosion analysis, LPG, BLEVE, vapor cloud explosion, academic resources">
     <link rel="canonical" href="https://virdanurlulu.github.io/" />
+    <link rel="icon" type="image/x-icon" href="https://virdanurlulu.github.io/img/favicon.ico">
 
     <!-- Open Graph Meta Tags for Social Sharing -->
     <meta property="og:title" content="Academic Bibliography: Process Safety & Explosion Analysis" />
@@ -18,6 +19,11 @@
 
     <!-- Styles for the bibliography page -->
     <style>
+        :root {
+            --ink: #1e2b3b;
+            --blue-itb: #0079c2;
+            --stripe: #eaf3fb;
+        }
         html {
             scroll-behavior: smooth;
         }
@@ -29,56 +35,67 @@
             color: #333;
         }
         
-        /* Navigation Menu Styles - Revised to match example */
-        .menu-container {
+        /* --- CSS for New Dropdown Menu --- */
+        .dropdown-menu {
             position: fixed;
             top: 20px;
             right: 20px;
             z-index: 1000;
         }
-        .menu-button {
-            background-color: #f8f9fa;
-            border: 1px solid #aaa;
-            border-radius: 4px;
-            padding: 8px 12px;
+        .dropdown-toggle {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--ink);
+            padding: 8px 16px;
             font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            font-family: Arial, sans-serif;
+            transition: background-color 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
         }
-        .menu-dropdown {
+        .dropdown-toggle:hover {
+            background-color: #ffffff;
+        }
+        .dropdown-content {
             display: none;
+            opacity: 0;
+            visibility: hidden;
             position: absolute;
-            top: 100%;
             right: 0;
-            background-color: white;
-            min-width: 240px; /* Adjusted width */
-            box-shadow: 0px 5px 15px 0px rgba(0,0,0,0.2);
-            z-index: 1;
-            list-style: none;
-            padding: 0;
-            margin-top: 8px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
+            top: 110%;
+            background-color: #ffffff;
+            min-width: 220px;
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
             overflow: hidden;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
         }
-        .menu-dropdown a {
-            color: black;
+        .dropdown-menu.is-active .dropdown-content {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .dropdown-content a {
+            color: var(--ink);
             padding: 12px 16px;
             text-decoration: none;
             display: block;
-            font-family: Arial, sans-serif;
-            text-align: left; /* Ensure text is left-aligned */
+            transition: background-color 0.2s ease, color 0.2s ease;
+            font-weight: 500;
+            white-space: nowrap;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
         }
-        .menu-dropdown a:hover {
-            background-color: #f1f1f1;
+        .dropdown-content a:hover {
+            background-color: var(--stripe);
+            color: var(--blue-itb);
         }
 
         .bibliography-header {
-            background: #0073cf; /* Revised Blue from example */
+            background: var(--blue-itb); /* Changed to match footer */
             padding: 2rem;
             color: white;
         }
@@ -93,6 +110,9 @@
             border-bottom: 2px solid #ffffff;
             padding-bottom: 0.5rem;
             font-size: 2.2rem;
+        }
+        main {
+            padding-bottom: 20px; /* Add space above footer */
         }
         .container {
             max-width: 800px;
@@ -160,6 +180,14 @@
             }
         }
         @media (max-width: 480px) {
+            .dropdown-menu {
+                top: 12px;
+                right: 12px;
+            }
+            .dropdown-toggle {
+                padding: 6px 12px;
+                font-size: 14px;
+            }
             .bibliography-header {
                 padding: 1.5rem 1rem;
             }
@@ -202,20 +230,62 @@
         #toTopBtn:hover {
             background-color: #34495e;
         }
+
+        /* --- CSS for Footer --- */
+        .app-footer {
+            margin-top: 20px;
+            color: #ffffff;
+            background-color: var(--blue-itb);
+            width: 100%;
+            padding: 24px 16px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .app-footer .footer-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .app-footer .credit {
+            font-weight: 700;
+            color: #e9f5ff;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        }
+        .app-footer .dedication {
+            font-size: 13px;
+            line-height: 1.6;
+            max-width: 960px;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        }
+        .app-footer a {
+            color: #ffffff;
+            text-decoration: none;
+        }
+        .app-footer a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 720px) {
+            .app-footer .footer-content {
+                gap: 16px;
+            }
+        }
+        
     </style>
 </head>
 <body>
 
-<div class="menu-container">
-    <button class="menu-button" onclick="toggleMenu()">
-        Menu <span>&#9776;</span>
-    </button>
-    <div class="menu-dropdown" id="myDropdown">
+<div class="dropdown-menu">
+    <button class="dropdown-toggle">Menu &#9776;</button>
+    <div class="dropdown-content">
         <a href="https://virdanurlulu.github.io/">Home</a>
-        <a href="#coming-soon">SIM Guide (coming soon)</a>
+        <a href="https://virdanurlulu.github.io/simulation-modeling-explosion10_damage.html">Simulation & Modeling Application</a>
+        <a href="#coming-soon">Simulation Guide (coming soon)</a>
         <a href="#coming-soon">Presentation (coming soon)</a>
         <a href="#coming-soon">Journal & Conference (coming soon)</a>
-        <a href="https://virdanurlulu.github.io/profile/">My Profile</a>
+        <a href="https://id.linkedin.com/in/virdanurlulu" target="_blank" rel="nofollow">My Profile</a>
     </div>
 </div>
 
@@ -236,6 +306,18 @@
 
 <!-- Back to Top Button -->
 <button id="toTopBtn" title="Go to top">▲</button>
+
+<footer class="app-footer">
+    <div class="footer-content">
+        <div class="credit">
+            Copyright © 2025 by
+            <a href="https://id.linkedin.com/in/virdanurlulu" target="_blank" rel="nofollow">Virda Nur Lu'lu</a>
+        </div>
+        <div class="dedication">
+            This application is dedicated to my parents for their persistent support and patient guidance throughout my JavaScript journey. It is also presented to the academic community at <a href="https://che.itb.ac.id/" target="_blank" rel="nofollow">Institut Teknologi Bandung</a> as a contribution towards inspiring further advancements in JavaScript technology.
+        </div>
+    </div>
+</footer>
 
 <script>
 // Array containing all the reference data
@@ -285,35 +367,55 @@ const references = [
     { text: "Zaranejad, A., Dept of. Sciences of Occupational Health, Tarbiat Modares University, Tehran, Iran., Ahmadi, O., & Dept. of Sciences of Occupational Health, Tarbiat Modares University, Tehran, Iran. (2015). Fire and explosion risk assessment in a chemical company by the application of DOW fire and explosion index. <i>Journal of Occupational Health and Epidemiology</i>, 4(3), 163-175. <a href='https://doi.org/10.18869/acadpub.johe.4.3.163' target='_blank' rel='nofollow'>[Link]</a>" }
 ];
 
-/**
- * Toggles the visibility of the dropdown menu.
- */
-function toggleMenu() {
-    document.getElementById("myDropdown").style.display = 
-        document.getElementById("myDropdown").style.display === 'block' ? 'none' : 'block';
-}
-
-// Close the dropdown if the user clicks outside of it
-window.onclick = function(event) {
-    if (!event.target.matches('.menu-button') && !event.target.parentElement.matches('.menu-button')) {
-        var dropdowns = document.getElementsByClassName("menu-dropdown");
-        for (var i = 0; i < dropdowns.length; i++) {
-            var openDropdown = dropdowns[i];
-            if (openDropdown.style.display === 'block') {
-                openDropdown.style.display = 'none';
-            }
+document.addEventListener("DOMContentLoaded", () => {
+    // --- JavaScript for Dropdown Menu ---
+    const dropdown = document.querySelector('.dropdown-menu');
+    if (dropdown) {
+        const dropdownToggle = dropdown.querySelector('.dropdown-toggle');
+        if (dropdownToggle) {
+            dropdownToggle.addEventListener('click', (event) => {
+                event.stopPropagation();
+                dropdown.classList.toggle('is-active');
+            });
         }
+        document.addEventListener('click', (event) => {
+            if (dropdown.classList.contains('is-active') && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('is-active');
+            }
+        });
     }
-}
+
+    // --- Other page functionalities ---
+    
+    // Initial display of references
+    const initialReferences = references.map((ref, index) => ({
+        text: ref.text,
+        originalIndex: index
+    }));
+    displayReferences(initialReferences);
+
+    // Back to Top Button Logic
+    const toTopBtn = document.getElementById('toTopBtn');
+    window.addEventListener('scroll', () => {
+        if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+            toTopBtn.style.display = 'block';
+        } else {
+            toTopBtn.style.display = 'none';
+        }
+    });
+    toTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+});
 
 
 /**
  * Renders a list of references into the DOM.
- * @param {Array<Object>} referencesToDisplay - The array of reference objects to display. Each object needs an 'originalIndex'.
+ * @param {Array<Object>} referencesToDisplay - The array of reference objects to display.
  */
 function displayReferences(referencesToDisplay) {
     const referencesContainer = document.getElementById('references');
-    referencesContainer.innerHTML = ''; // Clear existing list
+    referencesContainer.innerHTML = '';
     referencesToDisplay.forEach(ref => {
         const item = document.createElement('div');
         item.className = 'reference-item';
@@ -323,7 +425,7 @@ function displayReferences(referencesToDisplay) {
         numberElement.textContent = `${ref.originalIndex + 1}.`;
 
         const textElement = document.createElement('p');
-        textElement.innerHTML = ref.text; // Use innerHTML to render italics
+        textElement.innerHTML = ref.text;
         
         item.appendChild(numberElement);
         item.appendChild(textElement);
@@ -338,35 +440,10 @@ function searchReferences() {
     const input = document.getElementById('searchInput');
     const filter = input.value.toUpperCase();
     const filteredReferences = references
-        .map((ref, index) => ({ text: ref.text, originalIndex: index })) // Add original index
+        .map((ref, index) => ({ text: ref.text, originalIndex: index }))
         .filter(ref => ref.text.toUpperCase().includes(filter));
     displayReferences(filteredReferences);
 }
-
-// Initial call and event listeners
-document.addEventListener('DOMContentLoaded', () => {
-    // Initial display
-    const initialReferences = references.map((ref, index) => ({
-        text: ref.text,
-        originalIndex: index
-    }));
-    displayReferences(initialReferences);
-
-    // Back to Top Button Logic
-    const toTopBtn = document.getElementById('toTopBtn');
-
-    window.addEventListener('scroll', () => {
-        if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
-            toTopBtn.style.display = 'block';
-        } else {
-            toTopBtn.style.display = 'none';
-        }
-    });
-
-    toTopBtn.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-});
 </script>
 
 </body>
