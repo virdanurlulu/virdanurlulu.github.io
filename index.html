@@ -124,15 +124,20 @@
         margin: 0;
     }
     .toc-list li a {
-        display: block;
         padding: 12px 14px;
         text-decoration: none;
         color: var(--ink);
-        border-bottom: 1px solid var(--stripe);
         transition: background-color 0.2s ease, color 0.2s ease;
         font-weight: 500;
+        flex-grow: 1;
     }
-    .toc-list li:last-child a {
+     .toc-list .toc-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--stripe);
+    }
+    .toc-list li:last-child .toc-item {
         border-bottom: none;
     }
     .toc-list li a:hover {
@@ -143,11 +148,26 @@
         list-style-type: none;
         padding-left: 20px;
         margin: 5px 0;
+        display: none; /* Hide sub-menu by default */
+    }
+    .toc-list .submenu-toggle {
+        cursor: pointer;
+        padding: 12px 14px;
+        font-weight: bold;
+        user-select: none;
+    }
+    .toc-list li.open > ul {
+        display: block; /* Show sub-menu when parent is open */
     }
     .toc-list ul a {
         font-weight: 400;
         font-size: 0.9em;
         color: var(--muted);
+        display: block;
+        border-bottom: 1px solid var(--stripe);
+    }
+     .toc-list li ul li:last-child a {
+        border-bottom: none;
     }
     .responsive-table-wrapper {
         overflow-x: auto;
@@ -462,7 +482,7 @@
                 <li>$\Delta H_{c}$: heat of combustion (kJ/kg)</li>
                 <li>$E_{TNT}$: energy value of 1 kg of TNT, ranging from 4,230 to 4,836 kJ/kg (Wang et al., 2023)</li>
             </ul>
-            <figure>
+            <figure style="width: 60%; margin-left: auto; margin-right: auto;">
                 <img src="/img/ScaledOverpressure-vs-ScaledDistance.webp" alt="Graph of Scaled distance versus scaled overpressure for TNT explosions">
                 <figcaption>Figure 2.1: Correlation between Scaled Distance ($Z_{e}$) and Scaled Overpressure ($P_{s}$) (Crowl & Louvar, 2011, citing G. F. Kinney and K. J. Graham, Explosive Shocks in Air, 1985).</figcaption>
             </figure>
@@ -724,7 +744,7 @@
             <p>Validation of the overpressure results from the JavaScript application is performed by comparing the predicted overpressure values ($P_o$) against the consequence distances of explosion impacts. Accident records from fires and explosions involving ammonium nitrate, LPG, and hydrogen are compared with the actual consequences. One example used is the ammonium nitrate explosion at the Port of Tianjin in 2015, along with references from technical literature regarding the impact of overpressure on buildings and fatality probabilities.</p>
             <p>Validation is conducted by comparing the simulated overpressure values with the effects of real explosion events on buildings and fatalities, as described in Table 2.2 and Table 2.3. A tangible example of explosion consequences is presented in Figure 3.2, which shows the Tianjin Port explosion event.</p>
             <figure>
-                <img src="https://i.imgur.com/vHsl5V3.png" alt="Satellite images of Tianjin port before and after the explosion">
+                <img src="/img/Tianjin-Port-After-Explosion.webp" alt="Satellite images of Tianjin port before and after the explosion">
                 <figcaption>Figure 3.2: Aerial Photos of Tianjin Port Before and After the Explosion. Source: ABC News (2015)</figcaption>
             </figure>
             <p>Based on literature (Yu et al., 2022), visual data from the Tianjin Port explosion shows the level of damage to buildings based on the distance from the explosion center, as follows:</p>
@@ -734,7 +754,7 @@
                 <li><strong>1000 m:</strong> Minor damage such as broken glass and light structural damage was clearly visible.</li>
             </ul>
              <figure>
-                <img src="https://i.imgur.com/lO3oY2y.png" alt="Damage to buildings at various distances from the Tianjin explosion">
+                <img src="/img/Damage-After-Explosion-Various-Distances.webp" alt="Damage to buildings at various distances from the Tianjin explosion">
                 <figcaption>Figure 3.3: Damage After the Explosion at Various Distances from the Epicenter.</figcaption>
             </figure>
           </div>
@@ -748,10 +768,17 @@
           <h2 id="toc-title" class="card-header">Table of Contents</h2>
           <div>
             <ul class="toc-list">
-              <li><a href="#abstract">Abstract</a></li>
-              <li><a href="#foreword">Foreword</a></li>
               <li>
-                <a href="#introduction">Introduction</a>
+                <div class="toc-item"><a href="#abstract">Abstract</a></div>
+              </li>
+              <li>
+                <div class="toc-item"><a href="#foreword">Foreword</a></div>
+              </li>
+              <li>
+                <div class="toc-item">
+                    <a href="#introduction">Introduction</a>
+                    <span class="submenu-toggle">+</span>
+                </div>
                 <ul>
                   <li><a href="#background">1.1 Background</a></li>
                   <li><a href="#problem-statement">1.2 Problem Statement</a></li>
@@ -760,13 +787,19 @@
                 </ul>
               </li>
               <li>
-                <a href="#literature-review">Literature Review</a>
+                <div class="toc-item">
+                    <a href="#literature-review">Literature Review</a>
+                    <span class="submenu-toggle">+</span>
+                </div>
                 <ul>
                     <li><a href="#fire-and-explosion">2.1 Fire and Explosion</a></li>
                     <li><a href="#detonation-and-deflagration">2.2 Detonation and Deflagration</a></li>
                     <li><a href="#process-safety">2.3 Process Safety</a></li>
                     <li>
-                      <a href="#tnt-equivalent-models">2.4 TNT Equivalent Models</a>
+                      <div class="toc-item">
+                        <a href="#tnt-equivalent-models">2.4 TNT Equivalent Models</a>
+                        <span class="submenu-toggle">+</span>
+                      </div>
                       <ul>
                         <li><a href="#crowl-louvar-method">2.4.1 Crowl & Louvar</a></li>
                         <li><a href="#sadovski-method">2.4.2 Sadovski</a></li>
@@ -777,7 +810,10 @@
                 </ul>
               </li>
               <li>
-                <a href="#research-methodology">Research Methodology</a>
+                <div class="toc-item">
+                    <a href="#research-methodology">Research Methodology</a>
+                    <span class="submenu-toggle">+</span>
+                </div>
                 <ul>
                     <li><a href="#research-implementation">3.1 Research Implementation</a></li>
                     <li><a href="#tnt-calculation-steps">3.2 TNT Calculation Steps</a></li>
@@ -894,6 +930,26 @@
           timeoutId = setTimeout(() => { func.apply(this, args); }, delay);
         };
       }
+      
+      function setupTocAccordion() {
+        const tocLists = document.querySelectorAll('.toc-list');
+        tocLists.forEach(tocList => {
+            tocList.addEventListener('click', function(event) {
+                let target = event.target;
+                if (target.classList.contains('submenu-toggle')) {
+                    let parentLi = target.closest('li');
+                    if (parentLi) {
+                        parentLi.classList.toggle('open');
+                        if (parentLi.classList.contains('open')) {
+                            target.textContent = '−'; // Minus sign
+                        } else {
+                            target.textContent = '+';
+                        }
+                    }
+                }
+            });
+        });
+      }
 
       // --- Floating Panel Functions ---
       
@@ -1008,6 +1064,7 @@
       loadLogo();
       setupDropdownMenu();
       setupScrollToTopButton();
+      setupTocAccordion();
       renderMath();
 
       const floatingPanel = $('floatingControlPanel');
@@ -1026,5 +1083,6 @@
   </script>
 </body>
 </html>
+
 
 
