@@ -245,6 +245,13 @@
 
     /* 1. Main Layout Stacking and Table Scrolling for Tablets and Smaller */
     @media (max-width: 1024px) {
+        .wrap {
+            /* Force wrap to be full-width on mobile/tablet */
+            padding-left: 0;
+            padding-right: 0;
+            margin-left: 0;
+            margin-right: 0;
+        }
         main.split {
             grid-template-columns: 1fr; /* Stack left and right columns */
         }
@@ -499,46 +506,6 @@
           </div>
         </section>
         
-        <section class="card" aria-labelledby="log-head">
-            <div id="log-head" class="card-header">
-                <span data-lang-key="log_title">Simulation Log</span>
-                <div class="log-actions">
-                    <button class="btn" id="btnSortLog" data-lang-key="btn_sort">Sort</button>
-                    <button class="btn" id="btnExportLog" data-lang-key="btn_export_csv">Export CSV</button>
-                    <button class="btn" id="btnImportLog" data-lang-key="btn_import_csv">Import CSV</button>
-                    <input type="file" id="importFile" accept=".csv" style="display: none;" />
-                </div>
-            </div>
-            <div class="table-wrapper">
-                <table id="logTable">
-                    <thead>
-                        <tr>
-                            <th data-lang-key="log_col_node">Node</th>
-                            <th data-lang-key="log_col_material">Material</th>
-                            <th>ηE</th>
-                            <th>ETNT</th>
-                            <th data-lang-key="log_col_volume">Volume</th>
-                            <th data-lang-key="log_col_distance">Distance</th>
-                            <th>WTNT</th>
-                            <th>ze</th>
-                            <th>Ps</th>
-                            <th>Crowl</th>
-                            <th>Alonso</th>
-                            <th>Sadovski</th>
-                            <th class="col-action">-</th>
-                        </tr>
-                        <tr class="unit-row">
-                           <th></th><th></th><th></th><th>(kJ/kg)</th><th>(m³)</th><th>(m)</th><th>(kg)</th><th>(m·kg<sup>−1/3</sup>)</th><th></th><th>(kPa)</th><th>(kPa)</th><th>(kPa)</th><th></th>
-                        </tr>
-                    </thead>
-                    <tbody id="logTbody"></tbody>
-                </table>
-            </div>
-            <div style="padding: 0 14px 14px;">
-                <p class="footnote" data-lang-key="log_footnote">Click "Save" to log the calculation results. The last 10 entries will be stored in your browser.</p>
-            </div>
-        </section>
-
         <section class="card" aria-labelledby="contour-map-head">
           <div id="contour-map-head" class="card-header">
             <span data-lang-key="contour_map_title">Explosion Contour Map</span>
@@ -625,6 +592,45 @@
             <div class="method-card" id="panel-injury-sadovski"><div class="vlabel">SADOVSKI</div><div class="pad"><p><strong>Overpressure (Po):</strong> <span id="val-Po-sadovski-inj">—</span> kPa</p><p><strong data-lang-key="effects_label">Effects:</strong></p><ul id="injury-effects-sadovski"></ul></div><div class="sevfoot" id="sev-injury-sadovski" data-lang-key="unknown">Unknown</div></div>
           </div>
         </section>
+        <section class="card" aria-labelledby="log-head">
+            <div id="log-head" class="card-header">
+                <span data-lang-key="log_title">Simulation Log</span>
+                <div class="log-actions">
+                    <button class="btn" id="btnSortLog" data-lang-key="btn_sort">Sort</button>
+                    <button class="btn" id="btnExportLog" data-lang-key="btn_export_csv">Export CSV</button>
+                    <button class="btn" id="btnImportLog" data-lang-key="btn_import_csv">Import CSV</button>
+                    <input type="file" id="importFile" accept=".csv" style="display: none;" />
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table id="logTable">
+                    <thead>
+                        <tr>
+                            <th data-lang-key="log_col_node">Node</th>
+                            <th data-lang-key="log_col_material">Material</th>
+                            <th>ηE</th>
+                            <th>ETNT</th>
+                            <th data-lang-key="log_col_volume">Volume</th>
+                            <th data-lang-key="log_col_distance">Distance</th>
+                            <th>WTNT</th>
+                            <th>ze</th>
+                            <th>Ps</th>
+                            <th>Crowl</th>
+                            <th>Alonso</th>
+                            <th>Sadovski</th>
+                            <th class="col-action">-</th>
+                        </tr>
+                        <tr class="unit-row">
+                           <th></th><th></th><th></th><th>(kJ/kg)</th><th>(m³)</th><th>(m)</th><th>(kg)</th><th>(m·kg<sup>−1/3</sup>)</th><th></th><th>(kPa)</th><th>(kPa)</th><th>(kPa)</th><th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="logTbody"></tbody>
+                </table>
+            </div>
+            <div style="padding: 0 14px 14px;">
+                <p class="footnote" data-lang-key="log_footnote">Click "Save" to log the calculation results. The last 10 entries will be stored in your browser.</p>
+            </div>
+        </section>
       </aside>
     </main>
   </div>
@@ -672,7 +678,7 @@
   <script src="https://virdanurlulu.github.io/js/js-app.js" defer></script>
 
   <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  window.addEventListener('load', () => {
     // ======= BUILT-IN DEFAULTS =======
     const BUILTIN_DEFAULTS = {
       lat: 33.901436, lon: 35.519057,
@@ -845,7 +851,7 @@
 
     async function fetchNominatimEN(lat, lon){
       const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1&namedetails=1&accept-language=en`;
-      const r = await fetch(url, {headers:{'Accept':'application/json'}});
+      const r = await fetch(url, {headers:{'Accept':'application/json', 'User-Agent': 'ExplosionSim/1.0'}});
       if (!r.ok) throw new Error(`Nominatim request failed with status ${r.status}`);
       const j = await r.json();
       const a = j.address || {};
@@ -1172,12 +1178,47 @@
         });
         observer.observe(logTbodyObserver, { childList: true });
     }
+    
+    // Panggil updateMapFromLog saat halaman pertama kali dimuat
+    setTimeout(updateMapFromLog, 500);
 
-    // Lakukan sinkronisasi awal saat halaman selesai dimuat sepenuhnya
-    window.addEventListener('load', () => {
-      // Beri jeda singkat untuk memastikan skrip lain selesai memuat data log dari localStorage
-      setTimeout(updateMapFromLog, 500);
+    // ======= DYNAMIC LAYOUT: Move Simulation Log based on screen size =======
+    const leftPanel = document.querySelector('.left');
+    const rightPanel = document.querySelector('.right');
+    const logSection = document.querySelector('section[aria-labelledby="log-head"]');
+    const overpressureChartSection = document.querySelector('section[aria-labelledby="overpressure-chart-head"]');
+    let resizeTimer;
+
+    function adjustLogPosition() {
+        if (!leftPanel || !rightPanel || !logSection || !overpressureChartSection) {
+            // This error can be ignored if it appears briefly on load, 
+            // as this function will be called again once elements are ready.
+            return;
+        }
+
+        if (window.innerWidth <= 1024) {
+            // Mobile/Tablet view: Move log to the left panel if it's not already there.
+            // It should be placed after the 'Overpressure vs Distance' chart.
+            if (!leftPanel.contains(logSection)) {
+                overpressureChartSection.insertAdjacentElement('afterend', logSection);
+            }
+        } else {
+            // Desktop view: Move log back to the right panel if it's not already there.
+            if (!rightPanel.contains(logSection)) {
+                rightPanel.appendChild(logSection);
+            }
+        }
+    }
+
+    // Initial check on page load
+    adjustLogPosition();
+
+    // Adjust on window resize, with a debounce to prevent excessive calls
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(adjustLogPosition, 150);
     });
+
   });
   </script>
 </body>
