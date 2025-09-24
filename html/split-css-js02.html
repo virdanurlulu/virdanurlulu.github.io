@@ -499,6 +499,46 @@
           </div>
         </section>
         
+        <section class="card" aria-labelledby="log-head">
+            <div id="log-head" class="card-header">
+                <span data-lang-key="log_title">Simulation Log</span>
+                <div class="log-actions">
+                    <button class="btn" id="btnSortLog" data-lang-key="btn_sort">Sort</button>
+                    <button class="btn" id="btnExportLog" data-lang-key="btn_export_csv">Export CSV</button>
+                    <button class="btn" id="btnImportLog" data-lang-key="btn_import_csv">Import CSV</button>
+                    <input type="file" id="importFile" accept=".csv" style="display: none;" />
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table id="logTable">
+                    <thead>
+                        <tr>
+                            <th data-lang-key="log_col_node">Node</th>
+                            <th data-lang-key="log_col_material">Material</th>
+                            <th>ηE</th>
+                            <th>ETNT</th>
+                            <th data-lang-key="log_col_volume">Volume</th>
+                            <th data-lang-key="log_col_distance">Distance</th>
+                            <th>WTNT</th>
+                            <th>ze</th>
+                            <th>Ps</th>
+                            <th>Crowl</th>
+                            <th>Alonso</th>
+                            <th>Sadovski</th>
+                            <th class="col-action">-</th>
+                        </tr>
+                        <tr class="unit-row">
+                           <th></th><th></th><th></th><th>(kJ/kg)</th><th>(m³)</th><th>(m)</th><th>(kg)</th><th>(m·kg<sup>−1/3</sup>)</th><th></th><th>(kPa)</th><th>(kPa)</th><th>(kPa)</th><th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="logTbody"></tbody>
+                </table>
+            </div>
+            <div style="padding: 0 14px 14px;">
+                <p class="footnote" data-lang-key="log_footnote">Click "Save" to log the calculation results. The last 10 entries will be stored in your browser.</p>
+            </div>
+        </section>
+
         <section class="card" aria-labelledby="contour-map-head">
           <div id="contour-map-head" class="card-header">
             <span data-lang-key="contour_map_title">Explosion Contour Map</span>
@@ -584,46 +624,6 @@
             <div class="method-card" id="panel-injury-alonso"><div class="vlabel">ALONSO</div><div class="pad"><p><strong>Overpressure (Po):</strong> <span id="val-Po-alonso-inj">—</span> kPa</p><p><strong data-lang-key="effects_label">Effects:</strong></p><ul id="injury-effects-alonso"></ul></div><div class="sevfoot" id="sev-injury-alonso" data-lang-key="unknown">Unknown</div></div>
             <div class="method-card" id="panel-injury-sadovski"><div class="vlabel">SADOVSKI</div><div class="pad"><p><strong>Overpressure (Po):</strong> <span id="val-Po-sadovski-inj">—</span> kPa</p><p><strong data-lang-key="effects_label">Effects:</strong></p><ul id="injury-effects-sadovski"></ul></div><div class="sevfoot" id="sev-injury-sadovski" data-lang-key="unknown">Unknown</div></div>
           </div>
-        </section>
-
-        <section class="card" aria-labelledby="log-head">
-            <div id="log-head" class="card-header">
-                <span data-lang-key="log_title">Simulation Log</span>
-                <div class="log-actions">
-                    <button class="btn" id="btnSortLog" data-lang-key="btn_sort">Sort</button>
-                    <button class="btn" id="btnExportLog" data-lang-key="btn_export_csv">Export CSV</button>
-                    <button class="btn" id="btnImportLog" data-lang-key="btn_import_csv">Import CSV</button>
-                    <input type="file" id="importFile" accept=".csv" style="display: none;" />
-                </div>
-            </div>
-            <div class="table-wrapper">
-                <table id="logTable">
-                    <thead>
-                        <tr>
-                            <th data-lang-key="log_col_node">Node</th>
-                            <th data-lang-key="log_col_material">Material</th>
-                            <th>ηE</th>
-                            <th>ETNT</th>
-                            <th data-lang-key="log_col_volume">Volume</th>
-                            <th data-lang-key="log_col_distance">Distance</th>
-                            <th>WTNT</th>
-                            <th>ze</th>
-                            <th>Ps</th>
-                            <th>Crowl</th>
-                            <th>Alonso</th>
-                            <th>Sadovski</th>
-                            <th class="col-action">-</th>
-                        </tr>
-                        <tr class="unit-row">
-                           <th></th><th></th><th></th><th>(kJ/kg)</th><th>(m³)</th><th>(m)</th><th>(kg)</th><th>(m·kg<sup>−1/3</sup>)</th><th></th><th>(kPa)</th><th>(kPa)</th><th>(kPa)</th><th></th>
-                        </tr>
-                    </thead>
-                    <tbody id="logTbody"></tbody>
-                </table>
-            </div>
-            <div style="padding: 0 14px 14px;">
-                <p class="footnote" data-lang-key="log_footnote">Click "Save" to log the calculation results. The last 10 entries will be stored in your browser.</p>
-            </div>
         </section>
       </aside>
     </main>
@@ -1182,3 +1182,4 @@
   </script>
 </body>
 </html>
+
