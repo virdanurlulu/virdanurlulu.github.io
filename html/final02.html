@@ -498,7 +498,10 @@
         </section>
 
         <section class="card" aria-labelledby="param-head">
-          <div id="param-head" class="card-header" data-lang-key="card_title_parameters">Parameters</div>
+          <div id="param-head" class="card-header">
+            <span data-lang-key="card_title_parameters">Parameters</span>
+            <button class="btn" id="btnAddResult" data-lang-key="btn_add_result" disabled>Add to Log & Map</button>
+          </div>
           <div style="padding:12px">
             <div class="table-wrapper">
               <table>
@@ -931,6 +934,7 @@
           // Quick Control Panel
           quick_control_panel: "Quick Control Panel",
           btn_save: "Save",
+          btn_add_result: "Add to Log & Map",
           float_overpressure_label: "Overpressure (Po)",
          
           // Status Messages
@@ -1162,6 +1166,7 @@
           // Quick Control Panel
           quick_control_panel: "Panel Kontrol Cepat",
           btn_save: "Simpan",
+          btn_add_result: "Tambahkan ke Log & Peta",
           float_overpressure_label: "Tekanan Berlebih (Po)",
          
           // Status Messages
@@ -1873,6 +1878,7 @@
 
       function calculateValues(isInitialLoad = false) {
         const btnSaveFloat = $('btnSaveResultFloat');
+        const btnAddResult = $('btnAddResult');
         fields.forEach(id => $(id)?.classList.remove('input-error'));
         let hasError = false;
         const getFloat = (id) => {
@@ -1894,6 +1900,7 @@
           updateFloatingPanelOutputs(NaN, NaN, NaN, false);
           if (chartController) chartController.plotResult(NaN, NaN);
           if (btnSaveFloat) btnSaveFloat.disabled = true;
+          if (btnAddResult) btnAddResult.disabled = true;
         };
 
         if (hasError) return resetAll("status_error_range");
@@ -1938,6 +1945,7 @@
 
         showStatusMessage("status_success");
         if (btnSaveFloat) btnSaveFloat.disabled = false;
+        if (btnAddResult) btnAddResult.disabled = false;
 
         if (!isInitialLoad) {
           saveStateToURL();
@@ -2121,7 +2129,7 @@
                 <div class="floating-output-col"><span>Sadovski</span><span id="float_po_sadovski">—</span></div>
             </div>
             <div style="margin-top: 12px;">
-                <button class="btn" id="btnSaveResultFloat" disabled style="width: 100%;">${lang.btn_save}</button>
+                <button class="btn" id="btnSaveResultFloat" disabled style="width: 100%;">${lang.btn_add_result}</button>
             </div>
         `;
        
@@ -2262,7 +2270,8 @@
 
       const saveAction = () => {
         const btnSaveFloat = $('btnSaveResultFloat');
-        if (btnSaveFloat.disabled) return;
+        const btnAddResult = $('btnAddResult');
+        if (btnSaveFloat.disabled && btnAddResult.disabled) return;
        
         const selectedOption = materialSel.options[materialSel.selectedIndex];
         const newLogEntry = {
@@ -2295,6 +2304,9 @@
         saveLogToLocalStorage();
       };
      
+      const btnAddResult = $('btnAddResult');
+      if(btnAddResult) btnAddResult.addEventListener('click', saveAction);
+
       const logTbody = $('logTbody');
       logTbody.addEventListener('click', (event) => {
         const deleteButton = event.target.closest('.btn-delete');
@@ -2378,15 +2390,29 @@
                   }
 
                   const importedData = [];
+                  const numericalHeaders = ['eta', 'e_tnt', 'vol', 'dist', 'w_tnt', 'ze', 'ps'];
+                  const poHeaders = ['po_crowl', 'po_alonso', 'po_sadovski'];
 
-                  for(let i = 1; i < lines.length; i++) {
+                  for (let i = 1; i < lines.length; i++) {
+                      const rowNum = i + 1;
                       const values = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/"/g, ''));
                       if (values.length !== headers.length) continue;
-                     
+
                       const logEntry = {};
-                      headers.forEach((header, index) => {
-                          logEntry[header] = values[index];
-                      });
+                      for (let j = 0; j < headers.length; j++) {
+                          const header = headers[j];
+                          const value = values[j];
+
+                          // Validasi data numerik, dengan pesan error yang spesifik
+                          if (numericalHeaders.includes(header) && isNaN(parseFloat(value))) {
+                              throw new Error(`Data tidak valid di baris ${rowNum} (kolom "${header}"). Harap masukkan angka yang valid.`);
+                          }
+                          // Validasi khusus untuk kolom Po, yang boleh berisi 'N/A'
+                          if (poHeaders.includes(header) && isNaN(parseFloat(value)) && value.toUpperCase() !== 'N/A') {
+                              throw new Error(`Data tidak valid di baris ${rowNum} (kolom "${header}"). Harap masukkan angka yang valid atau 'N/A'.`);
+                          }
+                          logEntry[header] = value;
+                      }
                       importedData.push(logEntry);
                   }
                  
@@ -3060,8 +3086,8 @@
         observer.observe(logTbodyObserver, { childList: true });
     }
     
-    // Panggil updateMapFromLog saat halaman pertama kali dimuat
-    setTimeout(updateMapFromLog, 500);
+    // Panggilan updateMapFromLog yang berlebihan telah dihapus.
+    // Observer sudah menangani pembaruan awal saat log pertama kali dirender.
 
     // ======= DYNAMIC LAYOUT: Move Simulation Log based on screen size =======
     const leftPanel = document.querySelector('.left');
