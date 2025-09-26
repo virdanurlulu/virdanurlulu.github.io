@@ -948,7 +948,107 @@
           status_import_error_empty: "CSV file is invalid or empty.",
           status_import_error_missing_cols: "Required columns are missing: ",
           status_import_error_no_data: "No valid data could be retrieved from the CSV file.",
-          status_ocean_warning: "The plotted contour coordinate points are located beyond the specified boundaries (ocean)."
+
+          // Damage & Injury Categories and Descriptions (as keys)
+          cat_catastrophic: "Catastrophic",
+          cat_major: "Major",
+          cat_severe: "Severe",
+          cat_serious: "Serious",
+          cat_moderate: "Moderate",
+          cat_minor: "Minor",
+          cat_insignificant: "Insignificant",
+          cat_no_effect: "No Effect",
+         
+          injury_cat_invalid: "Invalid Input",
+          injury_cat_no_effect: "No Effect Reported",
+          injury_cat_minor: "Minor Injury",
+          injury_cat_moderate: "Moderate Injury",
+          injury_cat_serious: "Serious Injury",
+          injury_cat_severe: "Severe Injury",
+          injury_cat_fatality: "Fatality",
+
+          injury_awaiting_input: "Awaiting input...",
+          injury_no_serious: "No serious injuries; eardrum damage is insignificant.",
+          injury_glass_fragments: "Glass begins to break at 3–5 kPa, where fragments can cause skin/eye injuries.",
+          injury_unlikely_primary: "Primary injuries are unlikely, but a risk of secondary injuries from glass fragments persists.",
+          injury_minor_contusions: "Minor contusions.",
+          injury_moderate_damage: "Moderate structural damage may cause ceiling collapse and falling of small objects.",
+          injury_combo_minor: "A combination of minor contusions and secondary injuries from fragments/debris.",
+          injury_eardrum_rupture: "Eardrum rupture, moderate contusions.",
+          injury_flying_debris: "More extensive structural damage creates flying debris, which may cause bone fractures.",
+          injury_increased_severity: "Injury severity is increased due to the combined effects of the blast wave and flying debris.",
+          injury_serious_internal: "Serious and potentially fatal internal contusions.",
+          injury_entrapment: "Most buildings are likely to be completely destroyed, creating entrapment scenarios under the rubble.",
+          injury_highly_fatal: "The combination of internal injuries and entrapment is potentially highly fatal.",
+          injury_high_mortality: "Extremely high mortality rate for unprotected individuals; 90%–100% fatality.",
+          injury_total_collapse: "Total building collapse; large debris moving at high velocity.",
+          injury_extreme_fatality_risk: "The interaction between the blast wave and structural failure poses an extremely high risk of fatality.",
+          injury_no_significant_effects: "No significant effects reported.",
+          injury_none_anticipated: "No injuries are anticipated.",
+         
+          damage_no_significant: "No significant structural damage predicted.",
+          equipment_no_significant: "No significant equipment damage predicted.",
+          alonso_warning: "Warning: Result is extrapolated beyond the valid Alonso model range (1 ≤ ze ≤ 200).",
+         
+          damage_accidental_glass: "Accidental glass damage [1].",
+          damage_minor_glass_architectural: "Minor glass breakage and light architectural damage such as displacement of roof tiles and falling plaster [1].",
+          damage_widespread_glass_nonstructural: "Widespread glass shattering and significant damage to non-structural elements like doors, windows, and roofs [1].",
+          damage_collapse_unreinforced_walls: "Collapse of unreinforced concrete walls or cement blocks [2].",
+          damage_steel_panels_destroyed_tanks_ruptured_1: "Frame-less steel panels destroyed; oil storage tanks ruptured (20.7 kPa - ≤25 kPa) [2].",
+          damage_steel_panels_destroyed_tanks_ruptured_2: "Frame-less steel panels destroyed; oil storage tanks ruptured (25 kPa - 27.6 kPa) [2].",
+          damage_extensive_nonstructural: "Extensive damage to non-structural elements such as brick facades, roofs, and ceilings [1].",
+          damage_total_destruction_houses_1: "Near-total destruction of residential houses (34.5 kPa - ≤40 kPa) [2].",
+          damage_total_destruction_houses_2: "Near-total destruction of residential houses (40 kPa - 48.2 kPa) [2].",
+          damage_heavy_nonstructural_ceiling_collapse: "Heavy damage to non-structural elements leading to ceiling collapse [1].",
+          damage_brick_panels_fail_1: "8-12 inch thick unreinforced brick panels fail from shear or bending (48.2 kPa - ≤55 kPa) [2].",
+          damage_brick_panels_fail_2: "8-12 inch thick unreinforced brick panels fail from shear or bending (55 kPa - 55.1 kPa) [2].",
+          damage_partial_collapse_concrete_columns: "Partial collapse of non-structural elements and significant damage to concrete columns [1].",
+          damage_total_collapse_all_elements: "Near-total collapse of all building elements, including heavy damage to load-bearing concrete columns [1].",
+
+          desc_annoying_noise: "Annoying noise (137 dB if low frequency, 10–15 Hz)",
+          desc_breakage_large_windows: "Breakage of large windows previously under stress",
+          desc_loud_noise_glass_failure: "Loud noise (143 dB), sonic boom, glass failure",
+          desc_small_windows_break: "Small windows break due to pressure",
+          desc_typical_pressure_break_glass: "Typical pressure to break glass",
+          desc_safe_distance: '"Safe distance," 95% probability of no serious damage below this level, projectile limit, minor ceiling damage, 10% window breakage',
+          desc_limited_minor_structural_damage: "Limited minor structural damage",
+          desc_minor_structural_damage_houses: "Minor structural damage to houses",
+          desc_partial_house_collapse: "Partial house collapse, uninhabitable",
+          desc_slight_distortion_steel_frames: "Slight distortion of coated steel frames",
+          desc_partial_collapse_roof_walls: "Partial collapse of roof and walls",
+          desc_lower_limit_serious_damage: "Lower limit of serious structural damage",
+          desc_50_percent_brick_walls_collapse: "50% of brick walls collapse",
+          desc_heavy_machinery_damaged: "Heavy machinery (3,000 lb) slightly damaged in industrial buildings; steel frames distorted or detached from foundation",
+          desc_light_industrial_structures_collapse: "Light industrial structures collapse",
+          desc_utility_poles_break: "Utility poles break; 40,000 lb hydraulic equipment slightly damaged",
+          desc_freight_train_cars_destroyed: "Freight train cars completely destroyed",
+          desc_fully_loaded_train_cars_destroyed: "Fully loaded train cars totally destroyed",
+          desc_likely_total_damage: "Likely total damage to structures; 7,000 lb equipment displaced and severely damaged; 12,000 lb machinery still present",
+
+          equip_no_damage: "No significant damage recorded",
+          equip_control_house_steel_roof_windows_broken: "Control house steel roof. Windows and gauges broken. Cooling tower. Louvers fall off (1.37855 - 2.44738 kPa).",
+          equip_switchgear_damaged_tank_roof_collapses: "Control house steel roof. Switchgear is damaged from roof collapse. Control house concrete roof. Windows broken. Tank (cone) roof. Roof collapses.",
+          equip_control_house_roof_collapses_instruments_damaged: "Control house steel roof. Roof collapses. Control house concrete roof. Frame deforms. Instruments. Are damaged. Windows and gauges broken.",
+          equip_concrete_roof_collapses_fire_heater_cracks: "Control house concrete roof. Roof collapses. Instruments. Are damaged. Windows and gauges broken. Fire heater. Brick cracks. Filter. Debris - missile damage occurs.",
+          equip_fire_heater_moves: "Fire heater. Unit moves and pipes break.",
+          equip_tank_uplifts_instruments_damaged: "Tank (cone roof). Unit uplifts (half tilted). Instruments. Unit is damaged. Unit moves and pipes break. Controls are damaged. Cooling tower. Frame collapses. Control house steel roof. Block walls fall. Pine supports. Unit moves and pipes break.",
+          equip_cooling_tower_collapses: "Cooling tower. Frame collapses. Pine supports. Frame deforms.",
+          equip_reactor_moves: "Reactor (chemical). Unit moves and pipes break.",
+          equip_filter_inner_parts_damaged: "Filter. Inner parts are damaged. Utilities (gas regulatory). Controls are damaged. Utilities (electronic transformer). Debris - missile damage occurs.",
+          equip_fire_heater_overturns: "Fire heater. Unit overturns or is destroyed. Reactor (chemical). Frame deforms. Electric motor. Debris - missile damage occurs. Blower. Unit is on foundation.",
+          equip_fractionation_column_cracks: "Fractionation column. Frame cracks.",
+          equip_instrument_cubicle_overturns: "Instrument cubicle. Unit overturns or is destroyed. Pine supports. Piping breaks. Frame collapses. Fractionation column. Unit moves and pipes break.",
+          equip_tank_uplifts_reactor_destroyed: "Tank (cone roof). Unit uplifts (0.9 tilted). Reactor (chemical). Unit is destroyed. Fractionation column. Unit moves and pipes break. Extraction column. Unit moves and pipes break.",
+          equip_reactor_cracking_moves: "Reactor (cracking). Unit moves and pipes break. Fractionation column. Unit overturns or is destroyed.",
+          equip_generator_overturns: "Generator. Unit overturns or is destroyed. Utilities (electronic transformer). Unit moves and pipes break. Heat exchanger. Unit moves and pipes break.",
+          equip_tank_sphere_moves: "Tank sphere. Unit moves and pipes break.",
+          equip_reactor_chemical_overturns: "Reactor (chemical). Unit overturns or is destroyed. Electric motor. Unit moves and pipes break. Extraction column. Unit overturns or is destroyed. Heat exchanger. Unit overturns or is destroyed.",
+          equip_filter_uplifts: "Filter. Unit uplifts (0.9 tilted).",
+          equip_utilities_overturns: "Utilities (electronic transformer). Unit overturns or is destroyed. Utilities (gas regulatory). Controls are damaged. Case is damaged. Steam turbine. Piping breaks. Case is damaged.",
+          equip_filter_overturns: "Filter. Unit overturns or is destroyed. Reactor (cracking). Unit overturns or is destroyed. Steam turbine. Unit overturns or is destroyed. Steam turbine. Controls are damaged.",
+          equip_steam_turbine_piping_breaks: "Steam turbine. Piping breaks. Tank sphere. Unit moves and pipes break. Pressure vessel (vertical). Unit overturns or is destroyed.",
+          equip_tank_sphere_overturns: "Tank sphere. Unit overturns or is destroyed. Pump. Unit moves on foundation.",
+          equip_floating_roof_collapses: "Tank (floating roof). Roof collapses. Reactor (cracking). Unit overturns or is destroyed. Steam turbine. Unit moves on foundation."
         },
         id: {
           // Page Titles
@@ -1080,7 +1180,107 @@
           status_import_error_empty: "File CSV tidak valid atau kosong.",
           status_import_error_missing_cols: "Kolom yang diperlukan tidak ada: ",
           status_import_error_no_data: "Tidak ada data valid yang dapat diambil dari file CSV.",
-          status_ocean_warning: "Titik koordinat kontur berada di luar batas daratan (lautan)."
+         
+          // Damage & Injury Categories and Descriptions (as keys)
+          cat_catastrophic: "Kacau Total",
+          cat_major: "Mayor",
+          cat_severe: "Parah",
+          cat_serious: "Serius",
+          cat_moderate: "Sedang",
+          cat_minor: "Ringan",
+          cat_insignificant: "Tidak Berarti",
+          cat_no_effect: "Tidak Ada Efek",
+
+          injury_cat_invalid: "Input Tidak Valid",
+          injury_cat_no_effect: "Tidak Ada Efek",
+          injury_cat_minor: "Cedera Ringan",
+          injury_cat_moderate: "Cedera Sedang",
+          injury_cat_serious: "Cedera Serius",
+          injury_cat_severe: "Cedera Parah",
+          injury_cat_fatality: "Kematian",
+         
+          injury_awaiting_input: "Menunggu masukan...",
+          injury_no_serious: "Tidak ada cedera serius; kerusakan gendang telinga tidak signifikan.",
+          injury_glass_fragments: "Kaca mulai pecah pada 3–5 kPa, di mana pecahan dapat menyebabkan cedera kulit/mata.",
+          injury_unlikely_primary: "Cedera primer tidak mungkin terjadi, tetapi risiko cedera sekunder dari pecahan kaca tetap ada.",
+          injury_minor_contusions: "Memar ringan.",
+          injury_moderate_damage: "Kerusakan struktur tingkat sedang dapat menyebabkan langit-langit runtuh dan benda-benda kecil jatuh.",
+          injury_combo_minor: "Kombinasi memar ringan dan cedera sekunder dari pecahan/puing-puing.",
+          injury_eardrum_rupture: "Gendang telinga pecah, memar sedang.",
+          injury_flying_debris: "Kerusakan struktural yang lebih luas menciptakan puing-puing beterbangan, yang dapat menyebabkan patah tulang.",
+          injury_increased_severity: "Tingkat keparahan cedera meningkat karena efek gabungan dari gelombang ledakan dan puing-puing yang beterbangan.",
+          injury_serious_internal: "Memar internal yang serius dan berpotensi fatal.",
+          injury_entrapment: "Sebagian besar bangunan kemungkinan besar akan hancur total, menciptakan skenario terperangkap di bawah reruntuhan.",
+          injury_highly_fatal: "Gabungan cedera internal dan kondisi terperangkap berpotensi sangat fatal.",
+          injury_high_mortality: "Tingkat kematian sangat tinggi bagi orang tanpa pelindung; 90%–100% fatal.",
+          injury_total_collapse: "Keruntuhan total bangunan; puing-puing besar bergerak dengan kecepatan tinggi.",
+          injury_extreme_fatality_risk: "Interaksi antara gelombang ledakan dan kegagalan struktural menimbulkan risiko kematian yang sangat tinggi.",
+          injury_no_significant_effects: "Tidak ada efek signifikan yang dilaporkan.",
+          injury_none_anticipated: "Tidak ada cedera yang diperkirakan.",
+         
+          damage_no_significant: "Tidak ada kerusakan struktural signifikan yang diprediksi.",
+          equipment_no_significant: "Tidak ada kerusakan peralatan signifikan yang diprediksi.",
+          alonso_warning: "Peringatan: Hasil diekstrapolasi di luar rentang valid model Alonso (1 ≤ ze ≤ 200).",
+
+          damage_accidental_glass: "Kerusakan kaca yang tidak disengaja [1].",
+          damage_minor_glass_architectural: "Pecahan kaca kecil dan kerusakan arsitektur ringan seperti pergeseran genteng dan plester yang jatuh [1].",
+          damage_widespread_glass_nonstructural: "Pecahan kaca yang luas dan kerusakan signifikan pada elemen non-struktural seperti pintu, jendela, dan atap [1].",
+          damage_collapse_unreinforced_walls: "Runtuhnya dinding beton tak bertulang atau balok semen [2].",
+          damage_steel_panels_destroyed_tanks_ruptured_1: "Panel baja tanpa rangka hancur; tangki penyimpanan minyak pecah (20.7 kPa - ≤25 kPa) [2].",
+          damage_steel_panels_destroyed_tanks_ruptured_2: "Panel baja tanpa rangka hancur; tangki penyimpanan minyak pecah (25 kPa - 27.6 kPa) [2].",
+          damage_extensive_nonstructural: "Kerusakan luas pada elemen non-struktural seperti fasad bata, atap, dan langit-langit [1].",
+          damage_total_destruction_houses_1: "Kehancuran mendekati total pada rumah tinggal (34.5 kPa - ≤40 kPa) [2].",
+          damage_total_destruction_houses_2: "Kehancuran mendekati total pada rumah tinggal (40 kPa - 48.2 kPa) [2].",
+          damage_heavy_nonstructural_ceiling_collapse: "Kerusakan berat pada elemen non-struktural yang menyebabkan langit-langit runtuh [1].",
+          damage_brick_panels_fail_1: "Panel bata tak bertulang setebal 8-12 inci gagal akibat geser atau lentur (48.2 kPa - ≤55 kPa) [2].",
+          damage_brick_panels_fail_2: "Panel bata tak bertulang setebal 8-12 inci gagal akibat geser atau lentur (55 kPa - 55.1 kPa) [2].",
+          damage_partial_collapse_concrete_columns: "Runtuh parsial elemen non-struktural dan kerusakan signifikan pada kolom beton [1].",
+          damage_total_collapse_all_elements: "Runtuh mendekati total semua elemen bangunan, termasuk kerusakan berat pada kolom beton penahan beban [1].",
+
+          desc_annoying_noise: "Kebisingan yang mengganggu (137 dB jika frekuensi rendah, 10–15 Hz)",
+          desc_breakage_large_windows: "Pecahnya jendela besar yang sebelumnya mengalami tegangan",
+          desc_loud_noise_glass_failure: "Suara keras (143 dB), ledakan sonik, kegagalan kaca",
+          desc_small_windows_break: "Jendela kecil pecah karena tekanan",
+          desc_typical_pressure_break_glass: "Tekanan tipikal untuk memecahkan kaca",
+          desc_safe_distance: '"Jarak aman," probabilitas 95% tidak ada kerusakan serius di bawah tingkat ini, batas proyektil, kerusakan langit-langit kecil, 10% jendela pecah',
+          desc_limited_minor_structural_damage: "Kerusakan struktural ringan terbatas",
+          desc_minor_structural_damage_houses: "Kerusakan struktural ringan pada rumah",
+          desc_partial_house_collapse: "Rumah runtuh sebagian, tidak dapat dihuni",
+          desc_slight_distortion_steel_frames: "Distorsi ringan pada rangka baja berlapis",
+          desc_partial_collapse_roof_walls: "Runtuh sebagian atap dan dinding",
+          desc_lower_limit_serious_damage: "Batas bawah kerusakan struktural serius",
+          desc_50_percent_brick_walls_collapse: "50% dinding bata runtuh",
+          desc_heavy_machinery_damaged: "Mesin berat (3.000 lb) sedikit rusak di gedung industri; rangka baja terdistorsi atau terlepas dari fondasi",
+          desc_light_industrial_structures_collapse: "Struktur industri ringan runtuh",
+          desc_utility_poles_break: "Tiang listrik patah; peralatan hidrolik 40.000 lb sedikit rusak",
+          desc_freight_train_cars_destroyed: "Gerbong kereta barang hancur total",
+          desc_fully_loaded_train_cars_destroyed: "Gerbong kereta bermuatan penuh hancur total",
+          desc_likely_total_damage: "Kemungkinan kerusakan total pada struktur; peralatan 7.000 lb bergeser dan rusak parah; mesin 12.000 lb masih ada",
+
+          equip_no_damage: "Tidak ada kerusakan signifikan yang tercatat",
+          equip_control_house_steel_roof_windows_broken: "Rumah kontrol atap baja. Jendela dan alat ukur pecah. Menara pendingin. Kisi-kisi jatuh (1.37855 - 2.44738 kPa).",
+          equip_switchgear_damaged_tank_roof_collapses: "Rumah kontrol atap baja. Switchgear rusak akibat atap runtuh. Rumah kontrol atap beton. Jendela pecah. Atap tangki (kerucut). Atap runtuh.",
+          equip_control_house_roof_collapses_instruments_damaged: "Rumah kontrol atap baja. Atap runtuh. Rumah kontrol atap beton. Rangka berubah bentuk. Instrumen. Rusak. Jendela dan alat ukur pecah.",
+          equip_concrete_roof_collapses_fire_heater_cracks: "Rumah kontrol atap beton. Atap runtuh. Instrumen. Rusak. Jendela dan alat ukur pecah. Pemanas api. Bata retak. Filter. Kerusakan akibat serpihan proyektil.",
+          equip_fire_heater_moves: "Pemanas api. Unit bergerak dan pipa pecah.",
+          equip_tank_uplifts_instruments_damaged: "Atap tangki (kerucut). Unit terangkat (setengah miring). Instrumen. Unit rusak. Unit bergerak dan pipa pecah. Kontrol rusak. Menara pendingin. Rangka runtuh. Rumah kontrol atap baja. Dinding balok jatuh. Penopang pinus. Unit bergerak dan pipa pecah.",
+          equip_cooling_tower_collapses: "Menara pendingin. Rangka runtuh. Penopang pinus. Rangka berubah bentuk.",
+          equip_reactor_moves: "Reaktor (kimia). Unit bergerak dan pipa pecah.",
+          equip_filter_inner_parts_damaged: "Filter. Bagian dalam rusak. Utilitas (regulator gas). Kontrol rusak. Utilitas (transformator elektronik). Kerusakan akibat serpihan proyektil.",
+          equip_fire_heater_overturns: "Pemanas api. Unit terbalik atau hancur. Reaktor (kimia). Rangka berubah bentuk. Motor listrik. Kerusakan akibat serpihan proyektil. Blower. Unit berada di atas fondasi.",
+          equip_fractionation_column_cracks: "Kolom fraksinasi. Rangka retak.",
+          equip_instrument_cubicle_overturns: "Kubikel instrumen. Unit terbalik atau hancur. Penopang pinus. Pipa pecah. Rangka runtuh. Kolom fraksinasi. Unit bergerak dan pipa pecah.",
+          equip_tank_uplifts_reactor_destroyed: "Atap tangki (kerucut). Unit terangkat (0.9 miring). Reaktor (kimia). Unit hancur. Kolom fraksinasi. Unit bergerak dan pipa pecah. Kolom ekstraksi. Unit bergerak dan pipa pecah.",
+          equip_reactor_cracking_moves: "Reaktor (perengkahan). Unit bergerak dan pipa pecah. Kolom fraksinasi. Unit terbalik atau hancur.",
+          equip_generator_overturns: "Generator. Unit terbalik atau hancur. Utilitas (transformator elektronik). Unit bergerak dan pipa pecah. Penukar panas. Unit bergerak dan pipa pecah.",
+          equip_tank_sphere_moves: "Tangki bola. Unit bergerak dan pipa pecah.",
+          equip_reactor_chemical_overturns: "Reaktor (kimia). Unit terbalik atau hancur. Motor listrik. Unit bergerak dan pipa pecah. Kolom ekstraksi. Unit terbalik atau hancur. Penukar panas. Unit terbalik atau hancur.",
+          equip_filter_uplifts: "Filter. Unit terangkat (0.9 miring).",
+          equip_utilities_overturns: "Utilitas (transformator elektronik). Unit terbalik atau hancur. Utilitas (regulator gas). Kontrol rusak. Casing rusak. Turbin uap. Pipa pecah. Casing rusak.",
+          equip_filter_overturns: "Filter. Unit terbalik atau hancur. Reaktor (perengkahan). Unit terbalik atau hancur. Turbin uap. Unit terbalik atau hancur. Turbin uap. Kontrol rusak.",
+          equip_steam_turbine_piping_breaks: "Turbin uap. Pipa pecah. Tangki bola. Unit bergerak dan pipa pecah. Bejana tekan (vertikal). Unit terbalik atau hancur.",
+          equip_tank_sphere_overturns: "Tangki bola. Unit terbalik atau hancur. Pompa. Unit bergerak di atas fondasi.",
+          equip_floating_roof_collapses: "Tangki (atap apung). Atap runtuh. Reaktor (perengkahan). Unit terbalik atau hancur. Turbin uap. Unit bergerak di atas fondasi."
         }
       };
 
@@ -2347,10 +2547,8 @@
   <script>
   window.addEventListener('load', () => {
     // ======= BUILT-IN DEFAULTS =======
-    const DEFAULT_LAT = 33.901404;
-    const DEFAULT_LON = 35.519039;
     const BUILTIN_DEFAULTS = {
-      lat: DEFAULT_LAT, lon: DEFAULT_LON,
+      lat: 33.901436, lon: 35.519057,
       csv:
   `49, 2042.348
   150, 159.4947
@@ -2506,34 +2704,20 @@
       const city = a.city || a.town;
       const country = a.country || '';
       const joined = [city, country].filter(Boolean).join(', ');
-      // Return both the display name and the raw JSON for further checks
-      return { name: joined, raw: j };
+      return joined;
     }
 
     async function reverseGeocode(lat, lon){
       const key = rgKey(lat, lon);
       const cache = rgLoadCache();
       const TTL = 30*24*3600*1000; // 30 days
-      if (cache[key] && (Date.now()-cache[key].ts) < TTL) {
-        // Also check cached data for ocean warning
-        if (cache[key].isOcean) {
-          showNotification(translations[currentLanguage].status_ocean_warning, true);
-        }
-        return cache[key].name;
-      }
+      if (cache[key] && (Date.now()-cache[key].ts) < TTL) return cache[key].name;
 
       let geocodeError = false;
       try{
-        let { name, raw } = await fetchNominatimEN(lat, lon);
-        const isOcean = raw && raw.address && !raw.address.country_code;
-
-        if (isOcean) {
-          showNotification(translations[currentLanguage].status_ocean_warning, true);
-        }
-
+        let name = await fetchNominatimEN(lat, lon);
         if (name && !isRTL(name)) {
-          cache[key] = {name, isOcean, ts: Date.now()}; 
-          rgSaveCache(cache);
+          cache[key] = {name, ts: Date.now()}; rgSaveCache(cache);
           return name;
         }
       } catch(e) {
@@ -2791,49 +2975,27 @@
     }
 
     const debouncedUpdateMapFromInput = debounce(() => {
-        const latValue = mapLatInput.value.trim();
-        const lonValue = mapLonInput.value.trim();
+        const lat = parseFloat(mapLatInput.value);
+        const lon = parseFloat(mapLonInput.value);
 
-        // Fitur Reset: Kembali ke default jika kedua kolom input dikosongkan
-        if (latValue === '' && lonValue === '') {
-            settings.lat = DEFAULT_LAT;
-            settings.lon = DEFAULT_LON;
-            savePartial({ lat: settings.lat, lon: settings.lon });
-            
-            // Pindahkan peta dan gambar ulang
-            isProgrammaticMove = true; 
-            map.setView([settings.lat, settings.lon], map.getZoom()); // Pertahankan tingkat zoom saat ini
-            refreshPlaceName(settings.lat, settings.lon).then(() => {
-                drawInitialState();
-            });
-            
-            // Perbarui kolom input untuk menampilkan nilai default
-            updateCoordInputs();
-            return;
-        }
-
-        const lat = parseFloat(latValue);
-        const lon = parseFloat(lonValue);
-
-        // Lanjutkan pembaruan hanya jika kedua kolom berisi angka yang valid
         if (!isNaN(lat) && !isNaN(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
+            // Cek jika koordinat benar-benar berubah untuk menghindari pembaruan yang tidak perlu
             if (Math.abs(settings.lat - lat) > 1e-7 || Math.abs(settings.lon - lon) > 1e-7) {
                 settings.lat = lat;
                 settings.lon = lon;
                 savePartial({ lat: lat, lon: lon });
 
-                isProgrammaticMove = true;
+                // Atur tampilan peta ke koordinat baru
+                isProgrammaticMove = true; 
                 map.setView([lat, lon]);
 
+                // Muat ulang nama tempat dan gambar ulang semuanya di lokasi baru
                 refreshPlaceName(lat, lon).then(() => {
                     drawInitialState();
                 });
             }
         } else {
-            // Tampilkan error hanya jika kedua kolom terisi tetapi tidak valid
-            if (latValue !== '' && lonValue !== '') {
-                showNotification('Invalid coordinate values.', true);
-            }
+            showNotification('Invalid coordinate values.', true);
         }
     }, 750);
     
