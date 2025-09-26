@@ -2791,27 +2791,49 @@
     }
 
     const debouncedUpdateMapFromInput = debounce(() => {
-        const lat = parseFloat(mapLatInput.value);
-        const lon = parseFloat(mapLonInput.value);
+        const latValue = mapLatInput.value.trim();
+        const lonValue = mapLonInput.value.trim();
 
+        // Fitur Reset: Kembali ke default jika kedua kolom input dikosongkan
+        if (latValue === '' && lonValue === '') {
+            settings.lat = DEFAULT_LAT;
+            settings.lon = DEFAULT_LON;
+            savePartial({ lat: settings.lat, lon: settings.lon });
+            
+            // Pindahkan peta dan gambar ulang
+            isProgrammaticMove = true; 
+            map.setView([settings.lat, settings.lon], map.getZoom()); // Pertahankan tingkat zoom saat ini
+            refreshPlaceName(settings.lat, settings.lon).then(() => {
+                drawInitialState();
+            });
+            
+            // Perbarui kolom input untuk menampilkan nilai default
+            updateCoordInputs();
+            return;
+        }
+
+        const lat = parseFloat(latValue);
+        const lon = parseFloat(lonValue);
+
+        // Lanjutkan pembaruan hanya jika kedua kolom berisi angka yang valid
         if (!isNaN(lat) && !isNaN(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
-            // Cek jika koordinat benar-benar berubah untuk menghindari pembaruan yang tidak perlu
             if (Math.abs(settings.lat - lat) > 1e-7 || Math.abs(settings.lon - lon) > 1e-7) {
                 settings.lat = lat;
                 settings.lon = lon;
                 savePartial({ lat: lat, lon: lon });
 
-                // Atur tampilan peta ke koordinat baru
-                isProgrammaticMove = true; 
+                isProgrammaticMove = true;
                 map.setView([lat, lon]);
 
-                // Muat ulang nama tempat dan gambar ulang semuanya di lokasi baru
                 refreshPlaceName(lat, lon).then(() => {
                     drawInitialState();
                 });
             }
         } else {
-            showNotification('Invalid coordinate values.', true);
+            // Tampilkan error hanya jika kedua kolom terisi tetapi tidak valid
+            if (latValue !== '' && lonValue !== '') {
+                showNotification('Invalid coordinate values.', true);
+            }
         }
     }, 750);
     
@@ -2946,4 +2968,3 @@
   </script>
 </body>
 </html>
-
