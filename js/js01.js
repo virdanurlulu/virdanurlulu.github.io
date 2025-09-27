@@ -168,6 +168,8 @@
           status_import_error_empty: "CSV file is invalid or empty.",
           status_import_error_missing_cols: "Required columns are missing: ",
           status_import_error_no_data: "No valid data could be retrieved from the CSV file.",
+          status_log_saved: "Log entry saved successfully to browser storage.",
+          status_export_success: "Export Successful.",
 
           // Damage & Injury Categories and Descriptions (as keys)
           cat_catastrophic: "Catastrophic",
@@ -400,6 +402,8 @@
           status_import_error_empty: "File CSV tidak valid atau kosong.",
           status_import_error_missing_cols: "Kolom yang diperlukan tidak ada: ",
           status_import_error_no_data: "Tidak ada data valid yang dapat diambil dari file CSV.",
+          status_log_saved: "Entri log berhasil disimpan di penyimpanan browser.",
+          status_export_success: "Ekspor Berhasil.",
          
           // Damage & Injury Categories and Descriptions (as keys)
           cat_catastrophic: "Kacau Total",
@@ -509,7 +513,11 @@
       function setLanguage(lang) {
         if (!translations[lang]) return;
         currentLanguage = lang;
-        localStorage.setItem('preferredLanguage', lang);
+        try {
+          localStorage.setItem('preferredLanguage', lang);
+        } catch (e) {
+          console.warn("Could not save language preference to local storage:", e);
+        }
        
         document.documentElement.lang = lang;
 
@@ -533,9 +541,8 @@
           renderEquation($('material').value);
         }
         if (chartController) {
-            const ze = parseFloat($("Ze")?.value);
-            const ps = parseFloat($("Ps")?.value);
-            chartController.plotResult(ze, ps);
+            // Memperbaiki bug: Memanggil fungsi update yang benar alih-alih fungsi yang tidak ada.
+            updatePsVsZeChart();
         }
         if (overpressureChartController) {
             updateOverpressureChartFromLog();
@@ -550,7 +557,12 @@
       }
 
       function initLanguage() {
-        const preferredLanguage = localStorage.getItem('preferredLanguage') || 'en';
+        let preferredLanguage = 'en';
+        try {
+            preferredLanguage = localStorage.getItem('preferredLanguage') || 'en';
+        } catch (e) {
+            console.warn("Could not read language preference from local storage:", e);
+        }
         setLanguage(preferredLanguage);
 
         document.querySelectorAll('.lang-btn').forEach(btn => {
@@ -643,7 +655,7 @@
 
       let chartController;
       let overpressureChartController; 
-      let simulationLog = [];
+      // simulationLog is now globally defined, so we remove the local 'let' declaration here.
 
       function showStatusMessage(messageKey, isError = false, extraInfo = '') {
           const msgEl = $("msg");
@@ -724,6 +736,26 @@
                 splitLine: { lineStyle: { color: 'rgba(0, 0, 0, 0.1)', width: 2 } },
                 minorSplitLine: { show: true, lineStyle: { color: 'rgba(0, 0, 0, 0.05)' } }
             },
+            series: [ // Pre-define series structure
+                {
+                  name: translations[currentLanguage].chart_tooltip_ref_curve,
+                  type: 'line', showSymbol: false,
+                  lineStyle: { width: 2.5, color: BLUE, shadowColor: 'rgba(0, 0, 0, 0.2)', shadowBlur: 5, shadowOffsetY: 2 },
+                  data: refPairs, zlevel: 1
+                },
+                {
+                  name: 'Log Data',
+                  type: 'scatter', symbolSize: 8,
+                  itemStyle: { color: '#64748b', borderColor: '#ffffff', borderWidth: 1, opacity: 0.7 },
+                  data: [], zlevel: 2
+                },
+                {
+                  name: 'Current Calculation',
+                  type: 'scatter', symbolSize: 12,
+                  itemStyle: { color: DANGER, borderColor: '#ffffff', borderWidth: 2, shadowColor: 'rgba(0,0,0,0.3)', shadowBlur: 5 },
+                  data: [], zlevel: 3
+                }
+            ],
             media: [
                 {
                     query: { minWidth: 601 },
@@ -749,32 +781,75 @@
         chart.setOption(getBaseOption());
 
         return {
-          plotResult: function(ze, ps) {
-            chart.setOption(getBaseOption()); // Re-apply options to update language
+          updateChart: function(currentCalcPoint, logDataPoints) {
+            chart.setOption(getBaseOption()); 
             const materialSel = $('material');
             const selectedOption = materialSel ? materialSel.options[materialSel.selectedIndex] : null;
-            const compound = (selectedOption && selectedOption.value) ? selectedOption.text : 'Calculation Results';
-            const seriesData = (Number.isFinite(ze) && Number.isFinite(ps)) ? [[ze, ps]] : [];
+            const compoundName = (selectedOption && selectedOption.value) ? selectedOption.text : 'Calculation';
+
+            const currentSeriesData = (currentCalcPoint && Number.isFinite(currentCalcPoint.ze) && Number.isFinite(currentCalcPoint.ps))
+              ? [[currentCalcPoint.ze, currentCalcPoint.ps]]
+              : [];
 
             chart.setOption({
               series: [
-                {
-                  name: translations[currentLanguage].chart_tooltip_ref_curve,
-                  type: 'line', showSymbol: false,
-                  lineStyle: { width: 2.5, color: BLUE, shadowColor: 'rgba(0, 0, 0, 0.2)', shadowBlur: 5, shadowOffsetY: 2 },
-                  data: refPairs, zlevel: 1
-                },
-                {
-                  name: `${translations[currentLanguage].chart_tooltip_compound}: ${compound}`, type: 'scatter', symbolSize: 12,
-                  itemStyle: { color: DANGER, borderColor: '#ffffff', borderWidth: 2, shadowColor: 'rgba(0,0,0,0.3)', shadowBlur: 5 },
-                  data: seriesData, zlevel: 2
-                }
+                { name: translations[currentLanguage].chart_tooltip_ref_curve, data: refPairs },
+                { name: 'Log Data', data: logDataPoints || [] },
+                { name: `${translations[currentLanguage].chart_tooltip_compound}: ${compoundName}`, data: currentSeriesData }
               ]
             });
           }
         };
       }
      
+      // Overwrite the placeholder with the actual function implementation
+      updatePsVsZeChart = function() {
+          if (!chartController) return;
+
+          const pa = parseFloat($("pa").value);
+          if (isNaN(pa)) return;
+
+          // 1. Get Log Data
+          const poModelSelect = $('poModelSelect');
+          const selectedModelKey = poModelSelect ? `po_${poModelSelect.value}` : 'po_crowl';
+          
+          const logPoints = simulationLog.map(log => {
+              const ze = parseFloat(log.ze);
+              const po = parseFloat(log[selectedModelKey]);
+              if (!isNaN(ze) && !isNaN(po)) {
+                  const ps = po / pa;
+                  return [ze, ps];
+              }
+              return null;
+          }).filter(Boolean);
+
+          // 2. Get Current Calculation Data
+          const currentZe = parseFloat($("Ze")?.value);
+          
+          // BUG FIX: Calculate Ps for the current point dynamically based on the selected model
+          // This makes the red dot on the chart consistent with the user's selection.
+          let currentPs;
+          if (!isNaN(currentZe) && pa > 0) {
+              const currentPoCrowl = parseFloat($("Po_crowl")?.value);
+              const currentPoAlonso = parseFloat($("Po_alonso")?.value);
+              const currentPoSadovski = parseFloat($("Po_sadovski")?.value);
+              
+              let selectedPo;
+              if (selectedModelKey === 'po_crowl')      selectedPo = currentPoCrowl;
+              else if (selectedModelKey === 'po_alonso')   selectedPo = currentPoAlonso;
+              else if (selectedModelKey === 'po_sadovski') selectedPo = currentPoSadovski;
+
+              if (!isNaN(selectedPo)) {
+                  currentPs = selectedPo / pa;
+              }
+          }
+          
+          const currentCalcPoint = { ze: currentZe, ps: currentPs };
+          
+          // 3. Update chart
+          chartController.updateChart(currentCalcPoint, logPoints);
+      }
+
       function initializeOverpressureChart() {
           const ctx = document.getElementById('overpressureChart');
           if (!ctx) return null;
@@ -1118,7 +1193,7 @@
           updateEstimationPanels(NaN, NaN, NaN);
           updateInjuryPanels(NaN, NaN, NaN);
           updateFloatingPanelOutputs(NaN, NaN, NaN, false);
-          if (chartController) chartController.plotResult(NaN, NaN);
+          updatePsVsZeChart(); // Clear chart
           if (btnSaveFloat) btnSaveFloat.disabled = true;
           if (btnAddResult) btnAddResult.disabled = true;
         };
@@ -1140,8 +1215,7 @@
         const PoPa_crowl = (1616 * (1 + (Ze/4.5)**2)) /
           (Math.sqrt(1 + (Ze/0.048)**2) * Math.sqrt(1 + (Ze/0.32)**2) * Math.sqrt(1 + (Ze/1.35)**2));
         $("Ps").value = PoPa_crowl.toFixed(3);
-        if (chartController) chartController.plotResult(Ze, PoPa_crowl);
-
+        
         const Po_crowl = PoPa_crowl * pa;
         const isAlonsoExtrapolated = Ze < 1 || Ze > 200;
         const Po_alonso = ((z) => {
@@ -1162,6 +1236,7 @@
         updateEstimationPanels(Po_crowl, Po_alonso, Po_sadovski, isAlonsoExtrapolated);
         updateInjuryPanels(Po_crowl, Po_alonso, Po_sadovski);
         updateFloatingPanelOutputs(Po_crowl, Po_alonso, Po_sadovski, true);
+        updatePsVsZeChart(); // Update chart with new calculation
 
         showStatusMessage("status_success");
         if (btnSaveFloat) btnSaveFloat.disabled = false;
@@ -1206,6 +1281,12 @@
         let hasParams = params.has('material');
 
         if (hasParams) {
+          // BUG FIX: Jika memuat dari URL, bersihkan log yang ada/default
+          // untuk mencegah tampilan data yang tidak konsisten.
+          simulationLog = [];
+          renderLogTable(); 
+          updateOverpressureChartFromLog(); 
+
           params.forEach((val, key) => {
             const el = $(key); 
             if (el) { el.value = val; }
@@ -1215,17 +1296,47 @@
             renderEquation(materialEl.value);
           }
           compute(true);
+          // BUG FIX: Sync the floating panel inputs after loading from URL
+          syncFloatingPanelInputs(); 
         } else {
-          const materialEl = $('material');
-          if (materialEl) {
-              materialEl.value = 'AN';
-              const p = presets[materialEl.value];
-              if (p) Object.keys(p).forEach(key => $(key).value = p[key]);
-              renderEquation(materialEl.value);
-             
-              $('vol').value = '10';
-              $('dist').value = '100';
-              compute(true);
+          // PERBAIKAN: Jika tidak ada parameter URL, sinkronkan formulir dengan
+          // entri pertama dari log yang sudah dimuat (localStorage atau default).
+          // Ini memastikan UI konsisten saat pertama kali dimuat.
+          if (simulationLog.length > 0) {
+              try {
+                  const firstLog = simulationLog[0];
+                  const materialSelect = $('material');
+                  
+                  const findMaterialValue = (abbr) => {
+                      const options = materialSelect.options;
+                      for (let i = 0; i < options.length; i++) {
+                          if (materialAbbreviationMap[options[i].text.trim()] === abbr.trim()) {
+                              return options[i].value;
+                          }
+                      }
+                      return '';
+                  };
+              
+                  const materialValue = findMaterialValue(firstLog.material);
+                  if (materialValue) {
+                      materialSelect.value = materialValue;
+                      const p = presets[materialValue];
+                      if (p) {
+                          Object.keys(p).forEach(key => {
+                              const el = $(key);
+                              if (el) el.value = p[key];
+                          });
+                      }
+                      renderEquation(materialValue);
+                      $('vol').value = firstLog.vol;
+                      $('dist').value = firstLog.dist;
+                      compute(true);
+                      // BUG FIX: Also sync the floating panel here for consistency on initial load
+                      syncFloatingPanelInputs(); 
+                  }
+              } catch (e) {
+                  console.error("Gagal menyinkronkan formulir dengan log awal:", e);
+              }
           }
         }
       }
@@ -1268,13 +1379,19 @@
             `;
             logTbody.appendChild(row);
         });
+        
+        updatePsVsZeChart(); // Update chart whenever the log table is re-rendered
       }
 
       function saveLogToLocalStorage() {
-        if(simulationLog.length > 0) {
-          localStorage.setItem('explosionSimLog', JSON.stringify(simulationLog));
-        } else {
-          localStorage.removeItem('explosionSimLog');
+        try {
+          if(simulationLog.length > 0) {
+            localStorage.setItem('explosionSimLog', JSON.stringify(simulationLog));
+          } else {
+            localStorage.removeItem('explosionSimLog');
+          }
+        } catch (e) {
+          console.warn("Could not save simulation log to local storage:", e);
         }
       }
 
@@ -1369,6 +1486,19 @@
             }
         };
        
+        const floatingPanel = $('floatingControlPanel');
+        // PERBAIKAN FINAL: Gunakan event delegation untuk tombol di dalam panel melayang.
+        // Ini mencegah penambahan event listener berulang kali saat bahasa diubah,
+        // yang dapat menyebabkan kebocoran memori dan bug.
+        floatingPanel.addEventListener('click', (event) => {
+            if (event.target && event.target.id === 'btnSaveResultFloat') {
+                saveAction();
+            }
+        });
+
+        // Hapus pemanggilan event listener langsung dari dalam fungsi setup
+        // $('btnSaveResultFloat').addEventListener('click', saveAction);
+
         ['material', 'vol', 'dist'].forEach(id => {
             const original = $(id);
             const float = $(`float_${id}`);
@@ -1426,6 +1556,8 @@
           };
          
           handle.addEventListener('mousedown', dragStart);
+          // BUG FIX: Pindahkan event listener 'touchstart' ke luar dari fungsi 'dragStart'
+          // untuk mencegah penambahan listener berulang kali (memory leak).
           handle.addEventListener('touchstart', dragStart, { passive: false });
 
           function elementDrag(e) {
@@ -1461,8 +1593,23 @@
       const floatingPanel = $('floatingControlPanel');
       makeDraggable(floatingPanel, floatingPanel.querySelector('.floating-panel-header'));
      
-      chartController = initializeChart();
-      overpressureChartController = initializeOverpressureChart();
+      // --- FINAL ROBUSTNESS CHECK FOR CHART LIBRARIES ---
+      if (typeof echarts !== 'undefined') {
+        chartController = initializeChart();
+      } else {
+        console.error("ECharts library failed to load.");
+        const chartContainer = $('chart');
+        if (chartContainer) chartContainer.innerHTML = '<p style="padding: 20px; text-align: center; color: var(--danger);">Failed to load Ps vs ze chart library. Please check your internet connection.</p>';
+      }
+
+      if (typeof Chart !== 'undefined') {
+        overpressureChartController = initializeOverpressureChart();
+      } else {
+        console.error("Chart.js library failed to load.");
+        const overpressureChartContainer = $('overpressureChart');
+        if (overpressureChartContainer) overpressureChartContainer.parentElement.innerHTML = '<p style="padding: 20px; text-align: center; color: var(--danger);">Failed to load Po vs Distance chart library. Please check your internet connection.</p>';
+      }
+      
       const debouncedCompute = debounce(() => compute(false), 250);
      
       inputFields.forEach(id => {
@@ -1522,6 +1669,7 @@
         renderLogTable();
         updateOverpressureChartFromLog();
         saveLogToLocalStorage();
+        showStatusMessage('status_log_saved'); // Memberikan umpan balik yang jelas kepada pengguna
       };
      
       const btnAddResult = $('btnAddResult');
@@ -1561,18 +1709,27 @@
               return;
           }
 
+          const mapLat = document.getElementById('mapLat').value;
+          const mapLon = document.getElementById('mapLon').value;
+          const poModel = document.getElementById('poModelSelect').value;
+
+          // Menggunakan format CSV standar (koma sebagai pemisah) untuk metadata
+          const metadataLines = [
+              `#mapLat,${mapLat}`,
+              `#mapLon,${mapLon}`,
+              `#poModel,${poModel}`
+          ];
+
           const headers = Object.keys(simulationLog[0]).filter(key => key !== 'isNew');
+          // Menggunakan koma (,) sebagai pemisah untuk header dan baris data
           const csvRows = [headers.join(',')];
 
           simulationLog.forEach(log => {
-              const values = headers.map(header => {
-                  const escaped = ('' + log[header]).replace(/"/g, '""');
-                  return `"${escaped}"`;
-              });
+              const values = headers.map(header => String(log[header] || ''));
               csvRows.push(values.join(','));
           });
 
-          const csvString = csvRows.join('\n');
+          const csvString = metadataLines.join('\n') + '\n' + csvRows.join('\n');
           const dataBlob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
           const url = URL.createObjectURL(dataBlob);
           const a = document.createElement('a');
@@ -1582,6 +1739,7 @@
           a.click();
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
+          showStatusMessage('status_export_success');
       });
 
       btnImportLog.addEventListener('click', () => {
@@ -1597,72 +1755,151 @@
               try {
                   const csv = e.target.result;
                   const lines = csv.split(/\r\n|\n/).filter(line => line.trim() !== '');
-                  if (lines.length < 2) {
-                      throw new Error(translations[currentLanguage].status_import_error_empty);
-                  }
-                 
-                  const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-                  const requiredHeaders = ['material', 'eta', 'e_tnt', 'vol', 'dist', 'w_tnt', 'ze', 'ps', 'po_crowl', 'po_alonso', 'po_sadovski'];
-                  const missingHeaders = requiredHeaders.filter(rh => !headers.includes(rh));
-
-                  if (missingHeaders.length > 0) {
-                      throw new Error(`${translations[currentLanguage].status_import_error_missing_cols}${missingHeaders.join(', ')}`);
-                  }
-
-                  const importedData = [];
-                  const numericalHeaders = ['eta', 'e_tnt', 'vol', 'dist', 'w_tnt', 'ze', 'ps'];
-                  const poHeaders = ['po_crowl', 'po_alonso', 'po_sadovski'];
-
-                  for (let i = 1; i < lines.length; i++) {
-                      const rowNum = i + 1;
-                      const values = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/"/g, ''));
-                      if (values.length !== headers.length) continue;
-
-                      const logEntry = {};
-                      for (let j = 0; j < headers.length; j++) {
-                          const header = headers[j];
-                          const value = values[j];
-
-                          // Validasi data numerik, dengan pesan error yang spesifik
-                          if (numericalHeaders.includes(header) && isNaN(parseFloat(value))) {
-                              throw new Error(`Data tidak valid di baris ${rowNum} (kolom "${header}"). Harap masukkan angka yang valid.`);
+                  
+                  let newLat, newLon, newPoModel;
+                  // Logika baru untuk mem-parsing metadata dan data yang dipisahkan koma
+                  const dataLines = lines.filter(line => {
+                      if (line.startsWith('#')) {
+                          const parts = line.substring(1).split(','); // Hapus '#' lalu pisahkan dengan koma
+                          if (parts.length >= 2) {
+                              const key = `#${parts[0].trim()}`;
+                              const value = parts[1].trim();
+                              if (key === '#mapLat') newLat = parseFloat(value);
+                              else if (key === '#mapLon') newLon = parseFloat(value);
+                              else if (key === '#poModel') newPoModel = value;
                           }
-                          // Validasi khusus untuk kolom Po, yang boleh berisi 'N/A'
-                          if (poHeaders.includes(header) && isNaN(parseFloat(value)) && value.toUpperCase() !== 'N/A') {
-                              throw new Error(`Data tidak valid di baris ${rowNum} (kolom "${header}"). Harap masukkan angka yang valid atau 'N/A'.`);
-                          }
-                          logEntry[header] = value;
+                          return false; // Baris metadata, jangan sertakan dalam dataLines
                       }
-                      importedData.push(logEntry);
-                  }
-                 
-                  if (importedData.length === 0) {
-                      throw new Error(translations[currentLanguage].status_import_error_no_data);
-                  }
-                 
-                  simulationLog = importedData.slice(0, 10);
+                      return true; // Baris data
+                  });
 
-                  if (simulationLog.length > 0) {
-                      const firstLog = simulationLog[0];
-                      const findMaterialValue = (abbr) => {
-                          const options = $('material').options;
-                          for (let i = 0; i < options.length; i++) {
-                              if (materialAbbreviationMap[options[i].text] === abbr) {
-                                  return options[i].value;
-                              }
-                          }
-                          return ''; 
-                      };
-                      $('material').value = findMaterialValue(firstLog.material);
-                      $('vol').value = firstLog.vol;
-                      $('dist').value = firstLog.dist;
-                      compute(true);
+                  // Terapkan pembaruan status dari metadata TERLEBIH DAHULU
+                  if (typeof newLat === 'number' && !isNaN(newLat) && typeof newLon === 'number' && !isNaN(newLon)) {
+                      settings.lat = newLat;
+                      settings.lon = newLon;
+                      savePartial({ lat: newLat, lon: newLon });
+                      updateCoordInputs(); 
+                      // PERBAIKAN FINAL: Panggil map.setView() secara langsung di sini.
+                      // Ini memastikan peta selalu berpusat pada koordinat yang diimpor,
+                      // bahkan jika file CSV tidak berisi baris data log.
+                      if (typeof map !== 'undefined' && map.setView) {
+                          map.setView([newLat, newLon]);
+                      }
                   }
 
+                  if (newPoModel && ['crowl', 'alonso', 'sadovski'].includes(newPoModel)) {
+                       // HANYA perbarui variabel settings. Peta akan diperbarui oleh observer.
+                       const poModelSelect = document.getElementById('poModelSelect');
+                       if(poModelSelect) poModelSelect.value = newPoModel;
+                       settings.poModel = newPoModel;
+                       savePartial({ poModel: newPoModel });
+                  }
+
+                  if (dataLines.length < 1) { // Bisa jadi hanya metadata
+                      if (newLat !== undefined || newPoModel !== undefined) {
+                          showStatusMessage('status_import_success'); // Metadata berhasil diimpor
+                          simulationLog = []; // Kosongkan log jika tidak ada baris data
+                      } else {
+                          throw new Error(translations[currentLanguage].status_import_error_empty);
+                      }
+                  } else {
+                    const headers = dataLines[0].split(',').map(h => h.trim());
+                    const requiredHeaders = ['material', 'eta', 'e_tnt', 'vol', 'dist', 'w_tnt', 'ze', 'ps', 'po_crowl', 'po_alonso', 'po_sadovski'];
+                    const missingHeaders = requiredHeaders.filter(rh => !headers.includes(rh));
+
+                    if (missingHeaders.length > 0) {
+                        throw new Error(`${translations[currentLanguage].status_import_error_missing_cols}${missingHeaders.join(', ')}`);
+                    }
+
+                    const importedData = [];
+                    const numericalHeaders = ['eta', 'e_tnt', 'vol', 'dist', 'w_tnt', 'ze', 'ps'];
+                    const poHeaders = ['po_crowl', 'po_alonso', 'po_sadovski'];
+
+                    for (let i = 1; i < dataLines.length; i++) {
+                        const rowNum = i + 1;
+                        const values = dataLines[i].split(',').map(v => v.trim());
+                        if (values.length !== headers.length) continue;
+
+                        const logEntry = {};
+                        for (let j = 0; j < headers.length; j++) {
+                            const header = headers[j];
+                            const value = values[j];
+
+                            if (numericalHeaders.includes(header) && isNaN(parseFloat(value))) {
+                                throw new Error(`Data tidak valid di baris ${rowNum} (kolom "${header}"). Harap masukkan angka yang valid.`);
+                            }
+                            if (poHeaders.includes(header) && isNaN(parseFloat(value)) && value.toUpperCase() !== 'N/A') {
+                                throw new Error(`Data tidak valid di baris ${rowNum} (kolom "${header}"). Harap masukkan angka yang valid atau 'N/A'.`);
+                            }
+                            logEntry[header] = value;
+                        }
+                        importedData.push(logEntry);
+                    }
+                   
+                    // BUG FIX: Menghapus error throw untuk file tanpa baris data.
+                    // if (importedData.length === 0) {
+                    //     throw new Error(translations[currentLanguage].status_import_error_no_data);
+                    // }
+                   
+                    simulationLog = importedData.slice(0, 10);
+                    showStatusMessage('status_import_success');
+                  }
+
+                  // === ALUR BARU YANG LEBIH KUAT ===
+                  // Langkah 1: Segera render tabel log dengan data yang baru diimpor.
+                  // Ini adalah prioritas utama untuk memberikan umpan balik kepada pengguna.
                   renderLogTable();
                   updateOverpressureChartFromLog();
                   saveLogToLocalStorage();
-                  showStatusMessage('status_import_success');
+
+                  // Langkah 2: Coba perbarui formulir kalkulator utama dengan entri pertama.
+                  // Ini adalah tugas sekunder; jika gagal, log tetap ditampilkan.
+                  if (simulationLog.length > 0) {
+                      try {
+                          const firstLog = simulationLog[0];
+                          const materialSelect = $('material');
+                          
+                          const findMaterialValue = (abbr) => {
+                              const options = materialSelect.options;
+                              for (let i = 0; i < options.length; i++) {
+                                  if (materialAbbreviationMap[options[i].text.trim()] === abbr.trim()) {
+                                      return options[i].value;
+                                  }
+                              }
+                              return '';
+                          };
+                      
+                          const materialValue = findMaterialValue(firstLog.material);
+                          if (materialValue) {
+                              // Atur nilai material.
+                              materialSelect.value = materialValue;
+                      
+                              // PERBAIKAN: Secara eksplisit muat preset, render persamaan, dan hitung ulang
+                              // tanpa bergantung pada dispatchEvent untuk alur yang lebih kuat.
+                              const p = presets[materialValue];
+                              if (p) {
+                                  Object.keys(p).forEach(key => {
+                                      const el = $(key);
+                                      if (el) el.value = p[key];
+                                  });
+                              }
+                              renderEquation(materialValue);
+                      
+                              // Atur volume dan jarak spesifik dari file impor.
+                              $('vol').value = firstLog.vol;
+                              $('dist').value = firstLog.dist;
+                      
+                              // Jalankan ulang perhitungan dengan semua input yang sudah benar.
+                              compute(true);
+                              
+                              // PERBAIKAN: Panggil fungsi sinkronisasi secara manual untuk memastikan
+                              // panel kontrol cepat diperbarui setelah impor CSV.
+                              syncFloatingPanelInputs();
+                          }
+                      } catch (e) {
+                          console.warn("Gagal memperbarui formulir utama dari CSV yang diimpor, tetapi log berhasil dimuat.", e);
+                      }
+                  }
 
               } catch (err) {
                   showStatusMessage('status_import_error', true, err.message);
@@ -1743,8 +1980,11 @@
           }
       };
 
-      window.addEventListener('resize', debounce(updateOnResizeOrRotate, 100));
-      window.addEventListener('orientationchange', updateOnResizeOrRotate);
+      // PERBAIKAN: Gunakan fungsi debounce untuk kedua event listener 
+      // untuk mencegah eksekusi ganda saat orientasi berubah.
+      const debouncedUpdateOnResizeOrRotate = debounce(updateOnResizeOrRotate, 150);
+      window.addEventListener('resize', debouncedUpdateOnResizeOrRotate);
+      window.addEventListener('orientationchange', debouncedUpdateOnResizeOrRotate);
 
       // --- INITIALIZATION SEQUENCE ---
       initLanguage(); 
@@ -1755,6 +1995,7 @@
       updateOverpressureChartFromLog();
       loadStateFromURL();
       setupCollapsePanel(); 
+      updatePsVsZeChart(); // Initial plot
      
       setTimeout(() => {
           isPageLoaded = true;
