@@ -84,13 +84,69 @@
     .btn-home-3d:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--button-shadow); }
     .btn-home-3d:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--button-active-shadow); }
     .footer-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
-    .dropdown-menu { position: relative; z-index: 1000; }
-    .dropdown-toggle { background-color: rgba(255, 255, 255, 0.9); color: var(--ink); padding: 8px 16px; font-size: 16px; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.2s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    .dropdown-toggle:hover { background-color: #ffffff; }
-    .dropdown-content { display: none; position: absolute; right: 0; top: 110%; background-color: #ffffff; min-width: 220px; box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); border-radius: 8px; overflow: hidden; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s; }
-    .dropdown-menu.is-active .dropdown-content { display: block; opacity: 1; visibility: visible; transform: translateY(0); }
-    .dropdown-content a { color: var(--ink); padding: 12px 16px; text-decoration: none; display: block; transition: background-color 0.2s ease, color 0.2s ease; font-weight: 500; white-space: nowrap; }
-    .dropdown-content a:hover { background-color: var(--stripe); color: var(--blue-itb); }
+    .dropdown-menu {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1002; /* Memastikan menu tampil di atas elemen lain */
+    }
+    .dropdown-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background-color: rgba(255, 255, 255, 0.9);
+      color: var(--ink);
+      padding: 8px 16px;
+      font-size: 16px;
+      font-weight: 600;
+      border: 1px solid #d6e3ef;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .dropdown-toggle:hover {
+      background-color: #ffffff;
+      border-color: var(--blue-itb);
+    }
+    .dropdown-toggle .hamburger-icon {
+      font-size: 20px;
+      line-height: 1;
+    }
+    .dropdown-content {
+      display: none; /* Disembunyikan secara default */
+      opacity: 0;
+      visibility: hidden;
+      position: absolute;
+      right: 0;
+      top: 110%;
+      background-color: #ffffff;
+      min-width: 220px;
+      box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      overflow: hidden;
+      transform: translateY(-10px);
+      transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+    }
+    .dropdown-menu.is-active .dropdown-content {
+      display: block;
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .dropdown-content a {
+      color: var(--ink);
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .dropdown-content a:hover {
+      background-color: var(--stripe);
+      color: var(--blue-itb);
+    }
     .chart-container { padding: 12px; background-color: var(--card); border-radius: 14px; position: relative; }
     #chart, #overpressureChart { width: 100%; height: 500px; }
     .chart-note { margin-top: 4px; text-align: center; font-style: italic; color: var(--muted); font-size: 11px; }
@@ -304,6 +360,17 @@
             padding-top: 12px;
             border-top: 2px solid var(--stripe);
         }
+    }
+
+    @media (max-width: 480px) {
+      .dropdown-menu {
+        top: 12px;
+        right: 12px;
+      }
+      .dropdown-toggle {
+        padding: 6px 12px;
+        font-size: 14px;
+      }
     }
 
     @media (max-width: 375px) {
