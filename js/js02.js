@@ -544,6 +544,37 @@
         return;
       }
 
+      // Secara otomatis menyinkronkan kontrol peta dengan entri pertama dalam log simulasi.
+      if (simulationLog.length > 0) {
+          const firstLog = simulationLog[0];
+          const lat = parseFloat(firstLog.lat);
+          const lon = parseFloat(firstLog.lon);
+          const poModel = firstLog.poModel;
+          let settingsChanged = false;
+
+          // Menyinkronkan koordinat
+          if (!isNaN(lat) && !isNaN(lon)) {
+              if (settings.lat !== lat || settings.lon !== lon) {
+                  settings.lat = lat;
+                  settings.lon = lon;
+                  settingsChanged = true;
+              }
+              updateCoordInputs(); // Fungsi ini memperbarui bidang input
+          }
+
+          // Menyinkronkan Po Model
+          const poModelSelect = document.getElementById('poModelSelect');
+          if (poModel && poModelSelect && settings.poModel !== poModel) {
+              settings.poModel = poModel;
+              poModelSelect.value = poModel; // Memperbarui UI dropdown
+              settingsChanged = true;
+          }
+          
+          if (settingsChanged) {
+              savePartial({ lat: settings.lat, lon: settings.lon, poModel: settings.poModel });
+          }
+      }
+
       // Pastikan nama lokasi diperbarui SEBELUM menggambar ulang peta
       await refreshPlaceName(settings.lat, settings.lon);
 
