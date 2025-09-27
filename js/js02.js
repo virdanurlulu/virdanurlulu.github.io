@@ -1,14 +1,23 @@
   window.addEventListener('load', () => {
+    // Periksa apakah pustaka Leaflet (objek 'L') telah berhasil dimuat.
+    if (typeof L === 'undefined') {
+        console.error("Pustaka Leaflet tidak dimuat. Peta tidak dapat diinisialisasi.");
+        const mapContainer = document.getElementById('map');
+        const mapCard = document.getElementById('mapCard');
+        if (mapContainer) {
+            mapContainer.innerHTML = '<p style="padding: 20px; text-align: center; color: var(--danger); font-weight: bold;">Kesalahan: Gagal memuat pustaka peta. Harap periksa koneksi internet Anda dan coba muat ulang halaman.</p>';
+        }
+        // Sembunyikan kontrol yang tidak relevan jika peta gagal dimuat
+        const controls = document.getElementById('mapControls');
+        if (controls) controls.style.display = 'none';
+        if (mapCard) mapCard.style.backgroundColor = 'var(--bg)';
+        return; // Hentikan eksekusi skrip peta
+    }
+
     // ======= BUILT-IN DEFAULTS =======
     const BUILTIN_DEFAULTS = {
-      lat: 33.901436, lon: 35.519057,
-      csv:
-  `49, 2042.348
-  150, 159.4947
-  300, 41.51972
-  500, 19.59217
-  1000, 8.648397
-  3000, 2.768441`,
+      lat: 33.901404, lon: 35.519039,
+      csv: '', // Dihapus: Data sekarang akan selalu berasal dari simulationLog
       np: 90, iv: 250, os: 0.3, of: 0.2, sw: 0.3, pal: 'bright',
       showLabel: true,
       poModel: 'crowl'
@@ -75,7 +84,11 @@
     }
     function savePartial(patch){
       settings = { ...settings, ...patch };
-      try { localStorage.setItem(LS_KEY, JSON.stringify(settings)); } catch {}
+      try { 
+        localStorage.setItem(LS_KEY, JSON.stringify(settings)); 
+      } catch (e) {
+        console.warn("Could not save map settings to local storage:", e);
+      }
     }
 
     // ======= Compose settings (QS ➜ LS ➜ Built-in) =======
@@ -428,6 +441,23 @@
     }
 
     const debouncedUpdateMapFromInput = debounce(() => {
+        const latStr = mapLatInput.value.trim();
+        const lonStr = mapLonInput.value.trim();
+
+        if (latStr === '' && lonStr === '') {
+            settings.lat = BUILTIN_DEFAULTS.lat;
+            settings.lon = BUILTIN_DEFAULTS.lon;
+            savePartial({ lat: settings.lat, lon: settings.lon });
+            updateCoordInputs();
+            isProgrammaticMove = true;
+            map.setView([settings.lat, settings.lon]);
+            refreshPlaceName(settings.lat, settings.lon).then(() => {
+                drawInitialState();
+            });
+            showNotification('Coordinates reset to default.', false);
+            return;
+        }
+        
         const lat = parseFloat(mapLatInput.value);
         const lon = parseFloat(mapLonInput.value);
 
@@ -462,6 +492,7 @@
             settings.poModel = poModelSelect.value;
             savePartial({ poModel: poModelSelect.value });
             updateMapFromLog();
+            updatePsVsZeChart(); // Update chart with new Po model selection
         });
     }
 
@@ -473,62 +504,86 @@
       setFSLabel(false);
       updateCoordInputs();
       if (poModelSelect) poModelSelect.value = settings.poModel;
-      drawInitialState();
+      // Memanggil updateMapFromLog() di sini untuk memastikan peta melakukan sinkronisasi dengan
+      // data log yang sudah dimuat saat halaman pertama kali dibuka.
+      updateMapFromLog(); 
     })();
+
+    // Listen for custom events from the other script for CSV import
+    window.addEventListener('map:updateCoords', (e) => {
+        const { lat, lon } = e.detail;
+        settings.lat = lat;
+        settings.lon = lon;
+        savePartial({ lat, lon });
+        updateCoordInputs();
+        isProgrammaticMove = true;
+        map.setView([lat, lon]);
+        refreshPlaceName(lat, lon).then(() => {
+            drawInitialState();
+        });
+    });
+
+    window.addEventListener('map:updatePoModel', (e) => {
+        const { model } = e.detail;
+        settings.poModel = model;
+        if(poModelSelect) poModelSelect.value = model;
+        savePartial({ poModel: model });
+        updateMapFromLog(); // Redraw map with new model selection
+    });
+
 
     // ======= INTEGRATION: Sync Map with Simulation Log =======
     /**
-     * Reads data from the Simulation Log table and updates the contour map.
+     * Reads data from the simulationLog array and updates the contour map.
+     * This version reads directly from the globally accessible `simulationLog` array
+     * for improved robustness, avoiding fragile DOM parsing.
      */
-    function updateMapFromLog() {
-      const logTbody = document.getElementById('logTbody');
-      if (!logTbody) return;
+    async function updateMapFromLog() {
+      if (typeof simulationLog === 'undefined' || !Array.isArray(simulationLog)) {
+        console.error("simulationLog array not found or not an array.");
+        return;
+      }
+
+      // Pastikan nama lokasi diperbarui SEBELUM menggambar ulang peta
+      await refreshPlaceName(settings.lat, settings.lon);
 
       const poModelSelect = document.getElementById('poModelSelect');
       const selectedModel = poModelSelect ? poModelSelect.value : (settings.poModel || 'crowl');
-      const modelColumnMap = {
-          crowl: 9,
-          alonso: 10,
-          sadovski: 11
+      const modelKeyMap = {
+          crowl: 'po_crowl',
+          alonso: 'po_alonso',
+          sadovski: 'po_sadovski'
       };
-      const pressureColumnIndex = modelColumnMap[selectedModel] || 9;
+      const pressureKey = modelKeyMap[selectedModel] || 'po_crowl';
 
-      const rows = logTbody.querySelectorAll('tr');
-      const csvLines = [];
-
-      rows.forEach(row => {
-          // Kolom 'Distance' adalah kolom ke-6 (indeks 5)
-          const distanceCell = row.cells[5];
-          // Kolom 'Crowl', 'Alonso', atau 'Sadovski' dipilih berdasarkan dropdown
-          const pressureCell = row.cells[pressureColumnIndex];
-
-          if (distanceCell) {
-              const distance = parseFloat(distanceCell.textContent);
-              if (!isNaN(distance) && distance > 0) {
-                  const pressure = pressureCell ? parseFloat(pressureCell.textContent) : NaN;
-                  // Format baris CSV: "jarak, tekanan". Tekanan bersifat opsional.
-                  const line = isNaN(pressure) ? `${distance}` : `${distance}, ${pressure}`;
-                  csvLines.push(line);
-              }
+      const csvLines = simulationLog.map(logEntry => {
+          const distance = parseFloat(logEntry.dist);
+          if (!isNaN(distance) && distance > 0) {
+              const pressure = logEntry[pressureKey] ? parseFloat(logEntry[pressureKey]) : NaN;
+              // Format CSV line: "distance, pressure". Pressure is optional.
+              return isNaN(pressure) ? `${distance}` : `${distance}, ${pressure}`;
           }
-      });
+          return null; // Return null for invalid entries
+      }).filter(Boolean); // Filter out null values
 
       const newCsv = csvLines.join('\n');
       
+      // Only redraw if the data has changed or if the map hasn't been drawn yet.
       if (newCsv !== settings.csv || (newCsv && !finalLayer)) {
           settings.csv = newCsv;
           
           if (csvLines.length === 0) {
-              rings = []; // Kosongkan data ring
-              clearLayers(); // Hapus semua layer dari peta
-              ensureCenterMarker(settings.lat, settings.lon, placeName); // Gambar ulang marker pusat
+              rings = []; // Clear ring data
+              clearLayers(); // Remove all layers from the map
+              ensureCenterMarker(settings.lat, settings.lon, placeName); // Redraw the center marker
           } else {
               drawInitialState();
           }
       }
     }
 
-    // Amati perubahan pada tabel log (saat baris ditambah atau dihapus)
+    // A MutationObserver on the log table is a reliable way to trigger a map update
+    // whenever the log data changes (add, delete, import, sort).
     const logTbodyObserver = document.getElementById('logTbody');
     if (logTbodyObserver) {
         const observer = new MutationObserver(() => {
@@ -539,7 +594,6 @@
         observer.observe(logTbodyObserver, { childList: true });
     }
     
-    // Panggilan updateMapFromLog yang berlebihan telah dihapus.
     // Observer sudah menangani pembaruan awal saat log pertama kali dirender.
 
     // ======= DYNAMIC LAYOUT: Move Simulation Log based on screen size =======
@@ -547,18 +601,14 @@
     const rightPanel = document.querySelector('.right');
     const logSection = document.querySelector('section[aria-labelledby="log-head"]');
     const overpressureChartSection = document.querySelector('section[aria-labelledby="overpressure-chart-head"]');
-    let resizeTimer;
 
     function adjustLogPosition() {
         if (!leftPanel || !rightPanel || !logSection || !overpressureChartSection) {
-            // This error can be ignored if it appears briefly on load, 
-            // as this function will be called again once elements are ready.
             return;
         }
 
         if (window.innerWidth <= 1024) {
             // Mobile/Tablet view: Move log to the left panel if it's not already there.
-            // It should be placed after the 'Overpressure vs Distance' chart.
             if (!leftPanel.contains(logSection)) {
                 overpressureChartSection.insertAdjacentElement('afterend', logSection);
             }
@@ -573,10 +623,10 @@
     // Initial check on page load
     adjustLogPosition();
 
-    // Adjust on window resize, with a debounce to prevent excessive calls
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(adjustLogPosition, 150);
-    });
+    // PERBAIKAN: Gunakan fungsi debounce dan tambahkan listener untuk 'orientationchange' 
+    // untuk memastikan tata letak selalu diperbarui dengan andal di perangkat seluler.
+    const debouncedAdjustLogPosition = debounce(adjustLogPosition, 150);
+    window.addEventListener('resize', debouncedAdjustLogPosition);
+    window.addEventListener('orientationchange', debouncedAdjustLogPosition);
 
   });
