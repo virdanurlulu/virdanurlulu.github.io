@@ -8,7 +8,7 @@
   <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
   <link rel="canonical" href="https://virdanurlulu.github.io/">
   <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
-  <link rel="dns-prefetch" href="//raw.githubusercontent.com">
+  <link rel="dns-prefetch" href="https://raw.githubusercontent.com">
   <link rel="preload" as="image" href="/img/banner-itb1.webp">
 
   <meta name="description" content="Interactive Simulation and Modeling of Explosion Effects Based on TNT Equivalence Using JavaScript: Incorporating Chemical Material Properties, Consequence Estimation, Pa–Ze Relationship, Overpressure–Distance Chart, and Visualization of Explosion Overpressure Contours.">
@@ -137,13 +137,69 @@
     .btn-home-3d:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--button-shadow); }
     .btn-home-3d:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--button-active-shadow); }
     .footer-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
-    .dropdown-menu { position: relative; z-index: 1000; }
-    .dropdown-toggle { background-color: rgba(255, 255, 255, 0.9); color: var(--ink); padding: 8px 16px; font-size: 16px; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.2s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    .dropdown-toggle:hover { background-color: #ffffff; }
-    .dropdown-content { display: none; position: absolute; right: 0; top: 110%; background-color: #ffffff; min-width: 220px; box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); border-radius: 8px; overflow: hidden; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s; }
-    .dropdown-menu.is-active .dropdown-content { display: block; opacity: 1; visibility: visible; transform: translateY(0); }
-    .dropdown-content a { color: var(--ink); padding: 12px 16px; text-decoration: none; display: block; transition: background-color 0.2s ease, color 0.2s ease; font-weight: 500; white-space: nowrap; }
-    .dropdown-content a:hover { background-color: var(--stripe); color: var(--blue-itb); }
+    .dropdown-menu {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1002; /* Memastikan menu tampil di atas elemen lain */
+    }
+    .dropdown-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background-color: rgba(255, 255, 255, 0.9);
+      color: var(--ink);
+      padding: 8px 16px;
+      font-size: 16px;
+      font-weight: 600;
+      border: 1px solid #d6e3ef;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .dropdown-toggle:hover {
+      background-color: #ffffff;
+      border-color: var(--blue-itb);
+    }
+    .dropdown-toggle .hamburger-icon {
+      font-size: 20px;
+      line-height: 1;
+    }
+    .dropdown-content {
+      display: none; /* Disembunyikan secara default */
+      opacity: 0;
+      visibility: hidden;
+      position: absolute;
+      right: 0;
+      top: 110%;
+      background-color: #ffffff;
+      min-width: 220px;
+      box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      overflow: hidden;
+      transform: translateY(-10px);
+      transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+    }
+    .dropdown-menu.is-active .dropdown-content {
+      display: block;
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .dropdown-content a {
+      color: var(--ink);
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .dropdown-content a:hover {
+      background-color: var(--stripe);
+      color: var(--blue-itb);
+    }
     .chart-container { padding: 12px; background-color: var(--card); border-radius: 14px; position: relative; }
     #chart, #overpressureChart { width: 100%; height: 500px; }
     .chart-note { margin-top: 4px; text-align: center; font-style: italic; color: var(--muted); font-size: 11px; }
@@ -359,6 +415,17 @@
         }
     }
 
+    @media (max-width: 480px) {
+      .dropdown-menu {
+        top: 12px;
+        right: 12px;
+      }
+      .dropdown-toggle {
+        padding: 6px 12px;
+        font-size: 14px;
+      }
+    }
+
     @media (max-width: 375px) {
         body {
             font-size: 13px;
@@ -429,7 +496,7 @@
       </div>
 
       <div class="dropdown-menu">
-        <button class="dropdown-toggle" data-lang-key="menu_button">Menu &#9776;</button>
+        <button class="dropdown-toggle"><span data-lang-key="menu_button">Menu</span><span class="hamburger-icon">&#9776;</span></button>
         <div class="dropdown-content">
           <a href="/" data-lang-key="menu_home">Home</a>
           <a href="/html/simulation-modeling-visualisation-explosion.html" data-lang-key="menu_app">Simulation & Modeling Application</a>
@@ -686,6 +753,8 @@
                             <th data-lang-key="log_col_material">Material</th>
                             <th>ηE</th>
                             <th>ETNT</th>
+                            <th>ρ</th>
+                            <th>ΔH<sub>exp</sub></th>
                             <th data-lang-key="log_col_volume">Volume</th>
                             <th data-lang-key="log_col_distance">Distance</th>
                             <th>WTNT</th>
@@ -694,10 +763,13 @@
                             <th>Crowl</th>
                             <th>Alonso</th>
                             <th>Sadovski</th>
+                            <th>Lat</th>
+                            <th>Lon</th>
+                            <th>Po Model</th>
                             <th class="col-action">-</th>
                         </tr>
                         <tr class="unit-row">
-                           <th></th><th></th><th></th><th>(kJ/kg)</th><th>(m³)</th><th>(m)</th><th>(kg)</th><th>(m·kg<sup>−1/3</sup>)</th><th></th><th>(kPa)</th><th>(kPa)</th><th>(kPa)</th><th></th>
+                           <th></th><th></th><th></th><th>(kJ/kg)</th><th>(kg/m³)</th><th>(kJ/kg)</th><th>(m³)</th><th>(m)</th><th>(kg)</th><th>(m·kg<sup>−1/3</sup>)</th><th></th><th>(kPa)</th><th>(kPa)</th><th>(kPa)</th><th></th><th></th><th></th><th></th>
                         </tr>
                     </thead>
                     <tbody id="logTbody"></tbody>
@@ -1443,11 +1515,11 @@
       ];
 
       const defaultLogData = [
-          { material: 'AN', eta: '0.35', e_tnt: '4500', vol: '1734.8209', dist: '1500', w_tnt: '576999.986', ze: '18.018', ps: '0.097', po_crowl: '9.857', po_alonso: '6.395', po_sadovski: '5.778' },
-          { material: 'AN', eta: '0.35', e_tnt: '4500', vol: '1734.8209', dist: '1000', w_tnt: '576999.986', ze: '12.012', ps: '0.156', po_crowl: '15.813', po_alonso: '10.235', po_sadovski: '9.617' },
-          { material: 'AN', eta: '0.35', e_tnt: '4500', vol: '1734.8209', dist: '700', w_tnt: '576999.986', ze: '8.408', ps: '0.250', po_crowl: '25.310', po_alonso: '15.647', po_sadovski: '15.698' },
-          { material: 'AN', eta: '0.35', e_tnt: '4500', vol: '1734.8209', dist: '500', w_tnt: '576999.986', ze: '6.006', ps: '0.419', po_crowl: '42.468', po_alonso: '30.771', po_sadovski: '26.163' },
-          { material: 'AN', eta: '0.35', e_tnt: '4500', vol: '1734.8209', dist: '300', w_tnt: '576999.986', ze: '3.604', ps: '1.096', po_crowl: '111.073', po_alonso: '85.912', po_sadovski: '63.387' }
+          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '300', w_tnt: '576999.986', ze: '3.604', ps: '1.096', po_crowl: '111.073', po_alonso: '85.912', po_sadovski: '63.787', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
+          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '500', w_tnt: '576999.986', ze: '6.006', ps: '0.419', po_crowl: '42.468', po_alonso: '30.771', po_sadovski: '26.163', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
+          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '700', w_tnt: '576999.986', ze: '8.408', ps: '0.250', po_crowl: '25.310', po_alonso: '15.647', po_sadovski: '15.698', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
+          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '1000', w_tnt: '576999.986', ze: '12.012', ps: '0.156', po_crowl: '15.813', po_alonso: '10.235', po_sadovski: '9.617', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
+          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '1500', w_tnt: '576999.986', ze: '18.018', ps: '0.097', po_crowl: '9.857', po_alonso: '6.395', po_sadovski: '5.778', lat: '33.901404', lon: '35.519039', poModel: 'crowl' }
       ];
 
       let chartController;
@@ -1606,13 +1678,10 @@
           const pa = parseFloat($("pa").value);
           if (isNaN(pa)) return;
 
-          // 1. Get Log Data
-          const poModelSelect = $('poModelSelect');
-          const selectedModelKey = poModelSelect ? `po_${poModelSelect.value}` : 'po_crowl';
-          
+          // 1. Dapatkan Data Log - SELALU gunakan 'po_crowl' untuk konsistensi.
           const logPoints = simulationLog.map(log => {
               const ze = parseFloat(log.ze);
-              const po = parseFloat(log[selectedModelKey]);
+              const po = parseFloat(log.po_crowl); // Revisi: Dikunci ke model Crowl
               if (!isNaN(ze) && !isNaN(po)) {
                   const ps = po / pa;
                   return [ze, ps];
@@ -1620,30 +1689,20 @@
               return null;
           }).filter(Boolean);
 
-          // 2. Get Current Calculation Data
+          // 2. Dapatkan Data Perhitungan Saat Ini - SELALU gunakan 'Po_crowl'.
           const currentZe = parseFloat($("Ze")?.value);
           
-          // BUG FIX: Calculate Ps for the current point dynamically based on the selected model
-          // This makes the red dot on the chart consistent with the user's selection.
           let currentPs;
           if (!isNaN(currentZe) && pa > 0) {
-              const currentPoCrowl = parseFloat($("Po_crowl")?.value);
-              const currentPoAlonso = parseFloat($("Po_alonso")?.value);
-              const currentPoSadovski = parseFloat($("Po_sadovski")?.value);
-              
-              let selectedPo;
-              if (selectedModelKey === 'po_crowl')      selectedPo = currentPoCrowl;
-              else if (selectedModelKey === 'po_alonso')   selectedPo = currentPoAlonso;
-              else if (selectedModelKey === 'po_sadovski') selectedPo = currentPoSadovski;
-
-              if (!isNaN(selectedPo)) {
-                  currentPs = selectedPo / pa;
+              const currentPoCrowl = parseFloat($("Po_crowl")?.value); // Revisi: Hanya menggunakan Crowl
+              if (!isNaN(currentPoCrowl)) {
+                  currentPs = currentPoCrowl / pa;
               }
           }
           
           const currentCalcPoint = { ze: currentZe, ps: currentPs };
           
-          // 3. Update chart
+          // 3. Perbarui grafik
           chartController.updateChart(currentCalcPoint, logPoints);
       }
 
@@ -2145,7 +2204,7 @@
         logTbody.innerHTML = ''; 
 
         if (simulationLog.length === 0) {
-            logTbody.innerHTML = `<tr class="log-placeholder"><td colspan="13">${translations[currentLanguage].log_placeholder}</td></tr>`;
+            logTbody.innerHTML = `<tr class="log-placeholder"><td colspan="18">${translations[currentLanguage].log_placeholder}</td></tr>`;
             return;
         }
 
@@ -2160,6 +2219,8 @@
                 <td data-label="${translations[currentLanguage].log_col_material}">${log.material}</td>
                 <td data-label="ηE">${log.eta}</td>
                 <td data-label="ETNT (kJ/kg)">${log.e_tnt}</td>
+                <td data-label="ρ (kg/m³)">${log.rho}</td>
+                <td data-label="ΔHexp (kJ/kg)">${log.dh}</td>
                 <td data-label="${translations[currentLanguage].log_col_volume} (m³)">${log.vol}</td>
                 <td data-label="${translations[currentLanguage].log_col_distance} (m)">${log.dist}</td>
                 <td data-label="WTNT (kg)">${log.w_tnt}</td>
@@ -2168,6 +2229,9 @@
                 <td data-label="Crowl (kPa)">${log.po_crowl}</td>
                 <td data-label="Alonso (kPa)">${log.po_alonso}</td>
                 <td data-label="Sadovski (kPa)">${log.po_sadovski}</td>
+                <td data-label="Lat">${log.lat}</td>
+                <td data-label="Lon">${log.lon}</td>
+                <td data-label="Po Model">${log.poModel}</td>
                 <td class="col-action">
                     <button class="btn-delete" data-index="${index}" title="Delete this line">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
@@ -2220,19 +2284,27 @@
       }
 
       const dropdown = document.querySelector('.dropdown-menu');
+      // Pastikan elemen dropdown ada sebelum menambahkan event listener
       if (dropdown) {
-          const dropdownToggle = dropdown.querySelector('.dropdown-toggle');
-          if (dropdownToggle) {
-              dropdownToggle.addEventListener('click', (event) => {
-                  event.stopPropagation();
-                  dropdown.classList.toggle('is-active');
-              });
-          }
-          document.addEventListener('click', (event) => {
-              if (dropdown.classList.contains('is-active') && !dropdown.contains(event.target)) {
-                  dropdown.classList.remove('is-active');
-              }
+        const dropdownToggle = dropdown.querySelector('.dropdown-toggle');
+
+        // Event listener untuk tombol menu
+        if (dropdownToggle) {
+          dropdownToggle.addEventListener('click', (event) => {
+            // Mencegah event klik menyebar ke elemen lain
+            event.stopPropagation();
+            // Toggle class 'is-active' untuk menampilkan atau menyembunyikan menu
+            dropdown.classList.toggle('is-active');
           });
+        }
+
+        // Event listener pada dokumen untuk menutup menu saat klik di luar area menu
+        document.addEventListener('click', (event) => {
+          // Cek jika menu sedang aktif dan klik terjadi di luar area '.dropdown-menu'
+          if (dropdown.classList.contains('is-active') && !dropdown.contains(event.target)) {
+            dropdown.classList.remove('is-active');
+          }
+        });
       }
      
       function setupFloatingPanel() {
@@ -2442,6 +2514,8 @@
             material: materialAbbreviationMap[selectedOption.text] || selectedOption.text,
             eta: $('eta').value,
             e_tnt: $('e_tnt').value,
+            rho: $('rho').value,
+            dh: $('dh').value,
             vol: $('vol').value,
             dist: $('dist').value,
             w_tnt: $('W_tnt').value,
@@ -2450,6 +2524,9 @@
             po_crowl: $('Po_crowl').value || 'N/A',
             po_alonso: $('Po_alonso').value || 'N/A',
             po_sadovski: $('Po_sadovski').value || 'N/A',
+            lat: $('mapLat').value,
+            lon: $('mapLon').value,
+            poModel: $('poModelSelect').value,
             isNew: true
         };
 
@@ -2506,27 +2583,27 @@
               return;
           }
 
-          const mapLat = document.getElementById('mapLat').value;
-          const mapLon = document.getElementById('mapLon').value;
-          const poModel = document.getElementById('poModelSelect').value;
-
-          // Menggunakan format CSV standar (koma sebagai pemisah) untuk metadata
-          const metadataLines = [
-              `#mapLat,${mapLat}`,
-              `#mapLon,${mapLon}`,
-              `#poModel,${poModel}`
-          ];
-
           const headers = Object.keys(simulationLog[0]).filter(key => key !== 'isNew');
-          // Menggunakan koma (,) sebagai pemisah untuk header dan baris data
+          
+          const escapeCsvCell = (cell) => {
+              const strCell = (cell === null || cell === undefined) ? '' : String(cell);
+              // Jika sel berisi koma, tanda kutip ganda, atau baris baru, sertakan dalam tanda kutip ganda.
+              if (/[",\n\r]/.test(strCell)) {
+                  // Di dalam string yang dikutip, setiap tanda kutip ganda harus di-escape dengan tanda kutip ganda lainnya.
+                  return `"${strCell.replace(/"/g, '""')}"`;
+              }
+              return strCell;
+          };
+
+          // Menggunakan koma (,) sebagai pemisah untuk format CSV standar.
           const csvRows = [headers.join(',')];
 
           simulationLog.forEach(log => {
-              const values = headers.map(header => String(log[header] || ''));
+              const values = headers.map(header => escapeCsvCell(log[header]));
               csvRows.push(values.join(','));
           });
 
-          const csvString = metadataLines.join('\n') + '\n' + csvRows.join('\n');
+          const csvString = csvRows.join('\n');
           const dataBlob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
           const url = URL.createObjectURL(dataBlob);
           const a = document.createElement('a');
@@ -2601,7 +2678,7 @@
                       }
                   } else {
                     const headers = dataLines[0].split(',').map(h => h.trim());
-                    const requiredHeaders = ['material', 'eta', 'e_tnt', 'vol', 'dist', 'w_tnt', 'ze', 'ps', 'po_crowl', 'po_alonso', 'po_sadovski'];
+                    const requiredHeaders = ['material', 'eta', 'e_tnt', 'rho', 'dh', 'vol', 'dist', 'w_tnt', 'ze', 'ps', 'po_crowl', 'po_alonso', 'po_sadovski', 'lat', 'lon', 'poModel'];
                     const missingHeaders = requiredHeaders.filter(rh => !headers.includes(rh));
 
                     if (missingHeaders.length > 0) {
@@ -3347,6 +3424,37 @@
       if (typeof simulationLog === 'undefined' || !Array.isArray(simulationLog)) {
         console.error("simulationLog array not found or not an array.");
         return;
+      }
+
+      // Secara otomatis menyinkronkan kontrol peta dengan entri pertama dalam log simulasi.
+      if (simulationLog.length > 0) {
+          const firstLog = simulationLog[0];
+          const lat = parseFloat(firstLog.lat);
+          const lon = parseFloat(firstLog.lon);
+          const poModel = firstLog.poModel;
+          let settingsChanged = false;
+
+          // Menyinkronkan koordinat
+          if (!isNaN(lat) && !isNaN(lon)) {
+              if (settings.lat !== lat || settings.lon !== lon) {
+                  settings.lat = lat;
+                  settings.lon = lon;
+                  settingsChanged = true;
+              }
+              updateCoordInputs(); // Fungsi ini memperbarui bidang input
+          }
+
+          // Menyinkronkan Po Model
+          const poModelSelect = document.getElementById('poModelSelect');
+          if (poModel && poModelSelect && settings.poModel !== poModel) {
+              settings.poModel = poModel;
+              poModelSelect.value = poModel; // Memperbarui UI dropdown
+              settingsChanged = true;
+          }
+          
+          if (settingsChanged) {
+              savePartial({ lat: settings.lat, lon: settings.lon, poModel: settings.poModel });
+          }
       }
 
       // Pastikan nama lokasi diperbarui SEBELUM menggambar ulang peta
