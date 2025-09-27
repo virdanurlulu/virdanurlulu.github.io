@@ -646,11 +646,11 @@
       ];
 
       const defaultLogData = [
-          { material: 'AN', eta: '0.35', e_tnt: '4500', vol: '1734.8209', dist: '1500', w_tnt: '576999.986', ze: '18.018', ps: '0.097', po_crowl: '9.857', po_alonso: '6.395', po_sadovski: '5.778' },
-          { material: 'AN', eta: '0.35', e_tnt: '4500', vol: '1734.8209', dist: '1000', w_tnt: '576999.986', ze: '12.012', ps: '0.156', po_crowl: '15.813', po_alonso: '10.235', po_sadovski: '9.617' },
-          { material: 'AN', eta: '0.35', e_tnt: '4500', vol: '1734.8209', dist: '700', w_tnt: '576999.986', ze: '8.408', ps: '0.250', po_crowl: '25.310', po_alonso: '15.647', po_sadovski: '15.698' },
-          { material: 'AN', eta: '0.35', e_tnt: '4500', vol: '1734.8209', dist: '500', w_tnt: '576999.986', ze: '6.006', ps: '0.419', po_crowl: '42.468', po_alonso: '30.771', po_sadovski: '26.163' },
-          { material: 'AN', eta: '0.35', e_tnt: '4500', vol: '1734.8209', dist: '300', w_tnt: '576999.986', ze: '3.604', ps: '1.096', po_crowl: '111.073', po_alonso: '85.912', po_sadovski: '63.387' }
+          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '300', w_tnt: '576999.986', ze: '3.604', ps: '1.096', po_crowl: '111.073', po_alonso: '85.912', po_sadovski: '63.787', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
+          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '500', w_tnt: '576999.986', ze: '6.006', ps: '0.419', po_crowl: '42.468', po_alonso: '30.771', po_sadovski: '26.163', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
+          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '700', w_tnt: '576999.986', ze: '8.408', ps: '0.250', po_crowl: '25.310', po_alonso: '15.647', po_sadovski: '15.698', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
+          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '1000', w_tnt: '576999.986', ze: '12.012', ps: '0.156', po_crowl: '15.813', po_alonso: '10.235', po_sadovski: '9.617', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
+          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '1500', w_tnt: '576999.986', ze: '18.018', ps: '0.097', po_crowl: '9.857', po_alonso: '6.395', po_sadovski: '5.778', lat: '33.901404', lon: '35.519039', poModel: 'crowl' }
       ];
 
       let chartController;
@@ -809,13 +809,10 @@
           const pa = parseFloat($("pa").value);
           if (isNaN(pa)) return;
 
-          // 1. Get Log Data
-          const poModelSelect = $('poModelSelect');
-          const selectedModelKey = poModelSelect ? `po_${poModelSelect.value}` : 'po_crowl';
-          
+          // 1. Dapatkan Data Log - SELALU gunakan 'po_crowl' untuk konsistensi.
           const logPoints = simulationLog.map(log => {
               const ze = parseFloat(log.ze);
-              const po = parseFloat(log[selectedModelKey]);
+              const po = parseFloat(log.po_crowl); // Revisi: Dikunci ke model Crowl
               if (!isNaN(ze) && !isNaN(po)) {
                   const ps = po / pa;
                   return [ze, ps];
@@ -823,30 +820,20 @@
               return null;
           }).filter(Boolean);
 
-          // 2. Get Current Calculation Data
+          // 2. Dapatkan Data Perhitungan Saat Ini - SELALU gunakan 'Po_crowl'.
           const currentZe = parseFloat($("Ze")?.value);
           
-          // BUG FIX: Calculate Ps for the current point dynamically based on the selected model
-          // This makes the red dot on the chart consistent with the user's selection.
           let currentPs;
           if (!isNaN(currentZe) && pa > 0) {
-              const currentPoCrowl = parseFloat($("Po_crowl")?.value);
-              const currentPoAlonso = parseFloat($("Po_alonso")?.value);
-              const currentPoSadovski = parseFloat($("Po_sadovski")?.value);
-              
-              let selectedPo;
-              if (selectedModelKey === 'po_crowl')      selectedPo = currentPoCrowl;
-              else if (selectedModelKey === 'po_alonso')   selectedPo = currentPoAlonso;
-              else if (selectedModelKey === 'po_sadovski') selectedPo = currentPoSadovski;
-
-              if (!isNaN(selectedPo)) {
-                  currentPs = selectedPo / pa;
+              const currentPoCrowl = parseFloat($("Po_crowl")?.value); // Revisi: Hanya menggunakan Crowl
+              if (!isNaN(currentPoCrowl)) {
+                  currentPs = currentPoCrowl / pa;
               }
           }
           
           const currentCalcPoint = { ze: currentZe, ps: currentPs };
           
-          // 3. Update chart
+          // 3. Perbarui grafik
           chartController.updateChart(currentCalcPoint, logPoints);
       }
 
@@ -1348,7 +1335,7 @@
         logTbody.innerHTML = ''; 
 
         if (simulationLog.length === 0) {
-            logTbody.innerHTML = `<tr class="log-placeholder"><td colspan="13">${translations[currentLanguage].log_placeholder}</td></tr>`;
+            logTbody.innerHTML = `<tr class="log-placeholder"><td colspan="18">${translations[currentLanguage].log_placeholder}</td></tr>`;
             return;
         }
 
@@ -1363,6 +1350,8 @@
                 <td data-label="${translations[currentLanguage].log_col_material}">${log.material}</td>
                 <td data-label="ηE">${log.eta}</td>
                 <td data-label="ETNT (kJ/kg)">${log.e_tnt}</td>
+                <td data-label="ρ (kg/m³)">${log.rho}</td>
+                <td data-label="ΔHexp (kJ/kg)">${log.dh}</td>
                 <td data-label="${translations[currentLanguage].log_col_volume} (m³)">${log.vol}</td>
                 <td data-label="${translations[currentLanguage].log_col_distance} (m)">${log.dist}</td>
                 <td data-label="WTNT (kg)">${log.w_tnt}</td>
@@ -1371,6 +1360,9 @@
                 <td data-label="Crowl (kPa)">${log.po_crowl}</td>
                 <td data-label="Alonso (kPa)">${log.po_alonso}</td>
                 <td data-label="Sadovski (kPa)">${log.po_sadovski}</td>
+                <td data-label="Lat">${log.lat}</td>
+                <td data-label="Lon">${log.lon}</td>
+                <td data-label="Po Model">${log.poModel}</td>
                 <td class="col-action">
                     <button class="btn-delete" data-index="${index}" title="Delete this line">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
@@ -1423,19 +1415,27 @@
       }
 
       const dropdown = document.querySelector('.dropdown-menu');
+      // Pastikan elemen dropdown ada sebelum menambahkan event listener
       if (dropdown) {
-          const dropdownToggle = dropdown.querySelector('.dropdown-toggle');
-          if (dropdownToggle) {
-              dropdownToggle.addEventListener('click', (event) => {
-                  event.stopPropagation();
-                  dropdown.classList.toggle('is-active');
-              });
-          }
-          document.addEventListener('click', (event) => {
-              if (dropdown.classList.contains('is-active') && !dropdown.contains(event.target)) {
-                  dropdown.classList.remove('is-active');
-              }
+        const dropdownToggle = dropdown.querySelector('.dropdown-toggle');
+
+        // Event listener untuk tombol menu
+        if (dropdownToggle) {
+          dropdownToggle.addEventListener('click', (event) => {
+            // Mencegah event klik menyebar ke elemen lain
+            event.stopPropagation();
+            // Toggle class 'is-active' untuk menampilkan atau menyembunyikan menu
+            dropdown.classList.toggle('is-active');
           });
+        }
+
+        // Event listener pada dokumen untuk menutup menu saat klik di luar area menu
+        document.addEventListener('click', (event) => {
+          // Cek jika menu sedang aktif dan klik terjadi di luar area '.dropdown-menu'
+          if (dropdown.classList.contains('is-active') && !dropdown.contains(event.target)) {
+            dropdown.classList.remove('is-active');
+          }
+        });
       }
      
       function setupFloatingPanel() {
@@ -1645,6 +1645,8 @@
             material: materialAbbreviationMap[selectedOption.text] || selectedOption.text,
             eta: $('eta').value,
             e_tnt: $('e_tnt').value,
+            rho: $('rho').value,
+            dh: $('dh').value,
             vol: $('vol').value,
             dist: $('dist').value,
             w_tnt: $('W_tnt').value,
@@ -1653,6 +1655,9 @@
             po_crowl: $('Po_crowl').value || 'N/A',
             po_alonso: $('Po_alonso').value || 'N/A',
             po_sadovski: $('Po_sadovski').value || 'N/A',
+            lat: $('mapLat').value,
+            lon: $('mapLon').value,
+            poModel: $('poModelSelect').value,
             isNew: true
         };
 
@@ -1709,27 +1714,27 @@
               return;
           }
 
-          const mapLat = document.getElementById('mapLat').value;
-          const mapLon = document.getElementById('mapLon').value;
-          const poModel = document.getElementById('poModelSelect').value;
-
-          // Menggunakan format CSV standar (koma sebagai pemisah) untuk metadata
-          const metadataLines = [
-              `#mapLat,${mapLat}`,
-              `#mapLon,${mapLon}`,
-              `#poModel,${poModel}`
-          ];
-
           const headers = Object.keys(simulationLog[0]).filter(key => key !== 'isNew');
-          // Menggunakan koma (,) sebagai pemisah untuk header dan baris data
+          
+          const escapeCsvCell = (cell) => {
+              const strCell = (cell === null || cell === undefined) ? '' : String(cell);
+              // Jika sel berisi koma, tanda kutip ganda, atau baris baru, sertakan dalam tanda kutip ganda.
+              if (/[",\n\r]/.test(strCell)) {
+                  // Di dalam string yang dikutip, setiap tanda kutip ganda harus di-escape dengan tanda kutip ganda lainnya.
+                  return `"${strCell.replace(/"/g, '""')}"`;
+              }
+              return strCell;
+          };
+
+          // Menggunakan koma (,) sebagai pemisah untuk format CSV standar.
           const csvRows = [headers.join(',')];
 
           simulationLog.forEach(log => {
-              const values = headers.map(header => String(log[header] || ''));
+              const values = headers.map(header => escapeCsvCell(log[header]));
               csvRows.push(values.join(','));
           });
 
-          const csvString = metadataLines.join('\n') + '\n' + csvRows.join('\n');
+          const csvString = csvRows.join('\n');
           const dataBlob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
           const url = URL.createObjectURL(dataBlob);
           const a = document.createElement('a');
@@ -1804,7 +1809,7 @@
                       }
                   } else {
                     const headers = dataLines[0].split(',').map(h => h.trim());
-                    const requiredHeaders = ['material', 'eta', 'e_tnt', 'vol', 'dist', 'w_tnt', 'ze', 'ps', 'po_crowl', 'po_alonso', 'po_sadovski'];
+                    const requiredHeaders = ['material', 'eta', 'e_tnt', 'rho', 'dh', 'vol', 'dist', 'w_tnt', 'ze', 'ps', 'po_crowl', 'po_alonso', 'po_sadovski', 'lat', 'lon', 'poModel'];
                     const missingHeaders = requiredHeaders.filter(rh => !headers.includes(rh));
 
                     if (missingHeaders.length > 0) {
