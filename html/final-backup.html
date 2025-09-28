@@ -477,6 +477,15 @@
             height: 85vh;
         }
     }
+
+  #logTable tbody tr.selected-row {
+    background-color: #dbeafe !important; /* Warna biru muda untuk sorotan */
+    font-weight: 600;
+  }
+
+  #logTable tbody tr:not(.log-placeholder) {
+    cursor: pointer; /* Mengubah kursor menjadi pointer saat di atas baris */
+  }
   </style>
 </head>
 <body class="theme-itb full">
@@ -2099,7 +2108,7 @@
         if (btnAddResult) btnAddResult.disabled = false;
 
         if (!isInitialLoad) {
-          saveStateToURL();
+          //saveStateToURL();
         }
       }
 
@@ -2139,7 +2148,6 @@
         if (hasParams) {
           // BUG FIX: Jika memuat dari URL, bersihkan log yang ada/default
           // untuk mencegah tampilan data yang tidak konsisten.
-          simulationLog = [];
           renderLogTable(); 
           updateOverpressureChartFromLog(); 
 
@@ -2546,6 +2554,59 @@
       }
 
       const logTbody = $('logTbody');
+
+      // Fungsi baru untuk menangani klik pada baris log
+      function handleLogRowClick(event) {
+        const row = event.target.closest('tr');
+        // Abaikan klik jika bukan pada baris data atau jika pada tombol hapus
+        if (!row || row.classList.contains('log-placeholder') || event.target.closest('.btn-delete')) {
+            return;
+        }
+        
+        const deleteButton = row.querySelector('.btn-delete');
+        if (!deleteButton) return;
+        
+        const index = parseInt(deleteButton.dataset.index, 10);
+        if (isNaN(index) || !simulationLog[index]) return;
+
+        // 1. Ambil data dari array simulationLog berdasarkan indeks
+        const logData = simulationLog[index];
+
+        // 2. Perbarui nilai pada form input utama
+        $('vol').value = logData.vol;
+        $('dist').value = logData.dist;
+        
+        // Mengubah material sedikit lebih rumit karena perlu memicu event 'change'
+        const materialSelect = $('material');
+        // Temukan nilai <option> yang sesuai dengan singkatan material (misal: 'AN')
+        const materialValue = Array.from(materialSelect.options).find(opt => 
+            (materialAbbreviationMap[opt.text] || opt.value) === logData.material
+        )?.value;
+
+        if (materialValue && materialSelect.value !== materialValue) {
+            materialSelect.value = materialValue;
+            // 3. Memicu event 'change' secara manual untuk menjalankan semua logika terkait
+            // seperti memuat properti, menampilkan persamaan, dan yang terpenting,
+            // memanggil fungsi `compute()` untuk menghitung ulang semuanya.
+            materialSelect.dispatchEvent(new Event('change'));
+        } else {
+            // Jika material tidak berubah, panggil `compute()` secara manual
+            compute(true);
+        }
+
+        // 4. Atur sorotan visual pada baris yang dipilih
+        document.querySelectorAll('#logTable tbody tr.selected-row').forEach(selectedRow => {
+            selectedRow.classList.remove('selected-row');
+        });
+        row.classList.add('selected-row');
+
+        // 5. Beri notifikasi kepada pengguna
+        showStatusMessage(`Data dari log #${index + 1} telah dimuat ke kalkulator.`);
+      }
+
+      // Tambahkan event listener ke <tbody>
+      logTbody.addEventListener('click', handleLogRowClick);
+
       logTbody.addEventListener('click', (event) => {
         const deleteButton = event.target.closest('.btn-delete');
         if (deleteButton) {
@@ -3542,4 +3603,3 @@
   </script>
 </body>
 </html>
-
