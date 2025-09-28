@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simulation & Modeling of Explosion Effects (TNT Equivalence)</title>
+
+  <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+  <link rel="canonical" href="https://virdanurlulu.github.io/">
+  <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
+  <link rel="dns-prefetch" href="https://raw.githubusercontent.com">
+  <link rel="preload" as="image" href="/img/banner-itb1.webp">
+
+  <meta name="description" content="Interactive Simulation and Modeling of Explosion Effects Based on TNT Equivalence Using JavaScript: Incorporating Chemical Material Properties, Consequence Estimation, Pa–Ze Relationship, Overpressure–Distance Chart, and Visualization of Explosion Overpressure Contours.">
+  <meta name="author" content="Virda Nur Lu'lu">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#0079c2">
+  <meta name="color-scheme" content="light dark">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Master’s Program in Chemical Engineering, Bandung Institute of Technology">
+  <meta property="og:title" content="Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript">
+  <meta property="og:description" content="Interactive Simulation and Modeling of Explosion Effects Based on TNT Equivalence Using JavaScript: Incorporating Chemical Material Properties, Consequence Estimation, Pa–Ze Relationship, Overpressure–Distance Chart, and Visualization of Explosion Overpressure Contours.">
+  <meta property="og:url" content="https://virdanurlulu.github.io/">
+  <meta property="og:image" content="https://virdanurlulu.github.io/img/ITB-Exlosion-Modeling-Simulation.webp">
+  <meta property="og:image:type" content="image/webp">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript">
+  <meta name="twitter:description" content="Interactive Simulation and Modeling of Explosion Effects Based on TNT Equivalence Using JavaScript: Incorporating Chemical Material Properties, Consequence Estimation, Pa–Ze Relationship, Overpressure–Distance Chart, and Visualization of Explosion Overpressure Contours.">
+  <meta name="twitter:image" content="https://virdanurlulu.github.io/img/ITB-Exlosion-Modeling-Simulation.webp">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Explosion Effects Simulation & Modeling (TNT Equivalence)", 
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Web",
+    "url": "https://virdanurlulu.github.io/",
+    "image": "https://virdanurlulu.github.io/img/ITB-Exlosion-Modeling-Simulation.webp",
+    "author": {"@type": "Person", "name": "Virda Nur Lu'lu", "sameAs": ["https://id.linkedin.com/in/virdanurlulu"]},
+    "inLanguage": "en",
+    "description": "Interactive Simulation and Modeling of Explosion Effects Based on TNT Equivalence Using JavaScript: Incorporating Chemical Material Properties, Consequence Estimation, Pa–Ze Relationship, Overpressure–Distance Chart, and Visualization of Explosion Overpressure Contours.",
+    "publisher": {"@type": "Organization", "name": "Bandung Institute of Technology", "url": "https://che.itb.ac.id/"}
+  }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body class="theme-itb full">
+  
+  <div class="wrap">
+    <div class="banner title">
+      <div class="brandbar">
+        <a href="https://virdanurlulu.github.io/" target="_blank" rel="noopener noreferrer" aria-label="Visit homepage">
+          <img id="itbLogo" class="brand-logo" alt="Logo ITB" width="96" height="96">
+        </a>
+        <div class="brand-text">
+          <h1 data-lang-key="app_title">Simulation and Modeling of Explosion Effects Based on TNT Equivalence <span class="nowrap">using Javascript</span></h1>
+          <h2>
+            <span class="sub-line1" data-lang-key="app_subtitle1">Master’s Program in Chemical Engineering, </span>
+            <span class="sub-line2" data-lang-key="app_subtitle2">Bandung Institute of Technology</span>
+          </h2>
+        </div>
+      </div>
+
+      <div class="dropdown-menu">
+        <button class="dropdown-toggle"><span data-lang-key="menu_button">Menu</span><span class="hamburger-icon">&#9776;</span></button>
+        <div class="dropdown-content">
+          <a href="/" data-lang-key="menu_home">Home</a>
+          <a href="/html/simulation-modeling-visualisation-explosion.html" data-lang-key="menu_app">Simulation & Modeling Application</a>
+          <a href="#" data-lang-key="menu_guide">Simulation Guide (coming soon)</a>
+          <a href="/html/presentation-slide.html" data-lang-key="menu_presentation">Presentation</a>
+          <a href="#" data-lang-key="menu_journal">Journal & Conference (coming soon)</a>
+          <a href="/html/bibliography_sim_modeling_explosion.html" data-lang-key="menu_bibliography">Bibliography</a>
+        </div>
+      </div>
+      
+      <div id="language-switcher">
+          <button class="lang-btn" data-lang="en" aria-label="Switch to English">
+              <img src="https://virdanurlulu.github.io/img/EN.svg" alt="Switch to English" />
+          </button>
+          <button class="lang-btn" data-lang="id" aria-label="Ganti ke Bahasa Indonesia">
+              <img src="https://virdanurlulu.github.io/img/ID.svg" alt="Ganti ke Bahasa Indonesia" />
+          </button>
+      </div>
+
+    </div>
+
+    <main class="split" role="main">
+      <div class="left">
+        <section class="card" id="materialCard" aria-labelledby="mat-head">
+          <div id="mat-head" class="card-header" data-lang-key="card_title_material">Chemical Material</div>
+          <div style="padding:14px">
+            <div class="chem-grid">
+              <div class="matcol">
+                <div>
+                  <label for="material" class="label" data-lang-key="label_select_material">Select Material</label>
+                  <select id="material">
+                    <option value="" data-lang-key="select_option_default">— Select —</option>
+                    <option value="AN" data-lang-key="select_option_an">Ammonium Nitrate (AN)</option>
+                    <option value="LPG" data-lang-key="select_option_lpg">Propane (LPG)</option>
+                    <option value="H2" data-lang-key="select_option_h2">Hydrogen (H₂)</option>
+                  </select>
+                </div>
+                <div class="mini">
+                  <div>
+                    <label for="vol" class="label" data-lang-key="label_volume">Volume (m³)</label>
+                    <input id="vol" type="number" min="0" step="any" placeholder="e.g., 12.5" aria-label="Volume" />
+                  </div>
+                  <div>
+                    <label for="dist" class="label" data-lang-key="label_distance">Distance (m)</label>
+                    <input id="dist" type="number" min="0" step="any" placeholder="e.g., 150" aria-label="Distance" />
+                  </div>
+                </div>
+              </div>
+              <div class="eq-panel">
+                <div class="eq-title" data-lang-key="eq_panel_title">Representative Overall Reaction</div>
+                <div id="eq-text" class="eq-body" data-lang-key="eq_panel_placeholder">Select a material to display the reaction equation.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="prop-head">
+          <div id="prop-head" class="card-header" data-lang-key="card_title_properties">Properties</div>
+          <div style="padding:12px">
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th data-lang-key="table_header_properties">Properties</th>
+                    <th data-lang-key="table_header_value">Value</th>
+                    <th data-lang-key="table_header_unit">Unit</th>
+                    <th data-lang-key="table_header_literature">Literature</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td data-label="Properties"><label for="rho">Density ρ = m/V</label></td><td data-label="Value"><input id="rho" type="number" min="0" step="any"/></td><td data-label="Unit" class="unit">kg/m³</td><td data-label="Source" class="ref">@Literature</td></tr>
+                  <tr><td data-label="Properties"><label for="dh">ΔH<sub>explosion</sub></label></td><td data-label="Value"><input id="dh" type="number" step="any"/></td><td data-label="Unit" class="unit">kJ/kg</td><td data-label="Source" class="ref">@Literature</td></tr>
+                  <tr><td data-label="Properties"><label for="pa" data-lang-key="label_ambient_pressure">Ambient Pressure</label></td><td data-label="Value"><input id="pa" type="number" min="0" step="any"/></td><td data-label="Unit" class="unit">kPa</td><td data-label="Source" class="ref">@Literature</td></tr>
+                  <tr><td data-label="Properties"><label for="eta" data-lang-key="label_explosion_efficiency">η<sub>E</sub> Explosion Efficiency</label></td><td data-label="Value"><input id="eta" type="number" min="0" max="1" step="any"/></td><td data-label="Unit" class="unit">–</td><td data-label="Source" class="ref">@Literature</td></tr>
+                  <tr><td data-label="Properties"><label for="e_tnt">E<sub>TNT</sub></label></td><td data-label="Value"><input id="e_tnt" type="number" min="0" step="any"/></td><td data-label="Unit" class="unit">kJ/kg</td><td data-label="Source" class="ref">@Literature</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="param-head">
+          <div id="param-head" class="card-header">
+            <span data-lang-key="card_title_parameters">Parameters</span>
+            <button class="btn" id="btnAddResult" data-lang-key="btn_add_result" disabled>Add to Log & Map</button>
+          </div>
+          <div style="padding:12px">
+            <div class="table-wrapper">
+              <table>
+                <thead><tr>
+                  <th data-lang-key="table_header_parameters">Parameters</th>
+                  <th data-lang-key="table_header_value">Value</th>
+                  <th data-lang-key="table_header_unit">Unit</th>
+                  <th data-lang-key="table_header_sources">Sources</th>
+                </tr></thead>
+                <tbody>
+                  <tr><td data-label="Parameters" data-lang-key="param_mass_material">(W) Mass Material</td><td data-label="Value"><input id="W_mass" type="text" readonly /></td><td data-label="Unit" class="unit">kg</td><td data-label="Source" class="ref" data-lang-key="source_calculated">@Calculated</td></tr>
+                  <tr><td data-label="Parameters" data-lang-key="param_total_energy">(E) Total Energy</td><td data-label="Value"><input id="E_total" type="text" readonly /></td><td data-label="Unit" class="unit">kJ</td><td data-label="Source" class="ref" data-lang-key="source_calculated">@Calculated</td></tr>
+                  <tr><td data-label="Parameters" data-lang-key="param_tnt_equivalent">(W) TNT Equivalent</td><td data-label="Value"><input id="W_tnt" type="text" readonly /></td><td data-label="Unit" class="unit">kg</td><td data-label="Source" class="ref" data-lang-key="source_calculated">@Calculated</td></tr>
+                  <tr><td data-label="Parameters" data-lang-key="param_scaled_distance">(Ze) Scaled Distance</td><td data-label="Value"><input id="Ze" type="text" readonly /></td><td data-label="Unit" class="unit">m·kg<sup>−1/3</sup></td><td data-label="Source" class="ref" data-lang-key="source_calculated">@Calculated</td></tr>
+                  <tr><td data-label="Parameters" data-lang-key="param_scaled_overpressure">(Ps) Scaled Overpressure</td><td data-label="Value"><input id="Ps" type="text" readonly /></td><td data-label="Unit" class="unit">–</td><td data-label="Source" class="ref" data-lang-key="source_crowl_kinney">@Crowl/Kinney</td></tr>
+                  <tr><td data-label="Parameters" data-lang-key="param_peak_overpressure">(Po) Peak side-on overpressure</td><td data-label="Value"><input id="Po_crowl" type="text" readonly /></td><td data-label="Unit" class="unit">kPa</td><td data-label="Source" class="ref" data-lang-key="source_crowl">@Crowl</td></tr>
+                  <tr><td data-label="Parameters" data-lang-key="param_peak_overpressure">(Po) Peak side-on overpressure</td><td data-label="Value"><input id="Po_alonso" type="text" readonly /></td><td data-label="Unit" class="unit">kPa</td><td data-label="Source" class="ref" data-lang-key="source_alonso">@Alonso</td></tr>
+                  <tr><td data-label="Parameters" data-lang-key="param_peak_overpressure">(Po) Peak side-on overpressure</td><td data-label="Value"><input id="Po_sadovski" type="text" readonly /></td><td data-label="Unit" class="unit">kPa</td><td data-label="Source" class="ref" data-lang-key="source_sadovski">@Sadovski</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="msg" class="status" role="status" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="chart-head">
+          <div id="chart-head" class="card-header">
+            <span data-lang-key="chart_title_ps_vs_ze">Scaled Overpressure vs Scaled Distance</span>
+            <button class="btn" id="btnExport" data-lang-key="btn_export_png">Export PNG</button>
+          </div>
+          <div class="chart-container">
+            <div id="chart" role="img" aria-label="Log-log plot of Ps (Po/Pa) versus ze based on Kinney &amp; Graham (1985)."></div>
+            <noscript><p data-lang-key="chart_noscript">Please enable JavaScript to display the chart. Reference: G. F. Kinney & K. J. Graham (1985).</p></noscript>
+            <div class="chart-note" data-lang-key="chart_note_source">Source: G. F. Kinney & K. J. Graham, <em>Explosive Shocks in Air</em>, Springer-Verlag, 1985.</div>
+          </div>
+        </section>
+        
+        <section class="card" aria-labelledby="overpressure-chart-head">
+          <div id="overpressure-chart-head" class="card-header">
+            <span data-lang-key="chart_title_po_vs_dist">Overpressure vs Distance</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="overpressureChart"></canvas>
+            <div id="overpressureChartMsg" class="chart-note" style="display: none; padding: 20px; font-size: 14px;"></div>
+            <noscript><p data-lang-key="chart_noscript_generic">Please enable JavaScript to display the chart.</p></noscript>
+          </div>
+        </section>
+        
+        <section class="card" aria-labelledby="contour-map-head">
+          <div id="contour-map-head" class="card-header">
+            <span data-lang-key="contour_map_title">Explosion Contour Map</span>
+          </div>
+          <div style="padding: 14px;">
+            <div id="contourMapContainer">
+              <div class="fs-host" id="mapCard">
+                <div id="mapTitle" class="map-title">Explosion Contour</div>
+                <button id="fsBtn" class="fs-btn" aria-pressed="false" title="Fullscreen (F)">⛶ Fullscreen</button>
+                <button id="fsBtnMobile" class="fs-btn fs-btn-mobile" aria-pressed="false" title="Fullscreen">⛶ Fullscreen</button>
+                <div id="map" role="region" aria-label="Explosion contour map"></div>
+                <div class="legend" id="legend" hidden></div>
+                <div id="notification" class="notification"></div>
+              </div>
+            </div>
+            <div id="mapControls">
+              <div class="coord-inputs">
+                  <label for="mapLat">Lat</label>
+                  <input type="number" id="mapLat" step="any" aria-label="Latitude">
+                  <label for="mapLon">Lon</label>
+                  <input type="number" id="mapLon" step="any" aria-label="Longitude">
+              </div>
+              <div class="model-select">
+                  <label for="poModelSelect">Select Po</label>
+                  <select id="poModelSelect">
+                      <option value="crowl">Crowl</option>
+                      <option value="alonso">Alonso</option>
+                      <option value="sadovski">Sadovski</option>
+                  </select>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <aside class="right">
+        <section class="card estimation" aria-labelledby="est-damage">
+          <div id="est-damage" class="card-header" data-lang-key="estimation_damage_title">Estimation of Damage to Structures and Process Equipment</div>
+          <div class="method-grid">
+            <div class="method-card" id="panel-damage-crowl">
+              <div class="vlabel">CROWL</div>
+              <div class="pad">
+                <p><strong>Overpressure (Po):</strong> <span id="val-Po-crowl">—</span> kPa</p>
+                <div>
+                  <strong data-lang-key="damage_details_label">Damage Details:</strong>
+                  <div class="damage-category">
+                    <strong data-lang-key="structural_label">Structural:</strong>
+                    <ul id="structural-damage-crowl"></ul>
+                  </div>
+                  <div class="damage-category">
+                    <strong data-lang-key="process_equipment_label">Process Equipment:</strong>
+                    <ul id="equipment-damage-crowl"></ul>
+                  </div>
+                </div>
+              </div>
+              <div class="sevfoot" id="sev-crowl" data-lang-key="unknown">Unknown</div>
+            </div>
+            <div class="method-card" id="panel-damage-alonso">
+              <div class="vlabel">ALONSO</div>
+              <div class="pad">
+                <p><strong>Overpressure (Po):</strong> <span id="val-Po-alonso">—</span> kPa</p>
+                  <div>
+                  <strong data-lang-key="damage_details_label">Damage Details:</strong>
+                  <div class="damage-category">
+                    <strong data-lang-key="structural_label">Structural:</strong>
+                    <ul id="structural-damage-alonso"></ul>
+                  </div>
+                  <div class="damage-category">
+                    <strong data-lang-key="process_equipment_label">Process Equipment:</strong>
+                    <ul id="equipment-damage-alonso"></ul>
+                  </div>
+                </div>
+              </div>
+              <div class="sevfoot" id="sev-alonso" data-lang-key="unknown">Unknown</div>
+            </div>
+            <div class="method-card" id="panel-damage-sadovski">
+              <div class="vlabel">SADOVSKI</div>
+              <div class="pad">
+                <p><strong>Overpressure (Po):</strong> <span id="val-Po-sadovski">—</span> kPa</p>
+                  <div>
+                  <strong data-lang-key="damage_details_label">Damage Details:</strong>
+                  <div class="damage-category">
+                    <strong data-lang-key="structural_label">Structural:</strong>
+                    <ul id="structural-damage-sadovski"></ul>
+                  </div>
+                  <div class="damage-category">
+                    <strong data-lang-key="process_equipment_label">Process Equipment:</strong>
+                    <ul id="equipment-damage-sadovski"></ul>
+                  </div>
+                </div>
+              </div>
+              <div class="sevfoot" id="sev-sadovski" data-lang-key="unknown">Unknown</div>
+            </div>
+          </div>
+        </section>
+        <section class="card estimation" aria-labelledby="est-injury">
+          <div id="est-injury" class="card-header" data-lang-key="estimation_injury_title">Estimation of Injury Consequences</div>
+          <div class="method-grid">
+            <div class="method-card" id="panel-injury-crowl"><div class="vlabel">CROWL</div><div class="pad"><p><strong>Overpressure (Po):</strong> <span id="val-Po-crowl-inj">—</span> kPa</p><p><strong data-lang-key="effects_label">Effects:</strong></p><ul id="injury-effects-crowl"></ul></div><div class="sevfoot" id="sev-injury-crowl" data-lang-key="unknown">Unknown</div></div>
+            <div class="method-card" id="panel-injury-alonso"><div class="vlabel">ALONSO</div><div class="pad"><p><strong>Overpressure (Po):</strong> <span id="val-Po-alonso-inj">—</span> kPa</p><p><strong data-lang-key="effects_label">Effects:</strong></p><ul id="injury-effects-alonso"></ul></div><div class="sevfoot" id="sev-injury-alonso" data-lang-key="unknown">Unknown</div></div>
+            <div class="method-card" id="panel-injury-sadovski"><div class="vlabel">SADOVSKI</div><div class="pad"><p><strong>Overpressure (Po):</strong> <span id="val-Po-sadovski-inj">—</span> kPa</p><p><strong data-lang-key="effects_label">Effects:</strong></p><ul id="injury-effects-sadovski"></ul></div><div class="sevfoot" id="sev-injury-sadovski" data-lang-key="unknown">Unknown</div></div>
+          </div>
+        </section>
+        <section class="card" aria-labelledby="log-head">
+            <div id="log-head" class="card-header">
+                <span data-lang-key="log_title">Simulation Log</span>
+                <div class="log-actions">
+                    <button class="btn" id="btnSortLog" data-lang-key="btn_sort">Sort</button>
+                    <button class="btn" id="btnExportLog" data-lang-key="btn_export_csv">Export CSV</button>
+                    <button class="btn" id="btnImportLog" data-lang-key="btn_import_csv">Import CSV</button>
+                    <input type="file" id="importFile" accept=".csv" style="display: none;" />
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table id="logTable">
+                    <thead>
+                        <tr>
+                            <th data-lang-key="log_col_node">Node</th>
+                            <th data-lang-key="log_col_material">Material</th>
+                            <th>ηE</th>
+                            <th>ETNT</th>
+                            <th>ρ</th>
+                            <th>ΔH<sub>exp</sub></th>
+                            <th data-lang-key="log_col_volume">Volume</th>
+                            <th data-lang-key="log_col_distance">Distance</th>
+                            <th>WTNT</th>
+                            <th>ze</th>
+                            <th>Ps</th>
+                            <th>Crowl</th>
+                            <th>Alonso</th>
+                            <th>Sadovski</th>
+                            <th>Lat</th>
+                            <th>Lon</th>
+                            <th>Po Model</th>
+                            <th class="col-action">-</th>
+                        </tr>
+                        <tr class="unit-row">
+                           <th></th><th></th><th></th><th>(kJ/kg)</th><th>(kg/m³)</th><th>(kJ/kg)</th><th>(m³)</th><th>(m)</th><th>(kg)</th><th>(m·kg<sup>−1/3</sup>)</th><th></th><th>(kPa)</th><th>(kPa)</th><th>(kPa)</th><th>° N</th><th>° E</th><th>Po</th><th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="logTbody"></tbody>
+                </table>
+            </div>
+            <div style="padding: 0 14px 14px;">
+                <p class="footnote" data-lang-key="log_footnote">Click "Save" to log the calculation results. The last 10 entries will be stored in your browser.</p>
+            </div>
+        </section>
+      </aside>
+    </main>
+  </div>
+    
+  <div id="floatingControlPanel">
+      <div class="floating-panel-header">
+        <h3 data-lang-key="quick_control_panel">Quick Control Panel</h3>
+        <div class="panel-header-buttons">
+          <button id="floatPanelCollapseBtn" class="floating-panel-action-btn" aria-label="Collapse/Expand Panel">▲</button>
+        </div>
+      </div>
+      <div class="floating-panel-body">
+        <div id="floatPanelInputs">
+        </div>
+        <div id="floatPanelOutputs">
+        </div>
+      </div>
+  </div>
+
+  <footer class="app-footer">
+      <div class="footer-content">
+        <div class="footer-buttons">
+          <a class="btn-home-3d" href="/" target="_blank" rel="noopener noreferrer" data-lang-key="menu_home">Home</a>
+          <a class="btn-home-3d" href="#" data-lang-key="footer_guide">Guide</a>
+          <a class="btn-home-3d" href="#" data-lang-key="menu_presentation">Presentation</a>
+          <a class="btn-home-3d" href="#" data-lang-key="footer_journal">Journal</a>
+          <a class="btn-home-3d" href="https://id.linkedin.com/in/virdanurlulu" data-lang-key="footer_profile">Profile</a>
+        </div>
+        <div class="credit">
+          <span data-lang-key="footer_copyright">Copyright © 2025 by</span>
+          <a href="https://id.linkedin.com/in/virdanurlulu" target="_blank" rel="nofollow noopener noreferrer" style="text-decoration: none;">Virda Nur Lu'lu</a>
+        </div>
+        <div class="dedication">
+          <span data-lang-key="footer_dedication1">This application is dedicated to my parents for their persistent support and patient guidance throughout my JavaScript journey.</span>
+          <span data-lang-key="footer_dedication2">It is also presented to the academic community at</span>
+          <a href="https://che.itb.ac.id/" target="_blank" rel="nofollow noopener noreferrer" data-lang-key="footer_dedication_itb">Bandung Institute of Technology</a>
+          <span data-lang-key="footer_dedication3">as a contribution towards inspiring further advancements in JavaScript technology.</span>
+        </div>
+      </div>
+  </footer>
+
+  <button class="btn" id="toTop" type="button" aria-label="Back to Top">&#8679;</button>
+  
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+  
+  <script src="script.js"></script>
+
+</body>
+</html>
