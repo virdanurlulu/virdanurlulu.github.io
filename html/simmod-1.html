@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -40,7 +40,8 @@
     "image": "https://virdanurlulu.github.io/img/ITB-Exlosion-Modeling-Simulation.webp",
     "author": {"@type": "Person", "name": "Virda Nur Lu'lu", "sameAs": ["https://id.linkedin.com/in/virdanurlulu"]},
     "inLanguage": "en",
-    "description": "Interactive Simulation and Modeling of Explosion Effects Based on TNT Equivalence Using JavaScript: Incorporating Chemical Material Properties, Consequence Estimation, Pa–Ze Relationship, Overpressure–Distance Chart, and Visualization of Explosion Overpressure Contours."
+    "description": "Interactive Simulation and Modeling of Explosion Effects Based on TNT Equivalence Using JavaScript: Incorporating Chemical Material Properties, Consequence Estimation, Pa–Ze Relationship, Overpressure–Distance Chart, and Visualization of Explosion Overpressure Contours.",
+    "publisher": {"@type": "Organization", "name": "Bandung Institute of Technology", "url": "https://che.itb.ac.id/"}
   }
   </script>
 
@@ -48,69 +49,54 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="https://virdanurlulu.github.io/css/style-app.css">
-
   <style>
-    #aiResultContainer ol {
-        font-size: 8pt;
-        list-style-position: inside;
-        padding-left: 0;
+    /* Styling for Gemini Feature */
+    .gemini-card .card-header {
+      background: linear-gradient(45deg, #4285f4, #9b72cb);
+      color: white;
     }
-    #aiResultContainer li {
-        margin-bottom: 10px;
-        padding-left: 2em;
-        text-indent: -2em;
+    #gemini-prompt {
+      width: 100%; 
+      box-sizing: border-box; 
+      min-height: 80px; 
+      margin-bottom: 10px; 
+      padding: 8px; 
+      border-radius: 4px; 
+      border: 1px solid #ccc; 
+      font-family: inherit;
+      resize: vertical;
     }
-     #aiResultContainer p {
-        font-size: 8pt;
-        font-weight: normal;
-        text-align: left;
-        text-indent: 0;
-        margin-bottom: 1em;
+    #gemini-response {
+      margin-top: 15px; 
+      padding: 12px; 
+      border: 1px solid #e0e0e0; 
+      border-radius: 4px; 
+      min-height: 50px; 
+      background-color: #f9f9f9; 
+      white-space: pre-wrap; 
+      word-wrap: break-word;
+      font-size: 14px;
+      line-height: 1.6;
     }
-    #aiResultContainer h1, #aiResultContainer h2, #aiResultContainer .section-title, #aiResultContainer h3, #aiResultContainer ol li {
-        text-indent: 0;
+    #gemini-response.loading::after {
+      content: '●';
+      animation: dots 1.4s infinite;
+      animation-timing-function: ease-in-out;
+      text-align: center;
+      display: block;
+      margin-top: 10px;
+      font-size: 24px;
     }
-    #aiResultContainer h1 { 
-        font-size: 11pt; 
-        text-align: center; 
-        font-weight: bold;
+    @keyframes dots {
+      0%, 20% { color: rgba(0,0,0,0.2); text-shadow: .25em 0 0 rgba(0,0,0,0.2), .5em 0 0 rgba(0,0,0,0.2); }
+      40% { color: #4285f4; text-shadow: .25em 0 0 rgba(0,0,0,0.2), .5em 0 0 rgba(0,0,0,0.2); }
+      60% { text-shadow: .25em 0 0 #4285f4, .5em 0 0 rgba(0,0,0,0.2); }
+      80%, 100% { text-shadow: .25em 0 0 #4285f4, .5em 0 0 #4285f4; }
     }
-    #aiResultContainer h2 { 
-        font-size: 11pt; 
-        text-align: normal; 
-        font-weight: normal; 
-        font-style: italic;
-    }
-    #aiResultContainer .section-title { 
-        font-size: 11pt; 
-        font-weight: bold; 
-        margin-top: 1.5em;
-        margin-bottom: 1em;
-    }
-    #aiResultContainer h3 { 
-        font-size: 11pt; 
-        font-weight: bold;
-    }
-
-
-    .loader {
-      border: 5px solid #f3f3f3;
-      border-radius: 50%;
-      border-top: 5px solid #0079c2;
-      width: 40px;
-      height: 40px;
-      animation: spin 2s linear infinite;
-      margin: 20px auto;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-</style>
-
+  </style>
 </head>
 <body class="theme-itb full">
- 
+  
   <div class="wrap">
     <div class="banner title">
       <div class="brandbar">
@@ -118,31 +104,31 @@
           <img id="itbLogo" class="brand-logo" alt="Logo ITB" width="96" height="96">
         </a>
         <div class="brand-text">
-          <h1 data-lang-key="app_title"></h1>
+          <h1 data-lang-key="app_title">Simulation and Modeling of Explosion Effects Based on TNT Equivalence <span class="nowrap">using Javascript</span></h1>
           <h2>
-            <span class="sub-line1" data-lang-key="app_subtitle1"></span>
-            <span class="sub-line2" data-lang-key="app_subtitle2"></span>
+            <span class="sub-line1" data-lang-key="app_subtitle1">Master’s Program in Chemical Engineering, </span>
+            <span class="sub-line2" data-lang-key="app_subtitle2">Bandung Institute of Technology</span>
           </h2>
         </div>
       </div>
 
       <div class="dropdown-menu">
-        <button class="dropdown-toggle"><span data-lang-key="menu_button"></span><span class="hamburger-icon">&#9776;</span></button>
+        <button class="dropdown-toggle"><span data-lang-key="menu_button">Menu</span><span class="hamburger-icon">&#9776;</span></button>
         <div class="dropdown-content">
-          <a href="/" data-lang-key="menu_home"></a>
-          <a href="/html/simulation-modeling-visualisation-explosion.html" data-lang-key="menu_app"></a>
-          <a href="#" data-lang-key="menu_guide"></a>
-          <a href="/html/presentation-slide.html" data-lang-key="menu_presentation"></a>
-          <a href="#" data-lang-key="menu_journal"></a>
-          <a href="/html/bibliography_sim_modeling_explosion.html" data-lang-key="menu_bibliography"></a>
+          <a href="/" data-lang-key="menu_home">Home</a>
+          <a href="/html/simulation-modeling-visualisation-explosion.html" data-lang-key="menu_app">Simulation & Modeling Application</a>
+          <a href="#" data-lang-key="menu_guide">Simulation Guide (coming soon)</a>
+          <a href="/html/presentation-slide.html" data-lang-key="menu_presentation">Presentation</a>
+          <a href="#" data-lang-key="menu_journal">Journal & Conference (coming soon)</a>
+          <a href="/html/bibliography_sim_modeling_explosion.html" data-lang-key="menu_bibliography">Bibliography</a>
         </div>
       </div>
-     
+      
       <div id="language-switcher">
           <button class="lang-btn" data-lang="en" aria-label="Switch to English">
               <img src="https://virdanurlulu.github.io/img/EN.svg" alt="Switch to English" />
           </button>
-          <button class="lang-btn active" data-lang="id" aria-label="Ganti ke Bahasa Indonesia">
+          <button class="lang-btn" data-lang="id" aria-label="Ganti ke Bahasa Indonesia">
               <img src="https://virdanurlulu.github.io/img/ID.svg" alt="Ganti ke Bahasa Indonesia" />
           </button>
       </div>
@@ -152,56 +138,56 @@
     <main class="split" role="main">
       <div class="left">
         <section class="card" id="materialCard" aria-labelledby="mat-head">
-          <div id="mat-head" class="card-header" data-lang-key="card_title_material"></div>
+          <div id="mat-head" class="card-header" data-lang-key="card_title_material">Chemical Material</div>
           <div style="padding:14px">
             <div class="chem-grid">
               <div class="matcol">
                 <div>
-                  <label for="material" class="label" data-lang-key="label_select_material"></label>
+                  <label for="material" class="label" data-lang-key="label_select_material">Select Material</label>
                   <select id="material">
-                    <option value="" data-lang-key="select_option_default"></option>
-                    <option value="AN" data-lang-key="select_option_an"></option>
-                    <option value="LPG" data-lang-key="select_option_lpg"></option>
-                    <option value="H2" data-lang-key="select_option_h2"></option>
+                    <option value="" data-lang-key="select_option_default">— Select —</option>
+                    <option value="AN" data-lang-key="select_option_an">Ammonium Nitrate (AN)</option>
+                    <option value="LPG" data-lang-key="select_option_lpg">Propane (LPG)</option>
+                    <option value="H2" data-lang-key="select_option_h2">Hydrogen (H₂)</option>
                   </select>
                 </div>
                 <div class="mini">
                   <div>
-                    <label for="vol" class="label" data-lang-key="label_volume"></label>
+                    <label for="vol" class="label" data-lang-key="label_volume">Volume (m³)</label>
                     <input id="vol" type="number" min="0" step="any" placeholder="e.g., 12.5" aria-label="Volume" />
                   </div>
                   <div>
-                    <label for="dist" class="label" data-lang-key="label_distance"></label>
+                    <label for="dist" class="label" data-lang-key="label_distance">Distance (m)</label>
                     <input id="dist" type="number" min="0" step="any" placeholder="e.g., 150" aria-label="Distance" />
                   </div>
                 </div>
               </div>
               <div class="eq-panel">
-                <div class="eq-title" data-lang-key="eq_panel_title"></div>
-                <div id="eq-text" class="eq-body" data-lang-key="eq_panel_placeholder"></div>
+                <div class="eq-title" data-lang-key="eq_panel_title">Representative Overall Reaction</div>
+                <div id="eq-text" class="eq-body" data-lang-key="eq_panel_placeholder">Select a material to display the reaction equation.</div>
               </div>
             </div>
           </div>
         </section>
 
         <section class="card" aria-labelledby="prop-head">
-          <div id="prop-head" class="card-header" data-lang-key="card_title_properties"></div>
+          <div id="prop-head" class="card-header" data-lang-key="card_title_properties">Properties</div>
           <div style="padding:12px">
             <div class="table-wrapper">
               <table>
                 <thead>
                   <tr>
-                    <th data-lang-key="table_header_properties"></th>
-                    <th data-lang-key="table_header_value"></th>
-                    <th data-lang-key="table_header_unit"></th>
-                    <th data-lang-key="table_header_literature"></th>
+                    <th data-lang-key="table_header_properties">Properties</th>
+                    <th data-lang-key="table_header_value">Value</th>
+                    <th data-lang-key="table_header_unit">Unit</th>
+                    <th data-lang-key="table_header_literature">Literature</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr><td data-label="Properties"><label for="rho">Density ρ = m/V</label></td><td data-label="Value"><input id="rho" type="number" min="0" step="any"/></td><td data-label="Unit" class="unit">kg/m³</td><td data-label="Source" class="ref">@Literature</td></tr>
                   <tr><td data-label="Properties"><label for="dh">ΔH<sub>explosion</sub></label></td><td data-label="Value"><input id="dh" type="number" step="any"/></td><td data-label="Unit" class="unit">kJ/kg</td><td data-label="Source" class="ref">@Literature</td></tr>
-                  <tr><td data-label="Properties"><label for="pa" data-lang-key="label_ambient_pressure"></label></td><td data-label="Value"><input id="pa" type="number" min="0" step="any"/></td><td data-label="Unit" class="unit">kPa</td><td data-label="Source" class="ref">@Literature</td></tr>
-                  <tr><td data-label="Properties"><label for="eta" data-lang-key="label_explosion_efficiency"></label></td><td data-label="Value"><input id="eta" type="number" min="0" max="1" step="any"/></td><td data-label="Unit" class="unit">–</td><td data-label="Source" class="ref">@Literature</td></tr>
+                  <tr><td data-label="Properties"><label for="pa" data-lang-key="label_ambient_pressure">Ambient Pressure</label></td><td data-label="Value"><input id="pa" type="number" min="0" step="any"/></td><td data-label="Unit" class="unit">kPa</td><td data-label="Source" class="ref">@Literature</td></tr>
+                  <tr><td data-label="Properties"><label for="eta" data-lang-key="label_explosion_efficiency">η<sub>E</sub> Explosion Efficiency</label></td><td data-label="Value"><input id="eta" type="number" min="0" max="1" step="any"/></td><td data-label="Unit" class="unit">–</td><td data-label="Source" class="ref">@Literature</td></tr>
                   <tr><td data-label="Properties"><label for="e_tnt">E<sub>TNT</sub></label></td><td data-label="Value"><input id="e_tnt" type="number" min="0" step="any"/></td><td data-label="Unit" class="unit">kJ/kg</td><td data-label="Source" class="ref">@Literature</td></tr>
                 </tbody>
               </table>
@@ -211,27 +197,27 @@
 
         <section class="card" aria-labelledby="param-head">
           <div id="param-head" class="card-header">
-            <span data-lang-key="card_title_parameters"></span>
-            <button class="btn" id="btnAddResult" data-lang-key="btn_add_result"></button>
+            <span data-lang-key="card_title_parameters">Parameters</span>
+            <button class="btn" id="btnAddResult" data-lang-key="btn_add_result" disabled>Add to Log & Map</button>
           </div>
           <div style="padding:12px">
             <div class="table-wrapper">
               <table>
                 <thead><tr>
-                  <th data-lang-key="table_header_parameters"></th>
-                  <th data-lang-key="table_header_value"></th>
-                  <th data-lang-key="table_header_unit"></th>
-                  <th data-lang-key="table_header_sources"></th>
+                  <th data-lang-key="table_header_parameters">Parameters</th>
+                  <th data-lang-key="table_header_value">Value</th>
+                  <th data-lang-key="table_header_unit">Unit</th>
+                  <th data-lang-key="table_header_sources">Sources</th>
                 </tr></thead>
                 <tbody>
-                  <tr><td data-label="Parameters" data-lang-key="param_mass_material"></td><td data-label="Value"><input id="W_mass" type="text" readonly /></td><td data-label="Unit" class="unit">kg</td><td data-label="Source" class="ref" data-lang-key="source_calculated"></td></tr>
-                  <tr><td data-label="Parameters" data-lang-key="param_total_energy"></td><td data-label="Value"><input id="E_total" type="text" readonly /></td><td data-label="Unit" class="unit">kJ</td><td data-label="Source" class="ref" data-lang-key="source_calculated"></td></tr>
-                  <tr><td data-label="Parameters" data-lang-key="param_tnt_equivalent"></td><td data-label="Value"><input id="W_tnt" type="text" readonly /></td><td data-label="Unit" class="unit">kg</td><td data-label="Source" class="ref" data-lang-key="source_calculated"></td></tr>
-                  <tr><td data-label="Parameters" data-lang-key="param_scaled_distance"></td><td data-label="Value"><input id="Ze" type="text" readonly /></td><td data-label="Unit" class="unit">m·kg<sup>−1/3</sup></td><td data-label="Source" class="ref" data-lang-key="source_calculated"></td></tr>
-                  <tr><td data-label="Parameters" data-lang-key="param_scaled_overpressure"></td><td data-label="Value"><input id="Ps" type="text" readonly /></td><td data-label="Unit" class="unit">–</td><td data-label="Source" class="ref" data-lang-key="source_crowl_kinney"></td></tr>
-                  <tr><td data-label="Parameters" data-lang-key="param_peak_overpressure"></td><td data-label="Value"><input id="Po_crowl" type="text" readonly /></td><td data-label="Unit" class="unit">kPa</td><td data-label="Source" class="ref" data-lang-key="source_crowl"></td></tr>
-                  <tr><td data-label="Parameters" data-lang-key="param_peak_overpressure"></td><td data-label="Value"><input id="Po_alonso" type="text" readonly /></td><td data-label="Unit" class="unit">kPa</td><td data-label="Source" class="ref" data-lang-key="source_alonso"></td></tr>
-                  <tr><td data-label="Parameters" data-lang-key="param_peak_overpressure"></td><td data-label="Value"><input id="Po_sadovski" type="text" readonly /></td><td data-label="Unit" class="unit">kPa</td><td data-label="Source" class="ref" data-lang-key="source_sadovski"></td></tr>
+                  <tr><td data-label="Parameters" data-lang-key="param_mass_material">(W) Mass Material</td><td data-label="Value"><input id="W_mass" type="text" readonly /></td><td data-label="Unit" class="unit">kg</td><td data-label="Source" class="ref" data-lang-key="source_calculated">@Calculated</td></tr>
+                  <tr><td data-label="Parameters" data-lang-key="param_total_energy">(E) Total Energy</td><td data-label="Value"><input id="E_total" type="text" readonly /></td><td data-label="Unit" class="unit">kJ</td><td data-label="Source" class="ref" data-lang-key="source_calculated">@Calculated</td></tr>
+                  <tr><td data-label="Parameters" data-lang-key="param_tnt_equivalent">(W) TNT Equivalent</td><td data-label="Value"><input id="W_tnt" type="text" readonly /></td><td data-label="Unit" class="unit">kg</td><td data-label="Source" class="ref" data-lang-key="source_calculated">@Calculated</td></tr>
+                  <tr><td data-label="Parameters" data-lang-key="param_scaled_distance">(Ze) Scaled Distance</td><td data-label="Value"><input id="Ze" type="text" readonly /></td><td data-label="Unit" class="unit">m·kg<sup>−1/3</sup></td><td data-label="Source" class="ref" data-lang-key="source_calculated">@Calculated</td></tr>
+                  <tr><td data-label="Parameters" data-lang-key="param_scaled_overpressure">(Ps) Scaled Overpressure</td><td data-label="Value"><input id="Ps" type="text" readonly /></td><td data-label="Unit" class="unit">–</td><td data-label="Source" class="ref" data-lang-key="source_crowl_kinney">@Crowl/Kinney</td></tr>
+                  <tr><td data-label="Parameters" data-lang-key="param_peak_overpressure">(Po) Peak side-on overpressure</td><td data-label="Value"><input id="Po_crowl" type="text" readonly /></td><td data-label="Unit" class="unit">kPa</td><td data-label="Source" class="ref" data-lang-key="source_crowl">@Crowl</td></tr>
+                  <tr><td data-label="Parameters" data-lang-key="param_peak_overpressure">(Po) Peak side-on overpressure</td><td data-label="Value"><input id="Po_alonso" type="text" readonly /></td><td data-label="Unit" class="unit">kPa</td><td data-label="Source" class="ref" data-lang-key="source_alonso">@Alonso</td></tr>
+                  <tr><td data-label="Parameters" data-lang-key="param_peak_overpressure">(Po) Peak side-on overpressure</td><td data-label="Value"><input id="Po_sadovski" type="text" readonly /></td><td data-label="Unit" class="unit">kPa</td><td data-label="Source" class="ref" data-lang-key="source_sadovski">@Sadovski</td></tr>
                 </tbody>
               </table>
             </div>
@@ -241,30 +227,30 @@
 
         <section class="card" aria-labelledby="chart-head">
           <div id="chart-head" class="card-header">
-            <span data-lang-key="chart_title_ps_vs_ze"></span>
-            <button class="btn" id="btnExport" data-lang-key="btn_export_png"></button>
+            <span data-lang-key="chart_title_ps_vs_ze">Scaled Overpressure vs Scaled Distance</span>
+            <button class="btn" id="btnExport" data-lang-key="btn_export_png">Export PNG</button>
           </div>
           <div class="chart-container">
-            <div id="chart" role="img" aria-label="Log-log plot of Ps (Po/Pa) versus ze based on Kinney & Graham (1985)."></div>
-            <noscript><p data-lang-key="chart_noscript"></p></noscript>
-            <div class="chart-note" data-lang-key="chart_note_source"></div>
+            <div id="chart" role="img" aria-label="Log-log plot of Ps (Po/Pa) versus ze based on Kinney &amp; Graham (1985)."></div>
+            <noscript><p data-lang-key="chart_noscript">Please enable JavaScript to display the chart. Reference: G. F. Kinney & K. J. Graham (1985).</p></noscript>
+            <div class="chart-note" data-lang-key="chart_note_source">Source: G. F. Kinney & K. J. Graham, <em>Explosive Shocks in Air</em>, Springer-Verlag, 1985.</div>
           </div>
         </section>
-       
+        
         <section class="card" aria-labelledby="overpressure-chart-head">
           <div id="overpressure-chart-head" class="card-header">
-            <span data-lang-key="chart_title_po_vs_dist"></span>
+            <span data-lang-key="chart_title_po_vs_dist">Overpressure vs Distance</span>
           </div>
           <div class="chart-container">
             <canvas id="overpressureChart"></canvas>
             <div id="overpressureChartMsg" class="chart-note" style="display: none; padding: 20px; font-size: 14px;"></div>
-            <noscript><p data-lang-key="chart_noscript_generic"></p></noscript>
+            <noscript><p data-lang-key="chart_noscript_generic">Please enable JavaScript to display the chart.</p></noscript>
           </div>
         </section>
-       
+        
         <section class="card" aria-labelledby="contour-map-head">
           <div id="contour-map-head" class="card-header">
-            <span data-lang-key="contour_map_title"></span>
+            <span data-lang-key="contour_map_title">Explosion Contour Map</span>
           </div>
           <div style="padding: 14px;">
             <div id="contourMapContainer">
@@ -300,79 +286,79 @@
 
       <aside class="right">
         <section class="card estimation" aria-labelledby="est-damage">
-          <div id="est-damage" class="card-header" data-lang-key="estimation_damage_title"></div>
+          <div id="est-damage" class="card-header" data-lang-key="estimation_damage_title">Estimation of Damage to Structures and Process Equipment</div>
           <div class="method-grid">
             <div class="method-card" id="panel-damage-crowl">
               <div class="vlabel">CROWL</div>
               <div class="pad">
                 <p><strong>Overpressure (Po):</strong> <span id="val-Po-crowl">—</span> kPa</p>
                 <div>
-                  <strong data-lang-key="damage_details_label"></strong>
+                  <strong data-lang-key="damage_details_label">Damage Details:</strong>
                   <div class="damage-category">
-                    <strong data-lang-key="structural_label"></strong>
+                    <strong data-lang-key="structural_label">Structural:</strong>
                     <ul id="structural-damage-crowl"></ul>
                   </div>
                   <div class="damage-category">
-                    <strong data-lang-key="process_equipment_label"></strong>
+                    <strong data-lang-key="process_equipment_label">Process Equipment:</strong>
                     <ul id="equipment-damage-crowl"></ul>
                   </div>
                 </div>
               </div>
-              <div class="sevfoot" id="sev-crowl" data-lang-key="unknown"></div>
+              <div class="sevfoot" id="sev-crowl" data-lang-key="unknown">Unknown</div>
             </div>
             <div class="method-card" id="panel-damage-alonso">
               <div class="vlabel">ALONSO</div>
               <div class="pad">
                 <p><strong>Overpressure (Po):</strong> <span id="val-Po-alonso">—</span> kPa</p>
                   <div>
-                  <strong data-lang-key="damage_details_label"></strong>
+                  <strong data-lang-key="damage_details_label">Damage Details:</strong>
                   <div class="damage-category">
-                    <strong data-lang-key="structural_label"></strong>
+                    <strong data-lang-key="structural_label">Structural:</strong>
                     <ul id="structural-damage-alonso"></ul>
                   </div>
                   <div class="damage-category">
-                    <strong data-lang-key="process_equipment_label"></strong>
+                    <strong data-lang-key="process_equipment_label">Process Equipment:</strong>
                     <ul id="equipment-damage-alonso"></ul>
                   </div>
                 </div>
               </div>
-              <div class="sevfoot" id="sev-alonso" data-lang-key="unknown"></div>
+              <div class="sevfoot" id="sev-alonso" data-lang-key="unknown">Unknown</div>
             </div>
             <div class="method-card" id="panel-damage-sadovski">
               <div class="vlabel">SADOVSKI</div>
               <div class="pad">
                 <p><strong>Overpressure (Po):</strong> <span id="val-Po-sadovski">—</span> kPa</p>
                   <div>
-                  <strong data-lang-key="damage_details_label"></strong>
+                  <strong data-lang-key="damage_details_label">Damage Details:</strong>
                   <div class="damage-category">
-                    <strong data-lang-key="structural_label"></strong>
+                    <strong data-lang-key="structural_label">Structural:</strong>
                     <ul id="structural-damage-sadovski"></ul>
                   </div>
                   <div class="damage-category">
-                    <strong data-lang-key="process_equipment_label"></strong>
+                    <strong data-lang-key="process_equipment_label">Process Equipment:</strong>
                     <ul id="equipment-damage-sadovski"></ul>
                   </div>
                 </div>
               </div>
-              <div class="sevfoot" id="sev-sadovski" data-lang-key="unknown"></div>
+              <div class="sevfoot" id="sev-sadovski" data-lang-key="unknown">Unknown</div>
             </div>
           </div>
         </section>
         <section class="card estimation" aria-labelledby="est-injury">
-          <div id="est-injury" class="card-header" data-lang-key="estimation_injury_title"></div>
+          <div id="est-injury" class="card-header" data-lang-key="estimation_injury_title">Estimation of Injury Consequences</div>
           <div class="method-grid">
-            <div class="method-card" id="panel-injury-crowl"><div class="vlabel">CROWL</div><div class="pad"><p><strong>Overpressure (Po):</strong> <span id="val-Po-crowl-inj">—</span> kPa</p><p><strong data-lang-key="effects_label"></strong></p><ul id="injury-effects-crowl"></ul></div><div class="sevfoot" id="sev-injury-crowl" data-lang-key="unknown"></div></div>
-            <div class="method-card" id="panel-injury-alonso"><div class="vlabel">ALONSO</div><div class="pad"><p><strong>Overpressure (Po):</strong> <span id="val-Po-alonso-inj">—</span> kPa</p><p><strong data-lang-key="effects_label"></strong></p><ul id="injury-effects-alonso"></ul></div><div class="sevfoot" id="sev-injury-alonso" data-lang-key="unknown"></div></div>
-            <div class="method-card" id="panel-injury-sadovski"><div class="vlabel">SADOVSKI</div><div class="pad"><p><strong>Overpressure (Po):</strong> <span id="val-Po-sadovski-inj">—</span> kPa</p><p><strong data-lang-key="effects_label"></strong></p><ul id="injury-effects-sadovski"></ul></div><div class="sevfoot" id="sev-injury-sadovski" data-lang-key="unknown"></div></div>
+            <div class="method-card" id="panel-injury-crowl"><div class="vlabel">CROWL</div><div class="pad"><p><strong>Overpressure (Po):</strong> <span id="val-Po-crowl-inj">—</span> kPa</p><p><strong data-lang-key="effects_label">Effects:</strong></p><ul id="injury-effects-crowl"></ul></div><div class="sevfoot" id="sev-injury-crowl" data-lang-key="unknown">Unknown</div></div>
+            <div class="method-card" id="panel-injury-alonso"><div class="vlabel">ALONSO</div><div class="pad"><p><strong>Overpressure (Po):</strong> <span id="val-Po-alonso-inj">—</span> kPa</p><p><strong data-lang-key="effects_label">Effects:</strong></p><ul id="injury-effects-alonso"></ul></div><div class="sevfoot" id="sev-injury-alonso" data-lang-key="unknown">Unknown</div></div>
+            <div class="method-card" id="panel-injury-sadovski"><div class="vlabel">SADOVSKI</div><div class="pad"><p><strong>Overpressure (Po):</strong> <span id="val-Po-sadovski-inj">—</span> kPa</p><p><strong data-lang-key="effects_label">Effects:</strong></p><ul id="injury-effects-sadovski"></ul></div><div class="sevfoot" id="sev-injury-sadovski" data-lang-key="unknown">Unknown</div></div>
           </div>
         </section>
         <section class="card" aria-labelledby="log-head">
             <div id="log-head" class="card-header">
-                <span data-lang-key="log_title"></span>
+                <span data-lang-key="log_title">Simulation Log</span>
                 <div class="log-actions">
-                    <button class="btn" id="btnSortLog" data-lang-key="btn_sort"></button>
-                    <button class="btn" id="btnExportLog" data-lang-key="btn_export_csv"></button>
-                    <button class="btn" id="btnImportLog" data-lang-key="btn_import_csv"></button>
+                    <button class="btn" id="btnSortLog" data-lang-key="btn_sort">Sort</button>
+                    <button class="btn" id="btnExportLog" data-lang-key="btn_export_csv">Export CSV</button>
+                    <button class="btn" id="btnImportLog" data-lang-key="btn_import_csv">Import CSV</button>
                     <input type="file" id="importFile" accept=".csv" style="display: none;" />
                 </div>
             </div>
@@ -380,14 +366,14 @@
                 <table id="logTable">
                     <thead>
                         <tr>
-                            <th data-lang-key="log_col_node"></th>
-                            <th data-lang-key="log_col_material"></th>
+                            <th data-lang-key="log_col_node">Node</th>
+                            <th data-lang-key="log_col_material">Material</th>
                             <th>ηE</th>
                             <th>ETNT</th>
                             <th>ρ</th>
                             <th>ΔH<sub>exp</sub></th>
-                            <th data-lang-key="log_col_volume"></th>
-                            <th data-lang-key="log_col_distance"></th>
+                            <th data-lang-key="log_col_volume">Volume</th>
+                            <th data-lang-key="log_col_distance">Distance</th>
                             <th>WTNT</th>
                             <th>ze</th>
                             <th>Ps</th>
@@ -407,28 +393,33 @@
                 </table>
             </div>
             <div style="padding: 0 14px 14px;">
-                <p class="footnote" data-lang-key="log_footnote"></p>
+                <p class="footnote" data-lang-key="log_footnote">Click "Save" to log the calculation results. The last 10 entries will be stored in your browser.</p>
             </div>
         </section>
+        
+        <!-- Gemini Feature Section -->
+        <section class="card gemini-card" aria-labelledby="gemini-head">
+          <div id="gemini-head" class="card-header">
+            <span data-lang-key="gemini_title">✨ AI Analysis & Recommendation</span>
+          </div>
+          <div style="padding: 14px;">
+            <p data-lang-key="gemini_report_description" class="footnote" style="margin-bottom: 12px;">Enter a brief case study scenario below (e.g., "LPG truck tanker crash and explosion in a populated area") and the AI will generate a detailed academic report based on the current simulation log data.</p>
+            <textarea id="gemini-prompt" data-lang-key="gemini_prompt_placeholder">Analysis of section: Chemical Material, Properties, Parameters Calculation resulted, chart Scaled Overpressure vs Scaled Distance, Estimation of Damage to Structures and Process Equipment, Estimation of Injury Consequences, chart Overpressure vs Distance, Simulation Log, and Explosion Contour Map with check Lat and Lon the location.</textarea>
+            <button class="btn" id="btnAskGemini" data-lang-key="btn_generate_report">✨ Generate AI Report</button>
+            <div id="gemini-response">
+                <!-- AI Generated Report will be injected here -->
+            </div>
+          </div>
+        </section>
+        <!-- End Gemini Feature Section -->
 
-        <section class="card" aria-labelledby="ai-head">
-            <div id="ai-head" class="card-header">
-                <span data-lang-key="ai_safety_title"></span>
-            </div>
-            <div style="padding: 14px;">
-                <div style="text-align: center; margin-bottom: 15px;">
-                    <button class="btn" id="btnGetSafetyRecs" data-lang-key="btn_get_ai_recs"></button>
-                </div>
-                <div id="aiResultContainer" style="text-align: left; margin-top: 15px;"></div>
-            </div>
-        </section>
       </aside>
     </main>
   </div>
-   
+    
   <div id="floatingControlPanel">
       <div class="floating-panel-header">
-        <h3 data-lang-key="quick_control_panel"></h3>
+        <h3 data-lang-key="quick_control_panel">Quick Control Panel</h3>
         <div class="panel-header-buttons">
           <button id="floatPanelCollapseBtn" class="floating-panel-action-btn" aria-label="Collapse/Expand Panel">▲</button>
         </div>
@@ -444,433 +435,196 @@
   <footer class="app-footer">
       <div class="footer-content">
         <div class="footer-buttons">
-          <a class="btn-home-3d" href="/" target="_blank" rel="noopener noreferrer" data-lang-key="menu_home"></a>
-          <a class="btn-home-3d" href="#" data-lang-key="footer_guide"></a>
-          <a class="btn-home-3d" href="/html/presentation-slide.html" data-lang-key="menu_presentation"></a>
-          <a class="btn-home-3d" href="#" data-lang-key="footer_journal"></a>
-          <a class="btn-home-3d" href="https://id.linkedin.com/in/virdanurlulu" data-lang-key="footer_profile"></a>
+          <a class="btn-home-3d" href="/" target="_blank" rel="noopener noreferrer" data-lang-key="menu_home">Home</a>
+          <a class="btn-home-3d" href="#" data-lang-key="footer_guide">Guide</a>
+          <a class="btn-home-3d" href="#" data-lang-key="menu_presentation">Presentation</a>
+          <a class="btn-home-3d" href="#" data-lang-key="footer_journal">Journal</a>
+          <a class="btn-home-3d" href="https://id.linkedin.com/in/virdanurlulu" data-lang-key="footer_profile">Profile</a>
         </div>
         <div class="credit">
-          <span data-lang-key="footer_copyright"></span>
+          <span data-lang-key="footer_copyright">Copyright © 2025 by</span>
           <a href="https://id.linkedin.com/in/virdanurlulu" target="_blank" rel="nofollow noopener noreferrer" style="text-decoration: none;">Virda Nur Lu'lu</a>
         </div>
         <div class="dedication">
-          <span data-lang-key="footer_dedication1"></span>
-          <span data-lang-key="footer_dedication2"></span>
-          <a href="https://che.itb.ac.id/" target="_blank" rel="nofollow noopener noreferrer" data-lang-key="footer_dedication_itb"></a>
-          <span data-lang-key="footer_dedication3"></span>
+          <span data-lang-key="footer_dedication1">This application is dedicated to my parents for their persistent support and patient guidance throughout my JavaScript journey.</span>
+          <span data-lang-key="footer_dedication2">It is also presented to the academic community at</span>
+          <a href="https://che.itb.ac.id/" target="_blank" rel="nofollow noopener noreferrer" data-lang-key="footer_dedication_itb">Bandung Institute of Technology</a>
+          <span data-lang-key="footer_dedication3">as a contribution towards inspiring further advancements in JavaScript technology.</span>
         </div>
       </div>
   </footer>
 
   <button class="btn" id="toTop" type="button" aria-label="Back to Top">&#8679;</button>
- 
+  
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
   <script src="https://virdanurlulu.github.io/js/js-app.js"></script>
-  
-  <script type="module">
-    // --- Translations & AI Safety Feature ---
-    const translations = {
-      en: {
-        app_title: "Simulation and Modeling of Explosion Effects Based on TNT Equivalence <span class=\"nowrap\">using Javascript</span>",
-        app_subtitle1: "Master’s Program in Chemical Engineering, ",
-        app_subtitle2: "Bandung Institute of Technology",
-        menu_button: "Menu",
-        menu_home: "Home",
-        menu_app: "Simulation & Modeling Application",
-        menu_guide: "Simulation Guide (coming soon)",
-        menu_presentation: "Presentation",
-        menu_journal: "Journal & Conference (coming soon)",
-        menu_bibliography: "Bibliography",
-        card_title_material: "Chemical Material",
-        label_select_material: "Select Material",
-        select_option_default: "— Select —",
-        select_option_an: "Ammonium Nitrate (AN)",
-        select_option_lpg: "Propane (LPG)",
-        select_option_h2: "Hydrogen (H₂)",
-        label_volume: "Volume (m³)",
-        label_distance: "Distance (m)",
-        eq_panel_title: "Representative Overall Reaction",
-        eq_panel_placeholder: "Select a material to display the reaction equation.",
-        card_title_properties: "Properties",
-        table_header_properties: "Properties",
-        table_header_value: "Value",
-        table_header_unit: "Unit",
-        table_header_literature: "Literature",
-        label_ambient_pressure: "Ambient Pressure",
-        label_explosion_efficiency: "η<sub>E</sub> Explosion Efficiency",
-        card_title_parameters: "Parameters",
-        btn_add_result: "Add to Log & Map",
-        table_header_parameters: "Parameters",
-        table_header_sources: "Sources",
-        param_mass_material: "(W) Mass Material",
-        param_total_energy: "(E) Total Energy",
-        param_tnt_equivalent: "(W) TNT Equivalent",
-        param_scaled_distance: "(Ze) Scaled Distance",
-        param_scaled_overpressure: "(Ps) Scaled Overpressure",
-        param_peak_overpressure: "(Po) Peak side-on overpressure",
-        source_calculated: "@Calculated",
-        source_crowl_kinney: "@Crowl/Kinney",
-        source_crowl: "@Crowl",
-        source_alonso: "@Alonso",
-        source_sadovski: "@Sadovski",
-        chart_title_ps_vs_ze: "Scaled Overpressure vs Scaled Distance",
-        btn_export_png: "Export PNG",
-        chart_noscript: "Please enable JavaScript to display the chart. Reference: G. F. Kinney & K. J. Graham (1985).",
-        chart_note_source: "Source: G. F. Kinney & K. J. Graham, <em>Explosive Shocks in Air</em>, Springer-Verlag, 1985.",
-        chart_title_po_vs_dist: "Overpressure vs Distance",
-        chart_noscript_generic: "Please enable JavaScript to display the chart.",
-        contour_map_title: "Explosion Contour Map",
-        estimation_damage_title: "Estimation of Damage to Structures and Process Equipment",
-        damage_details_label: "Damage Details:",
-        structural_label: "Structural:",
-        process_equipment_label: "Process Equipment:",
-        unknown: "Unknown",
-        estimation_injury_title: "Estimation of Injury Consequences",
-        effects_label: "Effects:",
-        log_title: "Simulation Log",
-        btn_sort: "Sort",
-        btn_export_csv: "Export CSV",
-        btn_import_csv: "Import CSV",
-        log_col_node: "Node",
-        log_col_material: "Material",
-        log_col_volume: "Volume",
-        log_col_distance: "Distance",
-        log_footnote: "Click \"Add to Log & Map\" to log the calculation results. The last 10 entries will be stored in your browser.",
-        ai_safety_title: "Process Safety Analysis",
-        btn_get_ai_recs: "Click - Analysis of Simulation Results",
-        quick_control_panel: "Quick Control Panel",
-        footer_guide: "Guide",
-        footer_journal: "Journal",
-        footer_profile: "Profile",
-        footer_copyright: "Copyright © 2025 by",
-        footer_dedication1: "This application is dedicated to my parents for their persistent support and patient guidance throughout my JavaScript journey.",
-        footer_dedication2: "It is also presented to the academic community at",
-        footer_dedication_itb: "Bandung Institute of Technology",
-        footer_dedication3: "as a contribution towards inspiring further advancements in JavaScript technology."
-      },
-      id: {
-        app_title: "Simulasi dan Pemodelan Efek Ledakan Berdasarkan Ekuivalensi TNT <span class=\"nowrap\">menggunakan Javascript</span>",
-        app_subtitle1: "Program Magister Teknik Kimia, ",
-        app_subtitle2: "Institut Teknologi Bandung",
-        menu_button: "Menu",
-        menu_home: "Beranda",
-        menu_app: "Aplikasi Simulasi & Pemodelan",
-        menu_guide: "Panduan Simulasi (segera hadir)",
-        menu_presentation: "Presentasi",
-        menu_journal: "Jurnal & Konferensi (segera hadir)",
-        menu_bibliography: "Bibliografi",
-        card_title_material: "Bahan Kimia",
-        label_select_material: "Pilih Bahan",
-        select_option_default: "— Pilih —",
-        select_option_an: "Amonium Nitrat (AN)",
-        select_option_lpg: "Propana (LPG)",
-        select_option_h2: "Hidrogen (H₂)",
-        label_volume: "Volume (m³)",
-        label_distance: "Jarak (m)",
-        eq_panel_title: "Representasi Reaksi Keseluruhan",
-        eq_panel_placeholder: "Pilih bahan untuk menampilkan persamaan reaksi.",
-        card_title_properties: "Properti",
-        table_header_properties: "Properti",
-        table_header_value: "Nilai",
-        table_header_unit: "Unit",
-        table_header_literature: "Literatur",
-        label_ambient_pressure: "Tekanan Sekitar",
-        label_explosion_efficiency: "η<sub>E</sub> Efisiensi Ledakan",
-        card_title_parameters: "Parameter",
-        btn_add_result: "Tambah ke Log & Peta",
-        table_header_parameters: "Parameter",
-        table_header_sources: "Sumber",
-        param_mass_material: "(W) Massa Bahan",
-        param_total_energy: "(E) Energi Total",
-        param_tnt_equivalent: "(W) Ekuivalen TNT",
-        param_scaled_distance: "(Ze) Jarak Skala",
-        param_scaled_overpressure: "(Ps) Overpressure Skala",
-        param_peak_overpressure: "(Po) Puncak Overpressure Samping",
-        source_calculated: "@Dihitung",
-        source_crowl_kinney: "@Crowl/Kinney",
-        source_crowl: "@Crowl",
-        source_alonso: "@Alonso",
-        source_sadovski: "@Sadovski",
-        chart_title_ps_vs_ze: "Overpressure Skala vs Jarak Skala",
-        btn_export_png: "Ekspor PNG",
-        chart_noscript: "Mohon aktifkan JavaScript untuk menampilkan grafik. Referensi: G. F. Kinney & K. J. Graham (1985).",
-        chart_note_source: "Sumber: G. F. Kinney & K. J. Graham, <em>Explosive Shocks in Air</em>, Springer-Verlag, 1985.",
-        chart_title_po_vs_dist: "Overpressure vs Jarak",
-        chart_noscript_generic: "Mohon aktifkan JavaScript untuk menampilkan grafik.",
-        contour_map_title: "Peta Kontur Ledakan",
-        estimation_damage_title: "Estimasi Kerusakan pada Struktur dan Peralatan Proses",
-        damage_details_label: "Detail Kerusakan:",
-        structural_label: "Struktural:",
-        process_equipment_label: "Peralatan Proses:",
-        unknown: "Tidak Diketahui",
-        estimation_injury_title: "Estimasi Konsekuensi Cedera",
-        effects_label: "Efek:",
-        log_title: "Log Simulasi",
-        btn_sort: "Urutkan",
-        btn_export_csv: "Ekspor CSV",
-        btn_import_csv: "Impor CSV",
-        log_col_node: "Node",
-        log_col_material: "Bahan",
-        log_col_volume: "Volume",
-        log_col_distance: "Jarak",
-        log_footnote: "Klik \"Tambah ke Log & Peta\" untuk mencatat hasil perhitungan. 10 entri terakhir akan disimpan di browser Anda.",
-        ai_safety_title: "Analisis Keselamatan Proses",
-        btn_get_ai_recs: "Klik - Analisis Hasil Simulasi",
-        quick_control_panel: "Panel Kontrol Cepat",
-        footer_guide: "Panduan",
-        footer_journal: "Jurnal",
-        footer_profile: "Profil",
-        footer_copyright: "Hak Cipta © 2025 oleh",
-        footer_dedication1: "Aplikasi ini didedikasikan untuk orang tua saya atas dukungan dan bimbingan sabar mereka selama perjalanan JavaScript saya.",
-        footer_dedication2: "Ini juga dipersembahkan untuk komunitas akademik di",
-        footer_dedication_itb: "Institut Teknologi Bandung",
-        footer_dedication3: "sebagai kontribusi untuk menginspirasi kemajuan lebih lanjut dalam teknologi JavaScript."
-      }
-    };
 
-    function switchLanguage(lang) {
-      document.documentElement.lang = lang;
-      document.querySelectorAll('[data-lang-key]').forEach(el => {
-        const key = el.dataset.langKey;
-        if (translations[lang] && translations[lang][key]) {
-          el.innerHTML = translations[lang][key];
-        }
-      });
-      document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.lang === lang);
-      });
-    }
-
-    document.getElementById('language-switcher').addEventListener('click', (e) => {
-      const targetButton = e.target.closest('.lang-btn');
-      if (targetButton) {
-        switchLanguage(targetButton.dataset.lang);
-      }
-    });
-
+  <!-- Gemini API Integration Script -->
+  <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const initialLang = document.querySelector('.lang-btn.active')?.dataset.lang || 'id';
-        switchLanguage(initialLang);
-    });
+      const btnAskGemini = document.getElementById('btnAskGemini');
+      const geminiPrompt = document.getElementById('gemini-prompt');
+      const geminiResponse = document.getElementById('gemini-response');
+      const logTable = document.getElementById('logTable');
+      const languageSwitcher = document.getElementById('language-switcher');
 
-    const btnGetSafetyRecs = document.getElementById('btnGetSafetyRecs');
-    const aiResultContainer = document.getElementById('aiResultContainer');
+      if (btnAskGemini) {
+        btnAskGemini.addEventListener('click', handleGenerateReport);
+      }
 
-    btnGetSafetyRecs.addEventListener('click', () => {
-        aiResultContainer.innerHTML = '<div class="loader"></div>';
-        callGeminiAPI();
-    });
+      if(languageSwitcher) {
+        languageSwitcher.addEventListener('click', (e) => {
+            if (e.target.closest('.lang-btn')) {
+                setTimeout(updateReportLanguage, 100);
+            }
+        });
+      }
 
-    function getListData(ulId) {
-        const ul = document.getElementById(ulId);
-        if (!ul || ul.children.length === 0) {
-            return 'None specified.';
+      function updateReportLanguage() {
+        const activeLang = document.querySelector('.lang-btn.active')?.dataset.lang || 'en';
+        const reportEN = geminiResponse.querySelector('#report-en');
+        const reportID = geminiResponse.querySelector('#report-id');
+
+        if(reportEN && reportID) {
+            if (activeLang === 'id') {
+                reportEN.style.display = 'none';
+                reportID.style.display = 'block';
+            } else {
+                reportEN.style.display = 'block';
+                reportID.style.display = 'none';
+            }
         }
-        return Array.from(ul.getElementsByTagName('li')).map(li => li.textContent.trim()).join(', ');
-    }
+      }
 
-    async function callGeminiAPI() {
-        const materialSelect = document.getElementById('material');
-        const materialName = materialSelect.options[materialSelect.selectedIndex].text;
-        const volume = document.getElementById('vol').value;
-        const distance = document.getElementById('dist').value;
-        const poCrowl = document.getElementById('Po_crowl').value;
-        const poAlonso = document.getElementById('Po_alonso').value;
-        const poSadovski = document.getElementById('Po_sadovski').value;
-        const mapLat = document.getElementById('mapLat').value;
-        const mapLon = document.getElementById('mapLon').value;
+      function getLogDataAsText() {
+        const headers = Array.from(logTable.querySelectorAll('thead tr:first-child th'))
+          .map(th => th.textContent.trim())
+          .slice(0, -1); // Remove action column
+        const units = Array.from(logTable.querySelectorAll('thead tr.unit-row th'))
+          .map(th => th.textContent.trim());
+        
+        const combinedHeaders = headers.map((h, i) => units[i] ? `${h} ${units[i]}`.trim() : h);
 
+        const rows = Array.from(logTable.querySelectorAll('tbody tr'));
+        if (rows.length === 0) {
+          return "No simulation log data available.";
+        }
 
-        if (!materialName || materialName === '— Select —' || !volume || !distance || !poCrowl) {
-            aiResultContainer.innerHTML = `<p style="color: red; text-align: center;">${document.documentElement.lang === 'id' ? 'Jalankan simulasi terlebih dahulu untuk mendapatkan hasil sebelum meminta rekomendasi AI.' : 'Please run a simulation first to generate results before asking for AI recommendations.'}</p>`;
+        const data = rows.map(row => {
+          return Array.from(row.querySelectorAll('td'))
+            .map(td => td.textContent.trim())
+            .slice(0, -1) // Remove action column
+            .join(' | ');
+        });
+
+        return `Headers: ${combinedHeaders.join(' | ')}\nData:\n${data.join('\n')}`;
+      }
+
+      async function handleGenerateReport() {
+        const userScenario = geminiPrompt.value.trim();
+        if (!userScenario) {
+          geminiResponse.innerHTML = '<p>Please provide a brief case study scenario.</p>';
+          return;
+        }
+
+        const logData = getLogDataAsText();
+        if (logData === "No simulation log data available.") {
+            geminiResponse.innerHTML = '<p>Cannot generate a report without data in the Simulation Log.</p>';
             return;
         }
-
-        const structuralDamage = getListData('structural-damage-crowl');
-        const equipmentDamage = getListData('equipment-damage-crowl');
-        const injuryEffects = getListData('injury-effects-crowl');
         
-        const lang = document.querySelector('button.lang-btn.active')?.dataset.lang || 'id';
+        geminiResponse.textContent = '';
+        geminiResponse.classList.add('loading');
+        btnAskGemini.disabled = true;
 
-        const prompts = {
-            en: {
-                system: `You are an expert analyst in chemical engineering and process safety. Your audience is graduate students and researchers. Your language must be formal, academic, and technical.
-Your task is to find a relevant real-world explosion case study for the simulated chemical. Crucially, this case study must be geographically relevant. The simulation is set at Latitude: ${mapLat}, Longitude: ${mapLon}, indicating an ONSHORE location. You must select a comparable onshore incident (e.g., port, industrial plant, transport accident), NOT an offshore platform disaster.
-The report structure MUST follow this format precisely. Do not use markdown characters like '#' or '*'.
+        const systemPrompt = `You are a research assistant for a Master's program in Chemical Engineering at the Bandung Institute of Technology. Your task is to generate a formal academic case study report based on simulation data and a user-provided scenario.
 
-Case Study: [Title of Relevant Case Study]
-"[Subtitle describing the incident]"
+        **Output Rules:**
+        1.  Your entire response MUST be a single block of HTML. Do not use Markdown.
+        2.  The root of the HTML must contain two divs: \`<div id="report-en" lang="en">...\` and \`<div id="report-id" lang="id">...\`.
+        3.  Generate the complete, detailed report inside EACH language div, translated appropriately (academic English and formal Indonesian EYD).
+        4.  Use the following HTML structure for the content inside each language div:
+            -   Main Title: \`<h4 style='font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 5px; color: #00529b;'>...\`
+            -   Subtitle: \`<h5 style='font-size: 14px; font-weight: bold; text-align: center; margin-top: 0; margin-bottom: 15px; color: #00529b;'>...\`
+            -   Section Headers: \`<p style='margin-top: 15px; margin-bottom: 2px;'><strong style='font-size: 14px;'>[Section Number]. [Section Title]</strong></p>\`
+            -   Body Text: \`<p style='font-size: 12px; text-align: left; margin: 0 0 8pt 0; line-height: 1.2;'>...\`
+        5.  Incorporate academic citations throughout the text using the format \`<span style='color: #003366; font-weight: bold;'>[#]</span>\`. Use between 5 to 15 citations. These citations refer to the bibliography found at https://virdanurlulu.github.io/html/bibliography_sim_modeling_explosion.html. The numbers should be contextually relevant to process safety literature.
+        6.  The tone must be academic, analytical, data-driven, and suitable for a Master's level thesis.
 
-1. Incident Chronology
-(Comprehensive narrative paragraph on the event's chronology, with multiple citations where applicable [1][2].)
+        **Report Structure:**
+        -   **Case Study Title & Subtitle**: Derive these from the user's scenario.
+        -   **1. Chronology of Events**: Elaborate on the user's scenario, imagining a plausible sequence of events leading to the explosion.
+        -   **2. Event Analysis (Root Cause Analysis)**: Perform a brief root cause analysis (e.g., equipment failure, human error) that logically follows the chronology.
+        -   **3. Simulation & Modeling Analysis (TNT Equivalence)**: This is the core section.
+            -   Discuss the properties of the chemical from the log data.
+            -   Explain the calculation of Peak side-on overpressure (Po) and state the formulas used for Crowl, Alonso, and Sadovski models based on the provided data.
+            -   Analyze the "Scaled Overpressure vs Scaled Distance" and "Overpressure vs Distance" charts, explaining what the data points signify.
+            -   Detail the "Estimation of Damage to Structures and Process Equipment" and "Estimation of Injury Consequences" based on the calculated Po values.
+            -   Connect the "Simulation Log" data to the "Explosion Contour Map", technically explaining the hazardous zones (lethal, injury, damage) and safe zones based on the radii shown on the map.
+        -   **4. Risk Mitigation**: Propose mitigation strategies based on international standards (e.g., API, NFPA) and scientific literature to prevent recurrence.
+        -   **5. Recommendations**: Provide distinct short-term (immediate actions) and long-term (systemic changes, policy) recommendations.`;
+        
+        const fullPrompt = `**Simulation Log Data:**\n${logData}\n\n**User's Case Study Scenario:**\n${userScenario}`;
 
-2. Incident Analysis
-(Perform a Root Cause Analysis of the case study. Identify technical, human, and organizational failures, with multiple citations where applicable [3][4].)
+        try {
+          const generatedHtml = await callGeminiApi(fullPrompt, systemPrompt);
+          geminiResponse.innerHTML = generatedHtml;
+          updateReportLanguage(); // Set initial language visibility
+        } catch (error) {
+          console.error('Gemini API call failed:', error);
+          geminiResponse.textContent = 'Error: Could not get a response from the AI. Please check the console for details.';
+        } finally {
+          geminiResponse.classList.remove('loading');
+          btnAskGemini.disabled = false;
+        }
+      }
 
-3. Analysis of Simulation & Modelling of Explosion Effects TNT Equivalence
-3.1. Material Properties and TNT Equivalence
-(Explain material properties and the TNT equivalence model.)
-3.2. Peak Side-on Overpressure (Po) Calculation
-(Present and explain formulas for Crowl, Alonso, and Sadovski methods. Display the simulation's Po results.)
-3.3. Consequence Analysis and Hazard Zones
-(Technically analyze damage and injury consequences based on Po values and charts. Define hazard zones with citations [5][6].)
-
-4. Risk Mitigation
-(Propose layered mitigation strategies (Prevention, Control, Response) based on international standards, with multiple citations [7][8].)
-
-5. Recommendations
-(Provide specific short-term and long-term recommendations, with multiple citations [9][10].)
-
-Bibliography
-The citations in this analysis refer to the comprehensive bibliography available at: https://virdanurlulu.github.io/html/bibliography_sim_modeling_explosion.html`,
-                user: `Analysis for Date & Time: ${new Date().toLocaleString('en-US')}
-
-Simulation Data:
-- Chemical Material: ${materialName}
-- Volume: ${volume} m³
-- Distance from Epicenter: ${distance} m
-- Location Coordinates: Latitude=${mapLat}, Longitude=${mapLon}
-- Predicted Peak Overpressure (kPa): Crowl=${poCrowl}, Alonso=${poAlonso}, Sadovski=${poSadovski}
-
-Predicted Consequences at the specified distance:
-- Structural Damage: ${structuralDamage}
-- Process Equipment Damage: ${equipmentDamage}
-- Human Injury Consequences: ${injuryEffects}
-
-Perform a deep analysis using Google Search and generate a comprehensive, structured report in academic English, following all system instructions.`
-            },
-            id: {
-                system: `Anda adalah seorang analis ahli di bidang teknik kimia dan keselamatan proses. Audiens Anda adalah mahasiswa pascasarjana dan peneliti. Bahasa Anda harus formal, akademis, dan teknis.
-Tugas Anda adalah menemukan studi kasus ledakan di dunia nyata yang relevan. Krusial, studi kasus ini harus relevan secara geografis. Simulasi diatur pada Lintang: ${mapLat}, Bujur: ${mapLon}, yang mengindikasikan lokasi DI DARAT. Anda harus memilih insiden di darat yang sebanding (misalnya, pelabuhan, pabrik industri, kecelakaan transportasi), BUKAN bencana anjungan lepas pantai.
-Struktur laporan WAJIB mengikuti format ini, tanpa menggunakan karakter '#' atau '*'.
-
-Studi Kasus: [Judul Studi Kasus yang Relevan]
-"[Sub-judul yang mendeskripsikan kejadian]"
-
-1. Kronologi Kejadian
-(Paragraf naratif komprehensif tentang kronologi kejadian, dengan beberapa sitasi jika relevan [1][2].)
-
-2. Analisis Kejadian
-(Lakukan Analisis Akar Masalah dari studi kasus. Identifikasi kegagalan teknis, manusia, dan organisasional, dengan beberapa sitasi jika relevan [3][4].)
-
-3. Analisis Simulation & Modelling of Explosion Effects TNT Equivalence
-3.1. Sifat Bahan dan Ekuivalensi TNT
-(Jelaskan sifat bahan dan model ekuivalensi TNT.)
-3.2. Perhitungan Peak Side-on Overpressure (Po)
-(Sajikan dan jelaskan rumus metode Crowl, Alonso, dan Sadovski. Tampilkan hasil Po dari simulasi.)
-3.3. Analisis Konsekuensi dan Zona Bahaya
-(Analisis teknis konsekuensi kerusakan dan cedera berdasarkan nilai Po dan grafik. Tentukan zona bahaya, dengan sitasi [5][6].)
-
-4. Mitigasi Risiko
-(Usulkan strategi mitigasi berlapis (Pencegahan, Pengendalian, Respons) berdasarkan standar internasional, dengan beberapa sitasi [7][8].)
-
-5. Rekomendasi
-(Berikan rekomendasi jangka pendek dan panjang yang spesifik, dengan beberapa sitasi [9][10].)
-
-Daftar Pustaka
-Sitasi dalam analisis ini merujuk pada daftar pustaka komprehensif yang tersedia di: https://virdanurlulu.github.io/html/bibliography_sim_modeling_explosion.html`,
-                user: `Analisis untuk Tanggal & Waktu: ${new Date().toLocaleString('id-ID')}
-
-Data Simulasi:
-- Bahan Kimia: ${materialName}
-- Volume: ${volume} m³
-- Jarak dari Pusat Ledakan: ${distance} m
-- Koordinat Lokasi: Lintang=${mapLat}, Bujur=${mapLon}
-- Prediksi Overpressure Puncak (kPa): Crowl=${poCrowl}, Alonso=${poAlonso}, Sadovski=${poSadovski}
-
-Prediksi Konsekuensi pada Jarak yang Ditentukan:
-- Kerusakan Struktural: ${structuralDamage}
-- Kerusakan Peralatan Proses: ${equipmentDamage}
-- Dampak Cedera pada Manusia: ${injuryEffects}
-
-Lakukan analisis mendalam menggunakan Google Search dan hasilkan laporan yang komprehensif dan terstruktur dalam Bahasa Indonesia (EYD), mengikuti semua instruksi sistem.`
-            }
-        };
-
-        const apiKey = "AIzaSyCVfb2YVOx2mmRAlbnDIqCf29a7yZMK5J0";
+      async function callGeminiApi(prompt, systemInstruction, retries = 5, delay = 4000) {
+        const apiKey = "AIzaSyCVfb2YVOx2mmRAlbnDIqCf29a7yZMK5J0"; // API key will be provided by the environment.
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
         
         const payload = {
-            contents: [{ parts: [{ text: prompts[lang].user }] }],
+            contents: [{ parts: [{ text: prompt }] }],
             systemInstruction: {
-                parts: [{ text: prompts[lang].system }]
+                parts: [{ text: systemInstruction }]
             },
-            tools: [{ "google_search": {} }],
         };
-        
-        try {
-            const response = await fetchWithRetry(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
 
-            if (!response.ok) {
-                const errorBody = await response.text();
-                console.error("API Error Body:", errorBody);
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const result = await response.json();
-            const candidate = result.candidates?.[0];
-
-            if (candidate && candidate.content?.parts?.[0]?.text) {
-                const text = candidate.content.parts[0].text;
-                
-                let htmlContent = text.replace(/\n/g, '<br>');
-
-                // Handle Titles and Subtitles
-                htmlContent = htmlContent.replace(/^Case Study: (.*)$/gm, '<h1>$1</h1>');
-                htmlContent = htmlContent.replace(/^"(.*)"$/gm, '<h2>"$1"</h2>');
-
-                // Handle numbered section titles
-                htmlContent = htmlContent.replace(/^(\d\.\s.*)$/gm, '<div class="section-title">$1</div>');
-                
-                // Handle 3.x sub-sections
-                htmlContent = htmlContent.replace(/^(\d\.\d\..*)$/gm, '<h3>$1</h3>');
-
-                // Handle citations
-                htmlContent = htmlContent.replace(/(\s*\[\d+\])+/g, (match) => {
-                    return match.replace(/\[(\d+)\]/g, '<sup>[$1]</sup>');
-                });
-                
-                // Process paragraphs
-                let sections = htmlContent.split(/(<h1>.*<\/h1>|<h2>.*<\/h2>|<div class="section-title">.*<\/div>|<h3>.*<\/h3>)/);
-                let finalHtml = '';
-                for (let i = 0; i < sections.length; i++) {
-                    let section = sections[i].trim();
-                    if (section.startsWith('<h') || section.startsWith('<div')) {
-                        finalHtml += section;
-                    } else if (section) {
-                         finalHtml += `<p>${section.replace(/<br>/g, ' ')}</p>`;
-                    }
-                }
-                
-                aiResultContainer.innerHTML = finalHtml;
-
-            } else {
-                 console.error("API Response was OK, but no valid content found.", result);
-                 throw new Error("No valid content received from API.");
-            }
-        } catch (error) {
-            console.error("Error calling Gemini API:", error);
-            aiResultContainer.innerHTML = `<p style="color: red; text-align: center;">${lang === 'id' ? 'Gagal menghasilkan rekomendasi. Mungkin ada masalah jaringan atau otentikasi API. Silakan coba lagi nanti.' : 'Failed to generate recommendations. It might be a network issue or an API authentication problem. Please try again later.'}</p>`;
-        }
-    }
-
-    async function fetchWithRetry(url, options, retries = 3, delay = 1000) {
         for (let i = 0; i < retries; i++) {
             try {
-                return await fetch(url, options);
-            } catch (err) {
-                if (i === retries - 1) throw err;
-                await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status} ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                
+                if (result.candidates && result.candidates[0]?.content?.parts[0]?.text) {
+                    return result.candidates[0].content.parts[0].text;
+                } else {
+                    const blockReason = result.promptFeedback?.blockReason;
+                    if(blockReason){
+                         return `<p>Request was blocked. Reason: ${blockReason}. Please adjust your prompt.</p>`;
+                    }
+                    throw new Error('Invalid response structure from Gemini API.');
+                }
+            } catch (error) {
+                console.error(`Attempt ${i + 1} failed. Retrying in ${delay}ms...`, error);
+                if (i === retries - 1) throw error;
+                await new Promise(res => setTimeout(res, delay));
+                delay = delay * 2 + Math.floor(Math.random() * 1000);
             }
         }
-    }
+      }
+    });
   </script>
 
 </body>
 </html>
+
 
