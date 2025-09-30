@@ -67,16 +67,22 @@
       resize: vertical;
     }
     #gemini-response {
-      margin-top: 5px; 
-      border: 1px solid #e0e0e0; 
-      border-radius: 4px; 
-      min-height: 20px; 
-      background-color: #f9f9f9; 
-      white-space: pre-wrap; 
+      margin-top: 5px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      min-height: 20px;
+      background-color: #f9f9f9;
+      white-space: normal; /* render HTML normally (no preserved extra newlines) */
       word-wrap: break-word;
       font-size: 14px;
-      line-height: 1.2;
+      line-height: 1.4; /* tighter than default */
+      padding: 8px 10px;
     }
+    /* Compact, consistent spacing for headings, paragraphs, and lists inside the report */
+    #gemini-response h4 { margin: 8px 0 6px !important; }
+    #gemini-response h5 { margin: 6px 0 4px !important; }
+    #gemini-response p  { margin: 6px 0 !important; }
+    #gemini-response ul, #gemini-response ol { margin: 6px 0 6px 18px !important; }
     #gemini-response.loading::after {
       content: '●';
       animation: dots 1.4s infinite;
@@ -471,11 +477,13 @@
         btnAskGemini.addEventListener('click', handleGenerateReport);
       }
 
-      if(languageSwitcher) {
+      if (languageSwitcher) {
         languageSwitcher.addEventListener('click', (e) => {
-            if (e.target.closest('.lang-btn')) {
-                setTimeout(updateReportLanguage, 100);
-            }
+            const btn = e.target.closest('.lang-btn');
+            if (!btn) return;
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateReportLanguage();
         });
       }
 
@@ -558,7 +566,23 @@
 
         try {
           const generatedHtml = await callGeminiApi(fullPrompt, systemPrompt);
-          geminiResponse.innerHTML = generatedHtml;
+          let html = (generatedHtml || '').trim();
+          // Normalize fenced code blocks ```lang...```
+          if (/^```/.test(html)) {
+            const m = html.match(/^```([a-zA-Z0-9_-]+)?\n/);
+            if (m) {
+              html = html.slice(m[0].length);
+            } else {
+              html = html.replace(/^```/, '');
+            }
+            html = html.replace(/\n?```$/, '');
+          }
+          // Decode entities if model returned escaped HTML
+          if (html.includes('&lt;') && html.includes('&gt;') && !html.includes('<div')) {
+            const ta = document.createElement('textarea');
+            ta.innerHTML = html; html = ta.value;
+          }
+          geminiResponse.innerHTML = html;
           updateReportLanguage(); // Set initial language visibility
         } catch (error) {
           console.error('Gemini API call failed:', error);
