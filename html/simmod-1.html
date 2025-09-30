@@ -58,25 +58,24 @@
     #gemini-prompt {
       width: 100%; 
       box-sizing: border-box; 
-      min-height: 80px; 
-      margin-bottom: 10px; 
-      padding: 8px; 
+      min-height: 40px; 
+      margin-bottom: 1px; 
+      padding: 2px; 
       border-radius: 4px; 
       border: 1px solid #ccc; 
       font-family: inherit;
       resize: vertical;
     }
     #gemini-response {
-      margin-top: 15px; 
-      padding: 12px; 
+      margin-top: 5px; 
       border: 1px solid #e0e0e0; 
       border-radius: 4px; 
-      min-height: 50px; 
+      min-height: 10px; 
       background-color: #f9f9f9; 
       white-space: pre-wrap; 
       word-wrap: break-word;
       font-size: 14px;
-      line-height: 1.6;
+      line-height: 0.5;
     }
     #gemini-response.loading::after {
       content: '●';
@@ -84,7 +83,7 @@
       animation-timing-function: ease-in-out;
       text-align: center;
       display: block;
-      margin-top: 10px;
+      margin-top: 5px;
       font-size: 24px;
     }
     @keyframes dots {
@@ -400,12 +399,12 @@
         <!-- Gemini Feature Section -->
         <section class="card gemini-card" aria-labelledby="gemini-head">
           <div id="gemini-head" class="card-header">
-            <span data-lang-key="gemini_title">✨ AI Analysis & Recommendation</span>
+            <span data-lang-key="gemini_title">Process Safety Recommendation</span>
           </div>
           <div style="padding: 14px;">
-            <p data-lang-key="gemini_report_description" class="footnote" style="margin-bottom: 12px;">Enter a brief case study scenario below (e.g., "LPG truck tanker crash and explosion in a populated area") and the AI will generate a detailed academic report based on the current simulation log data.</p>
-            <textarea id="gemini-prompt" data-lang-key="gemini_prompt_placeholder">Analysis of section: Chemical Material, Properties, Parameters Calculation resulted, chart Scaled Overpressure vs Scaled Distance, Estimation of Damage to Structures and Process Equipment, Estimation of Injury Consequences, chart Overpressure vs Distance, Simulation Log, and Explosion Contour Map with check Lat and Lon the location.</textarea>
-            <button class="btn" id="btnAskGemini" data-lang-key="btn_generate_report">✨ Generate AI Report</button>
+            <p data-lang-key="gemini_report_description" class="footnote" style="margin-bottom: 12px;">Enter a brief case study scenario below (e.g., "LPG truck tanker crash and explosion in a populated area") and we will generate a detailed academic report based on the current simulation log data.</p>
+            <textarea id="gemini-prompt" data-lang-key="gemini_prompt_placeholder">Analysis of section: Chemical Material, Properties, physical material, Parameters Calculation resulted, chart Scaled Overpressure vs Scaled Distance, Estimation of Damage to Structures and Process Equipment, Estimation of Injury Consequences, chart Overpressure vs Distance, Simulation Log, and Explosion Contour Map with check Lat and Lon the location and check where the location (city and country) based on coordinate, find incident brief from the publication website Journal news.</textarea>
+            <button class="btn" id="btnAskGemini" data-lang-key="btn_generate_report">Process Safety Report</button>
             <div id="gemini-response">
                 <!-- AI Generated Report will be injected here -->
             </div>
@@ -457,7 +456,7 @@
   <button class="btn" id="toTop" type="button" aria-label="Back to Top">&#8679;</button>
   
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
-  <script src="https://virdanurlulu.github.io/js/js-app.js"></script>
+  <script src="https://virdanurlulu.github.io/js/js-app.js" defer></script>
 
   <!-- Gemini API Integration Script -->
   <script>
@@ -510,14 +509,17 @@
           return "No simulation log data available.";
         }
 
-        const data = rows.map(row => {
+        // Drastically limit the data sent to only the most recent entry
+        const recentRows = rows.slice(-1); 
+
+        const data = recentRows.map(row => {
           return Array.from(row.querySelectorAll('td'))
             .map(td => td.textContent.trim())
             .slice(0, -1) // Remove action column
             .join(' | ');
         });
 
-        return `Headers: ${combinedHeaders.join(' | ')}\nData:\n${data.join('\n')}`;
+        return `Headers: ${combinedHeaders.join(' | ')}\nData (last ${recentRows.length} entry):\n${data.join('\n')}`;
       }
 
       async function handleGenerateReport() {
@@ -537,32 +539,20 @@
         geminiResponse.classList.add('loading');
         btnAskGemini.disabled = true;
 
-        const systemPrompt = `You are a research assistant for a Master's program in Chemical Engineering at the Bandung Institute of Technology. Your task is to generate a formal academic case study report based on simulation data and a user-provided scenario.
-
-        **Output Rules:**
-        1.  Your entire response MUST be a single block of HTML. Do not use Markdown.
-        2.  The root of the HTML must contain two divs: \`<div id="report-en" lang="en">...\` and \`<div id="report-id" lang="id">...\`.
-        3.  Generate the complete, detailed report inside EACH language div, translated appropriately (academic English and formal Indonesian EYD).
-        4.  Use the following HTML structure for the content inside each language div:
-            -   Main Title: \`<h4 style='font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 5px; color: #00529b;'>...\`
-            -   Subtitle: \`<h5 style='font-size: 14px; font-weight: bold; text-align: center; margin-top: 0; margin-bottom: 15px; color: #00529b;'>...\`
-            -   Section Headers: \`<p style='margin-top: 15px; margin-bottom: 2px;'><strong style='font-size: 14px;'>[Section Number]. [Section Title]</strong></p>\`
-            -   Body Text: \`<p style='font-size: 12px; text-align: left; margin: 0 0 8pt 0; line-height: 1.2;'>...\`
-        5.  Incorporate academic citations throughout the text using the format \`<span style='color: #003366; font-weight: bold;'>[#]</span>\`. Use between 5 to 15 citations. These citations refer to the bibliography found at https://virdanurlulu.github.io/html/bibliography_sim_modeling_explosion.html. The numbers should be contextually relevant to process safety literature.
-        6.  The tone must be academic, analytical, data-driven, and suitable for a Master's level thesis.
-
-        **Report Structure:**
-        -   **Case Study Title & Subtitle**: Derive these from the user's scenario.
-        -   **1. Chronology of Events**: Elaborate on the user's scenario, imagining a plausible sequence of events leading to the explosion.
-        -   **2. Event Analysis (Root Cause Analysis)**: Perform a brief root cause analysis (e.g., equipment failure, human error) that logically follows the chronology.
-        -   **3. Simulation & Modeling Analysis (TNT Equivalence)**: This is the core section.
-            -   Discuss the properties of the chemical from the log data.
-            -   Explain the calculation of Peak side-on overpressure (Po) and state the formulas used for Crowl, Alonso, and Sadovski models based on the provided data.
-            -   Analyze the "Scaled Overpressure vs Scaled Distance" and "Overpressure vs Distance" charts, explaining what the data points signify.
-            -   Detail the "Estimation of Damage to Structures and Process Equipment" and "Estimation of Injury Consequences" based on the calculated Po values.
-            -   Connect the "Simulation Log" data to the "Explosion Contour Map", technically explaining the hazardous zones (lethal, injury, damage) and safe zones based on the radii shown on the map.
-        -   **4. Risk Mitigation**: Propose mitigation strategies based on international standards (e.g., API, NFPA) and scientific literature to prevent recurrence.
-        -   **5. Recommendations**: Provide distinct short-term (immediate actions) and long-term (systemic changes, policy) recommendations.`;
+        const systemPrompt = `You are a Chemical Engineering Master's student from ITB creating an academic case study.
+        **Rules**:
+        - Output MUST be a single HTML block.
+        - Create two root divs: \`<div id="report-en" lang="en">...\` and \`<div id="report-id" lang="id">...\`.
+        - Fully translate the report into academic English and formal Indonesian (EYD) inside the respective divs.
+        - Use this HTML styling: Title: \`<h4 style='font-size: 16px; font-weight: bold; text-align: center; color: #00529b;'>...\` | Subtitle: \`<h5 style='font-size: 14px; font-weight: bold; text-align: center; color: #00529b;'>...\` | Section Headers: \`<p><strong style='font-size: 14px;'># No. Title</strong></p>\` | Body: \`<p style='font-size: 12px; line-height: 1.2;'>...\`.
+        - Add 5-10 academic citations like \`<span style='color: #003366; font-weight: bold;'>[#]</span>\`, referencing the bibliography at https://virdanurlulu.github.io/html/bibliography_sim_modeling_explosion.html.
+        - The tone must be academic and analytical.
+        **Structure**:
+        1.  **Chronology**: Elaborate on the user's scenario.
+        2.  **Event Analysis**: Brief root cause analysis.
+        3.  **Simulation Analysis**: Analyze chemical properties, Po calculation methods, charts, damage/injury estimations, and the contour map from the log data.
+        4.  **Risk Mitigation**: Propose mitigation strategies based on standards.
+        5.  **Recommendations**: Provide short-term and long-term recommendations.`;
         
         const fullPrompt = `**Simulation Log Data:**\n${logData}\n\n**User's Case Study Scenario:**\n${userScenario}`;
 
@@ -572,16 +562,17 @@
           updateReportLanguage(); // Set initial language visibility
         } catch (error) {
           console.error('Gemini API call failed:', error);
-          geminiResponse.textContent = 'Error: Could not get a response from the AI. Please check the console for details.';
+          geminiResponse.textContent = `Error: ${error.message}`;
         } finally {
           geminiResponse.classList.remove('loading');
           btnAskGemini.disabled = false;
         }
       }
 
-      async function callGeminiApi(prompt, systemInstruction, retries = 5, delay = 4000) {
-        const apiKey = "AIzaSyCVfb2YVOx2mmRAlbnDIqCf29a7yZMK5J0"; // API key will be provided by the environment.
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+      async function callGeminiApi(prompt, systemInstruction) {
+        const apiKey = "AIzaSyBOol9JlsJIhmPmcaE8VqlKlXPHxEJ6Bic";
+        const model = 'gemini-2.5-flash-preview-05-20';
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
         
         const payload = {
             contents: [{ parts: [{ text: prompt }] }],
@@ -590,7 +581,11 @@
             },
         };
 
-        for (let i = 0; i < retries; i++) {
+        let lastError = null;
+        const maxRetries = 3;
+        let delay = 5000; // Start with a longer delay of 5 seconds
+
+        for (let i = 0; i < maxRetries; i++) {
             try {
                 const response = await fetch(apiUrl, {
                     method: 'POST',
@@ -598,33 +593,57 @@
                     body: JSON.stringify(payload)
                 });
 
+                // Check for 429 or 503 to retry
+                if (response.status === 429 || response.status === 503) {
+                    lastError = new Error(`Attempt ${i + 1} failed with status ${response.status}. Retrying in ${delay / 1000}s...`);
+                    console.error(lastError.message);
+                    if (i < maxRetries - 1) {
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2; // Exponential backoff
+                    }
+                    continue; // Go to the next iteration
+                }
+
                 if (!response.ok) {
+                    if (response.status === 401) {
+                        throw new Error(`Authentication failed (401). Please verify your API key.`);
+                    }
                     throw new Error(`HTTP error! status: ${response.status} ${response.statusText}`);
                 }
 
                 const result = await response.json();
                 
                 if (result.candidates && result.candidates[0]?.content?.parts[0]?.text) {
-                    return result.candidates[0].content.parts[0].text;
+                    return result.candidates[0].content.parts[0].text; // Success
                 } else {
                     const blockReason = result.promptFeedback?.blockReason;
                     if(blockReason){
-                         return `<p>Request was blocked. Reason: ${blockReason}. Please adjust your prompt.</p>`;
+                         return `<p>Request was blocked due to safety settings. Reason: ${blockReason}. Please adjust your prompt.</p>`;
+                    }
+                    if(result.error) {
+                        throw new Error(`API returned an error: ${result.error.message}`);
                     }
                     throw new Error('Invalid response structure from Gemini API.');
                 }
             } catch (error) {
-                console.error(`Attempt ${i + 1} failed. Retrying in ${delay}ms...`, error);
-                if (i === retries - 1) throw error;
-                await new Promise(res => setTimeout(res, delay));
-                delay = delay * 2 + Math.floor(Math.random() * 1000);
+                lastError = error;
+                console.error(`Attempt ${i + 1} failed with error:`, error);
+                if (i < maxRetries - 1) {
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                }
             }
         }
+
+        // If all retries fail, throw the last specific error
+        if (lastError) {
+          throw lastError;
+        }
+        throw new Error(`The AI service is still unavailable after ${maxRetries} attempts. Please try again later.`);
       }
     });
   </script>
 
 </body>
 </html>
-
 
