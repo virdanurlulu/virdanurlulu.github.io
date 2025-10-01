@@ -130,7 +130,7 @@
       </div>
       
       <div id="language-switcher">
-          <button class="lang-btn" data-lang="en" aria-label="Switch to English">
+          <button class="lang-btn active" data-lang="en" aria-label="Switch to English">
               <img src="https://virdanurlulu.github.io/img/EN.svg" alt="Switch to English" />
           </button>
           <button class="lang-btn" data-lang="id" aria-label="Ganti ke Bahasa Indonesia">
@@ -467,26 +467,101 @@
   <!-- Gemini API Integration Script -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // English: DOM element references.
+      // Bahasa Indonesia: Referensi elemen DOM.
       const btnAskGemini = document.getElementById('btnAskGemini');
       const geminiPrompt = document.getElementById('gemini-prompt');
       const geminiResponse = document.getElementById('gemini-response');
       const logTable = document.getElementById('logTable');
       const languageSwitcher = document.getElementById('language-switcher');
 
+      // English: Bilingual object for UI messages.
+      // Bahasa Indonesia: Objek bilingual untuk pesan antarmuka pengguna.
+      const messages = {
+          en: {
+              provideScenario: '<p>Please provide a brief case study scenario.</p>',
+              noLogData: '<p>Cannot generate a report without data in the Simulation Log.</p>',
+              apiError: (msg) => `Error: ${msg}`,
+              authError: 'Authentication failed (401). Please verify your API key.',
+              httpError: (status, text) => `HTTP error! status: ${status} ${text}`,
+              blockedRequest: (reason) => `<p>Request was blocked due to safety settings. Reason: ${reason}. Please adjust your prompt.</p>`,
+              apiResponseError: (msg) => `API returned an error: ${msg}`,
+              invalidResponse: 'Invalid response structure from Gemini API.',
+              serviceUnavailable: (retries) => `The AI service is still unavailable after ${retries} attempts. Please try again later.`
+          },
+          id: {
+              provideScenario: '<p>Mohon berikan skenario studi kasus singkat.</p>',
+              noLogData: '<p>Tidak dapat membuat laporan tanpa data di dalam Log Simulasi.</p>',
+              apiError: (msg) => `Galat: ${msg}`,
+              authError: 'Autentikasi gagal (401). Mohon verifikasi kunci API Anda.',
+              httpError: (status, text) => `Galat HTTP! status: ${status} ${text}`,
+              blockedRequest: (reason) => `<p>Permintaan diblokir karena pengaturan keamanan. Alasan: ${reason}. Mohon sesuaikan prompt Anda.</p>`,
+              apiResponseError: (msg) => `API mengembalikan galat: ${msg}`,
+              invalidResponse: 'Struktur respons dari API Gemini tidak valid.',
+              serviceUnavailable: (retries) => `Layanan AI masih tidak tersedia setelah ${retries} percobaan. Silakan coba lagi nanti.`
+          }
+      };
+
+      // English: Translations for the Process Safety Recommendation section.
+      // Bahasa Indonesia: Terjemahan untuk bagian Rekomendasi Keselamatan Proses.
+      const uiTranslations = {
+        en: {
+            gemini_title: 'Process Safety Recommendation',
+            gemini_report_description: 'Enter a brief case study scenario below (e.g., "LPG truck tanker crash and explosion in a populated area") and we will generate a detailed academic report based on the current simulation log data.',
+            btn_generate_report: 'Process Safety Report',
+            gemini_prompt_placeholder: 'Analysis of section: Chemical Material, Properties, physical material, Parameters Calculation resulted, chart Scaled Overpressure vs Scaled Distance, Estimation of Damage to Structures and Process Equipment, Estimation of Injury Consequences, chart Overpressure vs Distance, Simulation Log, and Explosion Contour Map with check Lat and Lon the location and check where the location (city and country) based on coordinate, find incident brief from the publication website Journal news, Recommendations for building a standard type explosion-proof and fire-proof control room building.'
+        },
+        id: {
+            gemini_title: 'Rekomendasi Keselamatan Proses',
+            gemini_report_description: 'Masukkan skenario studi kasus singkat di bawah ini (misalnya, "Kecelakaan dan ledakan truk tangki LPG di daerah padat penduduk") dan kami akan membuat laporan akademis terperinci berdasarkan data log simulasi saat ini.',
+            btn_generate_report: 'Buat Laporan Keselamatan Proses',
+            gemini_prompt_placeholder: 'Analisis bagian: Material Kimia, Properti, material fisik, Hasil Perhitungan Parameter, grafik Scaled Overpressure vs Scaled Distance, Estimasi Kerusakan Struktur dan Peralatan Proses, Estimasi Konsekuensi Cedera, grafik Overpressure vs Distance, Log Simulasi, dan Peta Kontur Ledakan dengan memeriksa Lintang dan Bujur lokasi dan memeriksa di mana lokasi (kota dan negara) berdasarkan koordinat, temukan ringkasan insiden dari situs web publikasi Jurnal berita, Rekomendasi untuk membangun gedung ruang kendali standar tahan ledakan dan tahan api.'
+        }
+      };
+      
+      /**
+       * English: Applies translations to elements with data-lang-key attributes.
+       * Bahasa Indonesia: Menerapkan terjemahan ke elemen dengan atribut data-lang-key.
+       * @param {string} lang - The selected language ('en' or 'id').
+       */
+      function applyTranslations(lang) {
+        document.querySelectorAll('[data-lang-key]').forEach(el => {
+            const key = el.dataset.langKey;
+            const translation = uiTranslations[lang]?.[key];
+            if (translation) {
+                if (el.tagName === 'TEXTAREA' && el.hasAttribute('placeholder')) {
+                    el.placeholder = translation;
+                } else {
+                    el.innerHTML = translation;
+                }
+            }
+        });
+      }
+
+      // English: Add click listener for the main button.
+      // Bahasa Indonesia: Tambahkan event listener untuk tombol utama.
       if (btnAskGemini) {
         btnAskGemini.addEventListener('click', handleGenerateReport);
       }
 
+      // English: Add click listener for the language switcher.
+      // Bahasa Indonesia: Tambahkan event listener untuk pengganti bahasa.
       if (languageSwitcher) {
         languageSwitcher.addEventListener('click', (e) => {
             const btn = e.target.closest('.lang-btn');
             if (!btn) return;
+            const selectedLang = btn.dataset.lang;
             document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             updateReportLanguage();
+            applyTranslations(selectedLang); // Apply new translations
         });
       }
 
+      /**
+       * English: Toggles visibility of the generated report based on the selected language.
+       * Bahasa Indonesia: Mengubah visibilitas laporan yang dihasilkan berdasarkan bahasa yang dipilih.
+       */
       function updateReportLanguage() {
         const activeLang = document.querySelector('.lang-btn.active')?.dataset.lang || 'en';
         const reportEN = geminiResponse.querySelector('#report-en');
@@ -503,10 +578,15 @@
         }
       }
 
+      /**
+       * English: Extracts and formats data from the simulation log table as plain text.
+       * Bahasa Indonesia: Mengekstrak dan memformat data dari tabel log simulasi sebagai teks biasa.
+       * @returns {string} - The formatted log data or a message if no data is available.
+       */
       function getLogDataAsText() {
         const headers = Array.from(logTable.querySelectorAll('thead tr:first-child th'))
           .map(th => th.textContent.trim())
-          .slice(0, -1); // Remove action column
+          .slice(0, -1); // English: Remove action column. // Bahasa Indonesia: Hapus kolom aksi.
         const units = Array.from(logTable.querySelectorAll('thead tr.unit-row th'))
           .map(th => th.textContent.trim());
         
@@ -517,97 +597,115 @@
           return "No simulation log data available.";
         }
 
-        // Drastically limit the data sent to only the most recent entry
+        // English: Limit the data sent to only the most recent entry to conserve tokens.
+        // Bahasa Indonesia: Batasi data yang dikirim hanya pada entri terbaru untuk menghemat token.
         const recentRows = rows.slice(-1); 
 
         const data = recentRows.map(row => {
           return Array.from(row.querySelectorAll('td'))
             .map(td => td.textContent.trim())
-            .slice(0, -1) // Remove action column
+            .slice(0, -1) // English: Remove action column. // Bahasa Indonesia: Hapus kolom aksi.
             .join(' | ');
         });
 
         return `Headers: ${combinedHeaders.join(' | ')}\nData (last ${recentRows.length} entry):\n${data.join('\n')}`;
       }
 
+      /**
+       * English: Main handler to orchestrate the report generation process.
+       * Bahasa Indonesia: Fungsi utama untuk mengatur proses pembuatan laporan.
+       */
       async function handleGenerateReport() {
+        const uiLang = document.querySelector('.lang-btn.active')?.dataset.lang || 'en';
         const userScenario = geminiPrompt.value.trim();
+        
+        // English: Validate user input. // Bahasa Indonesia: Validasi masukan pengguna.
         if (!userScenario) {
-          geminiResponse.innerHTML = '<p>Please provide a brief case study scenario.</p>';
+          geminiResponse.innerHTML = messages[uiLang].provideScenario;
           return;
         }
 
         const logData = getLogDataAsText();
         if (logData === "No simulation log data available.") {
-            geminiResponse.innerHTML = '<p>Cannot generate a report without data in the Simulation Log.</p>';
+            geminiResponse.innerHTML = messages[uiLang].noLogData;
             return;
         }
         
+        // English: Update UI to show loading state. // Bahasa Indonesia: Perbarui UI untuk menampilkan status memuat.
         geminiResponse.textContent = '';
         geminiResponse.classList.add('loading');
         btnAskGemini.disabled = true;
 
-        const systemPrompt = `You are a Chemical Engineering Master's student from ITB creating an academic case study.
-        **Rules**:
-        - Output MUST be a single HTML block.
+        // English: System prompt defining the AI's persona, rules, and output structure.
+        // Bahasa Indonesia: Prompt sistem yang mendefinisikan persona AI, aturan, dan struktur keluaran.
+        const systemPrompt = `You are an AI assistant generating an academic case study from the perspective of a Master's candidate in Chemical Engineering at ITB.
+        **Mandatory Directives**:
+        - The entire output must be a single HTML block.
         - Create two root divs: \`<div id="report-en" lang="en">...\` and \`<div id="report-id" lang="id">...\`.
         - Fully translate the report into academic English and formal Indonesian (EYD) inside the respective divs.
         - Use this HTML styling: Title: \`<h4 style='font-size: 16px; font-weight: bold; text-align: center; color: #00529b;'>...\` | Subtitle: \`<h5 style='font-size: 14px; font-weight: bold; text-align: center; color: #00529b;'>...\` | Section Headers: \`<p><strong style='font-size: 14px;'># No. Title</strong></p>\` | Body: \`<p style='font-size: 12px; line-height: 1.2;'>...\`.
         - Add 5-10 academic citations like \`<span style='color: #003366; font-weight: bold;'>[#]</span>\`, referencing the bibliography at https://virdanurlulu.github.io/html/bibliography_sim_modeling_explosion.html.
-        - The tone must be academic and analytical.
-        **Structure**:
-        1.  **Chronology**: Elaborate on the user's scenario.
-        2.  **Event Analysis**: Brief root cause analysis.
-        3.  **Simulation Analysis**: Analyze chemical properties, Po calculation methods, charts, damage/injury estimations, and the contour map from the log data.
-        4.  **Risk Mitigation**: Propose mitigation strategies based on standards.
-        5.  **Recommendations**: Provide short-term and long-term recommendations.`;
+        - Maintain a formal, academic, and analytical tone.
+        **Report Structure**:
+        1.  **Chronological Account**: Detail the user-provided scenario.
+        2.  **Causal Analysis**: Conduct a concise root cause analysis.
+        3.  **Simulation Data Analysis**: Interpret the simulation log data (chemical properties, overpressure calculations, charts, damage/injury estimates, contour map).
+        4.  **Risk Mitigation Strategies**: Propose mitigation measures based on industry standards.
+        5.  **Formal Recommendations**: Formulate specific short-term and long-term recommendations.`;
         
         const fullPrompt = `**Simulation Log Data:**\n${logData}\n\n**User's Case Study Scenario:**\n${userScenario}`;
 
         try {
           const generatedHtml = await callGeminiApi(fullPrompt, systemPrompt);
           let html = (generatedHtml || '').trim();
-          // Normalize fenced code blocks ```lang...```
+          
+          // English: Clean and normalize the API response.
+          // Bahasa Indonesia: Bersihkan dan normalisasikan respons API.
           if (/^```/.test(html)) {
             const m = html.match(/^```([a-zA-Z0-9_-]+)?\n/);
-            if (m) {
-              html = html.slice(m[0].length);
-            } else {
-              html = html.replace(/^```/, '');
-            }
+            html = m ? html.slice(m[0].length) : html.replace(/^```/, '');
             html = html.replace(/\n?```$/, '');
           }
-          // Decode entities if model returned escaped HTML
           if (html.includes('&lt;') && html.includes('&gt;') && !html.includes('<div')) {
             const ta = document.createElement('textarea');
             ta.innerHTML = html; html = ta.value;
           }
+          
           geminiResponse.innerHTML = html;
-          updateReportLanguage(); // Set initial language visibility
+          updateReportLanguage(); // English: Set initial visibility based on language. // Bahasa Indonesia: Atur visibilitas awal berdasarkan bahasa.
         } catch (error) {
-          console.error('Gemini API call failed:', error);
-          geminiResponse.textContent = `Error: ${error.message}`;
+          console.error('Gemini API call failed:', error); // English: Log error for debugging. // Bahasa Indonesia: Catat galat untuk debugging.
+          geminiResponse.textContent = messages[uiLang].apiError(error.message);
         } finally {
+          // English: Reset UI from loading state. // Bahasa Indonesia: Kembalikan UI dari status memuat.
           geminiResponse.classList.remove('loading');
           btnAskGemini.disabled = false;
         }
       }
 
+      /**
+       * English: Calls the Gemini API with exponential backoff for retries.
+       * Bahasa Indonesia: Memanggil API Gemini dengan strategi exponential backoff untuk percobaan ulang.
+       * @param {string} prompt - The user's full prompt.
+       * @param {string} systemInstruction - The system instructions for the model.
+       * @returns {Promise<string>} - The generated text from the API.
+       */
       async function callGeminiApi(prompt, systemInstruction) {
-        const apiKey = "AIzaSyBOol9JlsJIhmPmcaE8VqlKlXPHxEJ6Bic";
+        // IMPORTANT: The API key is exposed client-side and should be replaced with a secure server-side proxy in a production environment.
+        // PENTING: Kunci API terekspos di sisi klien dan harus diganti dengan proksi sisi server yang aman di lingkungan produksi.
+        const apiKey = "AIzaSyBOol9JlsJIhmPmcaE8VqlKlXPHxEJ6Bic"; 
         const model = 'gemini-2.5-flash-preview-05-20';
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        const uiLang = document.querySelector('.lang-btn.active')?.dataset.lang || 'en';
         
         const payload = {
             contents: [{ parts: [{ text: prompt }] }],
-            systemInstruction: {
-                parts: [{ text: systemInstruction }]
-            },
+            systemInstruction: { parts: [{ text: systemInstruction }] },
         };
 
         let lastError = null;
         const maxRetries = 3;
-        let delay = 5000; // Start with a longer delay of 5 seconds
+        let delay = 5000; // English: Start with a 5-second delay. // Bahasa Indonesia: Mulai dengan jeda 5 detik.
 
         for (let i = 0; i < maxRetries; i++) {
             try {
@@ -617,37 +715,32 @@
                     body: JSON.stringify(payload)
                 });
 
-                // Check for 429 or 503 to retry
+                // English: Retry on rate limiting or server errors.
+                // Bahasa Indonesia: Coba lagi jika terjadi rate limiting atau galat server.
                 if (response.status === 429 || response.status === 503) {
                     lastError = new Error(`Attempt ${i + 1} failed with status ${response.status}. Retrying in ${delay / 1000}s...`);
                     console.error(lastError.message);
                     if (i < maxRetries - 1) {
                         await new Promise(resolve => setTimeout(resolve, delay));
-                        delay *= 2; // Exponential backoff
+                        delay *= 2; // English: Exponential backoff. // Bahasa Indonesia: Exponential backoff.
                     }
-                    continue; // Go to the next iteration
+                    continue;
                 }
 
                 if (!response.ok) {
-                    if (response.status === 401) {
-                        throw new Error(`Authentication failed (401). Please verify your API key.`);
-                    }
-                    throw new Error(`HTTP error! status: ${response.status} ${response.statusText}`);
+                    if (response.status === 401) throw new Error(messages[uiLang].authError);
+                    throw new Error(messages[uiLang].httpError(response.status, response.statusText));
                 }
 
                 const result = await response.json();
                 
                 if (result.candidates && result.candidates[0]?.content?.parts[0]?.text) {
-                    return result.candidates[0].content.parts[0].text; // Success
+                    return result.candidates[0].content.parts[0].text; // English: Success. // Bahasa Indonesia: Berhasil.
                 } else {
                     const blockReason = result.promptFeedback?.blockReason;
-                    if(blockReason){
-                         return `<p>Request was blocked due to safety settings. Reason: ${blockReason}. Please adjust your prompt.</p>`;
-                    }
-                    if(result.error) {
-                        throw new Error(`API returned an error: ${result.error.message}`);
-                    }
-                    throw new Error('Invalid response structure from Gemini API.');
+                    if (blockReason) return messages[uiLang].blockedRequest(blockReason);
+                    if (result.error) throw new Error(messages[uiLang].apiResponseError(result.error.message));
+                    throw new Error(messages[uiLang].invalidResponse);
                 }
             } catch (error) {
                 lastError = error;
@@ -659,12 +752,16 @@
             }
         }
 
-        // If all retries fail, throw the last specific error
-        if (lastError) {
-          throw lastError;
-        }
-        throw new Error(`The AI service is still unavailable after ${maxRetries} attempts. Please try again later.`);
+        // English: Throw the last captured error after all retries fail.
+        // Bahasa Indonesia: Lemparkan galat terakhir yang ditangkap setelah semua percobaan ulang gagal.
+        if (lastError) throw lastError;
+        throw new Error(messages[uiLang].serviceUnavailable(maxRetries));
       }
+
+      // English: Apply initial translations on page load.
+      // Bahasa Indonesia: Terapkan terjemahan awal saat halaman dimuat.
+      const initialLang = document.querySelector('.lang-btn.active')?.dataset.lang || 'en';
+      applyTranslations(initialLang);
     });
   </script>
 
