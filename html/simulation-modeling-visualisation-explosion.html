@@ -212,7 +212,7 @@
             <div id="contourMapContainer">
               <div class="fs-host" id="mapCard">
                 <div id="mapTitle" class="map-title">Explosion Contour</div>
-                <button id="fsBtn" class="fs-btn" aria-pressed="false" title="Fullscreen (F)">⛶ Fullscreen</button>
+                <button id="fsBtn" class="fs-btn" aria-pressed="false" title="Fullscreen">⛶ Fullscreen</button>
                 <button id="fsBtnMobile" class="fs-btn fs-btn-mobile" aria-pressed="false" title="Fullscreen">⛶ Fullscreen</button>
                 <div id="map" role="region" aria-label="Explosion contour map"></div>
                 <div class="legend" id="legend" hidden></div>
@@ -398,5 +398,32 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
   <script src="https://virdanurlulu.github.io/js/js-app.js"></script>
 
+  <!-- Skrip untuk memastikan mode layar penuh HANYA aktif lewat tombol, bukan keyboard -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Menambahkan event listener 'keydown' ke seluruh dokumen.
+      // Opsi 'true' (fase capturing) memastikan skrip ini berjalan sebelum skrip lain
+      // dan dapat mencegat event-nya terlebih dahulu untuk menonaktifkan pintasan.
+      document.addEventListener('keydown', (event) => {
+        // Periksa apakah tombol yang ditekan adalah 'f' (tanpa mempedulikan huruf besar/kecil).
+        if (event.key.toLowerCase() === 'f') {
+          // PENTING: Periksa apakah tombol Ctrl (di Windows) atau Meta (Cmd di Mac) sedang ditekan.
+          if (event.ctrlKey || event.metaKey) {
+            // Jika Ctrl+F atau Cmd+F ditekan, JANGAN lakukan apa-apa.
+            // Biarkan browser menjalankan fungsi "Cari/Find" bawaannya.
+            return;
+          }
+          
+          // Jika HANYA tombol 'f' atau 'F' yang ditekan (tanpa Ctrl/Cmd),
+          // maka hentikan event ini sepenuhnya.
+          // `stopImmediatePropagation` mencegah listener lain (dari js-app.js)
+          // untuk menangkap event ini, sehingga pintasan keyboard untuk fullscreen tidak akan aktif.
+          event.stopImmediatePropagation();
+        }
+      }, true); // Argumen 'true' menjalankan listener ini pada fase capture.
+    });
+  </script>
+
 </body>
 </html>
+
