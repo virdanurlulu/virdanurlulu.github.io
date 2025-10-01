@@ -3356,11 +3356,11 @@
       setFSLabel(active);
     });
 
-    document.addEventListener('keydown', (e)=>{
-      if (document.activeElement.tagName === 'INPUT') return;
-      if (e.key.toLowerCase() === 'f') { e.preventDefault(); toggleFS(); }
-      if (e.key === 'Escape' && mapCard.classList.contains('fullscreen')) { exitFS(); }
-    });
+    // document.addEventListener('keydown', (e)=>{
+    //  if (document.activeElement.tagName === 'INPUT') return;
+    //  if (e.key.toLowerCase() === 'f') { e.preventDefault(); toggleFS(); }
+    //  if (e.key === 'Escape' && mapCard.classList.contains('fullscreen')) { exitFS(); }
+    // });
 
     window.addEventListener('resize', ()=>{
       if (mapCard.classList.contains('fullscreen')) {
