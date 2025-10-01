@@ -236,7 +236,7 @@
             <button class="btn" id="btnExport" data-lang-key="btn_export_png">Export PNG</button>
           </div>
           <div class="chart-container">
-            <div id="chart" role="img" aria-label="Log-log plot of Ps (Po/Pa) versus ze based on Kinney &amp; Graham (1985)."></div>
+            <div id="chart" role="img" aria-label="Log-log plot of Ps (Po/Pa) versus ze based on Kinney & Graham (1985)."></div>
             <noscript><p data-lang-key="chart_noscript">Please enable JavaScript to display the chart. Reference: G. F. Kinney & K. J. Graham (1985).</p></noscript>
             <div class="chart-note" data-lang-key="chart_note_source">Source: G. F. Kinney & K. J. Graham, <em>Explosive Shocks in Air</em>, Springer-Verlag, 1985.</div>
           </div>
@@ -506,14 +506,14 @@
       // Bahasa Indonesia: Terjemahan untuk bagian Rekomendasi Keselamatan Proses.
       const uiTranslations = {
         en: {
-            gemini_title: 'Process Safety Recommendation',
-            gemini_report_description: 'Enter a brief case study scenario below (e.g., "LPG truck tanker crash and explosion in a populated area") and we will generate a detailed academic report based on the current simulation log data.',
+            gemini_title: 'AI Process Safety Recommendation',
+            gemini_report_description: 'Enter a brief case study scenario below and AI will generate a detailed academic report based on the current simulation log data.',
             btn_generate_report: 'Process Safety Report',
             gemini_prompt_placeholder: 'Analysis of section: Chemical Material, Properties, physical material, Parameters Calculation resulted, chart Scaled Overpressure vs Scaled Distance, Estimation of Damage to Structures and Process Equipment, Estimation of Injury Consequences, chart Overpressure vs Distance, Simulation Log, and Explosion Contour Map with check Lat and Lon the location and check where the location (city and country) based on coordinate, find incident brief from the publication website Journal news, Recommendations for building a standard type explosion-proof and fire-proof control room building.'
         },
         id: {
-            gemini_title: 'Rekomendasi Keselamatan Proses',
-            gemini_report_description: 'Masukkan skenario studi kasus singkat di bawah ini (misalnya, "Kecelakaan dan ledakan truk tangki LPG di daerah padat penduduk") dan kami akan membuat laporan akademis terperinci berdasarkan data log simulasi saat ini.',
+            gemini_title: 'AI Rekomendasi Keselamatan Proses',
+            gemini_report_description: 'Masukkan skenario studi kasus singkat di bawah ini dan AI Process Safety akan membuat laporan akademis terperinci berdasarkan data log simulasi saat ini.',
             btn_generate_report: 'Buat Laporan Keselamatan Proses',
             gemini_prompt_placeholder: 'Analisis bagian: Material Kimia, Properti, material fisik, Hasil Perhitungan Parameter, grafik Scaled Overpressure vs Scaled Distance, Estimasi Kerusakan Struktur dan Peralatan Proses, Estimasi Konsekuensi Cedera, grafik Overpressure vs Distance, Log Simulasi, dan Peta Kontur Ledakan dengan memeriksa Lintang dan Bujur lokasi dan memeriksa di mana lokasi (kota dan negara) berdasarkan koordinat, temukan ringkasan insiden dari situs web publikasi Jurnal berita, Rekomendasi untuk membangun gedung ruang kendali standar tahan ledakan dan tahan api.'
         }
@@ -705,7 +705,7 @@
 
         let lastError = null;
         const maxRetries = 3;
-        let delay = 5000; // English: Start with a 5-second delay. // Bahasa Indonesia: Mulai dengan jeda 5 detik.
+        let delay = 500; // English: Start with a 1-second delay. // Bahasa Indonesia: Mulai dengan jeda 1 detik.
 
         for (let i = 0; i < maxRetries; i++) {
             try {
@@ -744,7 +744,7 @@
                 }
             } catch (error) {
                 lastError = error;
-                console.error(`Attempt ${i + 1} failed with error:`, error);
+                console.error(`Attempt ${i + 1} / Percobaan ke ${i + 1} gagal dengan galat:`, error);
                 if (i < maxRetries - 1) {
                     await new Promise(resolve => setTimeout(resolve, delay));
                     delay *= 2;
@@ -766,26 +766,32 @@
   </script>
 
   <script>
-  // Status apakah tombol F aktif atau tidak
-  let enableFKey = true;
+    // English: Status for enabling the 'F' key shortcut. // Bahasa Indonesia: Status untuk mengaktifkan pintasan tombol 'F'.
+    let enableFKey = false; // English: Disabled by default. // Bahasa Indonesia: Dinonaktifkan secara default.
 
-  document.addEventListener('keydown', (e) => {
-    if (document.activeElement.tagName === 'INPUT') return; // jangan ganggu saat isi input
-    if (enableFKey && e.key.toLowerCase() === 'f') {
-      e.preventDefault();
-      toggleFS(); // fungsi ini pasti sudah ada di js-app.js
-    }
-    if (e.key === 'Escape' && mapCard.classList.contains('fullscreen')) {
-      exitFS();
-    }
-  });
+    document.addEventListener('keydown', (e) => {
+        // English: Do not interfere when typing in an input field. // Bahasa Indonesia: Jangan mengganggu saat sedang mengetik di kolom input.
+        if (document.activeElement.tagName === 'INPUT') return;
+        
+        // English: Toggle fullscreen if 'F' key is enabled and pressed. // Bahasa Indonesia: Alihkan mode layar penuh jika tombol 'F' diaktifkan dan ditekan.
+        if (enableFKey && e.key.toLowerCase() === 'f') {
+            e.preventDefault();
+            toggleFS(); // English: This function is expected to be in js-app.js. // Bahasa Indonesia: Fungsi ini diharapkan sudah ada di dalam js-app.js.
+        }
 
-  // Fungsi untuk mengatur ON/OFF tombol F
-  function setFKey(disable) {
-    enableFKey = enabled;
-    console.log("F key fullscreen is now", enabled ? "ENABLED" : "DISABLED");
-  }
-</script>
+        // English: Exit fullscreen when 'Escape' is pressed. // Bahasa Indonesia: Keluar dari mode layar penuh saat tombol 'Escape' ditekan.
+        if (e.key === 'Escape' && document.getElementById('mapCard').classList.contains('fullscreen')) {
+            exitFS();
+        }
+    });
+
+    // English: Function to enable or disable the 'F' key shortcut. // Bahasa Indonesia: Fungsi untuk mengaktifkan atau menonaktifkan pintasan tombol 'F'.
+    function setFKey(enabled) {
+        enableFKey = enabled;
+        console.log("F key for fullscreen is now:", enabled ? "ENABLED" : "DISABLED");
+        // console.log("Tombol F untuk layar penuh sekarang:", enabled ? "AKTIF" : "NONAKTIF");
+    }
+  </script>
 
   
 </body>
