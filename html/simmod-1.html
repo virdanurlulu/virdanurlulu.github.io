@@ -765,6 +765,29 @@
     });
   </script>
 
+  <script>
+  // Status apakah tombol F aktif atau tidak
+  let enableFKey = true;
+
+  document.addEventListener('keydown', (e) => {
+    if (document.activeElement.tagName === 'INPUT') return; // jangan ganggu saat isi input
+    if (enableFKey && e.key.toLowerCase() === 'f') {
+      e.preventDefault();
+      toggleFS(); // fungsi ini pasti sudah ada di js-app.js
+    }
+    if (e.key === 'Escape' && mapCard.classList.contains('fullscreen')) {
+      exitFS();
+    }
+  });
+
+  // Fungsi untuk mengatur ON/OFF tombol F
+  function setFKey(disable) {
+    enableFKey = enabled;
+    console.log("F key fullscreen is now", enabled ? "ENABLED" : "DISABLED");
+  }
+</script>
+
+  
 </body>
 </html>
 
