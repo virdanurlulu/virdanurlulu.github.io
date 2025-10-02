@@ -217,6 +217,16 @@
                 </div>
                 <div class="form-row">
                     <div>
+                        <label for="new_material_pressure" data-lang-key="form_label_pressure">Pressure (kPa)</label>
+                        <input type="number" id="new_material_pressure" step="any" placeholder="e.g., 101.325">
+                    </div>
+                    <div>
+                        <label for="new_material_temp" data-lang-key="form_label_temp">Temperature (°C)</label>
+                        <input type="number" id="new_material_temp" step="any" placeholder="e.g., 25">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div>
                         <label for="new_material_rho" data-lang-key="form_label_density">Density (kg/m³)</label>
                         <input type="number" id="new_material_rho" step="any" placeholder="e.g., 0.656">
                     </div>
@@ -323,7 +333,7 @@
             <div id="contourMapContainer">
               <div class="fs-host" id="mapCard">
                 <div id="mapTitle" class="map-title">Explosion Contour</div>
-                <button id="fsBtn" class="fs-btn" aria-pressed="false" title="Fullscreen (F)">⛶ Fullscreen</button>
+                <button id="fsBtn" class="fs-btn" aria-pressed="false" title="Fullscreen">⛶ Fullscreen</button>
                 <button id="fsBtnMobile" class="fs-btn fs-btn-mobile" aria-pressed="false" title="Fullscreen">⛶ Fullscreen</button>
                 <div id="map" role="region" aria-label="Explosion contour map"></div>
                 <div class="legend" id="legend" hidden></div>
@@ -537,8 +547,18 @@
       const logTable = document.getElementById('logTable');
       const languageSwitcher = document.getElementById('language-switcher');
       const materialSelect = document.getElementById('material');
+      const eqText = document.getElementById('eq-text');
+      
+      // New Material Form elements
       const newMaterialForm = document.getElementById('new-material-form');
       const newMaterialNameInput = document.getElementById('new_material_name');
+      const newMaterialFormulaInput = document.getElementById('new_material_formula');
+      const newMaterialPressureInput = document.getElementById('new_material_pressure');
+      const newMaterialTempInput = document.getElementById('new_material_temp');
+      const newMaterialRhoInput = document.getElementById('new_material_rho');
+      const newMaterialDhInput = document.getElementById('new_material_dh');
+      const newMaterialEtaInput = document.getElementById('new_material_eta');
+      
       const newMaterialInputs = newMaterialForm.querySelectorAll('input');
       const btnSaveNewMaterial = document.getElementById('btnSaveNewMaterial');
       const btnEditMaterial = document.getElementById('btnEditMaterial');
@@ -547,6 +567,7 @@
       const materialLookupSpinner = document.getElementById('material-lookup-spinner');
 
       const LOCAL_STORAGE_KEY = 'virdanurlulu_custom_materials';
+      let currentMaterialData = {}; // Stores all fetched data for the new material
 
       // English: Bilingual object for UI messages.
       // Bahasa Indonesia: Objek bilingual untuk pesan antarmuka pengguna.
@@ -555,7 +576,7 @@
               provideScenario: '<p>Please provide a brief case study scenario.</p>',
               noLogData: '<p>Cannot generate a report without data in the Simulation Log.</p>',
               apiError: (msg) => `Error: ${msg}`,
-              authError: 'Authentication failed (401). Please verify your API key.',
+              authError: 'Authentication failed. All API keys may be invalid or have reached their quota. Please verify your API keys.',
               httpError: (status, text) => `HTTP error! status: ${status} ${text}`,
               blockedRequest: (reason) => `<p>Request was blocked due to safety settings. Reason: ${reason}. Please adjust your prompt.</p>`,
               apiResponseError: (msg) => `API returned an error: ${msg}`,
@@ -571,7 +592,7 @@
               provideScenario: '<p>Mohon berikan skenario studi kasus singkat.</p>',
               noLogData: '<p>Tidak dapat membuat laporan tanpa data di dalam Log Simulasi.</p>',
               apiError: (msg) => `Galat: ${msg}`,
-              authError: 'Autentikasi gagal (401). Mohon verifikasi kunci API Anda.',
+              authError: 'Autentikasi gagal. Semua kunci API mungkin tidak valid atau telah mencapai kuotanya. Mohon verifikasi kunci API Anda.',
               httpError: (status, text) => `Galat HTTP! status: ${status} ${text}`,
               blockedRequest: (reason) => `<p>Permintaan diblokir karena pengaturan keamanan. Alasan: ${reason}. Mohon sesuaikan prompt Anda.</p>`,
               apiResponseError: (msg) => `API mengembalikan galat: ${msg}`,
@@ -595,6 +616,8 @@
             form_title_new_material: 'Add New Material',
             form_label_name: 'Material Name',
             form_label_formula: 'Chemical Formula',
+            form_label_pressure: 'Pressure (kPa)',
+            form_label_temp: 'Temperature (°C)',
             form_label_density: 'Density (kg/m³)',
             form_label_dh: 'ΔH_exp (kJ/kg)',
             form_label_eta: 'η_E',
@@ -612,6 +635,8 @@
             form_title_new_material: 'Tambah Material Baru',
             form_label_name: 'Nama Material',
             form_label_formula: 'Rumus Kimia',
+            form_label_pressure: 'Tekanan (kPa)',
+            form_label_temp: 'Suhu (°C)',
             form_label_density: 'Massa Jenis (kg/m³)',
             form_label_dh: 'ΔH_ledak (kJ/kg)',
             form_label_eta: 'η_E',
@@ -653,11 +678,40 @@
             }
         }
       }
+
+      function updateDensityIfNeeded() {
+        const pressure_kPa = parseFloat(newMaterialPressureInput.value);
+        const temp_C = parseFloat(newMaterialTempInput.value);
+        const molarMass = currentMaterialData.molarMass;
+        const defaultDensity = currentMaterialData.density;
+
+        if (molarMass && !isNaN(pressure_kPa) && !isNaN(temp_C)) {
+            const P_Pa = pressure_kPa * 1000;
+            const T_K = temp_C + 273.15;
+            const M_kg_mol = molarMass / 1000;
+            const R = 8.314; // J/(mol·K)
+            const Z = 1; // Assuming Ideal Gas (Z=1) as a simplification
+
+            if (T_K > 0) {
+              const gasDensity = (P_Pa * M_kg_mol) / (Z * R * T_K);
+              newMaterialRhoInput.value = gasDensity.toFixed(4);
+            }
+        } else if (defaultDensity) {
+            newMaterialRhoInput.value = defaultDensity;
+        }
+      }
       
       materialSelect.addEventListener('change', () => {
         const selectedValue = materialSelect.value;
         const storedMaterials = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}');
         const isCustom = storedMaterials[selectedValue];
+        
+        // Also populate main properties table
+        const rhoInput = document.getElementById('rho');
+        const dhInput = document.getElementById('dh');
+        const etaInput = document.getElementById('eta');
+
+        currentMaterialData = {}; // Reset current data
 
         if (selectedValue === 'add_new') {
             newMaterialForm.style.display = 'block';
@@ -665,6 +719,7 @@
                 input.value = '';
                 input.readOnly = false;
             });
+            eqText.innerHTML = '';
             btnSaveNewMaterial.style.display = 'inline-block';
             btnCancelNewMaterial.style.display = 'inline-block';
             btnEditMaterial.style.display = 'none';
@@ -672,13 +727,22 @@
             newMaterialNameInput.focus();
         } else if (isCustom) {
             const data = storedMaterials[selectedValue];
+            currentMaterialData = data; // Load data for density calculation
             newMaterialForm.style.display = 'block';
-            document.getElementById('new_material_name').value = data.name;
-            document.getElementById('new_material_formula').value = data.reaction_formula;
-            document.getElementById('new_material_rho').value = data.rho;
-            document.getElementById('new_material_dh').value = data.dh;
-            document.getElementById('new_material_eta').value = data.eta;
+            newMaterialNameInput.value = data.name;
+            newMaterialFormulaInput.value = data.reaction_formula;
+            newMaterialPressureInput.value = data.pressure || '';
+            newMaterialTempInput.value = data.temperature || '';
+            newMaterialRhoInput.value = data.rho;
+            newMaterialDhInput.value = data.dh;
+            newMaterialEtaInput.value = data.eta;
+            eqText.innerHTML = data.reaction ? data.reaction.replace('⟶', '&longrightarrow;') : `${data.reaction_formula} + O₂ &longrightarrow; CO₂ + H₂O`;
             
+            // Populate main properties
+            rhoInput.value = data.rho;
+            dhInput.value = data.dh;
+            etaInput.value = data.eta;
+
             newMaterialInputs.forEach(input => input.readOnly = true);
 
             btnSaveNewMaterial.style.display = 'none';
@@ -688,12 +752,18 @@
         } else {
             newMaterialForm.style.display = 'none';
              if (window.materials && window.materials[selectedValue]) {
-                const formula = window.materials[selectedValue].reaction_formula;
-                const eqText = document.getElementById('eq-text');
+                const materialProps = window.materials[selectedValue];
+                rhoInput.value = materialProps.rho;
+                dhInput.value = materialProps.dh;
+                etaInput.value = materialProps.eta;
+
+                const formula = materialProps.reaction_formula;
                 if (formula && formula.includes('⟶')) {
                     eqText.innerHTML = formula;
                 } else if (formula) {
                     eqText.innerHTML = `${formula} + O₂ &longrightarrow; CO₂ + H₂O`;
+                } else {
+                    eqText.innerHTML = '';
                 }
             }
         }
@@ -720,7 +790,6 @@
           
           if (!selectedValue) return;
 
-          // Remove from global object, localStorage, and dropdown
           if (window.materials) delete window.materials[selectedValue];
           
           const storedMaterials = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}');
@@ -729,7 +798,6 @@
           
           materialSelect.querySelector(`option[value="${selectedValue}"]`)?.remove();
           
-          // Reset UI
           materialSelect.value = '';
           materialSelect.dispatchEvent(new Event('change'));
           
@@ -738,11 +806,14 @@
       });
       
       btnSaveNewMaterial.addEventListener('click', () => {
-        const name = document.getElementById('new_material_name').value.trim();
-        const formula = document.getElementById('new_material_formula').value.trim();
-        const rho = document.getElementById('new_material_rho').value;
-        const dh = document.getElementById('new_material_dh').value;
-        const eta = document.getElementById('new_material_eta').value;
+        const name = newMaterialNameInput.value.trim();
+        const formula = newMaterialFormulaInput.value.trim();
+        const pressure = newMaterialPressureInput.value;
+        const temp = newMaterialTempInput.value;
+        const rho = newMaterialRhoInput.value;
+        const dh = newMaterialDhInput.value;
+        const eta = newMaterialEtaInput.value;
+        const reaction = eqText.innerHTML.replace('&longrightarrow;', '⟶');
 
         const uiLang = document.querySelector('.lang-btn.active')?.dataset.lang || 'en';
         const msgDiv = document.getElementById('msg');
@@ -764,7 +835,12 @@
             rho: parseFloat(rho),
             dh: parseFloat(dh),
             eta: parseFloat(eta),
-            reaction_formula: formula 
+            reaction_formula: formula,
+            pressure: parseFloat(pressure),
+            temperature: parseFloat(temp),
+            molarMass: currentMaterialData.molarMass,
+            density: currentMaterialData.density,
+            reaction: reaction
         };
 
         if (window.materials) {
@@ -797,10 +873,21 @@
         try {
             const data = await fetchMaterialDataFromAI(materialName);
             if (data && data.formula) {
-                document.getElementById('new_material_formula').value = data.formula || '';
-                document.getElementById('new_material_rho').value = data.density || '';
-                document.getElementById('new_material_dh').value = data.heatOfCombustion || '';
-                document.getElementById('new_material_eta').value = data.explosionEfficiency || '0.04'; // Default to 4%
+                currentMaterialData = data; // Store all fetched data
+                
+                newMaterialFormulaInput.value = data.formula || '';
+                newMaterialRhoInput.value = data.density || '';
+                newMaterialDhInput.value = data.heatOfCombustion || '';
+                newMaterialEtaInput.value = data.explosionEfficiency || '0.04'; 
+                
+                if (data.reaction) {
+                    eqText.innerHTML = data.reaction.replace('⟶', '&longrightarrow;');
+                } else if(data.formula) {
+                    eqText.innerHTML = `${data.formula} + O₂ &longrightarrow; CO₂ + H₂O`;
+                }
+                
+                updateDensityIfNeeded();
+
             } else {
                  const msgDiv = document.getElementById('msg');
                  msgDiv.textContent = messages[uiLang].dataNotFound;
@@ -815,14 +902,19 @@
             materialLookupSpinner.style.display = 'none';
         }
       });
+      
+      newMaterialPressureInput.addEventListener('input', updateDensityIfNeeded);
+      newMaterialTempInput.addEventListener('input', updateDensityIfNeeded);
 
       async function fetchMaterialDataFromAI(materialName) {
-        const systemPrompt = `You are a chemical engineering assistant. Your task is to retrieve specific physical properties for a given chemical from the NIST Chemistry WebBook or other reliable sources. Respond ONLY with a JSON object with the keys "formula", "density", "heatOfCombustion", and "explosionEfficiency".
+        const systemPrompt = `You are a chemical engineering assistant. Your task is to retrieve specific physical properties for a given chemical from the NIST Chemistry WebBook or other reliable sources. Respond ONLY with a JSON object with the keys "formula", "density", "heatOfCombustion", "explosionEfficiency", "molarMass", and "reaction".
         - For 'formula', provide the chemical formula.
-        - For 'density', provide the gas density in kg/m³ if available, otherwise liquid density. If multiple values exist, provide a typical one.
+        - For 'density', provide the liquid density in kg/m³ for substances that are gases at STP but are typically stored as liquids under pressure (e.g., propane, LPG). For other substances, provide the gas density at standard conditions.
         - For 'heatOfCombustion', find the heat of combustion (ΔHc) in kJ/kg. If given in kJ/mol, convert it. Use this as a proxy for heat of explosion.
-        - For 'explosionEfficiency', provide a typical literature value for a vapor cloud explosion if available, otherwise default to 0.04.`;
-        const userQuery = `Find the following properties for ${materialName}: chemical formula, density (kg/m³), and heat of combustion (kJ/kg).`;
+        - For 'explosionEfficiency', provide a typical literature value for a vapor cloud explosion if available, otherwise default to 0.04.
+        - For 'molarMass', provide the molar mass in g/mol.
+        - For 'reaction', provide the balanced chemical equation for complete combustion with O₂, using '⟶' as the reaction arrow.`;
+        const userQuery = `Find the following properties for ${materialName}: chemical formula, density (kg/m³), heat of combustion (kJ/kg), molar mass (g/mol), and its balanced complete combustion reaction.`;
         
         return await callGeminiApi(userQuery, systemPrompt, true).then(text => JSON.parse(text)).catch(e => { console.error("AI data fetch failed:", e); return null;});
       }
@@ -905,20 +997,20 @@
         geminiResponse.classList.add('loading');
         btnAskGemini.disabled = true;
 
-        const systemPrompt = `You are an AI assistant generating an academic case study from the perspective of a Master's candidate in Chemical Engineering at ITB.
+        const systemPrompt = `You are an AI assistant and expert in chemical process safety, with deep knowledge of incidents like Beirut, Tianjin, Buncefield, and standards from CCPS, AIChE, and Lees' Loss Prevention. You are generating an academic case study from the perspective of a Master's candidate in Chemical Engineering at ITB.
         **Mandatory Directives**:
         - The entire output must be a single HTML block.
         - Create two root divs: \`<div id="report-en" lang="en">...\` and \`<div id="report-id" lang="id">...\`.
         - Fully translate the report into academic English and formal Indonesian (EYD) inside the respective divs.
         - Use this HTML styling: Title: \`<h4 style='font-size: 16px; font-weight: bold; text-align: center; color: #00529b;'>...\` | Subtitle: \`<h5 style='font-size: 14px; font-weight: bold; text-align: center; color: #00529b;'>...\` | Section Headers: \`<p><strong style='font-size: 14px;'># No. Title</strong></p>\` | Body: \`<p style='font-size: 12px; line-height: 1.2;'>...\`.
         - Add 5-10 academic citations like \`<span style='color: #003366; font-weight: bold;'>[#]</span>\`, referencing the bibliography at https://virdanurlulu.github.io/html/bibliography_sim_modeling_explosion.html.
-        - Maintain a formal, academic, and analytical tone.
+        - Maintain a formal, academic, and analytical tone, connecting simulation results to real-world incidents and best practices.
         **Report Structure**:
         1.  **Chronological Account**: Detail the user-provided scenario.
-        2.  **Causal Analysis**: Conduct a concise root cause analysis.
-        3.  **Simulation Data Analysis**: Interpret the simulation log data (chemical properties, overpressure calculations, charts, damage/injury estimates, contour map).
-        4.  **Risk Mitigation Strategies**: Propose mitigation measures based on industry standards.
-        5.  **Formal Recommendations**: Formulate specific short-term and long-term recommendations.`;
+        2.  **Causal Analysis**: Conduct a concise root cause analysis, referencing similar past incidents.
+        3.  **Simulation Data Analysis**: Interpret the simulation log data (chemical properties, overpressure calculations, charts, damage/injury estimates, contour map), explaining the significance of the results.
+        4.  **Risk Mitigation Strategies**: Propose mitigation measures based on industry standards (e.g., CCPS RBPS, facility siting guidelines).
+        5.  **Formal Recommendations**: Formulate specific short-term and long-term recommendations, drawing lessons from established safety literature.`;
         
         const fullPrompt = `**Simulation Log Data:**\n${logData}\n\n**User's Case Study Scenario:**\n${userScenario}`;
 
@@ -947,10 +1039,18 @@
         }
       }
 
+      // API Key Management
+      const apiKeys = [
+        "AIzaSyDG5smBPe4YS0DfPzdF32bMk1aTUM_fVt8",
+        "AIzaSyBOol9JlsJIhmPmcaE8VqlKlXPHxEJ6Bic",
+        "AIzaSyCVfb2YVOx2mmRAlbnDIqCf29a7yZMK5J0",
+        "AIzaSyCB_s_Wvn9a63osNm5vwyqYtmOOH9Rw1tk"
+      ];
+      let currentApiKeyIndex = 0;
+
+
       async function callGeminiApi(prompt, systemInstruction, isJson = false) {
-        const apiKey = "AIzaSyBOol9JlsJIhmPmcaE8VqlKlXPHxEJ6Bic"; 
         const model = 'gemini-2.5-flash-preview-05-20';
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
         const uiLang = document.querySelector('.lang-btn.active')?.dataset.lang || 'en';
         
         const payload = {
@@ -962,11 +1062,13 @@
             payload.generationConfig = { responseMimeType: "application/json" };
         }
 
+        const maxAttempts = apiKeys.length;
         let lastError = null;
-        const maxRetries = 3;
-        let delay = 1000; 
 
-        for (let i = 0; i < maxRetries; i++) {
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+            const apiKey = apiKeys[currentApiKeyIndex];
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
             try {
                 const response = await fetch(apiUrl, {
                     method: 'POST',
@@ -974,43 +1076,38 @@
                     body: JSON.stringify(payload)
                 });
 
-                if (response.status === 429 || response.status === 503) {
-                    lastError = new Error(`Attempt ${i + 1} failed with status ${response.status}. Retrying in ${delay / 1000}s...`);
-                    console.error(lastError.message);
-                    if (i < maxRetries - 1) {
-                        await new Promise(resolve => setTimeout(resolve, delay));
-                        delay *= 2; 
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.candidates && result.candidates[0]?.content?.parts[0]?.text) {
+                        return result.candidates[0].content.parts[0].text; // Success
+                    } else {
+                        const blockReason = result.promptFeedback?.blockReason;
+                        if (blockReason) return messages[uiLang].blockedRequest(blockReason);
+                        if (result.error) throw new Error(messages[uiLang].apiResponseError(result.error.message));
+                        throw new Error(messages[uiLang].invalidResponse);
                     }
-                    continue;
                 }
 
-                if (!response.ok) {
-                    if (response.status === 401) throw new Error(messages[uiLang].authError);
-                    throw new Error(messages[uiLang].httpError(response.status, response.statusText));
-                }
-
-                const result = await response.json();
-                
-                if (result.candidates && result.candidates[0]?.content?.parts[0]?.text) {
-                    return result.candidates[0].content.parts[0].text; 
+                if (response.status === 401 || response.status === 429) {
+                    console.warn(`API key index ${currentApiKeyIndex} failed with status ${response.status}. Switching to next key.`);
+                    lastError = new Error(messages[uiLang].authError); // Store the last relevant error
+                    currentApiKeyIndex = (currentApiKeyIndex + 1) % apiKeys.length;
+                    continue; // Try the next key
                 } else {
-                    const blockReason = result.promptFeedback?.blockReason;
-                    if (blockReason) return messages[uiLang].blockedRequest(blockReason);
-                    if (result.error) throw new Error(messages[uiLang].apiResponseError(result.error.message));
-                    throw new Error(messages[uiLang].invalidResponse);
+                    // For other server errors, we can treat them as potentially transient but still switch key
+                    lastError = new Error(messages[uiLang].httpError(response.status, response.statusText));
+                    currentApiKeyIndex = (currentApiKeyIndex + 1) % apiKeys.length;
                 }
+
             } catch (error) {
-                lastError = error;
-                console.error(`Attempt ${i + 1} failed with error:`, error);
-                if (i < maxRetries - 1) {
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                    delay *= 2;
-                }
+                console.warn(`Fetch failed for API key index ${currentApiKeyIndex}:`, error.message);
+                lastError = error; // Store the network error
+                currentApiKeyIndex = (currentApiKeyIndex + 1) % apiKeys.length;
             }
         }
-
-        if (lastError) throw lastError;
-        throw new Error(messages[uiLang].serviceUnavailable(maxRetries));
+        
+        // If the loop completes without a successful return, all keys have failed.
+        throw lastError || new Error(`All API keys failed after ${maxAttempts} attempts.`);
       }
 
       loadCustomMaterials();
@@ -1020,34 +1117,56 @@
   </script>
 
   <script>
-    // English: Status for enabling the 'F' key shortcut. // Bahasa Indonesia: Status untuk mengaktifkan pintasan tombol 'F'.
-    let enableFKey = false; // English: Disabled by default. // Bahasa Indonesia: Dinonaktifkan secara default.
+    document.addEventListener('DOMContentLoaded', function() {
+        const fsBtn = document.getElementById('fsBtn');
+        const fsBtnMobile = document.getElementById('fsBtnMobile');
+        const mapCard = document.getElementById('mapCard');
 
-    document.addEventListener('keydown', (e) => {
-        // English: Do not interfere when typing in an input field. // Bahasa Indonesia: Jangan mengganggu saat sedang mengetik di kolom input.
-        if (document.activeElement.tagName === 'INPUT') return;
-        
-        // English: Toggle fullscreen if 'F' key is enabled and pressed. // Bahasa Indonesia: Alihkan mode layar penuh jika tombol 'F' diaktifkan dan ditekan.
-        if (enableFKey && e.key.toLowerCase() === 'f') {
-            e.preventDefault();
-            toggleFS(); // English: This function is expected to be in js-app.js. // Bahasa Indonesia: Fungsi ini diharapkan sudah ada di dalam js-app.js.
+        function enterFS() {
+            if (mapCard.requestFullscreen) {
+                mapCard.requestFullscreen();
+            } else if (mapCard.webkitRequestFullscreen) { /* Safari */
+                mapCard.webkitRequestFullscreen();
+            } else if (mapCard.msRequestFullscreen) { /* IE11 */
+                mapCard.msRequestFullscreen();
+            }
+            fsBtn.setAttribute('aria-pressed', 'true');
+            fsBtnMobile.setAttribute('aria-pressed', 'true');
         }
 
-        // English: Exit fullscreen when 'Escape' is pressed. // Bahasa Indonesia: Keluar dari mode layar penuh saat tombol 'Escape' ditekan.
-        if (e.key === 'Escape' && document.getElementById('mapCard').classList.contains('fullscreen')) {
-            exitFS();
+        function exitFS() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) { /* Safari */
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) { /* IE11 */
+                document.msExitFullscreen();
+            }
+            fsBtn.setAttribute('aria-pressed', 'false');
+            fsBtnMobile.setAttribute('aria-pressed', 'false');
+        }
+
+        function toggleFS() {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                enterFS();
+            } else {
+                exitFS();
+            }
+        }
+
+        fsBtn.addEventListener('click', toggleFS);
+        fsBtnMobile.addEventListener('click', toggleFS);
+
+        document.addEventListener('fullscreenchange', handleFSChange);
+        document.addEventListener('webkitfullscreenchange', handleFSChange);
+
+        function handleFSChange() {
+            const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement);
+            fsBtn.setAttribute('aria-pressed', isFullscreen.toString());
+            fsBtnMobile.setAttribute('aria-pressed', isFullscreen.toString());
         }
     });
-
-    // English: Function to enable or disable the 'F' key shortcut. // Bahasa Indonesia: Fungsi untuk mengaktifkan atau menonaktifkan pintasan tombol 'F'.
-    function setFKey(enabled) {
-        enableFKey = enabled;
-        console.log("F key for fullscreen is now:", enabled ? "ENABLED" : "DISABLED");
-        // console.log("Tombol F untuk layar penuh sekarang:", enabled ? "AKTIF" : "NONAKTIF");
-    }
-  </script>
-
+</script>
   
 </body>
 </html>
-
