@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simulation & Modeling of Explosion Effects (TNT Equivalence)</title>
+
+  <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+  <link rel="canonical" href="https://virdanurlulu.github.io/">
+  <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
+  <link rel="dns-prefetch" href="https://raw.githubusercontent.com">
+  <link rel="preload" as="image" href="/img/banner-itb1.webp">
+
+  <meta name="description" content="Interactive Simulation and Modeling of Explosion Effects Based on TNT Equivalence Using JavaScript: Incorporating Chemical Material Properties, Consequence Estimation, Pa–Ze Relationship, Overpressure–Distance Chart, and Visualization of Explosion Overpressure Contours.">
+  <meta name="author" content="Virda Nur Lu'lu">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#0079c2">
+  <meta name="color-scheme" content="light dark">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Master’s Program in Chemical Engineering, Bandung Institute of Technology">
+  <meta property="og:title" content="Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript">
+  <meta property="og:description" content="Interactive Simulation and Modeling of Explosion Effects Based on TNT Equivalence Using JavaScript: Incorporating Chemical Material Properties, Consequence Estimation, Pa–Ze Relationship, Overpressure–Distance Chart, and Visualization of Explosion Overpressure Contours.">
+  <meta property="og:url" content="https://virdanurlulu.github.io/">
+  <meta property="og:image" content="https://virdanurlulu.github.io/img/ITB-Exlosion-Modeling-Simulation.webp">
+  <meta property="og:image:type" content="image/webp">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Simulation and Modeling of Explosion Effects Based on TNT Equivalence using Javascript">
+  <meta name="twitter:description" content="Interactive Simulation and Modeling of Explosion Effects Based on TNT Equivalence Using JavaScript: Incorporating Chemical Material Properties, Consequence Estimation, Pa–Ze Relationship, Overpressure–Distance Chart, and Visualization of Explosion Overpressure Contours.">
+  <meta name="twitter:image" content="https://virdanurlulu.github.io/img/ITB-Exlosion-Modeling-Simulation.webp">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Explosion Effects Simulation & Modeling (TNT Equivalence)", 
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Web",
+    "url": "https://virdanurlulu.github.io/",
+    "image": "https://virdanurlulu.github.io/img/ITB-Exlosion-Modeling-Simulation.webp",
+    "author": {"@type": "Person", "name": "Virda Nur Lu'lu", "sameAs": ["https://id.linkedin.com/in/virdanurlulu"]},
+    "inLanguage": "en",
+    "description": "Interactive Simulation and Modeling of Explosion Effects Based on TNT Equivalence Using JavaScript: Incorporating Chemical Material Properties, Consequence Estimation, Pa–Ze Relationship, Overpressure–Distance Chart, and Visualization of Explosion Overpressure Contours.",
+    "publisher": {"@type": "Organization", "name": "Bandung Institute of Technology", "url": "https://che.itb.ac.id/"}
+  }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://virdanurlulu.github.io/css/style-app.css">
+  <style>
+    /* Styling for Gemini Feature */
+    .gemini-card .card-header {
+      background: linear-gradient(45deg, #4285f4, #9b72cb);
+      color: white;
+    }
+    #gemini-prompt {
+      width: 100%; 
+      box-sizing: border-box; 
+      min-height: 80px; 
+      margin-bottom: 5px; 
+      padding: 4px; 
+      border-radius: 4px; 
+      border: 1px solid #ccc; 
+      font-family: inherit;
+      resize: vertical;
+    }
+    #gemini-response {
+      margin-top: 5px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      min-height: 20px;
+      background-color: #f9f9f9;
+      white-space: normal; /* render HTML normally (no preserved extra newlines) */
+      word-wrap: break-word;
+      font-size: 14px;
+      line-height: 1.4; /* tighter than default */
+      padding: 8px 10px;
+    }
+    /* Compact, consistent spacing for headings, paragraphs, and lists inside the report */
+    #gemini-response h4 { margin: 8px 0 6px !important; }
+    #gemini-response h5 { margin: 6px 0 4px !important; }
+    #gemini-response p  { margin: 6px 0 !important; }
+    #gemini-response ul, #gemini-response ol { margin: 6px 0 6px 18px !important; }
+    #gemini-response.loading::after {
+      content: '●';
+      animation: dots 1.4s infinite;
+      animation-timing-function: ease-in-out;
+      text-align: center;
+      display: block;
+      margin-top: 5px;
+      font-size: 24px;
+    }
+    @keyframes dots {
+      0%, 20% { color: rgba(0,0,0,0.2); text-shadow: .25em 0 0 rgba(0,0,0,0.2), .5em 0 0 rgba(0,0,0,0.2); }
+      40% { color: #4285f4; text-shadow: .25em 0 0 rgba(0,0,0,0.2), .5em 0 0 rgba(0,0,0,0.2); }
+      60% { text-shadow: .25em 0 0 #4285f4, .5em 0 0 rgba(0,0,0,0.2); }
+      80%, 100% { text-shadow: .25em 0 0 #4285f4, .5em 0 0 #4285f4; }
+    }
+    #new-material-form {
+      display: none;
+      padding: 10px;
+      margin-top: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+    }
+    .form-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 8px;
+    }
+    .form-row > div {
+        flex: 1;
+    }
+     .spinner {
+        display: none;
+        margin: 0 10px;
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #3498db;
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body class="theme-itb full">
+  
+  <div class="wrap">
+    <div class="banner title">
+      <div class="brandbar">
+        <a href="https://virdanurlulu.github.io/" target="_blank" rel="noopener noreferrer" aria-label="Visit homepage">
+          <img id="itbLogo" class="brand-logo" alt="Logo ITB" width="96" height="96">
+        </a>
+        <div class="brand-text">
+          <h1 data-lang-key="app_title">Simulation and Modeling of Explosion Effects Based on TNT Equivalence <span class="nowrap">using Javascript</span></h1>
+          <h2>
+            <span class="sub-line1" data-lang-key="app_subtitle1">Master’s Program in Chemical Engineering, </span>
+            <span class="sub-line2" data-lang-key="app_subtitle2">Bandung Institute of Technology</span>
+          </h2>
+        </div>
+      </div>
+
+      <div class="dropdown-menu">
+        <button class="dropdown-toggle"><span data-lang-key="menu_button">Menu</span><span class="hamburger-icon">&#9776;</span></button>
+        <div class="dropdown-content">
+          <a href="/" data-lang-key="menu_home">Home</a>
+          <a href="/html/simulation-modeling-visualisation-explosion.html" data-lang-key="menu_app">Simulation & Modeling Application</a>
+          <a href="#" data-lang-key="menu_guide">Simulation Guide (coming soon)</a>
+          <a href="/html/presentation-slide.html" data-lang-key="menu_presentation">Presentation</a>
+          <a href="#" data-lang-key="menu_journal">Journal & Conference (coming soon)</a>
+          <a href="/html/bibliography_sim_modeling_explosion.html" data-lang-key="menu_bibliography">Bibliography</a>
+        </div>
+      </div>
+      
+      <div id="language-switcher">
+          <button class="lang-btn active" data-lang="en" aria-label="Switch to English">
+              <img src="https://virdanurlulu.github.io/img/EN.svg" alt="Switch to English" />
+          </button>
+          <button class="lang-btn" data-lang="id" aria-label="Ganti ke Bahasa Indonesia">
+              <img src="https://virdanurlulu.github.io/img/ID.svg" alt="Ganti ke Bahasa Indonesia" />
+          </button>
+      </div>
+
+    </div>
+
+    <main class="split" role="main">
+      <div class="left">
+        <section class="card" id="materialCard" aria-labelledby="mat-head">
+          <div id="mat-head" class="card-header" data-lang-key="card_title_material">Chemical Material</div>
+          <div style="padding:14px">
+            <div class="chem-grid">
+              <div class="matcol">
+                <div>
+                  <label for="material" class="label" data-lang-key="label_select_material">Select Material</label>
+                  <select id="material">
+                    <option value="" data-lang-key="select_option_default">— Select —</option>
+                    <option value="AN" data-lang-key="select_option_an">Ammonium Nitrate (AN)</option>
+                    <option value="LPG" data-lang-key="select_option_lpg">Propane (LPG)</option>
+                    <option value="H2" data-lang-key="select_option_h2">Hydrogen (H₂)</option>
+                    <option value="add_new" data-lang-key="add_new_material">-- Add New Material --</option>
+                  </select>
+                </div>
+                <div class="mini">
+                  <div>
+                    <label for="vol" class="label" data-lang-key="label_volume">Volume (m³)</label>
+                    <input id="vol" type="number" min="0" step="any" placeholder="e.g., 12.5" aria-label="Volume" />
+                  </div>
+                  <div>
+                    <label for="dist" class="label" data-lang-key="label_distance">Distance (m)</label>
+                    <input id="dist" type="number" min="0" step="any" placeholder="e.g., 150" aria-label="Distance" />
+                  </div>
+                </div>
+              </div>
+              <div class="eq-panel">
+                <div class="eq-title" data-lang-key="eq_panel_title">Representative Overall Reaction</div>
+                <div id="eq-text" class="eq-body" data-lang-key="eq_panel_placeholder">Select a material to display the reaction equation.</div>
+              </div>
+            </div>
+            <div id="new-material-form">
+                <h4 data-lang-key="form_title_new_material">Add New Material</h4>
+                <div class="form-row">
+                    <div>
+                        <label for="new_material_name" data-lang-key="form_label_name">Material Name <span id="material-lookup-spinner" class="spinner"></span></label>
+                        <input type="text" id="new_material_name" placeholder="e.g., Methane">
+                    </div>
+                    <div>
+                        <label for="new_material_formula" data-lang-key="form_label_formula">Chemical Formula</label>
+                        <input type="text" id="new_material_formula" placeholder="e.g., CH₄">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div>
+                        <label for="new_material_rho" data-lang-key="form_label_density">Density (kg/m³)</label>
+                        <input type="number" id="new_material_rho" step="any" placeholder="e.g., 0.656">
+                    </div>
+                    <div>
+                        <label for="new_material_dh" data-lang-key="form_label_dh">ΔH_exp (kJ/kg)</label>
+                        <input type="number" id="new_material_dh" step="any" placeholder="e.g., 50020">
+                    </div>
+                    <div>
+                        <label for="new_material_eta" data-lang-key="form_label_eta">η_E</label>
+                        <input type="number" id="new_material_eta" step="any" min="0" max="1" placeholder="e.g., 0.04">
+                    </div>
+                </div>
+                <button class="btn" id="btnSaveNewMaterial" data-lang-key="btn_save_material">Save Material</button>
+                <button class="btn" id="btnEditMaterial" data-lang-key="btn_edit_material" style="display: none;">Edit</button>
+                <button class="btn" id="btnDeleteMaterial" data-lang-key="btn_delete_material" style="display: none;">Delete</button>
+                <button class="btn" id="btnCancelNewMaterial" data-lang-key="btn_cancel">Cancel</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="prop-head">
+          <div id="prop-head" class="card-header" data-lang-key="card_title_properties">Properties</div>
+          <div style="padding:12px">
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th data-lang-key="table_header_properties">Properties</th>
+                    <th data-lang-key="table_header_value">Value</th>
+                    <th data-lang-key="table_header_unit">Unit</th>
+                    <th data-lang-key="table_header_literature">Literature</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td data-label="Properties"><label for="rho">Density ρ = m/V</label></td><td data-label="Value"><input id="rho" type="number" min="0" step="any"/></td><td data-label="Unit" class="unit">kg/m³</td><td data-label="Source" class="ref">@Literature</td></tr>
+                  <tr><td data-label="Properties"><label for="dh">ΔH<sub>explosion</sub></label></td><td data-label="Value"><input id="dh" type="number" step="any"/></td><td data-label="Unit" class="unit">kJ/kg</td><td data-label="Source" class="ref">@Literature</td></tr>
+                  <tr><td data-label="Properties"><label for="pa" data-lang-key="label_ambient_pressure">Ambient Pressure</label></td><td data-label="Value"><input id="pa" type="number" min="0" step="any"/></td><td data-label="Unit" class="unit">kPa</td><td data-label="Source" class="ref">@Literature</td></tr>
+                  <tr><td data-label="Properties"><label for="eta" data-lang-key="label_explosion_efficiency">η<sub>E</sub> Explosion Efficiency</label></td><td data-label="Value"><input id="eta" type="number" min="0" max="1" step="any"/></td><td data-label="Unit" class="unit">–</td><td data-label="Source" class="ref">@Literature</td></tr>
+                  <tr><td data-label="Properties"><label for="e_tnt">E<sub>TNT</sub></label></td><td data-label="Value"><input id="e_tnt" type="number" min="0" step="any"/></td><td data-label="Unit" class="unit">kJ/kg</td><td data-label="Source" class="ref">@Literature</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="param-head">
+          <div id="param-head" class="card-header">
+            <span data-lang-key="card_title_parameters">Parameters</span>
+            <button class="btn" id="btnAddResult" data-lang-key="btn_add_result" disabled>Add to Log & Map</button>
+          </div>
+          <div style="padding:12px">
+            <div class="table-wrapper">
+              <table>
+                <thead><tr>
+                  <th data-lang-key="table_header_parameters">Parameters</th>
+                  <th data-lang-key="table_header_value">Value</th>
+                  <th data-lang-key="table_header_unit">Unit</th>
+                  <th data-lang-key="table_header_sources">Sources</th>
+                </tr></thead>
+                <tbody>
+                  <tr><td data-label="Parameters" data-lang-key="param_mass_material">(W) Mass Material</td><td data-label="Value"><input id="W_mass" type="text" readonly /></td><td data-label="Unit" class="unit">kg</td><td data-label="Source" class="ref" data-lang-key="source_calculated">@Calculated</td></tr>
+                  <tr><td data-label="Parameters" data-lang-key="param_total_energy">(E) Total Energy</td><td data-label="Value"><input id="E_total" type="text" readonly /></td><td data-label="Unit" class="unit">kJ</td><td data-label="Source" class="ref" data-lang-key="source_calculated">@Calculated</td></tr>
+                  <tr><td data-label="Parameters" data-lang-key="param_tnt_equivalent">(W) TNT Equivalent</td><td data-label="Value"><input id="W_tnt" type="text" readonly /></td><td data-label="Unit" class="unit">kg</td><td data-label="Source" class="ref" data-lang-key="source_calculated">@Calculated</td></tr>
+                  <tr><td data-label="Parameters" data-lang-key="param_scaled_distance">(Ze) Scaled Distance</td><td data-label="Value"><input id="Ze" type="text" readonly /></td><td data-label="Unit" class="unit">m·kg<sup>−1/3</sup></td><td data-label="Source" class="ref" data-lang-key="source_calculated">@Calculated</td></tr>
+                  <tr><td data-label="Parameters" data-lang-key="param_scaled_overpressure">(Ps) Scaled Overpressure</td><td data-label="Value"><input id="Ps" type="text" readonly /></td><td data-label="Unit" class="unit">–</td><td data-label="Source" class="ref" data-lang-key="source_crowl_kinney">@Crowl/Kinney</td></tr>
+                  <tr><td data-label="Parameters" data-lang-key="param_peak_overpressure">(Po) Peak side-on overpressure</td><td data-label="Value"><input id="Po_crowl" type="text" readonly /></td><td data-label="Unit" class="unit">kPa</td><td data-label="Source" class="ref" data-lang-key="source_crowl">@Crowl</td></tr>
+                  <tr><td data-label="Parameters" data-lang-key="param_peak_overpressure">(Po) Peak side-on overpressure</td><td data-label="Value"><input id="Po_alonso" type="text" readonly /></td><td data-label="Unit" class="unit">kPa</td><td data-label="Source" class="ref" data-lang-key="source_alonso">@Alonso</td></tr>
+                  <tr><td data-label="Parameters" data-lang-key="param_peak_overpressure">(Po) Peak side-on overpressure</td><td data-label="Value"><input id="Po_sadovski" type="text" readonly /></td><td data-label="Unit" class="unit">kPa</td><td data-label="Source" class="ref" data-lang-key="source_sadovski">@Sadovski</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="msg" class="status" role="status" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="chart-head">
+          <div id="chart-head" class="card-header">
+            <span data-lang-key="chart_title_ps_vs_ze">Scaled Overpressure vs Scaled Distance</span>
+            <button class="btn" id="btnExport" data-lang-key="btn_export_png">Export PNG</button>
+          </div>
+          <div class="chart-container">
+            <div id="chart" role="img" aria-label="Log-log plot of Ps (Po/Pa) versus ze based on Kinney & Graham (1985)."></div>
+            <noscript><p data-lang-key="chart_noscript">Please enable JavaScript to display the chart. Reference: G. F. Kinney & K. J. Graham (1985).</p></noscript>
+            <div class="chart-note" data-lang-key="chart_note_source">Source: G. F. Kinney & K. J. Graham, <em>Explosive Shocks in Air</em>, Springer-Verlag, 1985.</div>
+          </div>
+        </section>
+        
+        <section class="card" aria-labelledby="overpressure-chart-head">
+          <div id="overpressure-chart-head" class="card-header">
+            <span data-lang-key="chart_title_po_vs_dist">Overpressure vs Distance</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="overpressureChart"></canvas>
+            <div id="overpressureChartMsg" class="chart-note" style="display: none; padding: 20px; font-size: 14px;"></div>
+            <noscript><p data-lang-key="chart_noscript_generic">Please enable JavaScript to display the chart.</p></noscript>
+          </div>
+        </section>
+        
+        <section class="card" aria-labelledby="contour-map-head">
+          <div id="contour-map-head" class="card-header">
+            <span data-lang-key="contour_map_title">Explosion Contour Map</span>
+          </div>
+          <div style="padding: 14px;">
+            <div id="contourMapContainer">
+              <div class="fs-host" id="mapCard">
+                <div id="mapTitle" class="map-title">Explosion Contour</div>
+                <button id="fsBtn" class="fs-btn" aria-pressed="false" title="Fullscreen (F)">⛶ Fullscreen</button>
+                <button id="fsBtnMobile" class="fs-btn fs-btn-mobile" aria-pressed="false" title="Fullscreen">⛶ Fullscreen</button>
+                <div id="map" role="region" aria-label="Explosion contour map"></div>
+                <div class="legend" id="legend" hidden></div>
+                <div id="notification" class="notification"></div>
+              </div>
+            </div>
+            <div id="mapControls">
+              <div class="coord-inputs">
+                  <label for="mapLat">Lat</label>
+                  <input type="number" id="mapLat" step="any" aria-label="Latitude">
+                  <label for="mapLon">Lon</label>
+                  <input type="number" id="mapLon" step="any" aria-label="Longitude">
+              </div>
+              <div class="model-select">
+                  <label for="poModelSelect">Select Po</label>
+                  <select id="poModelSelect">
+                      <option value="crowl">Crowl</option>
+                      <option value="alonso">Alonso</option>
+                      <option value="sadovski">Sadovski</option>
+                  </select>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <aside class="right">
+        <section class="card estimation" aria-labelledby="est-damage">
+          <div id="est-damage" class="card-header" data-lang-key="estimation_damage_title">Estimation of Damage to Structures and Process Equipment</div>
+          <div class="method-grid">
+            <div class="method-card" id="panel-damage-crowl">
+              <div class="vlabel">CROWL</div>
+              <div class="pad">
+                <p><strong>Overpressure (Po):</strong> <span id="val-Po-crowl">—</span> kPa</p>
+                <div>
+                  <strong data-lang-key="damage_details_label">Damage Details:</strong>
+                  <div class="damage-category">
+                    <strong data-lang-key="structural_label">Structural:</strong>
+                    <ul id="structural-damage-crowl"></ul>
+                  </div>
+                  <div class="damage-category">
+                    <strong data-lang-key="process_equipment_label">Process Equipment:</strong>
+                    <ul id="equipment-damage-crowl"></ul>
+                  </div>
+                </div>
+              </div>
+              <div class="sevfoot" id="sev-crowl" data-lang-key="unknown">Unknown</div>
+            </div>
+            <div class="method-card" id="panel-damage-alonso">
+              <div class="vlabel">ALONSO</div>
+              <div class="pad">
+                <p><strong>Overpressure (Po):</strong> <span id="val-Po-alonso">—</span> kPa</p>
+                  <div>
+                  <strong data-lang-key="damage_details_label">Damage Details:</strong>
+                  <div class="damage-category">
+                    <strong data-lang-key="structural_label">Structural:</strong>
+                    <ul id="structural-damage-alonso"></ul>
+                  </div>
+                  <div class="damage-category">
+                    <strong data-lang-key="process_equipment_label">Process Equipment:</strong>
+                    <ul id="equipment-damage-alonso"></ul>
+                  </div>
+                </div>
+              </div>
+              <div class="sevfoot" id="sev-alonso" data-lang-key="unknown">Unknown</div>
+            </div>
+            <div class="method-card" id="panel-damage-sadovski">
+              <div class="vlabel">SADOVSKI</div>
+              <div class="pad">
+                <p><strong>Overpressure (Po):</strong> <span id="val-Po-sadovski">—</span> kPa</p>
+                  <div>
+                  <strong data-lang-key="damage_details_label">Damage Details:</strong>
+                  <div class="damage-category">
+                    <strong data-lang-key="structural_label">Structural:</strong>
+                    <ul id="structural-damage-sadovski"></ul>
+                  </div>
+                  <div class="damage-category">
+                    <strong data-lang-key="process_equipment_label">Process Equipment:</strong>
+                    <ul id="equipment-damage-sadovski"></ul>
+                  </div>
+                </div>
+              </div>
+              <div class="sevfoot" id="sev-sadovski" data-lang-key="unknown">Unknown</div>
+            </div>
+          </div>
+        </section>
+        <section class="card estimation" aria-labelledby="est-injury">
+          <div id="est-injury" class="card-header" data-lang-key="estimation_injury_title">Estimation of Injury Consequences</div>
+          <div class="method-grid">
+            <div class="method-card" id="panel-injury-crowl"><div class="vlabel">CROWL</div><div class="pad"><p><strong>Overpressure (Po):</strong> <span id="val-Po-crowl-inj">—</span> kPa</p><p><strong data-lang-key="effects_label">Effects:</strong></p><ul id="injury-effects-crowl"></ul></div><div class="sevfoot" id="sev-injury-crowl" data-lang-key="unknown">Unknown</div></div>
+            <div class="method-card" id="panel-injury-alonso"><div class="vlabel">ALONSO</div><div class="pad"><p><strong>Overpressure (Po):</strong> <span id="val-Po-alonso-inj">—</span> kPa</p><p><strong data-lang-key="effects_label">Effects:</strong></p><ul id="injury-effects-alonso"></ul></div><div class="sevfoot" id="sev-injury-alonso" data-lang-key="unknown">Unknown</div></div>
+            <div class="method-card" id="panel-injury-sadovski"><div class="vlabel">SADOVSKI</div><div class="pad"><p><strong>Overpressure (Po):</strong> <span id="val-Po-sadovski-inj">—</span> kPa</p><p><strong data-lang-key="effects_label">Effects:</strong></p><ul id="injury-effects-sadovski"></ul></div><div class="sevfoot" id="sev-injury-sadovski" data-lang-key="unknown">Unknown</div></div>
+          </div>
+        </section>
+        <section class="card" aria-labelledby="log-head">
+            <div id="log-head" class="card-header">
+                <span data-lang-key="log_title">Simulation Log</span>
+                <div class="log-actions">
+                    <button class="btn" id="btnSortLog" data-lang-key="btn_sort">Sort</button>
+                    <button class="btn" id="btnExportLog" data-lang-key="btn_export_csv">Export CSV</button>
+                    <button class="btn" id="btnImportLog" data-lang-key="btn_import_csv">Import CSV</button>
+                    <input type="file" id="importFile" accept=".csv" style="display: none;" />
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table id="logTable">
+                    <thead>
+                        <tr>
+                            <th data-lang-key="log_col_node">Node</th>
+                            <th data-lang-key="log_col_material">Material</th>
+                            <th>ηE</th>
+                            <th>ETNT</th>
+                            <th>ρ</th>
+                            <th>ΔH<sub>exp</sub></th>
+                            <th data-lang-key="log_col_volume">Volume</th>
+                            <th data-lang-key="log_col_distance">Distance</th>
+                            <th>WTNT</th>
+                            <th>ze</th>
+                            <th>Ps</th>
+                            <th>Crowl</th>
+                            <th>Alonso</th>
+                            <th>Sadovski</th>
+                            <th>Lat</th>
+                            <th>Lon</th>
+                            <th>Po Model</th>
+                            <th class="col-action">-</th>
+                        </tr>
+                        <tr class="unit-row">
+                           <th></th><th></th><th></th><th>(kJ/kg)</th><th>(kg/m³)</th><th>(kJ/kg)</th><th>(m³)</th><th>(m)</th><th>(kg)</th><th>(m·kg<sup>−1/3</sup>)</th><th></th><th>(kPa)</th><th>(kPa)</th><th>(kPa)</th><th>° N</th><th>° E</th><th>Po</th><th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="logTbody"></tbody>
+                </table>
+            </div>
+            <div style="padding: 0 14px 14px;">
+                <p class="footnote" data-lang-key="log_footnote">Click "Save" to log the calculation results. The last 10 entries will be stored in your browser.</p>
+            </div>
+        </section>
+        
+        <!-- Gemini Feature Section -->
+        <section class="card gemini-card" aria-labelledby="gemini-head">
+          <div id="gemini-head" class="card-header">
+            <span data-lang-key="gemini_title">Process Safety Recommendation</span>
+          </div>
+          <div style="padding: 14px;">
+            <p data-lang-key="gemini_report_description" class="footnote" style="margin-bottom: 12px;">Enter a brief case study scenario below (e.g., "LPG truck tanker crash and explosion in a populated area") and we will generate a detailed academic report based on the current simulation log data.</p>
+            <textarea id="gemini-prompt" data-lang-key="gemini_prompt_placeholder">Analysis of section: Chemical Material, Properties, physical material, Parameters Calculation resulted, chart Scaled Overpressure vs Scaled Distance, Estimation of Damage to Structures and Process Equipment, Estimation of Injury Consequences, chart Overpressure vs Distance, Simulation Log, and Explosion Contour Map with check Lat and Lon the location and check where the location (city and country) based on coordinate, find incident brief from the publication website Journal news, Recommendations for building a standard type explosion-proof and fire-proof control room building.</textarea>
+            <button class="btn" id="btnAskGemini" data-lang-key="btn_generate_report">Process Safety Report</button>
+            <div id="gemini-response">
+                <!-- AI Generated Report will be injected here -->
+            </div>
+          </div>
+        </section>
+        <!-- End Gemini Feature Section -->
+
+      </aside>
+    </main>
+  </div>
+    
+  <div id="floatingControlPanel">
+      <div class="floating-panel-header">
+        <h3 data-lang-key="quick_control_panel">Quick Control Panel</h3>
+        <div class="panel-header-buttons">
+          <button id="floatPanelCollapseBtn" class="floating-panel-action-btn" aria-label="Collapse/Expand Panel">▲</button>
+        </div>
+      </div>
+      <div class="floating-panel-body">
+        <div id="floatPanelInputs">
+        </div>
+        <div id="floatPanelOutputs">
+        </div>
+      </div>
+  </div>
+
+  <footer class="app-footer">
+      <div class="footer-content">
+        <div class="footer-buttons">
+          <a class="btn-home-3d" href="/" target="_blank" rel="noopener noreferrer" data-lang-key="menu_home">Home</a>
+          <a class="btn-home-3d" href="#" data-lang-key="footer_guide">Guide</a>
+          <a class="btn-home-3d" href="#" data-lang-key="menu_presentation">Presentation</a>
+          <a class="btn-home-3d" href="#" data-lang-key="footer_journal">Journal</a>
+          <a class="btn-home-3d" href="https://id.linkedin.com/in/virdanurlulu" data-lang-key="footer_profile">Profile</a>
+        </div>
+        <div class="credit">
+          <span data-lang-key="footer_copyright">Copyright © 2025 by</span>
+          <a href="https://id.linkedin.com/in/virdanurlulu" target="_blank" rel="nofollow noopener noreferrer" style="text-decoration: none;">Virda Nur Lu'lu</a>
+        </div>
+        <div class="dedication">
+          <span data-lang-key="footer_dedication1">This application is dedicated to my parents for their persistent support and patient guidance throughout my JavaScript journey.</span>
+          <span data-lang-key="footer_dedication2">It is also presented to the academic community at</span>
+          <a href="https://che.itb.ac.id/" target="_blank" rel="nofollow noopener noreferrer" data-lang-key="footer_dedication_itb">Bandung Institute of Technology</a>
+          <span data-lang-key="footer_dedication3">as a contribution towards inspiring further advancements in JavaScript technology.</span>
+        </div>
+      </div>
+  </footer>
+
+  <button class="btn" id="toTop" type="button" aria-label="Back to Top">&#8679;</button>
+  
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+  <script src="https://virdanurlulu.github.io/js/js-app.js"></script>
+
+  <!-- Gemini API Integration Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // English: DOM element references.
+      // Bahasa Indonesia: Referensi elemen DOM.
+      const btnAskGemini = document.getElementById('btnAskGemini');
+      const geminiPrompt = document.getElementById('gemini-prompt');
+      const geminiResponse = document.getElementById('gemini-response');
+      const logTable = document.getElementById('logTable');
+      const languageSwitcher = document.getElementById('language-switcher');
+      const materialSelect = document.getElementById('material');
+      const newMaterialForm = document.getElementById('new-material-form');
+      const newMaterialNameInput = document.getElementById('new_material_name');
+      const newMaterialInputs = newMaterialForm.querySelectorAll('input');
+      const btnSaveNewMaterial = document.getElementById('btnSaveNewMaterial');
+      const btnEditMaterial = document.getElementById('btnEditMaterial');
+      const btnDeleteMaterial = document.getElementById('btnDeleteMaterial');
+      const btnCancelNewMaterial = document.getElementById('btnCancelNewMaterial');
+      const materialLookupSpinner = document.getElementById('material-lookup-spinner');
+
+      const LOCAL_STORAGE_KEY = 'virdanurlulu_custom_materials';
+
+      // English: Bilingual object for UI messages.
+      // Bahasa Indonesia: Objek bilingual untuk pesan antarmuka pengguna.
+      const messages = {
+          en: {
+              provideScenario: '<p>Please provide a brief case study scenario.</p>',
+              noLogData: '<p>Cannot generate a report without data in the Simulation Log.</p>',
+              apiError: (msg) => `Error: ${msg}`,
+              authError: 'Authentication failed (401). Please verify your API key.',
+              httpError: (status, text) => `HTTP error! status: ${status} ${text}`,
+              blockedRequest: (reason) => `<p>Request was blocked due to safety settings. Reason: ${reason}. Please adjust your prompt.</p>`,
+              apiResponseError: (msg) => `API returned an error: ${msg}`,
+              invalidResponse: 'Invalid response structure from Gemini API.',
+              serviceUnavailable: (retries) => `The AI service is still unavailable after ${retries} attempts. Please try again later.`,
+              fillAllFields: 'Please fill all fields for the new material.',
+              materialAdded: 'New material added successfully.',
+              materialUpdated: 'Material updated successfully.',
+              materialDeleted: 'Material deleted successfully.',
+              dataNotFound: 'Could not find data for the specified material. Please enter manually.'
+          },
+          id: {
+              provideScenario: '<p>Mohon berikan skenario studi kasus singkat.</p>',
+              noLogData: '<p>Tidak dapat membuat laporan tanpa data di dalam Log Simulasi.</p>',
+              apiError: (msg) => `Galat: ${msg}`,
+              authError: 'Autentikasi gagal (401). Mohon verifikasi kunci API Anda.',
+              httpError: (status, text) => `Galat HTTP! status: ${status} ${text}`,
+              blockedRequest: (reason) => `<p>Permintaan diblokir karena pengaturan keamanan. Alasan: ${reason}. Mohon sesuaikan prompt Anda.</p>`,
+              apiResponseError: (msg) => `API mengembalikan galat: ${msg}`,
+              invalidResponse: 'Struktur respons dari API Gemini tidak valid.',
+              serviceUnavailable: (retries) => `Layanan AI masih tidak tersedia setelah ${retries} percobaan. Silakan coba lagi nanti.`,
+              fillAllFields: 'Mohon isi semua kolom untuk material baru.',
+              materialAdded: 'Material baru berhasil ditambahkan.',
+              materialUpdated: 'Material berhasil diperbarui.',
+              materialDeleted: 'Material berhasil dihapus.',
+              dataNotFound: 'Data untuk material yang dimaksud tidak dapat ditemukan. Mohon masukkan secara manual.'
+          }
+      };
+      
+      const uiTranslations = {
+        en: {
+            gemini_title: 'Process Safety Recommendation',
+            gemini_report_description: 'Enter a brief case study scenario below (e.g., "LPG truck tanker crash and explosion in a populated area") and we will generate a detailed academic report based on the current simulation log data.',
+            btn_generate_report: 'Process Safety Report',
+            gemini_prompt_placeholder: 'Analysis of section: Chemical Material, Properties, physical material, Parameters Calculation resulted, chart Scaled Overpressure vs Scaled Distance, Estimation of Damage to Structures and Process Equipment, Estimation of Injury Consequences, chart Overpressure vs Distance, Simulation Log, and Explosion Contour Map with check Lat and Lon the location and check where the location (city and country) based on coordinate, find incident brief from the publication website Journal news, Recommendations for building a standard type explosion-proof and fire-proof control room building.',
+            add_new_material: '-- Add New Material --',
+            form_title_new_material: 'Add New Material',
+            form_label_name: 'Material Name',
+            form_label_formula: 'Chemical Formula',
+            form_label_density: 'Density (kg/m³)',
+            form_label_dh: 'ΔH_exp (kJ/kg)',
+            form_label_eta: 'η_E',
+            btn_save_material: 'Save Material',
+            btn_edit_material: 'Edit',
+            btn_delete_material: 'Delete',
+            btn_cancel: 'Cancel'
+        },
+        id: {
+            gemini_title: 'Rekomendasi Keselamatan Proses',
+            gemini_report_description: 'Masukkan skenario studi kasus singkat di bawah ini (misalnya, "Kecelakaan dan ledakan truk tangki LPG di daerah padat penduduk") dan kami akan membuat laporan akademis terperinci berdasarkan data log simulasi saat ini.',
+            btn_generate_report: 'Buat Laporan Keselamatan Proses',
+            gemini_prompt_placeholder: 'Analisis bagian: Material Kimia, Properti, material fisik, Hasil Perhitungan Parameter, grafik Scaled Overpressure vs Scaled Distance, Estimasi Kerusakan Struktur dan Peralatan Proses, Estimasi Konsekuensi Cedera, grafik Overpressure vs Distance, Log Simulasi, dan Peta Kontur Ledakan dengan memeriksa Lintang dan Bujur lokasi dan memeriksa di mana lokasi (kota dan negara) berdasarkan koordinat, temukan ringkasan insiden dari situs web publikasi Jurnal berita, Rekomendasi untuk membangun gedung ruang kendali standar tahan ledakan dan tahan api.',
+            add_new_material: '-- Tambah Material Baru --',
+            form_title_new_material: 'Tambah Material Baru',
+            form_label_name: 'Nama Material',
+            form_label_formula: 'Rumus Kimia',
+            form_label_density: 'Massa Jenis (kg/m³)',
+            form_label_dh: 'ΔH_ledak (kJ/kg)',
+            form_label_eta: 'η_E',
+            btn_save_material: 'Simpan Material',
+            btn_edit_material: 'Ubah',
+            btn_delete_material: 'Hapus',
+            btn_cancel: 'Batal'
+        }
+      };
+      
+      function applyTranslations(lang) {
+        document.querySelectorAll('[data-lang-key]').forEach(el => {
+            const key = el.dataset.langKey;
+            const translation = uiTranslations[lang]?.[key];
+            if (translation) {
+                if (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') {
+                    if (el.hasAttribute('placeholder')) el.placeholder = translation;
+                } else {
+                    el.innerHTML = translation;
+                }
+            }
+        });
+      }
+
+      function loadCustomMaterials() {
+        const storedMaterials = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}');
+        if (window.materials) {
+            Object.assign(window.materials, storedMaterials);
+        }
+        
+        const addNewOption = materialSelect.querySelector('option[value="add_new"]');
+        for (const key in storedMaterials) {
+            const optionExists = materialSelect.querySelector(`option[value="${key}"]`);
+            if (!optionExists) {
+                const newOption = document.createElement('option');
+                newOption.value = key;
+                newOption.textContent = storedMaterials[key].name;
+                materialSelect.insertBefore(newOption, addNewOption);
+            }
+        }
+      }
+      
+      materialSelect.addEventListener('change', () => {
+        const selectedValue = materialSelect.value;
+        const storedMaterials = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}');
+        const isCustom = storedMaterials[selectedValue];
+
+        if (selectedValue === 'add_new') {
+            newMaterialForm.style.display = 'block';
+            newMaterialInputs.forEach(input => {
+                input.value = '';
+                input.readOnly = false;
+            });
+            btnSaveNewMaterial.style.display = 'inline-block';
+            btnCancelNewMaterial.style.display = 'inline-block';
+            btnEditMaterial.style.display = 'none';
+            btnDeleteMaterial.style.display = 'none';
+            newMaterialNameInput.focus();
+        } else if (isCustom) {
+            const data = storedMaterials[selectedValue];
+            newMaterialForm.style.display = 'block';
+            document.getElementById('new_material_name').value = data.name;
+            document.getElementById('new_material_formula').value = data.reaction_formula;
+            document.getElementById('new_material_rho').value = data.rho;
+            document.getElementById('new_material_dh').value = data.dh;
+            document.getElementById('new_material_eta').value = data.eta;
+            
+            newMaterialInputs.forEach(input => input.readOnly = true);
+
+            btnSaveNewMaterial.style.display = 'none';
+            btnCancelNewMaterial.style.display = 'inline-block';
+            btnEditMaterial.style.display = 'inline-block';
+            btnDeleteMaterial.style.display = 'inline-block';
+        } else {
+            newMaterialForm.style.display = 'none';
+             if (window.materials && window.materials[selectedValue]) {
+                const formula = window.materials[selectedValue].reaction_formula;
+                const eqText = document.getElementById('eq-text');
+                if (formula && formula.includes('⟶')) {
+                    eqText.innerHTML = formula;
+                } else if (formula) {
+                    eqText.innerHTML = `${formula} + O₂ &longrightarrow; CO₂ + H₂O`;
+                }
+            }
+        }
+      });
+      
+      btnCancelNewMaterial.addEventListener('click', () => {
+        newMaterialForm.style.display = 'none';
+        materialSelect.value = ''; 
+        newMaterialForm.querySelectorAll('input').forEach(input => input.value = '');
+        materialSelect.dispatchEvent(new Event('change'));
+      });
+
+      btnEditMaterial.addEventListener('click', () => {
+          newMaterialInputs.forEach(input => input.readOnly = false);
+          document.getElementById('new_material_name').readOnly = true; // Name is the key, should not be editable
+          btnSaveNewMaterial.style.display = 'inline-block';
+          btnEditMaterial.style.display = 'none';
+      });
+
+      btnDeleteMaterial.addEventListener('click', () => {
+          const selectedValue = materialSelect.value;
+          const uiLang = document.querySelector('.lang-btn.active')?.dataset.lang || 'en';
+          const msgDiv = document.getElementById('msg');
+          
+          if (!selectedValue) return;
+
+          // Remove from global object, localStorage, and dropdown
+          if (window.materials) delete window.materials[selectedValue];
+          
+          const storedMaterials = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}');
+          delete storedMaterials[selectedValue];
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(storedMaterials));
+          
+          materialSelect.querySelector(`option[value="${selectedValue}"]`)?.remove();
+          
+          // Reset UI
+          materialSelect.value = '';
+          materialSelect.dispatchEvent(new Event('change'));
+          
+          msgDiv.textContent = messages[uiLang].materialDeleted;
+          setTimeout(() => { msgDiv.textContent = '' }, 3000);
+      });
+      
+      btnSaveNewMaterial.addEventListener('click', () => {
+        const name = document.getElementById('new_material_name').value.trim();
+        const formula = document.getElementById('new_material_formula').value.trim();
+        const rho = document.getElementById('new_material_rho').value;
+        const dh = document.getElementById('new_material_dh').value;
+        const eta = document.getElementById('new_material_eta').value;
+
+        const uiLang = document.querySelector('.lang-btn.active')?.dataset.lang || 'en';
+        const msgDiv = document.getElementById('msg');
+
+        if (!name || !formula || !rho || !dh || !eta) {
+            msgDiv.textContent = messages[uiLang].fillAllFields;
+            setTimeout(() => { msgDiv.textContent = '' }, 3000);
+            return;
+        }
+
+        const originalKey = materialSelect.value;
+        const storedMaterials = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}');
+        const isEditing = storedMaterials[originalKey] !== undefined && originalKey !== 'add_new';
+
+        const newMaterialKey = name.toUpperCase().replace(/[^A-Z0-9]/g, '_');
+        
+        const newMaterialData = {
+            name: name,
+            rho: parseFloat(rho),
+            dh: parseFloat(dh),
+            eta: parseFloat(eta),
+            reaction_formula: formula 
+        };
+
+        if (window.materials) {
+            window.materials[newMaterialKey] = newMaterialData;
+        }
+
+        storedMaterials[newMaterialKey] = newMaterialData;
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(storedMaterials));
+
+        if (!isEditing) {
+            const newOption = document.createElement('option');
+            newOption.value = newMaterialKey;
+            newOption.textContent = name;
+            materialSelect.insertBefore(newOption, materialSelect.querySelector('option[value="add_new"]'));
+        }
+
+        materialSelect.value = newMaterialKey;
+        materialSelect.dispatchEvent(new Event('change'));
+
+        msgDiv.textContent = isEditing ? messages[uiLang].materialUpdated : messages[uiLang].materialAdded;
+        setTimeout(() => { msgDiv.textContent = '' }, 3000);
+      });
+
+      newMaterialNameInput.addEventListener('blur', async () => {
+        const materialName = newMaterialNameInput.value.trim();
+        const uiLang = document.querySelector('.lang-btn.active')?.dataset.lang || 'en';
+        if (!materialName || newMaterialNameInput.readOnly) return;
+
+        materialLookupSpinner.style.display = 'inline-block';
+        try {
+            const data = await fetchMaterialDataFromAI(materialName);
+            if (data && data.formula) {
+                document.getElementById('new_material_formula').value = data.formula || '';
+                document.getElementById('new_material_rho').value = data.density || '';
+                document.getElementById('new_material_dh').value = data.heatOfCombustion || '';
+                document.getElementById('new_material_eta').value = data.explosionEfficiency || '0.04'; // Default to 4%
+            } else {
+                 const msgDiv = document.getElementById('msg');
+                 msgDiv.textContent = messages[uiLang].dataNotFound;
+                 setTimeout(() => { msgDiv.textContent = '' }, 3000);
+            }
+        } catch (error) {
+            console.error("Error fetching material data:", error);
+            const msgDiv = document.getElementById('msg');
+            msgDiv.textContent = messages[uiLang].apiError(error.message);
+            setTimeout(() => { msgDiv.textContent = '' }, 3000);
+        } finally {
+            materialLookupSpinner.style.display = 'none';
+        }
+      });
+
+      async function fetchMaterialDataFromAI(materialName) {
+        const systemPrompt = `You are a chemical engineering assistant. Your task is to retrieve specific physical properties for a given chemical from the NIST Chemistry WebBook or other reliable sources. Respond ONLY with a JSON object with the keys "formula", "density", "heatOfCombustion", and "explosionEfficiency".
+        - For 'formula', provide the chemical formula.
+        - For 'density', provide the gas density in kg/m³ if available, otherwise liquid density. If multiple values exist, provide a typical one.
+        - For 'heatOfCombustion', find the heat of combustion (ΔHc) in kJ/kg. If given in kJ/mol, convert it. Use this as a proxy for heat of explosion.
+        - For 'explosionEfficiency', provide a typical literature value for a vapor cloud explosion if available, otherwise default to 0.04.`;
+        const userQuery = `Find the following properties for ${materialName}: chemical formula, density (kg/m³), and heat of combustion (kJ/kg).`;
+        
+        return await callGeminiApi(userQuery, systemPrompt, true).then(text => JSON.parse(text)).catch(e => { console.error("AI data fetch failed:", e); return null;});
+      }
+
+
+      if (btnAskGemini) {
+        btnAskGemini.addEventListener('click', handleGenerateReport);
+      }
+
+      if (languageSwitcher) {
+        languageSwitcher.addEventListener('click', (e) => {
+            const btn = e.target.closest('.lang-btn');
+            if (!btn) return;
+            const selectedLang = btn.dataset.lang;
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateReportLanguage();
+            applyTranslations(selectedLang); 
+        });
+      }
+
+      function updateReportLanguage() {
+        const activeLang = document.querySelector('.lang-btn.active')?.dataset.lang || 'en';
+        const reportEN = geminiResponse.querySelector('#report-en');
+        const reportID = geminiResponse.querySelector('#report-id');
+
+        if(reportEN && reportID) {
+            if (activeLang === 'id') {
+                reportEN.style.display = 'none';
+                reportID.style.display = 'block';
+            } else {
+                reportEN.style.display = 'block';
+                reportID.style.display = 'none';
+            }
+        }
+      }
+
+      function getLogDataAsText() {
+        const headers = Array.from(logTable.querySelectorAll('thead tr:first-child th'))
+          .map(th => th.textContent.trim())
+          .slice(0, -1);
+        const units = Array.from(logTable.querySelectorAll('thead tr.unit-row th'))
+          .map(th => th.textContent.trim());
+        
+        const combinedHeaders = headers.map((h, i) => units[i] ? `${h} ${units[i]}`.trim() : h);
+
+        const rows = Array.from(logTable.querySelectorAll('tbody tr'));
+        if (rows.length === 0) {
+          return "No simulation log data available.";
+        }
+
+        const recentRows = rows.slice(-1); 
+
+        const data = recentRows.map(row => {
+          return Array.from(row.querySelectorAll('td'))
+            .map(td => td.textContent.trim())
+            .slice(0, -1) 
+            .join(' | ');
+        });
+
+        return `Headers: ${combinedHeaders.join(' | ')}\nData (last ${recentRows.length} entry):\n${data.join('\n')}`;
+      }
+
+      async function handleGenerateReport() {
+        const uiLang = document.querySelector('.lang-btn.active')?.dataset.lang || 'en';
+        const userScenario = geminiPrompt.value.trim();
+        
+        if (!userScenario) {
+          geminiResponse.innerHTML = messages[uiLang].provideScenario;
+          return;
+        }
+
+        const logData = getLogDataAsText();
+        if (logData === "No simulation log data available.") {
+            geminiResponse.innerHTML = messages[uiLang].noLogData;
+            return;
+        }
+        
+        geminiResponse.textContent = '';
+        geminiResponse.classList.add('loading');
+        btnAskGemini.disabled = true;
+
+        const systemPrompt = `You are an AI assistant generating an academic case study from the perspective of a Master's candidate in Chemical Engineering at ITB.
+        **Mandatory Directives**:
+        - The entire output must be a single HTML block.
+        - Create two root divs: \`<div id="report-en" lang="en">...\` and \`<div id="report-id" lang="id">...\`.
+        - Fully translate the report into academic English and formal Indonesian (EYD) inside the respective divs.
+        - Use this HTML styling: Title: \`<h4 style='font-size: 16px; font-weight: bold; text-align: center; color: #00529b;'>...\` | Subtitle: \`<h5 style='font-size: 14px; font-weight: bold; text-align: center; color: #00529b;'>...\` | Section Headers: \`<p><strong style='font-size: 14px;'># No. Title</strong></p>\` | Body: \`<p style='font-size: 12px; line-height: 1.2;'>...\`.
+        - Add 5-10 academic citations like \`<span style='color: #003366; font-weight: bold;'>[#]</span>\`, referencing the bibliography at https://virdanurlulu.github.io/html/bibliography_sim_modeling_explosion.html.
+        - Maintain a formal, academic, and analytical tone.
+        **Report Structure**:
+        1.  **Chronological Account**: Detail the user-provided scenario.
+        2.  **Causal Analysis**: Conduct a concise root cause analysis.
+        3.  **Simulation Data Analysis**: Interpret the simulation log data (chemical properties, overpressure calculations, charts, damage/injury estimates, contour map).
+        4.  **Risk Mitigation Strategies**: Propose mitigation measures based on industry standards.
+        5.  **Formal Recommendations**: Formulate specific short-term and long-term recommendations.`;
+        
+        const fullPrompt = `**Simulation Log Data:**\n${logData}\n\n**User's Case Study Scenario:**\n${userScenario}`;
+
+        try {
+          const generatedHtml = await callGeminiApi(fullPrompt, systemPrompt);
+          let html = (generatedHtml || '').trim();
+          
+          if (/^```/.test(html)) {
+            const m = html.match(/^```([a-zA-Z0-9_-]+)?\n/);
+            html = m ? html.slice(m[0].length) : html.replace(/^```/, '');
+            html = html.replace(/\n?```$/, '');
+          }
+          if (html.includes('&lt;') && html.includes('&gt;') && !html.includes('<div')) {
+            const ta = document.createElement('textarea');
+            ta.innerHTML = html; html = ta.value;
+          }
+          
+          geminiResponse.innerHTML = html;
+          updateReportLanguage();
+        } catch (error) {
+          console.error('Gemini API call failed:', error);
+          geminiResponse.textContent = messages[uiLang].apiError(error.message);
+        } finally {
+          geminiResponse.classList.remove('loading');
+          btnAskGemini.disabled = false;
+        }
+      }
+
+      async function callGeminiApi(prompt, systemInstruction, isJson = false) {
+        const apiKey = "AIzaSyBOol9JlsJIhmPmcaE8VqlKlXPHxEJ6Bic"; 
+        const model = 'gemini-2.5-flash-preview-05-20';
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        const uiLang = document.querySelector('.lang-btn.active')?.dataset.lang || 'en';
+        
+        const payload = {
+            contents: [{ parts: [{ text: prompt }] }],
+            systemInstruction: { parts: [{ text: systemInstruction }] },
+        };
+        
+        if (isJson) {
+            payload.generationConfig = { responseMimeType: "application/json" };
+        }
+
+        let lastError = null;
+        const maxRetries = 3;
+        let delay = 1000; 
+
+        for (let i = 0; i < maxRetries; i++) {
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.status === 429 || response.status === 503) {
+                    lastError = new Error(`Attempt ${i + 1} failed with status ${response.status}. Retrying in ${delay / 1000}s...`);
+                    console.error(lastError.message);
+                    if (i < maxRetries - 1) {
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2; 
+                    }
+                    continue;
+                }
+
+                if (!response.ok) {
+                    if (response.status === 401) throw new Error(messages[uiLang].authError);
+                    throw new Error(messages[uiLang].httpError(response.status, response.statusText));
+                }
+
+                const result = await response.json();
+                
+                if (result.candidates && result.candidates[0]?.content?.parts[0]?.text) {
+                    return result.candidates[0].content.parts[0].text; 
+                } else {
+                    const blockReason = result.promptFeedback?.blockReason;
+                    if (blockReason) return messages[uiLang].blockedRequest(blockReason);
+                    if (result.error) throw new Error(messages[uiLang].apiResponseError(result.error.message));
+                    throw new Error(messages[uiLang].invalidResponse);
+                }
+            } catch (error) {
+                lastError = error;
+                console.error(`Attempt ${i + 1} failed with error:`, error);
+                if (i < maxRetries - 1) {
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+        if (lastError) throw lastError;
+        throw new Error(messages[uiLang].serviceUnavailable(maxRetries));
+      }
+
+      loadCustomMaterials();
+      const initialLang = document.querySelector('.lang-btn.active')?.dataset.lang || 'en';
+      applyTranslations(initialLang);
+    });
+  </script>
+
+  <script>
+    // English: Status for enabling the 'F' key shortcut. // Bahasa Indonesia: Status untuk mengaktifkan pintasan tombol 'F'.
+    let enableFKey = false; // English: Disabled by default. // Bahasa Indonesia: Dinonaktifkan secara default.
+
+    document.addEventListener('keydown', (e) => {
+        // English: Do not interfere when typing in an input field. // Bahasa Indonesia: Jangan mengganggu saat sedang mengetik di kolom input.
+        if (document.activeElement.tagName === 'INPUT') return;
+        
+        // English: Toggle fullscreen if 'F' key is enabled and pressed. // Bahasa Indonesia: Alihkan mode layar penuh jika tombol 'F' diaktifkan dan ditekan.
+        if (enableFKey && e.key.toLowerCase() === 'f') {
+            e.preventDefault();
+            toggleFS(); // English: This function is expected to be in js-app.js. // Bahasa Indonesia: Fungsi ini diharapkan sudah ada di dalam js-app.js.
+        }
+
+        // English: Exit fullscreen when 'Escape' is pressed. // Bahasa Indonesia: Keluar dari mode layar penuh saat tombol 'Escape' ditekan.
+        if (e.key === 'Escape' && document.getElementById('mapCard').classList.contains('fullscreen')) {
+            exitFS();
+        }
+    });
+
+    // English: Function to enable or disable the 'F' key shortcut. // Bahasa Indonesia: Fungsi untuk mengaktifkan atau menonaktifkan pintasan tombol 'F'.
+    function setFKey(enabled) {
+        enableFKey = enabled;
+        console.log("F key for fullscreen is now:", enabled ? "ENABLED" : "DISABLED");
+        // console.log("Tombol F untuk layar penuh sekarang:", enabled ? "AKTIF" : "NONAKTIF");
+    }
+  </script>
+
+  
+</body>
+</html>
+
