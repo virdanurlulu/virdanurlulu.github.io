@@ -2049,7 +2049,8 @@
         }, 100));
       }
      
-        const paramsCard = document.querySelector('section[aria-labelledby="param-head"]'); // Pemicu baru
+        // const paramsCard = document.querySelector('section[aria-labelledby="param-head"]'); 
+        const paramsCard = document.querySelector('section[aria-labelledby="material-head"]'); // Pemicu diubah
         function handlePanelVisibility() {
             if (!isPageLoaded) return;
             const floatingPanel = $('floatingControlPanel');
