@@ -2059,7 +2059,7 @@
             //Gunakan posisi kartu "Parameters" sebagai pemicu
             const cardRect = paramsCard.getBoundingClientRect(); 
 
-            if (cardRect.bottom < 10) {
+            if (cardRect.bottom < 5) {
                 syncFloatingPanelInputs();
                 floatingPanel.classList.add('visible');
             } else {
