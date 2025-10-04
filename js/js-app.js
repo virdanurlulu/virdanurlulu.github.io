@@ -2049,25 +2049,47 @@
         }, 100));
       }
      
-        // const paramsCard = document.querySelector('section[aria-labelledby="param-head"]'); 
-        const paramsCard = document.querySelector('section[aria-labelledby="material-head"]'); // Pemicu diubah
-        function handlePanelVisibility() {
-            if (!isPageLoaded) return;
-            const floatingPanel = $('floatingControlPanel');
+////////////
+// GANTI "param-head" MENJADI "material-head" DI BARIS DI BAWAH INI
+const paramsCard = document.querySelector('section[aria-labelledby="material-head"]'); 
+
+function handlePanelVisibility() {
+    if (!isPageLoaded) return;
+    const floatingPanel = $('floatingControlPanel');
+    // Pastikan menggunakan variabel baru
+    if (!paramsCard || !floatingPanel) return; 
+
+    // Gunakan posisi kartu "Chemical Material" sebagai pemicu
+    const cardRect = paramsCard.getBoundingClientRect(); 
+
+    if (cardRect.bottom < 20) {
+        syncFloatingPanelInputs();
+        floatingPanel.classList.add('visible');
+    } else {
+        floatingPanel.classList.remove('visible');
+    }
+}
+window.addEventListener('scroll', handlePanelVisibility);
+///////////////
+
+       // const paramsCard = document.querySelector('section[aria-labelledby="param-head"]'); 
+        ///function handlePanelVisibility() {
+            //if (!isPageLoaded) return;
+            //const floatingPanel = $('floatingControlPanel');
             // Pastikan menggunakan variabel baru
-            if (!paramsCard || !floatingPanel) return; 
+            //if (!paramsCard || !floatingPanel) return; 
 
             // Gunakan posisi kartu "Parameters" sebagai pemicu
-            const cardRect = paramsCard.getBoundingClientRect(); 
+            //const cardRect = paramsCard.getBoundingClientRect(); 
 
-            if (cardRect.bottom < 20) {
-                syncFloatingPanelInputs();
-                floatingPanel.classList.add('visible');
-            } else {
-                floatingPanel.classList.remove('visible');
-            }
-        }
-      window.addEventListener('scroll', handlePanelVisibility);
+            //if (cardRect.bottom < 20) {
+                //syncFloatingPanelInputs();
+                //floatingPanel.classList.add('visible');
+            //} else {
+              //  floatingPanel.classList.remove('visible');
+            //}
+        //}
+      //window.addEventListener('scroll', handlePanelVisibility);
      
       const updateOnResizeOrRotate = () => {
           handlePanelVisibility();
