@@ -47,7 +47,7 @@
 
       const presets = {
         AN:  { rho: 1725,    dh:  2479,  e_tnt: 4500, eta: 0.35 },
-        LPG: { rho: 566,     dh: 46000,  e_tnt: 4184, eta: 0.05 },
+        LPG: { rho: 566,     dh: 46000,  e_tnt: 4550, eta: 0.03 },
         H2:  { rho: 0.08375, dh: 130800, e_tnt: 4500, eta: 0.05 }
       };
 
