@@ -686,11 +686,11 @@
       ];
 
       const defaultLogData = [
-          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '300', w_tnt: '576999.986', ze: '3.604', ps: '1.096', po_crowl: '111.073', po_alonso: '85.912', po_sadovski: '63.787', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
-          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '500', w_tnt: '576999.986', ze: '6.006', ps: '0.419', po_crowl: '42.468', po_alonso: '30.771', po_sadovski: '26.163', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
-          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '700', w_tnt: '576999.986', ze: '8.408', ps: '0.250', po_crowl: '25.310', po_alonso: '15.647', po_sadovski: '15.698', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
-          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '1000', w_tnt: '576999.986', ze: '12.012', ps: '0.156', po_crowl: '15.813', po_alonso: '10.235', po_sadovski: '9.617', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
-          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '1500', w_tnt: '576999.986', ze: '18.018', ps: '0.097', po_crowl: '9.857', po_alonso: '6.395', po_sadovski: '5.778', lat: '33.901404', lon: '35.519039', poModel: 'crowl' }
+          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '300', w_tnt: '576999.986', ze: '3.604', ps: '1.096', po_crowl: '111.073', po_alonso: '85.912', po_sadovski: '63.787', lat: '39.039756', lon: '117.736123', poModel: 'crowl' },
+          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '500', w_tnt: '576999.986', ze: '6.006', ps: '0.419', po_crowl: '42.468', po_alonso: '30.771', po_sadovski: '26.163', lat: '39.039756', lon: '117.736123', poModel: 'crowl' },
+          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '700', w_tnt: '576999.986', ze: '8.408', ps: '0.250', po_crowl: '25.310', po_alonso: '15.647', po_sadovski: '15.698', lat: '39.039756', lon: '117.736123', poModel: 'crowl' },
+          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '1000', w_tnt: '576999.986', ze: '12.012', ps: '0.156', po_crowl: '15.813', po_alonso: '10.235', po_sadovski: '9.617', lat: '39.039756', lon: '117.736123', poModel: 'crowl' },
+          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '1500', w_tnt: '576999.986', ze: '18.018', ps: '0.097', po_crowl: '9.857', po_alonso: '6.395', po_sadovski: '5.778', lat: '39.039756', lon: '117.736123', poModel: 'crowl' }
       ];
 
       let chartController;
