@@ -1,3 +1,43 @@
+    let simulationLog = []; // Make simulationLog globally accessible for better module interaction
+    let updatePsVsZeChart = () => {}; // Define a placeholder function in a shared scope
+
+    // Global utility functions
+    function debounce(func, delay = 250) {
+      let timeoutId;
+      return function(...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => { func.apply(this, args); }, delay);
+      };
+    }
+
+    function parseNumberLoose(s){
+      if (s==null) return NaN;
+      s = String(s).trim().replace(/\s+/g,'').replace(/\u00A0/g,'');
+      if (/^\d{1,3}(\.\d{3})+,\d+$/.test(s)) s = s.replace(/\./g,'').replace(',', '.');
+      else if (/^\d+,\d+$/.test(s)) s = s.replace(',', '.');
+      else s = s.replace(/(?<=\d),(?=\d{3}(?:\D|$))/g, '');
+      return Number(s);
+    }
+
+    function extractNumbers(line){
+      const toks = String(line).match(/-?\d+(?:[.,]\d+)?/g) || [];
+      return toks.map(parseNumberLoose).filter(n=>Number.isFinite(n));
+    }
+    
+    function parseData(text){
+      const out = [];
+      const rows = (text||'').split(/[\r\n]+/).map(r=>r.trim()).filter(Boolean);
+      for (const r of rows){
+        const nums = extractNumbers(r);
+        if (!nums.length) continue;
+        const rVal = nums[0];
+        const poVal = nums.length>1 ? nums[1] : null;
+        if (rVal > 0) out.push({ r: rVal, Po: (poVal!=null && Number.isFinite(poVal)) ? poVal : null });
+      }
+      out.sort((a,b)=>a.r-b.r);
+      return out;
+    }
+
       document.addEventListener("DOMContentLoaded", () => {
       const $ = (id) => document.getElementById(id);
       const fields = ["rho", "vol", "dh", "eta", "e_tnt", "dist", "pa"];
@@ -1230,7 +1270,7 @@
         if (btnAddResult) btnAddResult.disabled = false;
 
         if (!isInitialLoad) {
-          saveStateToURL();
+          //saveStateToURL();
         }
       }
 
@@ -1270,7 +1310,6 @@
         if (hasParams) {
           // BUG FIX: Jika memuat dari URL, bersihkan log yang ada/default
           // untuk mencegah tampilan data yang tidak konsisten.
-          simulationLog = [];
           renderLogTable(); 
           updateOverpressureChartFromLog(); 
 
@@ -1470,8 +1509,6 @@
             </div>
         `;
        
-        $('btnSaveResultFloat').addEventListener('click', saveAction);
-
         const originalSelect = $('material');
         const floatSelect = $('float_material');
         floatSelect.innerHTML = originalSelect.innerHTML;
@@ -1486,19 +1523,6 @@
             }
         };
        
-        const floatingPanel = $('floatingControlPanel');
-        // PERBAIKAN FINAL: Gunakan event delegation untuk tombol di dalam panel melayang.
-        // Ini mencegah penambahan event listener berulang kali saat bahasa diubah,
-        // yang dapat menyebabkan kebocoran memori dan bug.
-        floatingPanel.addEventListener('click', (event) => {
-            if (event.target && event.target.id === 'btnSaveResultFloat') {
-                saveAction();
-            }
-        });
-
-        // Hapus pemanggilan event listener langsung dari dalam fungsi setup
-        // $('btnSaveResultFloat').addEventListener('click', saveAction);
-
         ['material', 'vol', 'dist'].forEach(id => {
             const original = $(id);
             const float = $(`float_${id}`);
@@ -1680,7 +1704,71 @@
       const btnAddResult = $('btnAddResult');
       if(btnAddResult) btnAddResult.addEventListener('click', saveAction);
 
+      // Atur event listener untuk panel melayang di sini untuk mencegah penambahan ganda.
+      // Menggunakan delegasi event, sehingga listener tetap berfungsi bahkan jika tombol di dalamnya dibuat ulang.
+      const floatingPanelForEvent = $('floatingControlPanel');
+      if(floatingPanelForEvent) {
+        floatingPanelForEvent.addEventListener('click', (event) => {
+            if (event.target && event.target.id === 'btnSaveResultFloat') {
+                saveAction();
+            }
+        });
+      }
+
       const logTbody = $('logTbody');
+
+      // Fungsi baru untuk menangani klik pada baris log
+      function handleLogRowClick(event) {
+        const row = event.target.closest('tr');
+        // Abaikan klik jika bukan pada baris data atau jika pada tombol hapus
+        if (!row || row.classList.contains('log-placeholder') || event.target.closest('.btn-delete')) {
+            return;
+        }
+        
+        const deleteButton = row.querySelector('.btn-delete');
+        if (!deleteButton) return;
+        
+        const index = parseInt(deleteButton.dataset.index, 10);
+        if (isNaN(index) || !simulationLog[index]) return;
+
+        // 1. Ambil data dari array simulationLog berdasarkan indeks
+        const logData = simulationLog[index];
+
+        // 2. Perbarui nilai pada form input utama
+        $('vol').value = logData.vol;
+        $('dist').value = logData.dist;
+        
+        // Mengubah material sedikit lebih rumit karena perlu memicu event 'change'
+        const materialSelect = $('material');
+        // Temukan nilai <option> yang sesuai dengan singkatan material (misal: 'AN')
+        const materialValue = Array.from(materialSelect.options).find(opt => 
+            (materialAbbreviationMap[opt.text] || opt.value) === logData.material
+        )?.value;
+
+        if (materialValue && materialSelect.value !== materialValue) {
+            materialSelect.value = materialValue;
+            // 3. Memicu event 'change' secara manual untuk menjalankan semua logika terkait
+            // seperti memuat properti, menampilkan persamaan, dan yang terpenting,
+            // memanggil fungsi `compute()` untuk menghitung ulang semuanya.
+            materialSelect.dispatchEvent(new Event('change'));
+        } else {
+            // Jika material tidak berubah, panggil `compute()` secara manual
+            compute(true);
+        }
+
+        // 4. Atur sorotan visual pada baris yang dipilih
+        document.querySelectorAll('#logTable tbody tr.selected-row').forEach(selectedRow => {
+            selectedRow.classList.remove('selected-row');
+        });
+        row.classList.add('selected-row');
+
+        // 5. Beri notifikasi kepada pengguna
+        showStatusMessage(`Data dari log #${index + 1} telah dimuat ke kalkulator.`);
+      }
+
+      // Tambahkan event listener ke <tbody>
+      logTbody.addEventListener('click', handleLogRowClick);
+
       logTbody.addEventListener('click', (event) => {
         const deleteButton = event.target.closest('.btn-delete');
         if (deleteButton) {
