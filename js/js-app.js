@@ -2049,23 +2049,20 @@
         }, 100));
       }
      
-       const paramsCard = document.querySelector('section[aria-labelledby="param-head"]'); 
-        function handlePanelVisibility() {
-            if (!isPageLoaded) return;
-            const floatingPanel = $('floatingControlPanel');
-            //Pastikan menggunakan variabel baru
-            if (!paramsCard || !floatingPanel) return; 
-
-            //Gunakan posisi kartu "Parameters" sebagai pemicu
-            const cardRect = paramsCard.getBoundingClientRect(); 
-
-            if (cardRect.bottom < 1) {
-                syncFloatingPanelInputs();
-                floatingPanel.classList.add('visible');
-            } else {
+      const materialCard = $('materialCard');
+      function handlePanelVisibility() {
+          if (!isPageLoaded) return; // Do not run until page has settled
+          const floatingPanel = $('floatingControlPanel');
+          if (!materialCard || !floatingPanel) return;
+          const cardRect = materialCard.getBoundingClientRect();
+          if (cardRect.bottom < 20) {
+              syncFloatingPanelInputs();
+              floatingPanel.classList.add('visible');
+          } else {
               floatingPanel.classList.remove('visible');
-            }
-        }
+          }
+      }
+
       window.addEventListener('scroll', handlePanelVisibility);
      
       const updateOnResizeOrRotate = () => {
@@ -2099,7 +2096,9 @@
       }, 250);
 
     });
+  </script>
 
+  <script>
   window.addEventListener('load', () => {
     // Periksa apakah pustaka Leaflet (objek 'L') telah berhasil dimuat.
     if (typeof L === 'undefined') {
