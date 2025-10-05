@@ -873,10 +873,9 @@
       out.sort((a,b)=>a.r-b.r);
       return out;
     }
-  </script>
 
-  <script>
-      document.addEventListener("DOMContentLoaded", () => {
+
+    document.addEventListener("DOMContentLoaded", () => {
       const $ = (id) => document.getElementById(id);
       const fields = ["rho", "vol", "dh", "eta", "e_tnt", "dist", "pa"];
       const inputFields = ["material", ...fields];
@@ -885,7 +884,7 @@
 
       const presets = {
         AN:  { rho: 1725,    dh:  2479,  e_tnt: 4500, eta: 0.35 },
-        LPG: { rho: 1.9,     dh: 50000,  e_tnt: 4500, eta: 0.03 },
+        LPG: { rho: 493,     dh: 46000,  e_tnt: 4550, eta: 0.03 },
         H2:  { rho: 0.08375, dh: 130800, e_tnt: 4500, eta: 0.05 }
       };
 
@@ -2387,7 +2386,7 @@
          
           if(floatCrowl) floatCrowl.textContent = isNaN(crowl) ? '—' : crowl.toFixed(3);
           if(floatAlonso) floatAlonso.textContent = isNaN(alonso) ? '—' : alonso.toFixed(3);
-          if(floatSadovski) floatSadovski.textContent = isNaN(sadovski) ? '—' : sadovski.toFixed(3);
+      if(floatSadovski) floatSadovski.textContent = isNaN(sadovski) ? '—' : sadovski.toFixed(3);
           if(btnSaveFloat) btnSaveFloat.disabled = !enabled;
 
       }
@@ -2555,7 +2554,44 @@
 
       const logTbody = $('logTbody');
 
-      // Fungsi baru untuk menangani klik pada baris log
+// *** MODIFICATION START ***
+      // Fungsi ini akan dipanggil oleh handleLogRowClick untuk menampilkan popup.
+      function showMapPopupForLog(logData) {
+        // Memastikan peta dan fungsi-fungsi yang diperlukan tersedia di objek window.
+        // Variabel-variabel ini diekspos oleh skrip peta (di blok window.load).
+        if (typeof window.map === 'undefined' || typeof window.destPoint === 'undefined') {
+          console.error("Objek peta (map) atau fungsi destPoint tidak tersedia. Pastikan skrip peta telah dimuat.");
+          return;
+        }
+
+        const lat = parseFloat(logData.lat);
+        const lon = parseFloat(logData.lon);
+        const radius = parseFloat(logData.dist);
+
+        if (isNaN(lat) || isNaN(lon) || isNaN(radius)) return;
+
+        // Pilih nilai Po berdasarkan model yang aktif di peta.
+        const poModelSelect = $('poModelSelect');
+        const selectedModel = poModelSelect ? poModelSelect.value : 'crowl';
+        const modelKeyMap = {
+            crowl: 'po_crowl',
+            alonso: 'po_alonso',
+            sadovski: 'po_sadovski'
+        };
+        const poKey = modelKeyMap[selectedModel];
+        const poValue = logData[poKey] ? parseFloat(logData[poKey]).toFixed(3) : 'N/A';
+
+        // Konten popup.
+        const popupContent = `<b>r = ${radius} m</b><br>Po: ${poValue}`;
+
+        // Hitung posisi untuk popup di tepi lingkaran (misalnya, arah timur laut).
+        const popupLatLng = window.destPoint(lat, lon, radius, 45); // 45 derajat bearing
+
+        // Buka popup di peta. Leaflet akan menangani penutupan popup yang sudah ada.
+        window.map.openPopup(popupContent, popupLatLng);
+      }
+
+      // Fungsi yang diperbarui untuk menangani klik pada baris log
       function handleLogRowClick(event) {
         const row = event.target.closest('tr');
         // Abaikan klik jika bukan pada baris data atau jika pada tombol hapus
@@ -2571,6 +2607,9 @@
 
         // 1. Ambil data dari array simulationLog berdasarkan indeks
         const logData = simulationLog[index];
+        
+        // *** NEW FEATURE: Panggil fungsi untuk menampilkan popup di peta. ***
+        showMapPopupForLog(logData);
 
         // 2. Perbarui nilai pada form input utama
         $('vol').value = logData.vol;
@@ -2586,8 +2625,6 @@
         if (materialValue && materialSelect.value !== materialValue) {
             materialSelect.value = materialValue;
             // 3. Memicu event 'change' secara manual untuk menjalankan semua logika terkait
-            // seperti memuat properti, menampilkan persamaan, dan yang terpenting,
-            // memanggil fungsi `compute()` untuk menghitung ulang semuanya.
             materialSelect.dispatchEvent(new Event('change'));
         } else {
             // Jika material tidak berubah, panggil `compute()` secara manual
@@ -2603,6 +2640,7 @@
         // 5. Beri notifikasi kepada pengguna
         showStatusMessage(`Data dari log #${index + 1} telah dimuat ke kalkulator.`);
       }
+      // *** MODIFICATION END ***
 
       // Tambahkan event listener ke <tbody>
       logTbody.addEventListener('click', handleLogRowClick);
@@ -2644,15 +2682,12 @@
           
           const escapeCsvCell = (cell) => {
               const strCell = (cell === null || cell === undefined) ? '' : String(cell);
-              // Jika sel berisi koma, tanda kutip ganda, atau baris baru, sertakan dalam tanda kutip ganda.
               if (/[",\n\r]/.test(strCell)) {
-                  // Di dalam string yang dikutip, setiap tanda kutip ganda harus di-escape dengan tanda kutip ganda lainnya.
                   return `"${strCell.replace(/"/g, '""')}"`;
               }
               return strCell;
           };
 
-          // Menggunakan koma (,) sebagai pemisah untuk format CSV standar.
           const csvRows = [headers.join(',')];
 
           simulationLog.forEach(log => {
@@ -2688,10 +2723,9 @@
                   const lines = csv.split(/\r\n|\n/).filter(line => line.trim() !== '');
                   
                   let newLat, newLon, newPoModel;
-                  // Logika baru untuk mem-parsing metadata dan data yang dipisahkan koma
                   const dataLines = lines.filter(line => {
                       if (line.startsWith('#')) {
-                          const parts = line.substring(1).split(','); // Hapus '#' lalu pisahkan dengan koma
+                          const parts = line.substring(1).split(',');
                           if (parts.length >= 2) {
                               const key = `#${parts[0].trim()}`;
                               const value = parts[1].trim();
@@ -2699,37 +2733,32 @@
                               else if (key === '#mapLon') newLon = parseFloat(value);
                               else if (key === '#poModel') newPoModel = value;
                           }
-                          return false; // Baris metadata, jangan sertakan dalam dataLines
+                          return false;
                       }
-                      return true; // Baris data
+                      return true;
                   });
 
-                  // Terapkan pembaruan status dari metadata TERLEBIH DAHULU
                   if (typeof newLat === 'number' && !isNaN(newLat) && typeof newLon === 'number' && !isNaN(newLon)) {
                       settings.lat = newLat;
                       settings.lon = newLon;
                       savePartial({ lat: newLat, lon: newLon });
                       updateCoordInputs(); 
-                      // PERBAIKAN FINAL: Panggil map.setView() secara langsung di sini.
-                      // Ini memastikan peta selalu berpusat pada koordinat yang diimpor,
-                      // bahkan jika file CSV tidak berisi baris data log.
                       if (typeof map !== 'undefined' && map.setView) {
                           map.setView([newLat, newLon]);
                       }
                   }
 
                   if (newPoModel && ['crowl', 'alonso', 'sadovski'].includes(newPoModel)) {
-                       // HANYA perbarui variabel settings. Peta akan diperbarui oleh observer.
                        const poModelSelect = document.getElementById('poModelSelect');
                        if(poModelSelect) poModelSelect.value = newPoModel;
                        settings.poModel = newPoModel;
                        savePartial({ poModel: newPoModel });
                   }
 
-                  if (dataLines.length < 1) { // Bisa jadi hanya metadata
+                  if (dataLines.length < 1) {
                       if (newLat !== undefined || newPoModel !== undefined) {
-                          showStatusMessage('status_import_success'); // Metadata berhasil diimpor
-                          simulationLog = []; // Kosongkan log jika tidak ada baris data
+                          showStatusMessage('status_import_success');
+                          simulationLog = [];
                       } else {
                           throw new Error(translations[currentLanguage].status_import_error_empty);
                       }
@@ -2767,24 +2796,14 @@
                         importedData.push(logEntry);
                     }
                    
-                    // BUG FIX: Menghapus error throw untuk file tanpa baris data.
-                    // if (importedData.length === 0) {
-                    //     throw new Error(translations[currentLanguage].status_import_error_no_data);
-                    // }
-                   
                     simulationLog = importedData.slice(0, 10);
                     showStatusMessage('status_import_success');
                   }
 
-                  // === ALUR BARU YANG LEBIH KUAT ===
-                  // Langkah 1: Segera render tabel log dengan data yang baru diimpor.
-                  // Ini adalah prioritas utama untuk memberikan umpan balik kepada pengguna.
                   renderLogTable();
                   updateOverpressureChartFromLog();
                   saveLogToLocalStorage();
 
-                  // Langkah 2: Coba perbarui formulir kalkulator utama dengan entri pertama.
-                  // Ini adalah tugas sekunder; jika gagal, log tetap ditampilkan.
                   if (simulationLog.length > 0) {
                       try {
                           const firstLog = simulationLog[0];
@@ -2802,11 +2821,8 @@
                       
                           const materialValue = findMaterialValue(firstLog.material);
                           if (materialValue) {
-                              // Atur nilai material.
                               materialSelect.value = materialValue;
                       
-                              // PERBAIKAN: Secara eksplisit muat preset, render persamaan, dan hitung ulang
-                              // tanpa bergantung pada dispatchEvent untuk alur yang lebih kuat.
                               const p = presets[materialValue];
                               if (p) {
                                   Object.keys(p).forEach(key => {
@@ -2816,15 +2832,11 @@
                               }
                               renderEquation(materialValue);
                       
-                              // Atur volume dan jarak spesifik dari file impor.
                               $('vol').value = firstLog.vol;
                               $('dist').value = firstLog.dist;
                       
-                              // Jalankan ulang perhitungan dengan semua input yang sudah benar.
                               compute(true);
                               
-                              // PERBAIKAN: Panggil fungsi sinkronisasi secara manual untuk memastikan
-                              // panel kontrol cepat diperbarui setelah impor CSV.
                               syncFloatingPanelInputs();
                           }
                       } catch (e) {
@@ -2911,8 +2923,6 @@
           }
       };
 
-      // PERBAIKAN: Gunakan fungsi debounce untuk kedua event listener 
-      // untuk mencegah eksekusi ganda saat orientasi berubah.
       const debouncedUpdateOnResizeOrRotate = debounce(updateOnResizeOrRotate, 150);
       window.addEventListener('resize', debouncedUpdateOnResizeOrRotate);
       window.addEventListener('orientationchange', debouncedUpdateOnResizeOrRotate);
@@ -2934,10 +2944,8 @@
       }, 250);
 
     });
-  </script>
 
-  <script>
-  window.addEventListener('load', () => {
+window.addEventListener('load', () => {
     // Periksa apakah pustaka Leaflet (objek 'L') telah berhasil dimuat.
     if (typeof L === 'undefined') {
         console.error("Pustaka Leaflet tidak dimuat. Peta tidak dapat diinisialisasi.");
@@ -3047,6 +3055,8 @@
       λ2 = ((λ2 + 3*Math.PI) % (2*Math.PI)) - Math.PI;
       return [φ2 * 180/Math.PI, λ2 * 180/Math.PI];
     }
+    window.destPoint = destPoint; // <-- TAMBAHKAN BARIS INI
+
     function circleCoordsGeodesic(lat0, lon0, Rm, n=90){
       const coords = [];
       for(let i=0;i<=n;i++){
@@ -3063,6 +3073,8 @@
       zoom: 14,
       zoomControl: false
     });
+    window.map = map; // <-- TAMBAHKAN BARIS INI
+
     const canvasRenderer = L.canvas({ padding: 0.3 });
     
     const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{
