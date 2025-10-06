@@ -1136,6 +1136,7 @@
           equipment_no_significant: "No significant equipment damage predicted.",
           alonso_warning: "Warning: Result is extrapolated beyond the valid Alonso model range (1 ≤ ze ≤ 200).",
           sadovski_warning: "Warning: Result is extrapolated beyond the valid Sadovski model range (1 ≤ ze ≤ 15).",
+          crowl_warning: "Warning: Result is extrapolated beyond the valid Crowl model range (0.01 ≤ Ze ≤ 100).",
          
           damage_accidental_glass: "Accidental glass damage [1].",
           damage_minor_glass_architectural: "Minor glass breakage and light architectural damage such as displacement of roof tiles and falling plaster [1].",
@@ -1371,6 +1372,7 @@
           equipment_no_significant: "Tidak ada kerusakan peralatan signifikan yang diprediksi.",
           alonso_warning: "Peringatan: Hasil diekstrapolasi di luar rentang valid model Alonso (1 ≤ ze ≤ 200).",
           sadovski_warning: "Peringatan: Hasil diekstrapolasi di luar rentang valid model Sadovski (1 ≤ ze ≤ 15).",
+          crowl_warning: "Peringatan: Hasil diekstrapolasi di luar rentang valid model Crowl (0.01 ≤ Ze ≤ 100).",
 
           damage_accidental_glass: "Kerusakan kaca yang tidak disengaja [1].",
           damage_minor_glass_architectural: "Pecahan kaca kecil dan kerusakan arsitektur ringan seperti pergeseran genteng dan plester yang jatuh [1].",
@@ -1978,97 +1980,118 @@
           }
       }
 
-// REVISED AND VERIFIED FUNCTION
-      function updateEstimationPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated = false) {
-        const methods = { crowl: PoCrowl, alonso: PoAlonso, sadovski: PoSadovski };
+// GANTI FUNGSI LAMA DENGAN YANG INI
+function updateEstimationPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated = false) {
+  const methods = { crowl: PoCrowl, alonso: PoAlonso, sadovski: PoSadovski };
 
-        Object.entries(methods).forEach(([method, Po]) => {
-            const isPoValid = Number.isFinite(Po);
-            const lang = translations[currentLanguage];
-            
-            const valPoEl = $(`val-Po-${method}`);
-            const sevEl = $(`sev-${method}`);
-            const structuralListEl = $(`structural-damage-${method}`);
-            const equipmentListEl = $(`equipment-damage-${method}`);
+  Object.entries(methods).forEach(([method, Po]) => {
+      const isPoValid = Number.isFinite(Po);
+      const lang = translations[currentLanguage];
+      
+      const valPoEl = $(`val-Po-${method}`);
+      const sevEl = $(`sev-${method}`);
+      const structuralListEl = $(`structural-damage-${method}`);
+      const equipmentListEl = $(`equipment-damage-${method}`);
 
-            if (!valPoEl || !sevEl || !structuralListEl || !equipmentListEl) {
-                console.error(`One or more elements for damage panel '${method}' not found.`);
-                return;
-            }
-            
-            if (!isPoValid) {
-                valPoEl.textContent = '—';
-                const impact = getImpactCategory(NaN);
-                sevEl.textContent = lang[impact.nameKey] || impact.nameKey;
-                sevEl.style.backgroundColor = impact.color;
-                sevEl.style.color = impact.textColor;
-                structuralListEl.innerHTML = `<li>${lang.awaiting_input}</li>`;
-                equipmentListEl.innerHTML = `<li>${lang.awaiting_input}</li>`;
-            } else {
-                valPoEl.textContent = Po.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 });
-                const impact = getImpactCategory(Po);
-                sevEl.textContent = lang[impact.nameKey] || impact.nameKey;
-                sevEl.style.backgroundColor = impact.color;
-                sevEl.style.color = impact.textColor;
-                
-                const structuralKeys = getDamageDescriptionKeys(Po);
-                const structuralRangeDesc = overpressureDamageLevels.find(range => Po >= range.minPo && Po < range.maxPo);
-                let structuralHtml = structuralKeys.map(key => `<li>${(lang[key] || key).replace(/\[(\d+)\]/g, (match, p1) => `(${citations[p1]})`)}</li>`).join('');
-                if (structuralRangeDesc) {
-                    structuralHtml += `<li>${(lang[structuralRangeDesc.descriptionKey] || structuralRangeDesc.descriptionKey)} (${citations[structuralRangeDesc.citation_ref]})</li>`;
-                }
-                structuralListEl.innerHTML = structuralHtml || `<li>${lang.damage_no_significant}</li>`;
-
-                const equipmentDamage = processEquipmentDamage.slice().reverse().find(item => Po >= item.po);
-                equipmentListEl.innerHTML = equipmentDamage ?
-                    `<li>${(lang[equipmentDamage.descriptionKey] || equipmentDamage.descriptionKey)} (${citations[equipmentDamage.citation_ref]})</li>` :
-                    `<li>${lang.equipment_no_significant}</li>`;
-            }
-
-            // --- Logic for Alonso extrapolation warning ---
-            if (method === 'alonso') {
-                const panelContentEl = $('panel-damage-alonso').querySelector('.pad');
-                let existingWarning = panelContentEl.querySelector('.extrapolation-warning');
-                
-                if (existingWarning) existingWarning.remove();
-
-                if (isAlonsoExtrapolated && isPoValid) {
-                    const poValueParagraph = valPoEl.parentElement; 
-                    if (poValueParagraph) {
-                        const warningDiv = document.createElement('div');
-                        warningDiv.className = 'extrapolation-warning';
-                        warningDiv.style.cssText = 'color: var(--danger); font-weight: bold; font-style: italic; font-size: 13px; margin: 4px 0 10px;';
-                        warningDiv.textContent = lang.alonso_warning;
-                        poValueParagraph.insertAdjacentElement('afterend', warningDiv);
-                    }
-                }
-            }
-            
-            // MODIFICATION START: Logic for Sadovski extrapolation warning
-            if (method === 'sadovski') {
-                const panelContentEl = $('panel-damage-sadovski').querySelector('.pad');
-                let existingWarning = panelContentEl.querySelector('.extrapolation-warning-sadovski');
-                
-                if (existingWarning) existingWarning.remove();
-
-                const zeValue = parseFloat($("Ze")?.value);
-                const isSadovskiExtrapolated = !isNaN(zeValue) && (zeValue < 1 || zeValue > 15);
-
-                if (isSadovskiExtrapolated && isPoValid) {
-                    const poValueParagraph = valPoEl.parentElement;
-                    if (poValueParagraph) {
-                        const warningDiv = document.createElement('div');
-                        // Use a unique class to avoid conflicts
-                        warningDiv.className = 'extrapolation-warning-sadovski'; 
-                        warningDiv.style.cssText = 'color: var(--danger); font-weight: bold; font-style: italic; font-size: 13px; margin: 4px 0 10px;';
-                        warningDiv.textContent = lang.sadovski_warning;
-                        poValueParagraph.insertAdjacentElement('afterend', warningDiv);
-                    }
-                }
-            }
-            // MODIFICATION END
-        });
+      if (!valPoEl || !sevEl || !structuralListEl || !equipmentListEl) {
+          console.error(`One or more elements for damage panel '${method}' not found.`);
+          return;
       }
+      
+      if (!isPoValid) {
+          valPoEl.textContent = '—';
+          const impact = getImpactCategory(NaN);
+          sevEl.textContent = lang[impact.nameKey] || impact.nameKey;
+          sevEl.style.backgroundColor = impact.color;
+          sevEl.style.color = impact.textColor;
+          structuralListEl.innerHTML = `<li>${lang.awaiting_input}</li>`;
+          equipmentListEl.innerHTML = `<li>${lang.awaiting_input}</li>`;
+      } else {
+          valPoEl.textContent = Po.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+          const impact = getImpactCategory(Po);
+          sevEl.textContent = lang[impact.nameKey] || impact.nameKey;
+          sevEl.style.backgroundColor = impact.color;
+          sevEl.style.color = impact.textColor;
+          
+          const structuralKeys = getDamageDescriptionKeys(Po);
+          const structuralRangeDesc = overpressureDamageLevels.find(range => Po >= range.minPo && Po < range.maxPo);
+          let structuralHtml = structuralKeys.map(key => `<li>${(lang[key] || key).replace(/\[(\d+)\]/g, (match, p1) => `(${citations[p1]})`)}</li>`).join('');
+          if (structuralRangeDesc) {
+              structuralHtml += `<li>${(lang[structuralRangeDesc.descriptionKey] || structuralRangeDesc.descriptionKey)} (${citations[structuralRangeDesc.citation_ref]})</li>`;
+          }
+          structuralListEl.innerHTML = structuralHtml || `<li>${lang.damage_no_significant}</li>`;
+
+          const equipmentDamage = processEquipmentDamage.slice().reverse().find(item => Po >= item.po);
+          equipmentListEl.innerHTML = equipmentDamage ?
+              `<li>${(lang[equipmentDamage.descriptionKey] || equipmentDamage.descriptionKey)} (${citations[equipmentDamage.citation_ref]})</li>` :
+              `<li>${lang.equipment_no_significant}</li>`;
+      }
+
+      // --- MODIFIKASI DIMULAI: Logika untuk peringatan ekstrapolasi Crowl ---
+      if (method === 'crowl') {
+          const panelContentEl = $('panel-damage-crowl').querySelector('.pad');
+          let existingWarning = panelContentEl.querySelector('.extrapolation-warning-crowl');
+          
+          if (existingWarning) existingWarning.remove();
+
+          const zeValue = parseFloat($("Ze")?.value);
+          const isCrowlExtrapolated = !isNaN(zeValue) && (zeValue < 0.01 || zeValue > 100);
+
+          if (isCrowlExtrapolated && isPoValid) {
+              const poValueParagraph = valPoEl.parentElement;
+              if (poValueParagraph) {
+                  const warningDiv = document.createElement('div');
+                  warningDiv.className = 'extrapolation-warning-crowl'; 
+                  warningDiv.style.cssText = 'color: var(--danger); font-weight: bold; font-style: italic; font-size: 13px; margin: 4px 0 10px;';
+                  warningDiv.textContent = lang.crowl_warning; // Menggunakan kunci terjemahan
+                  poValueParagraph.insertAdjacentElement('afterend', warningDiv);
+              }
+          }
+      }
+      // --- MODIFIKASI SELESAI ---
+
+      // --- Logika untuk peringatan ekstrapolasi Alonso ---
+      if (method === 'alonso') {
+          const panelContentEl = $('panel-damage-alonso').querySelector('.pad');
+          let existingWarning = panelContentEl.querySelector('.extrapolation-warning');
+          
+          if (existingWarning) existingWarning.remove();
+
+          if (isAlonsoExtrapolated && isPoValid) {
+              const poValueParagraph = valPoEl.parentElement; 
+              if (poValueParagraph) {
+                  const warningDiv = document.createElement('div');
+                  warningDiv.className = 'extrapolation-warning';
+                  warningDiv.style.cssText = 'color: var(--danger); font-weight: bold; font-style: italic; font-size: 13px; margin: 4px 0 10px;';
+                  warningDiv.textContent = lang.alonso_warning;
+                  poValueParagraph.insertAdjacentElement('afterend', warningDiv);
+              }
+          }
+      }
+      
+      // --- Logika untuk peringatan ekstrapolasi Sadovski ---
+      if (method === 'sadovski') {
+          const panelContentEl = $('panel-damage-sadovski').querySelector('.pad');
+          let existingWarning = panelContentEl.querySelector('.extrapolation-warning-sadovski');
+          
+          if (existingWarning) existingWarning.remove();
+
+          const zeValue = parseFloat($("Ze")?.value);
+          const isSadovskiExtrapolated = !isNaN(zeValue) && (zeValue < 1 || zeValue > 15);
+
+          if (isSadovskiExtrapolated && isPoValid) {
+              const poValueParagraph = valPoEl.parentElement;
+              if (poValueParagraph) {
+                  const warningDiv = document.createElement('div');
+                  warningDiv.className = 'extrapolation-warning-sadovski'; 
+                  warningDiv.style.cssText = 'color: var(--danger); font-weight: bold; font-style: italic; font-size: 13px; margin: 4px 0 10px;';
+                  warningDiv.textContent = lang.sadovski_warning;
+                  poValueParagraph.insertAdjacentElement('afterend', warningDiv);
+              }
+          }
+      }
+  });
+}
      
       function getInjuryEffects(Po) {
         const poValue = parseFloat(Po);
@@ -2119,96 +2142,117 @@
         }
       }
 
-// REVISED AND VERIFIED FUNCTION
-      function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated = false) {
-        const updateSinglePanel = (method, Po) => {
-            const isPoValid = Number.isFinite(Po);
-            const lang = translations[currentLanguage];
+// GANTI FUNGSI LAMA DENGAN YANG INI
+function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated = false) {
+  const updateSinglePanel = (method, Po) => {
+      const isPoValid = Number.isFinite(Po);
+      const lang = translations[currentLanguage];
 
-            const valPoEl = $(`val-Po-${method}-inj`);
-            const effectsListEl = $(`injury-effects-${method}`);
-            const sevFootEl = $(`sev-injury-${method}`);
+      const valPoEl = $(`val-Po-${method}-inj`);
+      const effectsListEl = $(`injury-effects-${method}`);
+      const sevFootEl = $(`sev-injury-${method}`);
 
-            if (!valPoEl || !effectsListEl || !sevFootEl) {
-                console.error(`One or more injury elements for method '${method}' not found.`);
-                return;
-            }
-            
-            const severity = getInjuryRiskCategory(Po);
-            sevFootEl.textContent = lang[severity.nameKey] || severity.nameKey;
-            sevFootEl.style.backgroundColor = severity.color;
-            sevFootEl.style.color = severity.textColor;
-            
-            if (!isPoValid) {
-                valPoEl.textContent = "—";
-                effectsListEl.innerHTML = `<li>${lang.awaiting_input}</li>`;
-            } else {
-                valPoEl.textContent = Po.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 });
-                
-                const effectKeys = getInjuryEffects(Po);
-                let html = '';
-                
-                if (effectKeys.primaryKey) {
-                    html += `<li><strong>${lang.primary_effects_label}</strong> ${(lang[effectKeys.primaryKey] || effectKeys.primaryKey)}</li>`;
-                }
-                if (effectKeys.secondaryKey) {
-                    html += `<li><strong>${lang.secondary_tertiary_effects_label}</strong> ${(lang[effectKeys.secondaryKey] || effectKeys.secondaryKey)}</li>`;
-                }
-                if (effectKeys.conclusionKey) {
-                    html += `<li><strong>${lang.conclusion_label}</strong> ${(lang[effectKeys.conclusionKey] || effectKeys.conclusionKey)}</li>`;
-                }
-
-                effectsListEl.innerHTML = html || `<li>${lang.injury_no_significant_effects}</li>`;
-            }
-
-            // --- Logic for Alonso extrapolation warning in Injury Panel ---
-            if (method === 'alonso') {
-                const panelContentEl = $('panel-injury-alonso').querySelector('.pad');
-                let existingWarning = panelContentEl.querySelector('.extrapolation-warning');
-
-                if (existingWarning) existingWarning.remove();
-                
-                if (isAlonsoExtrapolated && isPoValid) {
-                    const poValueParagraph = valPoEl.parentElement;
-                    if (poValueParagraph) {
-                        const warningDiv = document.createElement('div');
-                        warningDiv.className = 'extrapolation-warning';
-                        warningDiv.style.cssText = 'color: var(--danger); font-weight: bold; font-style: italic; font-size: 13px; margin: 4px 0 10px;';
-                        warningDiv.textContent = lang.alonso_warning;
-                        poValueParagraph.insertAdjacentElement('afterend', warningDiv);
-                    }
-                }
-            }
-            
-            // MODIFICATION START: Logic for Sadovski extrapolation warning in Injury Panel
-            if (method === 'sadovski') {
-                const panelContentEl = $('panel-injury-sadovski').querySelector('.pad');
-                let existingWarning = panelContentEl.querySelector('.extrapolation-warning-sadovski-inj');
-
-                if (existingWarning) existingWarning.remove();
-
-                const zeValue = parseFloat($("Ze")?.value);
-                const isSadovskiExtrapolated = !isNaN(zeValue) && (zeValue < 1 || zeValue > 15);
-
-                if (isSadovskiExtrapolated && isPoValid) {
-                    const poValueParagraph = valPoEl.parentElement;
-                    if (poValueParagraph) {
-                        const warningDiv = document.createElement('div');
-                        // Use a unique class to avoid conflicts
-                        warningDiv.className = 'extrapolation-warning-sadovski-inj';
-                        warningDiv.style.cssText = 'color: var(--danger); font-weight: bold; font-style: italic; font-size: 13px; margin: 4px 0 10px;';
-                        warningDiv.textContent = lang.sadovski_warning;
-                        poValueParagraph.insertAdjacentElement('afterend', warningDiv);
-                    }
-                }
-            }
-            // MODIFICATION END
-        };
-
-        updateSinglePanel('crowl', PoCrowl);
-        updateSinglePanel('alonso', PoAlonso);
-        updateSinglePanel('sadovski', PoSadovski);
+      if (!valPoEl || !effectsListEl || !sevFootEl) {
+          console.error(`One or more injury elements for method '${method}' not found.`);
+          return;
       }
+      
+      const severity = getInjuryRiskCategory(Po);
+      sevFootEl.textContent = lang[severity.nameKey] || severity.nameKey;
+      sevFootEl.style.backgroundColor = severity.color;
+      sevFootEl.style.color = severity.textColor;
+      
+      if (!isPoValid) {
+          valPoEl.textContent = "—";
+          effectsListEl.innerHTML = `<li>${lang.awaiting_input}</li>`;
+      } else {
+          valPoEl.textContent = Po.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+          
+          const effectKeys = getInjuryEffects(Po);
+          let html = '';
+          
+          if (effectKeys.primaryKey) {
+              html += `<li><strong>${lang.primary_effects_label}</strong> ${(lang[effectKeys.primaryKey] || effectKeys.primaryKey)}</li>`;
+          }
+          if (effectKeys.secondaryKey) {
+              html += `<li><strong>${lang.secondary_tertiary_effects_label}</strong> ${(lang[effectKeys.secondaryKey] || effectKeys.secondaryKey)}</li>`;
+          }
+          if (effectKeys.conclusionKey) {
+              html += `<li><strong>${lang.conclusion_label}</strong> ${(lang[effectKeys.conclusionKey] || effectKeys.conclusionKey)}</li>`;
+          }
+
+          effectsListEl.innerHTML = html || `<li>${lang.injury_no_significant_effects}</li>`;
+      }
+
+      // --- MODIFIKASI DIMULAI: Logika untuk peringatan ekstrapolasi Crowl di Panel Cedera ---
+      if (method === 'crowl') {
+          const panelContentEl = $('panel-injury-crowl').querySelector('.pad');
+          let existingWarning = panelContentEl.querySelector('.extrapolation-warning-crowl-inj');
+
+          if (existingWarning) existingWarning.remove();
+
+          const zeValue = parseFloat($("Ze")?.value);
+          const isCrowlExtrapolated = !isNaN(zeValue) && (zeValue < 0.01 || zeValue > 100);
+
+          if (isCrowlExtrapolated && isPoValid) {
+              const poValueParagraph = valPoEl.parentElement;
+              if (poValueParagraph) {
+                  const warningDiv = document.createElement('div');
+                  warningDiv.className = 'extrapolation-warning-crowl-inj';
+                  warningDiv.style.cssText = 'color: var(--danger); font-weight: bold; font-style: italic; font-size: 13px; margin: 4px 0 10px;';
+                  warningDiv.textContent = lang.crowl_warning; // Menggunakan kunci terjemahan
+                  poValueParagraph.insertAdjacentElement('afterend', warningDiv);
+              }
+          }
+      }
+      // --- MODIFIKASI SELESAI ---
+
+      // --- Logika untuk peringatan ekstrapolasi Alonso di Panel Cedera ---
+      if (method === 'alonso') {
+          const panelContentEl = $('panel-injury-alonso').querySelector('.pad');
+          let existingWarning = panelContentEl.querySelector('.extrapolation-warning');
+
+          if (existingWarning) existingWarning.remove();
+          
+          if (isAlonsoExtrapolated && isPoValid) {
+              const poValueParagraph = valPoEl.parentElement;
+              if (poValueParagraph) {
+                  const warningDiv = document.createElement('div');
+                  warningDiv.className = 'extrapolation-warning';
+                  warningDiv.style.cssText = 'color: var(--danger); font-weight: bold; font-style: italic; font-size: 13px; margin: 4px 0 10px;';
+                  warningDiv.textContent = lang.alonso_warning;
+                  poValueParagraph.insertAdjacentElement('afterend', warningDiv);
+              }
+          }
+      }
+      
+      // --- Logika untuk peringatan ekstrapolasi Sadovski di Panel Cedera ---
+      if (method === 'sadovski') {
+          const panelContentEl = $('panel-injury-sadovski').querySelector('.pad');
+          let existingWarning = panelContentEl.querySelector('.extrapolation-warning-sadovski-inj');
+
+          if (existingWarning) existingWarning.remove();
+
+          const zeValue = parseFloat($("Ze")?.value);
+          const isSadovskiExtrapolated = !isNaN(zeValue) && (zeValue < 1 || zeValue > 15);
+
+          if (isSadovskiExtrapolated && isPoValid) {
+              const poValueParagraph = valPoEl.parentElement;
+              if (poValueParagraph) {
+                  const warningDiv = document.createElement('div');
+                  warningDiv.className = 'extrapolation-warning-sadovski-inj';
+                  warningDiv.style.cssText = 'color: var(--danger); font-weight: bold; font-style: italic; font-size: 13px; margin: 4px 0 10px;';
+                  warningDiv.textContent = lang.sadovski_warning;
+                  poValueParagraph.insertAdjacentElement('afterend', warningDiv);
+              }
+          }
+      }
+  };
+
+  updateSinglePanel('crowl', PoCrowl);
+  updateSinglePanel('alonso', PoAlonso);
+  updateSinglePanel('sadovski', PoSadovski);
+}
 
       function calculateValues(isInitialLoad = false) {
         const btnSaveFloat = $('btnSaveResultFloat');
