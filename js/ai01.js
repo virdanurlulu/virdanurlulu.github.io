@@ -83,7 +83,7 @@
           // Page Titles
           page_title: "Simulation & Modeling of Explosion Effects (TNT Equivalence)",
           app_title: "Simulation and Modeling of Explosion Effects Based on TNT Equivalence",
-          app_subtitle1: "Master’s Program in Chemical Engineering, ",
+          app_subtitle1: "Chemical Engineering, ",
           app_subtitle2: "Bandung Institute of Technology",
 
           // Menu
@@ -317,7 +317,7 @@
           // Page Titles
           page_title: "Simulasi & Pemodelan Efek Ledakan (Ekuivalensi TNT)",
           app_title: "Simulasi dan Pemodelan Efek Ledakan Berdasarkan Ekuivalensi TNT",
-          app_subtitle1: "Program Magister Teknik Kimia, ",
+          app_subtitle1: "Teknik Kimia, ",
           app_subtitle2: "Institut Teknologi Bandung",
          
           // Menu
@@ -686,14 +686,76 @@
         { po: 137.9, descriptionKey: "equip_floating_roof_collapses", citation_ref: 3 }
       ];
 
-      const defaultLogData = [
-          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '300', w_tnt: '576999.986', ze: '3.604', ps: '1.096', po_crowl: '111.073', po_alonso: '85.912', po_sadovski: '63.787', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
-          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '500', w_tnt: '576999.986', ze: '6.006', ps: '0.419', po_crowl: '42.468', po_alonso: '30.771', po_sadovski: '26.163', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
-          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '700', w_tnt: '576999.986', ze: '8.408', ps: '0.250', po_crowl: '25.310', po_alonso: '15.647', po_sadovski: '15.698', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
-          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '1000', w_tnt: '576999.986', ze: '12.012', ps: '0.156', po_crowl: '15.813', po_alonso: '10.235', po_sadovski: '9.617', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
-          { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '1500', w_tnt: '576999.986', ze: '18.018', ps: '0.097', po_crowl: '9.857', po_alonso: '6.395', po_sadovski: '5.778', lat: '33.901404', lon: '35.519039', poModel: 'crowl' }
-      ];
+      // GANTI DENGAN BLOK DI BAWAH INI
+      const simulationScenarios = {
+        // =================== SKENARIO AMONIUM NITRATE EXPLOSION ===================
+        beirut: {
+          name: "2020 Beirut AN Explosion",
+          data: [
+            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '300', w_tnt: '576999.986', ze: '3.604', ps: '1.096', po_crowl: '111.073', po_alonso: '85.912', po_sadovski: '63.787', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
+            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '500', w_tnt: '576999.986', ze: '6.006', ps: '0.419', po_crowl: '42.468', po_alonso: '30.771', po_sadovski: '26.163', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
+            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '700', w_tnt: '576999.986', ze: '8.408', ps: '0.250', po_crowl: '25.310', po_alonso: '15.647', po_sadovski: '15.698', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
+            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '1000', w_tnt: '576999.986', ze: '12.012', ps: '0.156', po_crowl: '15.813', po_alonso: '10.235', po_sadovski: '9.617', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
+            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '1500', w_tnt: '576999.986', ze: '18.018', ps: '0.097', po_crowl: '9.857', po_alonso: '6.395', po_sadovski: '5.778', lat: '33.901404', lon: '35.519039', poModel: 'crowl' }
+          ]
+        },
+        tianjin: {
+          name: "2015 Tianjin AN Explosion",
+          data: [
+            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1495.6', dist: '300', w_tnt: '450000', ze: '3.915', ps: '0.941', po_crowl: '95.38', po_alonso: '73.21', po_sadovski: '56.12', lat: '39.039677', lon: '117.736059', poModel: 'crowl' },
+            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1495.6', dist: '600', w_tnt: '450000', ze: '7.830', ps: '0.288', po_crowl: '29.18', po_alonso: '18.99', po_sadovski: '17.73', lat: '39.039677', lon: '117.736059', poModel: 'crowl' },
+            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1495.6', dist: '900', w_tnt: '450000', ze: '11.74', ps: '0.162', po_crowl: '16.42', po_alonso: '10.74', po_sadovski: '10.22', lat: '39.039677', lon: '117.736059', poModel: 'crowl' },
+            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1495.6', dist: '1300', w_tnt: '450000', ze: '16.96', ps: '0.104', po_crowl: '10.51', po_alonso: '6.85', po_sadovski: '6.32', lat: '39.039677', lon: '117.736059', poModel: 'crowl' },
+            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1495.6', dist: '2800', w_tnt: '450000', ze: '36.54', ps: '0.042', po_crowl: '4.29', po_alonso: '2.77', po_sadovski: '2.59', lat: '39.039677', lon: '117.736059', poModel: 'crowl' }
+          ]
+        },
+        // =================== SKENARIO LPG EXPLOSION ===================
+        sanJuanico: {
+          name: "1984 San Juanico LPG Explosion",
+          data: [
+            { material: 'LPG', eta: '0.03', e_tnt: '4550', rho: '493', dh: '50000', vol: '118947.368', dist: '300', w_tnt: '339000', ze: '4.32', ps: '0.78', po_crowl: '79.02', po_alonso: '62.11', po_sadovski: '50.18', lat: '19.523999', lon: '-99.109216', poModel: 'crowl' },
+            { material: 'LPG', eta: '0.03', e_tnt: '4550', rho: '493', dh: '50000', vol: '118947.368', dist: '550', w_tnt: '339000', ze: '7.92', ps: '0.28', po_crowl: '28.38', po_alonso: '18.87', po_sadovski: '17.65', lat: '19.523999', lon: '-99.109216', poModel: 'crowl' },
+            { material: 'LPG', eta: '0.03', e_tnt: '4550', rho: '493', dh: '50000', vol: '118947.368', dist: '1000', w_tnt: '339000', ze: '14.4', ps: '0.12', po_crowl: '12.16', po_alonso: '8.23', po_sadovski: '8.44', lat: '19.523999', lon: '-99.109216', poModel: 'crowl' },
+            { material: 'LPG', eta: '0.03', e_tnt: '4550', rho: '493', dh: '50000', vol: '118947.368', dist: '1300', w_tnt: '339000', ze: '18.72', ps: '0.08', po_crowl: '8.1', po_alonso: '5.65', po_sadovski: '5.43', lat: '19.523999', lon: '-99.109216', poModel: 'crowl' }
+          ]
+        },
+        borgoItaly: {
+            name: "2018 Borgo Italy LPG Explosion",
+            data: [
+                { material: 'LPG', eta: '0.03', e_tnt: '4550', rho: '493', dh: '46000', vol: '50.71', dist: '15', w_tnt: '7582.427', ze: '0.764', ps: '35.096', po_crowl: '3556.064', po_alonso: '1943.598', po_sadovski: '2423.251', lat: '44.515030', lon: '11.280008', poModel: 'crowl' },
+                { material: 'LPG', eta: '0.03', e_tnt: '4550', rho: '493', dh: '46000', vol: '50.71', dist: '64', w_tnt: '7582.427', ze: '3.258', ps: '1.358', po_crowl: '137.598', po_alonso: '105.227', po_sadovski: '77.5', lat: '44.515030', lon: '11.280008', poModel: 'crowl' },
+                { material: 'LPG', eta: '0.03', e_tnt: '4550', rho: '493', dh: '46000', vol: '50.71', dist: '100', w_tnt: '7582.427', ze: '5.09', ps: '0.559', po_crowl: '56.61', po_alonso: '42.909', po_sadovski: '34.344', lat: '44.515030', lon: '11.280008', poModel: 'crowl' },
+                { material: 'LPG', eta: '0.03', e_tnt: '4550', rho: '493', dh: '46000', vol: '50.71', dist: '200', w_tnt: '7582.427', ze: '10.18', ps: '0.193', po_crowl: '19.508', po_alonso: '12.401', po_sadovski: '12.002', lat: '44.515030', lon: '11.280008', poModel: 'crowl' },
+                { material: 'LPG', eta: '0.03', e_tnt: '4550', rho: '493', dh: '46000', vol: '50.71', dist: '500', w_tnt: '7582.427', ze: '25.451', ps: '0.067', po_crowl: '6.784', po_alonso: '4.284', po_sadovski: '3.851', lat: '44.515030', lon: '11.280008', poModel: 'crowl' }
+            ]
+        },
+        // =================== SKENARIO H2 EXPLOSION ===================
+        muskingum: {
+            name: "2007 Muskingum H2 Plant Explosion",
+            data: [
+                { material: 'H₂', eta: '0.05', e_tnt: '4500', rho: '0.08375', dh: '130800', vol: '418', dist: '10', w_tnt: '50.878', ze: '2.699', ps: '2.58', po_crowl: '208.566', po_alonso: '153.621', po_sadovski: '113.39', lat: '39.585229', lon: '-81.677566', poModel: 'crowl' },
+                { material: 'H₂', eta: '0.05', e_tnt: '4500', rho: '0.08375', dh: '130800', vol: '418', dist: '15', w_tnt: '50.878', ze: '4.048', ps: '0.864', po_crowl: '87.568', po_alonso: '68', po_sadovski: '51.365', lat: '39.585229', lon: '-81.677566', poModel: 'crowl' },
+                { material: 'H₂', eta: '0.05', e_tnt: '4500', rho: '0.08375', dh: '130800', vol: '418', dist: '25', w_tnt: '50.878', ze: '6.747', ps: '0.347', po_crowl: '35.169', po_alonso: '24.355', po_sadovski: '21.794', lat: '39.585229', lon: '-81.677566', poModel: 'crowl' },
+                { material: 'H₂', eta: '0.05', e_tnt: '4500', rho: '0.08375', dh: '130800', vol: '418', dist: '50', w_tnt: '50.878', ze: '13.494', ps: '0.136', po_crowl: '13.735', po_alonso: '8.943', po_sadovski: '8.273', lat: '39.585229', lon: '-81.677566', poModel: 'crowl' },
+                { material: 'H₂', eta: '0.05', e_tnt: '4500', rho: '0.08375', dh: '130800', vol: '418', dist: '100', w_tnt: '50.878', ze: '26.987', ps: '0.063', po_crowl: '6.377', po_alonso: '4.002', po_sadovski: '3.602', lat: '39.585229', lon: '-81.677566', poModel: 'crowl' }
+            ]
+        },
+        stclara: {
+            name: "2019 Santa Clara H2 Explosion",
+            data: [
+                { material: 'H₂', eta: '0.03', e_tnt: '4500', rho: '0.08375', dh: '130800', vol: '3000', dist: '10', w_tnt: '219.09', ze: '1.659', ps: '5.348', po_crowl: '643.224', po_alonso: '408.597', po_sadovski: '335.542', lat: '37.3865991655481', lon: '-121.95744540904', poModel: 'crowl' },
+                { material: 'H₂', eta: '0.03', e_tnt: '4500', rho: '0.08375', dh: '130800', vol: '3000', dist: '20', w_tnt: '219.09', ze: '3.318', ps: '1.306', po_crowl: '132.312', po_alonso: '101.444', po_sadovski: '74.787', lat: '37.3865991655481', lon: '-121.95744540904', poModel: 'crowl' },
+                { material: 'H₂', eta: '0.03', e_tnt: '4500', rho: '0.08375', dh: '130800', vol: '3000', dist: '25', w_tnt: '219.09', ze: '4.147', ps: '0.824', po_crowl: '83.463', po_alonso: '64.779', po_sadovski: '49.159', lat: '37.3865991655481', lon: '-121.95744540904', poModel: 'crowl' },
+                { material: 'H₂', eta: '0.03', e_tnt: '4500', rho: '0.08375', dh: '130800', vol: '3000', dist: '35', w_tnt: '219.09', ze: '5.806', ps: '0.444', po_crowl: '44.959', po_alonso: '32.94', po_sadovski: '27.629', lat: '37.3865991655481', lon: '-121.95744540904', poModel: 'crowl' },
+                { material: 'H₂', eta: '0.03', e_tnt: '4500', rho: '0.08375', dh: '130800', vol: '3000', dist: '45', w_tnt: '219.09', ze: '7.465', ps: '0.297', po_crowl: '30.108', po_alonso: '19.876', po_sadovski: '18.695', lat: '37.3865991655481', lon: '-121.95744540904', poModel: 'crowl' },
+                { material: 'H₂', eta: '0.03', e_tnt: '4500', rho: '0.08375', dh: '130800', vol: '3000', dist: '70', w_tnt: '219.09', ze: '11.612', ps: '0.163', po_crowl: '16.491', po_alonso: '10.646', po_sadovski: '10.056', lat: '37.3865991655481', lon: '-121.95744540904', poModel: 'crowl' }
+            ]
+        }
 
+        // =======================================================================
+
+      };
+      
       let chartController;
       let overpressureChartController; 
       // simulationLog is now globally defined, so we remove the local 'let' declaration here.
@@ -1305,67 +1367,54 @@
       }
 
       function loadStateFromURL() {
-        const params = new URLSearchParams(window.location.search);
-        let hasParams = params.has('material');
-
-        if (hasParams) {
-          // BUG FIX: Jika memuat dari URL, bersihkan log yang ada/default
-          // untuk mencegah tampilan data yang tidak konsisten.
-          renderLogTable(); 
-          updateOverpressureChartFromLog(); 
-
-          params.forEach((val, key) => {
-            const el = $(key); 
-            if (el) { el.value = val; }
-          });
-          const materialEl = $('material');
-          if (materialEl.value) {
-            renderEquation(materialEl.value);
-          }
-          compute(true);
-          // BUG FIX: Sync the floating panel inputs after loading from URL
-          syncFloatingPanelInputs(); 
-        } else {
-          // PERBAIKAN: Jika tidak ada parameter URL, sinkronkan formulir dengan
-          // entri pertama dari log yang sudah dimuat (localStorage atau default).
-          // Ini memastikan UI konsisten saat pertama kali dimuat.
-          if (simulationLog.length > 0) {
-              try {
-                  const firstLog = simulationLog[0];
-                  const materialSelect = $('material');
-                  
-                  const findMaterialValue = (abbr) => {
-                      const options = materialSelect.options;
-                      for (let i = 0; i < options.length; i++) {
-                          if (materialAbbreviationMap[options[i].text.trim()] === abbr.trim()) {
-                              return options[i].value;
-                          }
-                      }
-                      return '';
-                  };
-              
-                  const materialValue = findMaterialValue(firstLog.material);
-                  if (materialValue) {
-                      materialSelect.value = materialValue;
-                      const p = presets[materialValue];
-                      if (p) {
-                          Object.keys(p).forEach(key => {
-                              const el = $(key);
-                              if (el) el.value = p[key];
-                          });
-                      }
-                      renderEquation(materialValue);
-                      $('vol').value = firstLog.vol;
-                      $('dist').value = firstLog.dist;
-                      compute(true);
-                      // BUG FIX: Also sync the floating panel here for consistency on initial load
-                      syncFloatingPanelInputs(); 
-                  }
-              } catch (e) {
-                  console.error("Gagal menyinkronkan formulir dengan log awal:", e);
+        // Hapus semua logika URL, kita fokus ke localStorage
+        let stateLoaded = false;
+        try {
+          const savedStateJSON = localStorage.getItem('explosionSimState');
+          if (savedStateJSON) {
+            const savedState = JSON.parse(savedStateJSON);
+            
+            // Langkah 1: Isi form dari localStorage
+            inputFields.forEach(id => {
+              if (savedState[id] !== undefined) {
+                const el = $(id);
+                if (el) el.value = savedState[id];
               }
+            });
+            stateLoaded = true;
+          }
+        } catch (error) {
+          console.error("Gagal memuat state dari localStorage:", error);
+          localStorage.removeItem('explosionSimState');
+        }
+
+        // Langkah 2: Jika tidak ada state tersimpan (pengguna baru), muat default Beirut
+        if (!stateLoaded) {
+          if (simulationLog.length > 0) {
+            const firstLog = simulationLog[0]; // Ini adalah data Beirut node 1
+            const materialValue = Array.from($('material').options).find(opt => 
+                (materialAbbreviationMap[opt.text] || opt.value) === firstLog.material
+            )?.value;
+
+            if (materialValue) {
+              const materialSelect = $('material');
+              materialSelect.value = materialValue;
+              
+              // Penting: Panggil 'change' untuk memuat preset (rho, dh, dll)
+              materialSelect.dispatchEvent(new Event('change'));
+              
+              // Setelah preset dimuat, baru kita timpa vol & dist sesuai data log
+              $('vol').value = firstLog.vol;
+              $('dist').value = firstLog.dist;
+            }
           }
         }
+
+        // Langkah 3: Setelah form diisi (baik dari localStorage atau default),
+        // baru jalankan kalkulasi dan update UI lainnya.
+        renderEquation($('material').value);
+        compute(true);
+        syncFloatingPanelInputs();
       }
      
       function renderLogTable() {
@@ -1432,7 +1481,7 @@
         if (savedLog) {
             try {
                 const parsedLog = JSON.parse(savedLog);
-                if (Array.isArray(parsedLog)) {
+                if (Array.isArray(parsedLog) && parsedLog.length > 0) {
                     simulationLog = parsedLog;
                     return;
                 }
@@ -1440,9 +1489,9 @@
                 console.error("Failed to load log from local storage:", e);
             }
         }
-        simulationLog = [...defaultLogData]; 
-      }
-     
+        // Fallback to the default scenario (Beirut)
+        simulationLog = [...simulationScenarios.beirut.data]; 
+      }     
       const toTopBtn = $('toTop');
       if (toTopBtn) {
         window.addEventListener('scroll', () => {
@@ -1635,12 +1684,20 @@
         if (overpressureChartContainer) overpressureChartContainer.parentElement.innerHTML = '<p style="padding: 20px; text-align: center; color: var(--danger);">Failed to load Po vs Distance chart library. Please check your internet connection.</p>';
       }
       
+      let isInitializing = true; // Tambahkan penanda (flag) global ini
+
       const debouncedCompute = debounce(() => compute(false), 250);
      
       inputFields.forEach(id => {
         const el = $(id);
         if (el && el.tagName === 'INPUT') {
-          el.addEventListener("input", debouncedCompute);
+          el.addEventListener("input", () => {
+            // Tambahkan pengecekan ini:
+            // Hanya jalankan kalkulasi jika proses inisialisasi sudah selesai.
+            if (!isInitializing) {
+              debouncedCompute();
+            }
+          });
         }
       });
      
@@ -1686,7 +1743,7 @@
             isNew: true
         };
 
-        if (JSON.stringify(simulationLog) === JSON.stringify(defaultLogData)) {
+        if (JSON.stringify(simulationLog) === JSON.stringify(simulationScenarios)) {
             simulationLog = [];
         }
 
@@ -2091,16 +2148,89 @@
       window.addEventListener('resize', debouncedUpdateOnResizeOrRotate);
       window.addEventListener('orientationchange', debouncedUpdateOnResizeOrRotate);
 
+// =================== KODE BARU DIMULAI ===================
+      function loadAndDisplayScenario(scenarioKey) {
+          if (!simulationScenarios[scenarioKey]) return;
+
+          // Ganti log saat ini dengan data skenario yang dipilih
+          simulationLog = [...simulationScenarios[scenarioKey].data];
+
+          // Perbarui semua elemen UI yang relevan
+          renderLogTable();
+          updateOverpressureChartFromLog();
+          saveLogToLocalStorage();
+
+          // Muat entri pertama dari skenario baru ke dalam kalkulator utama
+          if (simulationLog.length > 0) {
+              const firstLog = simulationLog[0];
+              const materialSelect = $('material');
+              
+              // LOGIKA YANG DIREVISI: Langsung gunakan nilai material dari data log.
+              const materialValue = firstLog.material; 
+
+              // Periksa apakah opsi dengan nilai ini ada di dalam dropdown.
+              const optionExists = Array.from(materialSelect.options).some(opt => opt.value === materialValue);
+
+              if (optionExists) {
+                  // Atur nilai dropdown, yang akan memilih material yang benar secara visual.
+                  materialSelect.value = materialValue;
+                  
+                  // Perbarui field volume dan jarak dari data log.
+                  $('vol').value = firstLog.vol;
+                  $('dist').value = firstLog.dist;
+                  
+                  // Picu event 'change' secara manual. Ini sangat penting karena mengubah nilai
+                  // sebuah select secara terprogram tidak otomatis menjalankan event-nya. Event ini
+                  // akan memicu logika untuk memuat properti material dan menjalankan ulang semua perhitungan.
+                  materialSelect.dispatchEvent(new Event('change'));
+              } else {
+                  console.error(`Material "${materialValue}" dari data skenario tidak ditemukan di dropdown.`);
+              }
+          }
+      }
+
+    function populateSimulationSelector() {
+          const selector = $('simulationSelector');
+          if (!selector) return;
+
+          // Hapus opsi yang mungkin sudah ada sebelumnya untuk mencegah duplikasi
+          selector.innerHTML = '';
+
+          Object.keys(simulationScenarios).forEach(key => {
+              const option = document.createElement('option');
+              option.value = key;
+              option.textContent = simulationScenarios[key].name;
+              selector.appendChild(option);
+          });
+
+          // Tambahkan event listener di sini
+          selector.addEventListener('change', (event) => {
+              const selectedScenarioKey = event.target.value;
+              // Panggil fungsi untuk memuat skenario
+              loadAndDisplayScenario(selectedScenarioKey);
+              // Simpan kunci skenario yang dipilih ke localStorage
+              try {
+                localStorage.setItem('lastSelectedScenario', selectedScenarioKey);
+              } catch (e) {
+                console.warn("Gagal menyimpan skenario terakhir ke localStorage:", e);
+              }
+          });
+      }
+// =================== KODE BARU SELESAI ===================
+
       // --- INITIALIZATION SEQUENCE ---
       initLanguage(); 
       loadLogo();
       toTopBtn.addEventListener('click', goTop);
+      populateSimulationSelector(); // <-- TAMBAHKAN BARIS INI
       loadLog();
       renderLogTable();
       updateOverpressureChartFromLog();
       loadStateFromURL();
       setupCollapsePanel(); 
       updatePsVsZeChart(); // Initial plot
+      
+      isInitializing = false;
      
       setTimeout(() => {
           isPageLoaded = true;
