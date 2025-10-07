@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alur Proses Aplikasi - Simulasi Ledakan</title>
+    <style>
+        :root {
+            --ink: #1e2b3b;
+            --muted: #64748b;
+            --card: #ffffff;
+            --bg: #f5f7fb;
+            --blue-itb: #0079c2;
+            --stripe: #eaf3fb;
+            --ring: rgba(0, 121, 194, 0.25);
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        * { box-sizing: border-box; }
+        html, body { height: 100%; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--ink);
+            font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        }
+        .wrap { max-width: 1280px; margin: 32px auto; padding: 0 16px; }
+        
+        /* --- START: Copied Styles from simulation-modeling-visualisation-explosion.html --- */
+        .banner { 
+            position: relative; 
+            color: #fff; 
+            background-image: url("https://virdanurlulu.github.io/img/banner-itb1.webp"); 
+            background-size: cover; 
+            background-position: center; 
+            padding: 24px 28px; 
+            min-height: 120px; 
+            border-radius: 14px; 
+            box-shadow: 0 6px 20px rgba(2, 41, 77, 0.12); 
+            margin-bottom: 18px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start;
+        }
+        .banner .title h1, .banner .title h2, .banner h3 { text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25); }
+        .brandbar { display: flex; align-items: center; gap: 16px; }
+        .brand-logo { height: 96px; width: auto; }
+        .brand-text h1 { margin: 0; font-size: 28px; line-height: 1.25; font-family: Georgia, "Times New Roman", serif; color: #fff; }
+        .brand-text h3 { margin: 0; font-size: 16px; font-weight: 600; color: #fff; }
+        .brand-text .authors { font-size: 14px; font-weight: 400; margin: 4px 0 0 0; font-style: italic; }
+
+        .dropdown-menu { position: absolute; top: 20px; right: 28px; }
+        .dropdown-toggle { display: flex; align-items: center; gap: 8px; background-color: rgba(255, 255, 255, 0.9); color: var(--ink); padding: 8px 16px; font-size: 16px; font-weight: 600; border: 1px solid #d6e3ef; border-radius: 8px; cursor: pointer; }
+        .dropdown-content { display: none; position: absolute; right: 0; top: 110%; background-color: #ffffff; min-width: 220px; box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); border-radius: 8px; z-index: 100; }
+        .dropdown-menu.is-active .dropdown-content { display: block; }
+        .dropdown-content a { color: var(--ink); padding: 12px 16px; text-decoration: none; display: block; }
+        .dropdown-content a:hover { background-color: var(--stripe); color: var(--blue-itb); }
+        
+        main.split { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .left, .right { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+        
+        .app-footer { margin-top: 20px; color: #fff; background-color: var(--blue-itb); width: 100vw; margin-left: calc(50% - 50vw); padding: 24px 16px; text-align: center; }
+        .app-footer .footer-content { max-width: 1280px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .app-footer .credit { font-weight: 700; }
+        .app-footer .dedication { font-size: 13px; max-width: 960px; }
+        .app-footer a { color: #fff; text-decoration: none; }
+        /* --- END: Copied Styles --- */
+
+        .flowchart-container {
+            background: var(--card);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            height: fit-content; /* Ensure container fits content */
+        }
+        .flowchart-header {
+            background-color: var(--header-bg);
+            color: var(--header-text);
+            padding: 20px;
+            text-align: center;
+            font-size: 1.5em;
+        }
+        .flowchart {
+            padding: 20px;
+        }
+        .node {
+            background-color: var(--node-bg);
+            border: 2px solid var(--node-border);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .node:hover {
+            border-color: var(--header-bg);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        }
+        .node.input { border-left: 5px solid #29b6f6; }
+        .node.process { border-left: 5px solid #66bb6a; }
+        .node.output { border-left: 5px solid #ffa726; }
+        .node.decision { border-left: 5px solid #ef5350; }
+        .arrow { text-align: center; margin: -10px 0; }
+        .arrow::after { content: '↓'; font-size: 2em; color: var(--arrow-color); }
+        .arrow.up::after { content: '↑'; }
+        .details { display: none; margin-top: 15px; padding: 15px; border-radius: 6px; text-align: left; font-size: 0.95em; }
+        .details.formula { background-color: #e8f5e9; border: 1px solid #a5d6a7; }
+        .details.validation { background-color: #fff3e0; border: 1px solid #ffcc80; }
+        .formula-eq { font-family: 'Courier New', monospace; background-color: rgba(255,255,255,0.6); padding: 8px; border-radius: 4px; margin: 10px 0; display: block; white-space: pre-wrap; word-wrap: break-word; }
+        ul { padding-left: 20px; margin-bottom: 0; }
+
+        @media (max-width: 1024px) {
+            main.split { grid-template-columns: 1fr; }
+            .wrap { margin: 16px auto; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrap">
+    <!-- Header copied from simulation app -->
+    <header class="banner">
+        <div class="brandbar">
+            <a href="https://virdanurlulu.github.io/" target="_blank" rel="noopener noreferrer">
+                <img id="itbLogo" class="brand-logo" alt="Logo ITB" width="96" height="96">
+            </a>
+            <div class="brand-text">
+                <h1>Dokumentasi Alur Proses Aplikasi</h1>
+                <h3>Teknik Kimia, Institut Teknologi Bandung</h3>
+                <h3 class="authors">Virda Nur Lu’lu, S.T., IPP<br>Dr. Eng. Ir. Pramujo Widiatmoko, S.T., M.T.<br>Ir. Hary Devianto, S.T., M.Eng., Ph.D., IPM, AER.*</h3>
+            </div>
+        </div>
+        <div class="dropdown-menu">
+            <button class="dropdown-toggle"><span>Menu</span><span>&#9776;</span></button>
+            <div class="dropdown-content">
+                <a href="#">Beranda</a>
+                <a href="#">Aplikasi Simulasi & Pemodelan</a>
+                <a href="#">Panduan Simulasi</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main content with two columns -->
+    <main class="split">
+        <!-- Left Column -->
+        <div class="left">
+            <div class="flowchart-container">
+                <div class="flowchart-header">Alur Kerja Maju (Simulasi Baru)</div>
+                <div class="flowchart">
+                    <div class="node input" onclick="toggleDetails('details1')"><div class="title">Langkah 1: Input Pengguna</div><span>Pilih Material, Volume, dan Jarak</span><div class="details" id="details1">Pengguna memulai simulasi dengan memberikan tiga input utama:<ul><li><strong>Pilihan Material:</strong> Memilih antara Amonium Nitrat (AN), Propana (LPG), atau Hidrogen (H₂). Pilihan ini secara otomatis mengisi properti kimia material.</li><li><strong>Volume (m³):</strong> Jumlah volume dari material yang dipilih.</li><li><strong>Jarak (m):</strong> Jarak dari titik pusat ledakan ke lokasi yang ditinjau.</li></ul></div></div>
+                    <div class="arrow"></div>
+                    <div class="node process" onclick="toggleDetails('details2')"><div class="title">Langkah 2: Perhitungan Ekuivalensi TNT</div><span>Hitung W_tnt</span><div class="details formula" id="details2">Aplikasi menghitung daya ledak berdasarkan model Ekuivalensi TNT.<code class="formula-eq">Massa (W) = ρ × Volume</code><code class="formula-eq">Energi Total (E) = W × ΔH_ledakan × η_E</code><code class="formula-eq">Ekuivalen TNT (W_tnt) = E / E_TNT</code></div></div>
+                    <div class="arrow"></div>
+                    <div class="node process" onclick="toggleDetails('details3')"><div class="title">Langkah 3: Jarak & Tekanan Berlebih (Po) Skala</div><span>Hitung Ze dan Po</span><div class="details formula" id="details3"><code class="formula-eq">Jarak Skala (Ze) = Jarak / (W_tnt)^(1/3)</code>Nilai `Ze` ini kemudian digunakan dalam tiga model (Crowl, Alonso, Sadovski) untuk menghitung Puncak Tekanan Berlebih (Po).</div></div>
+                    <div class="arrow"></div>
+                    <div class="node decision" onclick="toggleDetails('details4')"><div class="title">Langkah 4: Validasi Model</div><span>Periksa rentang valid Ze</span><div class="details validation" id="details4">Aplikasi memvalidasi nilai `Ze` yang dihitung. Peringatan akan diberikan jika nilai berada di luar rentang yang disarankan untuk setiap model.<ul><li><b>Crowl:</b> 0.01 ≤ Ze ≤ 100</li><li><b>Alonso:</b> 1 ≤ Ze ≤ 200</li><li><b>Sadovski:</b> 1 ≤ Ze ≤ 15</li></ul></div></div>
+                    <div class="arrow"></div>
+                    <div class="node output" onclick="toggleDetails('details5')"><div class="title">Langkah 5: Tampilkan Hasil & Analisis</div><span>Estimasi Kerusakan/Cedera dan Grafik</span><div class="details" id="details5">Nilai `Po` yang dihitung digunakan untuk:<ul><li>Estimasi Kerusakan Struktur & Peralatan.</li><li>Estimasi Konsekuensi Cedera.</li><li>Plot titik (Ze, Ps) pada Grafik Ps vs. Ze.</li></ul></div></div>
+                    <div class="arrow"></div>
+                    <div class="node process" onclick="toggleDetails('details6')"><div class="title">Langkah 6: Pencatatan Simulasi</div><span>Pengguna menyimpan hasil ke Log</span><div class="details" id="details6">Pengguna dapat menyimpan set lengkap input dan output sebagai sebuah "Node" di tabel log untuk perbandingan.</div></div>
+                    <div class="arrow"></div>
+                    <div class="node output" onclick="toggleDetails('details7')"><div class="title">Langkah 7: Visualisasi Agregat</div><span>Perbarui Grafik & Peta Kontur</span><div class="details" id="details7">Data dari semua "Node" di log digunakan untuk secara otomatis menghasilkan:<ul><li>Grafik Tekanan Berlebih vs. Jarak.</li><li>Peta Kontur Ledakan.</li></ul></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <aside class="right">
+            <div class="flowchart-container">
+                <div class="flowchart-header">Alur Kerja Terbalik (Dari Data Tersimpan)</div>
+                <div class="flowchart">
+                    <div class="node output" onclick="toggleDetails('detailsR5')"><div class="title">Hasil Akhir: Input Pengguna Terisi</div><span>Formulir Input diisi otomatis</span><div class="details" id="detailsR5">Sebagai langkah terakhir dari alur terbalik, bidang input awal (Material, Volume, Jarak) dan Properti diisi dengan data dari Node yang dipilih, memungkinkan pengguna untuk meninjau atau memodifikasi simulasi yang ada.</div></div>
+                    <div class="arrow up"></div>
+                    <div class="node output" onclick="toggleDetails('detailsR4')"><div class="title">Langkah 4: Analisis Detail & Grafik Diperbarui</div><span>Panel estimasi diperbarui</span><div class="details" id="detailsR4">Aplikasi langsung memperbarui panel "Estimasi Kerusakan" dan "Estimasi Cedera" dengan nilai-nilai dari Node yang dipilih. Titik yang sesuai pada Grafik Ps vs. Ze juga disorot.</div></div>
+                    <div class="arrow up"></div>
+                    <div class="node process" onclick="toggleDetails('detailsR3')"><div class="title">Langkah 3: Interaksi Pengguna dengan Log</div><span>Pengguna memilih 'Node' di tabel</span><div class="details" id="detailsR3">Ketika pengguna mengklik baris "Node" tertentu di dalam tabel log...</div></div>
+                    <div class="arrow up"></div>
+                    <div class="node output" onclick="toggleDetails('detailsR2')"><div class="title">Langkah 2: Visualisasi Instan</div><span>Grafik dan Peta langsung diplot</span><div class="details" id="detailsR2">Berdasarkan data yang diimpor atau dimuat, "Grafik Tekanan Berlebih vs. Jarak" dan "Peta Kontur Ledakan" segera diplot. Data dari Node 1 ditampilkan secara default.</div></div>
+                    <div class="arrow up"></div>
+                    <div class="node input" onclick="toggleDetails('detailsR1')"><div class="title">Langkah 1: Memuat Data</div><span>Impor File CSV atau Muat Log Tersimpan</span><div class="details" id="detailsR1">Pengguna memulai dengan mengimpor file simulasi (.csv) atau aplikasi secara otomatis memuat data simulasi terakhir dari penyimpanan browser. Seluruh set data dimuat ke dalam tabel Log Simulasi.</div></div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Footer copied from simulation app -->
+    <footer class="app-footer">
+        <div class="footer-content">
+            <div class="credit">
+                <span>Hak Cipta © 2025 oleh</span>
+                <a href="https://id.linkedin.com/in/virdanurlulu" target="_blank" rel="nofollow noopener noreferrer">Virda Nur Lu'lu</a>
+            </div>
+            <div class="dedication">
+                <span>Aplikasi ini didedikasikan untuk orang tua saya atas dukungan dan bimbingan sabar mereka sepanjang perjalanan JavaScript saya. </span>
+                <span>Ini juga dipersembahkan kepada komunitas akademik di </span>
+                <a href="https://che.itb.ac.id/" target="_blank" rel="nofollow noopener noreferrer">Institut Teknologi Bandung</a>
+                <span> sebagai kontribusi untuk menginspirasi kemajuan lebih lanjut dalam teknologi JavaScript.</span>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script>
+    // Function to toggle details visibility
+    function toggleDetails(id) {
+        var element = document.getElementById(id);
+        if (element.style.display === "block") {
+            element.style.display = "none";
+        } else {
+            element.style.display = "block";
+        }
+    }
+
+    // Script for dropdown menu
+    document.addEventListener("DOMContentLoaded", () => {
+        const dropdown = document.querySelector('.dropdown-menu');
+        if (dropdown) {
+            const dropdownToggle = dropdown.querySelector('.dropdown-toggle');
+            dropdownToggle.addEventListener('click', (event) => {
+                event.stopPropagation();
+                dropdown.classList.toggle('is-active');
+            });
+            document.addEventListener('click', (event) => {
+                if (dropdown.classList.contains('is-active') && !dropdown.contains(event.target)) {
+                    dropdown.classList.remove('is-active');
+                }
+            });
+        }
+
+        // Script to load ITB Logo
+        const img = document.getElementById("itbLogo");
+        if(img) {
+            const fallback = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><circle cx="128" cy="128" r="120" fill="%230079c2"/><text x="50%" y="56%" font-family="Georgia, serif" font-size="88" text-anchor="middle" fill="white">ITB</text></svg>';
+            img.onerror = () => { img.onerror = null; img.src = fallback; };
+            img.src = "https://virdanurlulu.github.io/img/Logo_Institut_Teknologi_Bandung.webp";
+        }
+    });
+</script>
+
+</body>
+</html>
+
