@@ -47,7 +47,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   
   <style>
@@ -296,8 +295,7 @@
     .map-title { position: absolute; top: 12px; left: 12px; z-index: 1002; background: rgba(255, 255, 255, 0.92); padding: 8px 12px; border-radius: 10px; box-shadow: 0 4px 12px rgba(2,8,20,.12); font-weight: 700; font-size: 16px; pointer-events: none; max-width: calc(100% - 150px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     @media (max-width: 640px) { .map-title { font-size: 14px; padding: 6px 10px; } }
     /* --- CONTOUR MAP STYLES END --- */
-
-    /* --- Map Controls Styles START --- */
+    
     #mapControls {
         display: flex;
         flex-wrap: wrap;
@@ -326,9 +324,6 @@
     }
     /* --- Map Controls Styles END --- */
 
-    /* --- REVISED RESPONSIVE STYLES FOR SPECIFIC DEVICES --- */
-
-    /* 1. Main Layout Stacking and Table Scrolling for Tablets and Smaller */
     @media (max-width: 1024px) {
         main.split {
             grid-template-columns: 1fr; /* Stack left and right columns */
@@ -1538,8 +1533,7 @@
       ================================================================================
       | END: BILINGUAL TRANSLATION SCRIPT                                            |
       ================================================================================
-      */
-     
+      */   
       function getDamageDescriptionKeys(kPa) {
         const keys = [];
         if (kPa >= 0.14 && kPa <= 2) keys.push("damage_accidental_glass");
@@ -1673,9 +1667,6 @@
                 { material: 'H₂', eta: '0.03', e_tnt: '4500', rho: '0.08375', dh: '130800', vol: '3000', dist: '70', w_tnt: '219.09', ze: '11.612', ps: '0.163', po_crowl: '16.491', po_alonso: '10.646', po_sadovski: '10.056', lat: '37.3865991655481', lon: '-121.95744540904', poModel: 'crowl' }
             ]
         }
-
-        // =======================================================================
-
       };
       
       let chartController;
@@ -1981,6 +1972,24 @@
          
           chart.update();
       }
+
+      // FUNGSI BARU: Untuk menyorot baris pertama dari tabel log
+      function highlightFirstRow() {
+        const logTbody = $('logTbody');
+        if (!logTbody) return;
+
+        // Hapus sorotan yang sudah ada dari baris lain
+        const currentlySelected = logTbody.querySelector('.selected-row');
+        if (currentlySelected) {
+            currentlySelected.classList.remove('selected-row');
+        }
+
+        // Tambahkan kelas sorotan ke baris data pertama di tabel
+        const firstRow = logTbody.querySelector('tr:not(.log-placeholder)');
+        if (firstRow) {
+            firstRow.classList.add('selected-row');
+        }
+      }      
 
       function getImpactCategory(Po) {
         if (Po > 76) return { nameKey: "cat_catastrophic", color: "#991B1B", textColor: "#FFFFFF" };
@@ -2442,8 +2451,6 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
           }
         }
 
-        // Langkah 3: Setelah form diisi (baik dari localStorage atau default),
-        // baru jalankan kalkulasi dan update UI lainnya.
         renderEquation($('material').value);
         compute(true);
         syncFloatingPanelInputs();
@@ -2807,7 +2814,7 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
 
       const logTbody = $('logTbody');
 
-// *** MODIFICATION START ***
+      // *** MODIFICATION START ***
       // Fungsi ini akan dipanggil oleh handleLogRowClick untuk menampilkan popup.
       function showMapPopupForLog(logData) {
         // Memastikan peta dan fungsi-fungsi yang diperlukan tersedia di objek window.
@@ -3180,7 +3187,7 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
       window.addEventListener('resize', debouncedUpdateOnResizeOrRotate);
       window.addEventListener('orientationchange', debouncedUpdateOnResizeOrRotate);
 
-// =================== KODE BARU DIMULAI ===================
+      // =================== KODE BARU DIMULAI ===================
       function loadAndDisplayScenario(scenarioKey) {
           if (!simulationScenarios[scenarioKey]) return;
 
@@ -3196,36 +3203,47 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
           if (simulationLog.length > 0) {
               const firstLog = simulationLog[0];
               const materialSelect = $('material');
-              
-              // LOGIKA YANG DIREVISI: Langsung gunakan nilai material dari data log.
               const materialValue = firstLog.material; 
-
-              // Periksa apakah opsi dengan nilai ini ada di dalam dropdown.
               const optionExists = Array.from(materialSelect.options).some(opt => opt.value === materialValue);
 
               if (optionExists) {
-                  // Atur nilai dropdown, yang akan memilih material yang benar secara visual.
                   materialSelect.value = materialValue;
-                  
-                  // Perbarui field volume dan jarak dari data log.
                   $('vol').value = firstLog.vol;
                   $('dist').value = firstLog.dist;
-                  
-                  // Picu event 'change' secara manual. Ini sangat penting karena mengubah nilai
-                  // sebuah select secara terprogram tidak otomatis menjalankan event-nya. Event ini
-                  // akan memicu logika untuk memuat properti material dan menjalankan ulang semua perhitungan.
+                  // Picu event 'change' agar kalkulator dan properti material ikut ter-update
                   materialSelect.dispatchEvent(new Event('change'));
               } else {
                   console.error(`Material "${materialValue}" dari data skenario tidak ditemukan di dropdown.`);
               }
           }
+          // Panggil fungsi untuk menyorot baris pertama setelah tabel diperbarui
+          highlightFirstRow();
       }
 
-    function populateSimulationSelector() {
+      function initializeSimulationState() {
+          const selector = $('simulationSelector');
+          // Coba dapatkan skenario terakhir yang dipilih dari localStorage
+          const lastScenario = localStorage.getItem('lastSelectedScenario');
+
+          if (lastScenario && simulationScenarios[lastScenario]) {
+              // Jika skenario yang valid tersimpan, atur dropdown ke nilai tersebut
+              selector.value = lastScenario;
+              // Muat data untuk skenario yang tersimpan
+              loadAndDisplayScenario(lastScenario);
+          } else {
+              // Jika tidak, ini adalah kunjungan pertama atau data tidak valid.
+              // Atur dropdown ke skenario default 'beirut'
+              selector.value = 'beirut';
+              // Muat data untuk skenario default
+              loadAndDisplayScenario('beirut');
+          }
+      }
+      
+      // Fungsi ini mengisi pilihan dropdown dan mengatur listener untuk menyimpan perubahan
+      function populateSimulationSelector() {
           const selector = $('simulationSelector');
           if (!selector) return;
 
-          // Hapus opsi yang mungkin sudah ada sebelumnya untuk mencegah duplikasi
           selector.innerHTML = '';
 
           Object.keys(simulationScenarios).forEach(key => {
@@ -3235,12 +3253,10 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
               selector.appendChild(option);
           });
 
-          // Tambahkan event listener di sini
           selector.addEventListener('change', (event) => {
               const selectedScenarioKey = event.target.value;
-              // Panggil fungsi untuk memuat skenario
               loadAndDisplayScenario(selectedScenarioKey);
-              // Simpan kunci skenario yang dipilih ke localStorage
+              // Simpan kunci skenario yang dipilih ke localStorage setiap kali ada perubahan
               try {
                 localStorage.setItem('lastSelectedScenario', selectedScenarioKey);
               } catch (e) {
@@ -3248,16 +3264,14 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
               }
           });
       }
-// =================== KODE BARU SELESAI ===================
+      // =================== KODE BARU SELESAI ===================
 
       // --- INITIALIZATION SEQUENCE ---
       initLanguage(); 
       loadLogo();
       toTopBtn.addEventListener('click', goTop);
-      populateSimulationSelector(); // <-- TAMBAHKAN BARIS INI
-      loadLog();
-      renderLogTable();
-      updateOverpressureChartFromLog();
+      populateSimulationSelector();
+      initializeSimulationState(); // <-- Satu baris ini menggantikan pemanggilan loadLog() dan render...() yang lama
       loadStateFromURL();
       setupCollapsePanel(); 
       updatePsVsZeChart(); // Initial plot
@@ -3298,9 +3312,6 @@ window.addEventListener('load', () => {
     const LS_KEY  = 'explosionContour:v1';
     const RG_KEY  = 'explosionContour:revgeo:v2';
 
-    // ======= Parser & CSV =======
-    // Functions parseNumberLoose, extractNumbers, and parseData have been moved to a global script block
-    
     let notifTimer = null;
     function showNotification(message, isError = false){
         const el = document.getElementById('notification');
@@ -3694,12 +3705,6 @@ window.addEventListener('load', () => {
       setFSLabel(active);
     });
 
-    // document.addEventListener('keydown', (e)=>{
-    //  if (document.activeElement.tagName === 'INPUT') return;
-    //  if (e.key.toLowerCase() === 'f') { e.preventDefault(); toggleFS(); }
-    //  if (e.key === 'Escape' && mapCard.classList.contains('fullscreen')) { exitFS(); }
-    // });
-
     window.addEventListener('resize', ()=>{
       if (mapCard.classList.contains('fullscreen')) {
         clearTimeout(window.__fsRaf);
@@ -3759,9 +3764,6 @@ window.addEventListener('load', () => {
         }
     }, 750);
     
-    // Fungsionalitas 'moveend' dihapus agar titik ledakan tidak berubah saat peta digeser.
-    // Pembaruan lokasi ledakan sekarang hanya ditangani oleh input Lat/Lon.
-
     if (mapLatInput) mapLatInput.addEventListener('input', debouncedUpdateMapFromInput);
     if (mapLonInput) mapLonInput.addEventListener('input', debouncedUpdateMapFromInput);
     if (poModelSelect) {
@@ -3808,13 +3810,6 @@ window.addEventListener('load', () => {
         updateMapFromLog(); // Redraw map with new model selection
     });
 
-
-    // ======= INTEGRATION: Sync Map with Simulation Log =======
-    /**
-     * Reads data from the simulationLog array and updates the contour map.
-     * This version reads directly from the globally accessible `simulationLog` array
-     * for improved robustness, avoiding fragile DOM parsing.
-     */
     async function updateMapFromLog() {
       if (typeof simulationLog === 'undefined' || !Array.isArray(simulationLog)) {
         console.error("simulationLog array not found or not an array.");
@@ -3852,7 +3847,6 @@ window.addEventListener('load', () => {
           }
       }
 
-      // Pastikan nama lokasi diperbarui SEBELUM menggambar ulang peta
       await refreshPlaceName(settings.lat, settings.lon);
 
       const poModelSelect = document.getElementById('poModelSelect');
@@ -3876,7 +3870,6 @@ window.addEventListener('load', () => {
 
       const newCsv = csvLines.join('\n');
       
-      // Only redraw if the data has changed or if the map hasn't been drawn yet.
       if (newCsv !== settings.csv || (newCsv && !finalLayer)) {
           settings.csv = newCsv;
           
@@ -3890,8 +3883,6 @@ window.addEventListener('load', () => {
       }
     }
 
-    // A MutationObserver on the log table is a reliable way to trigger a map update
-    // whenever the log data changes (add, delete, import, sort).
     const logTbodyObserver = document.getElementById('logTbody');
     if (logTbodyObserver) {
         const observer = new MutationObserver(() => {
@@ -3901,10 +3892,6 @@ window.addEventListener('load', () => {
         });
         observer.observe(logTbodyObserver, { childList: true });
     }
-    
-    // Observer sudah menangani pembaruan awal saat log pertama kali dirender.
-
-    // ======= DYNAMIC LAYOUT: Move Simulation Log based on screen size =======
     const leftPanel = document.querySelector('.left');
     const rightPanel = document.querySelector('.right');
     const logSection = document.querySelector('section[aria-labelledby="log-head"]');
@@ -3916,23 +3903,17 @@ window.addEventListener('load', () => {
         }
 
         if (window.innerWidth <= 1024) {
-            // Mobile/Tablet view: Move log to the left panel if it's not already there.
             if (!leftPanel.contains(logSection)) {
                 overpressureChartSection.insertAdjacentElement('afterend', logSection);
             }
         } else {
-            // Desktop view: Move log back to the right panel if it's not already there.
             if (!rightPanel.contains(logSection)) {
                 rightPanel.appendChild(logSection);
             }
         }
     }
 
-    // Initial check on page load
     adjustLogPosition();
-
-    // PERBAIKAN: Gunakan fungsi debounce dan tambahkan listener untuk 'orientationchange' 
-    // untuk memastikan tata letak selalu diperbarui dengan andal di perangkat seluler.
     const debouncedAdjustLogPosition = debounce(adjustLogPosition, 150);
     window.addEventListener('resize', debouncedAdjustLogPosition);
     window.addEventListener('orientationchange', debouncedAdjustLogPosition);
