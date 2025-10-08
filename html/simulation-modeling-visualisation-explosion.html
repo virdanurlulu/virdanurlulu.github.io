@@ -951,9 +951,10 @@
       };
      
       const citations = {
-        1: "Wang et al., 2023",
-        2: "Clancey, 1972; Crowl & Louvar, 2011",
-        3: "Clancey, 1972; CCPS, 2000"
+        1: "Wang et al., 2023",
+        2: "Clancey, 1972; Crowl & Louvar, 2011",
+        3: "Clancey, 1972; CCPS, 2000",
+        4: "Jeremić & Bajić., 2006"
       };
 
       /*
@@ -1131,6 +1132,23 @@
           injury_extreme_fatality_risk: "The interaction between the blast wave and structural failure poses an extremely high risk of fatality.",
           injury_no_significant_effects: "No significant effects reported.",
           injury_none_anticipated: "No injuries are anticipated.",
+                    // == MULAI TAMBAHKAN DARI SINI ==
+          injury_table_p1: "No serious injuries; eardrum rupture is not significant.",
+          injury_table_s1: "Glass cracking can begin around 1–1.5 kPa [4]; widespread breakage typically 3.5–7.6 kPa [4].",
+          injury_table_c1: "Primary injury is unlikely, but secondary injury risk from glass fragments remains.",
+          injury_table_p2: "Minor contusion [1]; 1% eardrum rupture (20–30 kPa) [4].",
+          injury_table_s2: "Moderate structure damage may cause ceiling sections to fall and small objects to drop [2].",
+          injury_table_c2: "Combination of minor contusion and secondary injuries from fragments/debris.",
+          injury_table_p3: "Moderate contusion [1]; eardrum rupture probability 50% around 110 kPa [4].",
+          injury_table_s3: "Wider structural damage creates flying debris [2], which can cause fractures.",
+          injury_table_c3: "Injury severity rises due to the combined effects of the blast wave and flying debris.",
+          injury_table_p4: "Serious internal contusions and possibly fatal [1]; risk of blast-lung depends on positive-phase duration with overpressure 70 kPa at 50 ms or 140–200 kPa at 3 ms [4].",
+          injury_table_s4: "Many buildings heavily damaged; some may be totally destroyed [2], creating entrapment under rubble.",
+          injury_table_c4: "Concurrence of internal injuries and entrapment is potentially fatal.",
+          injury_table_p5: "High fatality for unprotected persons, but thresholds depend on positive-phase duration: 1% fatality 190 kPa at 50 ms or 400–500 kPa at 3 ms [4].",
+          injury_table_s5: "Total building collapse; large debris moving rapidly [2].",
+          injury_table_c5: "Fatality risk escalates where both overpressure and duration exceed thresholds.",
+          // == AKHIR BAGIAN TAMBAHAN ==
          
           damage_no_significant: "No significant structural damage predicted.",
           equipment_no_significant: "No significant equipment damage predicted.",
@@ -1367,6 +1385,23 @@
           injury_extreme_fatality_risk: "Interaksi antara gelombang ledakan dan kegagalan struktural menimbulkan risiko kematian yang sangat tinggi.",
           injury_no_significant_effects: "Tidak ada efek signifikan yang dilaporkan.",
           injury_none_anticipated: "Tidak ada cedera yang diperkirakan.",
+          // == MULAI TAMBAHKAN DARI SINI ==
+          injury_table_p1: "Tidak ada cedera serius; pecahnya gendang telinga tidak signifikan.",
+          injury_table_s1: "Kaca bisa mulai retak sekitar 1–1.5 kPa [4]; kerusakan yang lebih luas biasanya terjadi pada 3.5–7.6 kPa [4].",
+          injury_table_c1: "Cedera primer tidak mungkin terjadi, namun risiko cedera sekunder dari pecahan kaca tetap ada.",
+          injury_table_p2: "Memar ringan [1]; 1% pecah gendang telinga (20–30 kPa) [4].",
+          injury_table_s2: "Kerusakan struktur sedang dapat menyebabkan bagian langit-langit runtuh dan benda-benda kecil jatuh [2].",
+          injury_table_c2: "Kombinasi memar ringan dan cedera sekunder dari pecahan/puing-puing.",
+          injury_table_p3: "Memar sedang [1]; probabilitas pecah gendang telinga 50% sekitar 110 kPa [4].",
+          injury_table_s3: "Kerusakan struktur yang lebih luas menciptakan puing-puing beterbangan [2], yang dapat menyebabkan patah tulang.",
+          injury_table_c3: "Tingkat keparahan cedera meningkat karena efek gabungan dari gelombang ledakan dan puing-puing beterbangan.",
+          injury_table_p4: "Memar internal yang serius dan berpotensi fatal [1]; risiko kerusakan paru-paru akibat ledakan bergantung pada durasi fase positif dengan tekanan berlebih 70 kPa pada 50 ms atau 140–200 kPa pada 3 ms [4].",
+          injury_table_s4: "Banyak bangunan rusak berat; beberapa mungkin hancur total [2], menciptakan situasi terperangkap di bawah reruntuhan.",
+          injury_table_c4: "Gabungan cedera internal dan kondisi terperangkap berpotensi fatal.",
+          injury_table_p5: "Tingkat kematian tinggi bagi orang tanpa pelindung, namun ambang batas bergantung pada durasi fase positif: 1% kematian pada 190 kPa selama 50 ms atau 400–500 kPa selama 3 ms [4].",
+          injury_table_s5: "Keruntuhan total bangunan; puing-puing besar bergerak dengan cepat [2].",
+          injury_table_c5: "Risiko kematian meningkat tajam ketika tekanan berlebih dan durasinya melampaui ambang batas.",
+          // == AKHIR BAGIAN TAMBAHAN ==
          
           damage_no_significant: "Tidak ada kerusakan struktural signifikan yang diprediksi.",
           equipment_no_significant: "Tidak ada kerusakan peralatan signifikan yang diprediksi.",
@@ -2093,54 +2128,50 @@ function updateEstimationPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapola
   });
 }
      
-      function getInjuryEffects(Po) {
-        const poValue = parseFloat(Po);
-        if (isNaN(poValue) || poValue < 0) {
-          return {
-            primaryKey: "injury_awaiting_input",
-            secondaryKey: null,
-            conclusionKey: null
-          };
-        }
+// GANTI FUNGSI LAMA DENGAN YANG INI
+function getInjuryEffects(Po) {
+  const poValue = parseFloat(Po);
+  if (isNaN(poValue) || poValue < 0) {
+    return {
+      primaryKey: "injury_awaiting_input",
+      secondaryKey: null,
+      conclusionKey: null
+    };
+  }
 
-        if (poValue >= 0.14 && poValue < 20) {
-          return {
-            primaryKey: "injury_no_serious",
-            secondaryKey: "injury_glass_fragments",
-            conclusionKey: "injury_unlikely_primary"
-          };
-        } else if (poValue >= 20 && poValue <= 30) {
-          return {
-            primaryKey: "injury_minor_contusions",
-            secondaryKey: "injury_moderate_damage",
-            conclusionKey: "injury_combo_minor"
-          };
-        } else if (poValue > 30 && poValue <= 50) {
-          return {
-            primaryKey: "injury_eardrum_rupture",
-            secondaryKey: "injury_flying_debris",
-            conclusionKey: "injury_increased_severity"
-          };
-        } else if (poValue > 50 && poValue <= 100) {
-          return {
-            primaryKey: "injury_serious_internal",
-            secondaryKey: "injury_entrapment",
-            conclusionKey: "injury_highly_fatal"
-          };
-        } else if (poValue > 100) {
-          return {
-            primaryKey: "injury_high_mortality",
-            secondaryKey: "injury_total_collapse",
-            conclusionKey: "injury_extreme_fatality_risk"
-          };
-        } else { // For values below 0.14 kPa
-          return {
-            primaryKey: "injury_no_significant_effects",
-            secondaryKey: null,
-            conclusionKey: "injury_none_anticipated"
-          };
-        }
-      }
+  // Logika baru berdasarkan tabel
+  if (poValue < 20) {
+    return {
+      primaryKey: "injury_table_p1",
+      secondaryKey: "injury_table_s1",
+      conclusionKey: "injury_table_c1"
+    };
+  } else if (poValue <= 30) { // Rentang 20-30
+    return {
+      primaryKey: "injury_table_p2",
+      secondaryKey: "injury_table_s2",
+      conclusionKey: "injury_table_c2"
+    };
+  } else if (poValue <= 50) { // Rentang 30-50
+    return {
+      primaryKey: "injury_table_p3",
+      secondaryKey: "injury_table_s3",
+      conclusionKey: "injury_table_c3"
+    };
+  } else if (poValue <= 100) { // Rentang 50-100
+    return {
+      primaryKey: "injury_table_p4",
+      secondaryKey: "injury_table_s4",
+      conclusionKey: "injury_table_c4"
+    };
+  } else { // Rentang > 100
+    return {
+      primaryKey: "injury_table_p5",
+      secondaryKey: "injury_table_s5",
+      conclusionKey: "injury_table_c5"
+    };
+  }
+}
 
 // GANTI FUNGSI LAMA DENGAN YANG INI
 function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated = false) {
@@ -2170,21 +2201,31 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
           
           const effectKeys = getInjuryEffects(Po);
           let html = '';
+
+          // FUNGSI HELPER UNTUK MENGGANTI SITASI
+          const processText = (key) => {
+            if (!key) return '';
+            const text = lang[key] || key;
+            // Ini adalah baris kunci yang mencari [angka] dan menggantinya
+            return text.replace(/\[(\d+)\]/g, (match, citationKey) => {
+              return citations[citationKey] ? ` (${citations[citationKey]})` : match;
+            });
+          };
           
           if (effectKeys.primaryKey) {
-              html += `<li><strong>${lang.primary_effects_label}</strong> ${(lang[effectKeys.primaryKey] || effectKeys.primaryKey)}</li>`;
+              html += `<li><strong>${lang.primary_effects_label}</strong> ${processText(effectKeys.primaryKey)}</li>`;
           }
           if (effectKeys.secondaryKey) {
-              html += `<li><strong>${lang.secondary_tertiary_effects_label}</strong> ${(lang[effectKeys.secondaryKey] || effectKeys.secondaryKey)}</li>`;
+              html += `<li><strong>${lang.secondary_tertiary_effects_label}</strong> ${processText(effectKeys.secondaryKey)}</li>`;
           }
           if (effectKeys.conclusionKey) {
-              html += `<li><strong>${lang.conclusion_label}</strong> ${(lang[effectKeys.conclusionKey] || effectKeys.conclusionKey)}</li>`;
+              html += `<li><strong>${lang.conclusion_label}</strong> ${processText(effectKeys.conclusionKey)}</li>`;
           }
 
           effectsListEl.innerHTML = html || `<li>${lang.injury_no_significant_effects}</li>`;
       }
 
-      // --- MODIFIKASI DIMULAI: Logika untuk peringatan ekstrapolasi Crowl di Panel Cedera ---
+      // --- Logika untuk peringatan ekstrapolasi (TIDAK BERUBAH) ---
       if (method === 'crowl') {
           const panelContentEl = $('panel-injury-crowl').querySelector('.pad');
           let existingWarning = panelContentEl.querySelector('.extrapolation-warning-crowl-inj');
@@ -2200,14 +2241,12 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
                   const warningDiv = document.createElement('div');
                   warningDiv.className = 'extrapolation-warning-crowl-inj';
                   warningDiv.style.cssText = 'color: var(--danger); font-weight: bold; font-style: italic; font-size: 13px; margin: 4px 0 10px;';
-                  warningDiv.textContent = lang.crowl_warning; // Menggunakan kunci terjemahan
+                  warningDiv.textContent = lang.crowl_warning;
                   poValueParagraph.insertAdjacentElement('afterend', warningDiv);
               }
           }
       }
-      // --- MODIFIKASI SELESAI ---
-
-      // --- Logika untuk peringatan ekstrapolasi Alonso di Panel Cedera ---
+      
       if (method === 'alonso') {
           const panelContentEl = $('panel-injury-alonso').querySelector('.pad');
           let existingWarning = panelContentEl.querySelector('.extrapolation-warning');
@@ -2226,7 +2265,6 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
           }
       }
       
-      // --- Logika untuk peringatan ekstrapolasi Sadovski di Panel Cedera ---
       if (method === 'sadovski') {
           const panelContentEl = $('panel-injury-sadovski').querySelector('.pad');
           let existingWarning = panelContentEl.querySelector('.extrapolation-warning-sadovski-inj');
