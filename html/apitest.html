@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Isolasi Kunci API Gemini</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        #output { padding: 20px; border-radius: 8px; margin-top: 20px; }
+        .success { background-color: #e0ffe0; border: 1px solid #008000; }
+        .error { background-color: #ffe0e0; border: 1px solid #c00000; color: #c00000; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>Hasil Tes Kunci API Gemini</h1>
+    <div id="output">Memulai tes...</div>
+
+    <script type="module">
+        import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+
+        // V GANTI BAGIAN INI DENGAN KUNCI API TERBARU ANDA V
+        const YOUR_API_KEY = "AIzaSyCFKMAE8zNKaRfEw1aXTwaHU8R21XxV1S0";
+        // ^ GANTI BAGIAN INI DENGAN KUNCI API TERBARU ANDA ^
+
+        const outputDiv = document.getElementById('output');
+
+        async function runTest() {
+            if (AIzaSyCFKMAE8zNKaRfEw1aXTwaHU8R21XxV1S0 === "GANTI_DENGAN_KUNCI_API_BARU_ANDA") {
+                outputDiv.className = 'error';
+                outputDiv.textContent = "Error: Silakan ganti placeholder 'YOUR_API_KEY' dengan kunci API Anda yang sebenarnya.";
+                return;
+            }
+
+            try {
+                const genAI = new GoogleGenerativeAI(YOUR_API_KEY);
+                const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+                const prompt = "Berikan respons singkat bahwa tes ini berhasil.";
+
+                const result = await model.generateContent(prompt);
+                const response = await result.response;
+                const text = response.text();
+
+                outputDiv.className = 'success';
+                outputDiv.textContent = "✅ SUKSES!\n\nRespons dari Gemini:\n" + text;
+
+            } catch (error) {
+                console.error("Test Gagal:", error);
+                outputDiv.className = 'error';
+                outputDiv.textContent = "❌ GAGAL!\n\nDetail Error:\n" + error.toString();
+            }
+        }
+
+        runTest();
+    </script>
+</body>
+</html>
