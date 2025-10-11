@@ -925,8 +925,8 @@
       let isPageLoaded = false; // Flag to prevent premature execution
 
       const presets = {
-        AN:  { rho: 1725,    dh:  2479,  e_tnt: 4500, eta: 0.35 },
-        LPG: { rho: 493,     dh: 46000,  e_tnt: 4550, eta: 0.03 },
+        AN:  { rho: 1725,    dh:  2479,  e_tnt: 4686, eta: 0.61 },
+        LPG: { rho: 492,     dh: 46011,  e_tnt: 4686, eta: 0.02 },
         H2:  { rho: 0.08375, dh: 130800, e_tnt: 4500, eta: 0.05 }
       };
 
@@ -1608,21 +1608,23 @@
         beirut: {
           name: "2020 Beirut AN Explosion",
           data: [
-            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '300', w_tnt: '576999.986', ze: '3.604', ps: '1.096', po_crowl: '111.073', po_alonso: '85.912', po_sadovski: '63.787', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
-            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '500', w_tnt: '576999.986', ze: '6.006', ps: '0.419', po_crowl: '42.468', po_alonso: '30.771', po_sadovski: '26.163', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
-            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '700', w_tnt: '576999.986', ze: '8.408', ps: '0.250', po_crowl: '25.310', po_alonso: '15.647', po_sadovski: '15.698', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
-            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '1000', w_tnt: '576999.986', ze: '12.012', ps: '0.156', po_crowl: '15.813', po_alonso: '10.235', po_sadovski: '9.617', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
-            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '1500', w_tnt: '576999.986', ze: '18.018', ps: '0.097', po_crowl: '9.857', po_alonso: '6.395', po_sadovski: '5.778', lat: '33.901404', lon: '35.519039', poModel: 'crowl' }
+            { material: 'AN', eta: 0.6532, e_tnt: 4686, rho: 1725, dh: 2479, vol: 1594.2029, dist: 300, w_tnt: 950283.134, ze: 3.051, ps: 1.566, po_crowl: 158.644, po_alonso: 120.012, po_sadovski: 88.231, lat: 33.901404, lon: 35.519039, poModel: 'crowl' },
+            { material: 'AN', eta: 0.6532, e_tnt: 4686, rho: 1725, dh: 2479, vol: 1594.2029, dist: 400, w_tnt: 950283.134, ze: 4.069, ps: 0.856, po_crowl: 86.69, po_alonso: 67.313, po_sadovski: 50.894, lat: 33.901404, lon: 35.519039, poModel: 'crowl' },
+            { material: 'AN', eta: 0.6532, e_tnt: 4686, rho: 1725, dh: 2479, vol: 1594.2029, dist: 568.8, w_tnt: 950283.134, ze: 5.786, ps: 0.446, po_crowl: 45.227, po_alonso: 33.172, po_sadovski: 27.786, lat: 33.901404, lon: 35.519039, poModel: 'crowl' },
+            { material: 'AN', eta: 0.6532, e_tnt: 4686, rho: 1725, dh: 2479, vol: 1594.2029, dist: 802.5, w_tnt: 950283.134, ze: 8.163, ps: 0.261, po_crowl: 26.405, po_alonso: 16.608, po_sadovski: 16.387, lat: 33.901404, lon: 35.519039, poModel: 'crowl' },
+            { material: 'AN', eta: 0.6532, e_tnt: 4686, rho: 1725, dh: 2479, vol: 1594.2029, dist: 934.4, w_tnt: 950283.134, ze: 9.504, ps: 0.211, po_crowl: 21.37, po_alonso: 12.231, po_sadovski: 13.196, lat: 33.901404, lon: 35.519039, poModel: 'crowl' },
+            { material: 'AN', eta: 0.6532, e_tnt: 4686, rho: 1725, dh: 2479, vol: 1594.2029, dist: 3062, w_tnt: 950283.134, ze: 31.145, ps: 0.054, po_crowl: 5.491, po_alonso: 3.389, po_sadovski: 3.065, lat: 33.901404, lon: 35.519039, poModel: 'crowl' }
           ]
         },
         tianjin: {
           name: "2015 Tianjin AN Explosion",
           data: [
-            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1495.6', dist: '300', w_tnt: '450000', ze: '3.915', ps: '0.941', po_crowl: '95.38', po_alonso: '73.21', po_sadovski: '56.12', lat: '39.039677', lon: '117.736059', poModel: 'crowl' },
-            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1495.6', dist: '600', w_tnt: '450000', ze: '7.830', ps: '0.288', po_crowl: '29.18', po_alonso: '18.99', po_sadovski: '17.73', lat: '39.039677', lon: '117.736059', poModel: 'crowl' },
-            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1495.6', dist: '900', w_tnt: '450000', ze: '11.74', ps: '0.162', po_crowl: '16.42', po_alonso: '10.74', po_sadovski: '10.22', lat: '39.039677', lon: '117.736059', poModel: 'crowl' },
-            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1495.6', dist: '1300', w_tnt: '450000', ze: '16.96', ps: '0.104', po_crowl: '10.51', po_alonso: '6.85', po_sadovski: '6.32', lat: '39.039677', lon: '117.736059', poModel: 'crowl' },
-            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1495.6', dist: '2800', w_tnt: '450000', ze: '36.54', ps: '0.042', po_crowl: '4.29', po_alonso: '2.77', po_sadovski: '2.59', lat: '39.039677', lon: '117.736059', poModel: 'crowl' }
+            { material: 'AN', eta: 0.661, e_tnt: 4686, rho: 1725, dh: 2479, vol: 955.421, dist: 300, w_tnt: 576628.00, ze: 3.604, ps: 1.096, po_crowl: 111.073, po_alonso: 85.912, po_sadovski: 63.787, lat: 39.039677, lon: 117.736059, poModel: 'crowl' },
+            { material: 'AN', eta: 0.661, e_tnt: 4686, rho: 1725, dh: 2479, vol: 955.421, dist: 400, w_tnt: 576628.00, ze: 4.806, ps: 0.624, po_crowl: 63.249, po_alonso: 49.186, po_sadovski: 37.065, lat: 39.039677, lon: 117.736059, poModel: 'crowl' },
+            { material: 'AN', eta: 0.661, e_tnt: 4686, rho: 1725, dh: 2479, vol: 955.421, dist: 500, w_tnt: 576628.00, ze: 6.007, ps: 0.419, po_crowl: 42.453, po_alonso: 30.757, po_sadovski: 26.154, lat: 39.039677, lon: 117.736059, poModel: 'crowl' },
+            { material: 'AN', eta: 0.661, e_tnt: 4686, rho: 1725, dh: 2479, vol: 955.421, dist: 1000, w_tnt: 576628.00, ze: 12.014, ps: 0.156, po_crowl: 15.808, po_alonso: 10.231, po_sadovski: 9.613, lat: 39.039677, lon: 117.736059, poModel: 'crowl' },
+            { material: 'AN', eta: 0.661, e_tnt: 4686, rho: 1725, dh: 2479, vol: 955.421, dist: 2000, w_tnt: 576628.00, ze: 24.029, ps: 0.071, po_crowl: 7.211, po_alonso: 4.729, po_sadovski: 4.15, lat: 39.039677, lon: 117.736059, poModel: 'crowl' },
+            { material: 'AN', eta: 0.661, e_tnt: 4686, rho: 1725, dh: 2479, vol: 955.421, dist: 3000, w_tnt: 576628.00, ze: 36.043, ps: 0.047, po_crowl: 4.721, po_alonso: 2.861, po_sadovski: 2.656, lat: 39.039677, lon: 117.736059, poModel: 'crowl' }
           ]
         },
         // =================== SKENARIO LPG EXPLOSION ===================
