@@ -44,9 +44,7 @@
     "publisher": {"@type": "Organization", "name": "Bandung Institute of Technology", "url": "https://che.itb.ac.id/"}
   }
   </script>
-  <script type="module">
-    import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
-  </script>
+
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -832,19 +830,6 @@
                 <p class="footnote" data-lang-key="log_footnote">Click "Save" to log the calculation results. The last 10 entries will be stored in your browser.</p>
             </div>
         </section>
-        <section class="card" id="caseStudySection" aria-labelledby="case-study-head" style="display: none;">
-            <div id="case-study-head" class="card-header">
-            <span data-lang-key="case_study_title">Case Study Incident Report</span>
-            </div>
-            <div style="padding: 14px;">
-            <div id="caseStudyContent">
-              <div id="reportSpinner" style="text-align: center; padding: 40px;">
-                <svg width="48" height="48" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#0079c2"><path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/><path d="M10.72,19.9a8,8,0,0,1-6.5-9.79A7.77,7.77,0,0,1,10.4,4.16a8,8,0,0,1,9.49,6.52A1.54,1.54,0,0,0,21.38,12h.13a1.37,1.37,0,0,0,1.38-1.54,11,11,0,1,0-12.7,12.39A1.54,1.54,0,0,0,12,21.34h0A1.47,1.47,0,0,0,10.72,19.9Z"><animateTransform attributeName="transform" type="rotate" dur="0.75s" values="0 12 12;360 12 12" repeatCount="indefinite"/></path></svg>
-                <p style="font-style: italic; color: var(--muted);" data-lang-key="generating_report">Generating report, please wait...</p>
-              </div>
-            </div>
-          </div>
-        </section>
       </aside>
     </main>
   </div>
@@ -940,9 +925,9 @@
       let isPageLoaded = false; // Flag to prevent premature execution
 
       const presets = {
-        AN:  { rho: 1725,    dh:  2479,  e_tnt: 4500, eta: 0.35 },
-        LPG: { rho: 493,     dh: 46000,  e_tnt: 4550, eta: 0.03 },
-        H2:  { rho: 0.08375, dh: 130800, e_tnt: 4500, eta: 0.05 }
+        AN:  { rho: 1725,    dh:  2479,  e_tnt: 4686, eta: 0.66 },
+        LPG: { rho: 492,     dh: 46011,  e_tnt: 4686, eta: 0.02 },
+        H2:  { rho: 0.08375, dh: 130800, e_tnt: 4686, eta: 0.05 }
       };
 
       const eqMap = {
@@ -1224,10 +1209,7 @@
           equip_filter_overturns: "Filter. Unit overturns or is destroyed. Reactor (cracking). Unit overturns or is destroyed. Steam turbine. Unit overturns or is destroyed. Steam turbine. Controls are damaged.",
           equip_steam_turbine_piping_breaks: "Steam turbine. Piping breaks. Tank sphere. Unit moves and pipes break. Pressure vessel (vertical). Unit overturns or is destroyed.",
           equip_tank_sphere_overturns: "Tank sphere. Unit overturns or is destroyed. Pump. Unit moves on foundation.",
-          equip_floating_roof_collapses: "Tank (floating roof). Roof collapses. Reactor (cracking). Unit overturns or is destroyed. Steam turbine. Unit moves on foundation.",
-
-          case_study_title: "Case Study Incident Report",
-          generating_report: "Generating report, please wait..."
+          equip_floating_roof_collapses: "Tank (floating roof). Roof collapses. Reactor (cracking). Unit overturns or is destroyed. Steam turbine. Unit moves on foundation."
         },
         id: {
           // Page Titles
@@ -1480,13 +1462,11 @@
           equip_filter_overturns: "Filter. Unit terbalik atau hancur. Reaktor (perengkahan). Unit terbalik atau hancur. Turbin uap. Unit terbalik atau hancur. Turbin uap. Kontrol rusak.",
           equip_steam_turbine_piping_breaks: "Turbin uap. Pipa pecah. Tangki bola. Unit bergerak dan pipa pecah. Bejana tekan (vertikal). Unit terbalik atau hancur.",
           equip_tank_sphere_overturns: "Tangki bola. Unit terbalik atau hancur. Pompa. Unit bergerak di atas fondasi.",
-          equip_floating_roof_collapses: "Tangki (atap apung). Atap runtuh. Reaktor (perengkahan). Unit terbalik atau hancur. Turbin uap. Unit bergerak di atas fondasi.",
-          case_study_title: "Laporan Studi Kasus Insiden",
-          generating_report: "Membuat laporan, harap tunggu..."
+          equip_floating_roof_collapses: "Tangki (atap apung). Atap runtuh. Reaktor (perengkahan). Unit terbalik atau hancur. Turbin uap. Unit bergerak di atas fondasi."
         }
       };
 
-      window.currentLanguage = 'en'; // Default language
+      let currentLanguage = 'en'; // Default language
 
       function setLanguage(lang) {
         if (!translations[lang]) return;
@@ -1532,9 +1512,6 @@
         updateEstimationPanels(Po_crowl, Po_alonso, Po_sadovski, isAlonsoExtrapolated);
         updateInjuryPanels(Po_crowl, Po_alonso, Po_sadovski);
         setupFloatingPanel(); 
-
-        document.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang: lang } }));
-
       }
 
       function initLanguage() {
@@ -1626,36 +1603,40 @@
       ];
 
       // GANTI DENGAN BLOK DI BAWAH INI
-      window.simulationScenarios = {
+      const simulationScenarios = {
         // =================== SKENARIO AMONIUM NITRATE EXPLOSION ===================
         beirut: {
           name: "2020 Beirut AN Explosion",
           data: [
-            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '300', w_tnt: '576999.986', ze: '3.604', ps: '1.096', po_crowl: '111.073', po_alonso: '85.912', po_sadovski: '63.787', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
-            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '500', w_tnt: '576999.986', ze: '6.006', ps: '0.419', po_crowl: '42.468', po_alonso: '30.771', po_sadovski: '26.163', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
-            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '700', w_tnt: '576999.986', ze: '8.408', ps: '0.250', po_crowl: '25.310', po_alonso: '15.647', po_sadovski: '15.698', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
-            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '1000', w_tnt: '576999.986', ze: '12.012', ps: '0.156', po_crowl: '15.813', po_alonso: '10.235', po_sadovski: '9.617', lat: '33.901404', lon: '35.519039', poModel: 'crowl' },
-            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1734.8209', dist: '1500', w_tnt: '576999.986', ze: '18.018', ps: '0.097', po_crowl: '9.857', po_alonso: '6.395', po_sadovski: '5.778', lat: '33.901404', lon: '35.519039', poModel: 'crowl' }
+            { material: 'AN', eta: 0.6532, e_tnt: 4686, rho: 1725, dh: 2479, vol: 1594.203, dist: 300, w_tnt: 950283.3, ze: 3.051, ps: 1.566, po_crowl: 158.644, po_alonso: 120.012, po_sadovski: 88.231, lat: 33.9014, lon: 35.51904, poModel: 'crowl' },
+            { material: 'AN', eta: 0.6532, e_tnt: 4686, rho: 1725, dh: 2479, vol: 1594.203, dist: 400, w_tnt: 950283.3, ze: 4.069, ps: 0.856, po_crowl: 86.69, po_alonso: 67.313, po_sadovski: 50.894, lat: 33.9014, lon: 35.51904, poModel: 'crowl' },
+            { material: 'AN', eta: 0.6532, e_tnt: 4686, rho: 1725, dh: 2479, vol: 1594.203, dist: 568.8, w_tnt: 950283.3, ze: 5.786, ps: 0.446, po_crowl: 45.227, po_alonso: 33.172, po_sadovski: 27.786, lat: 33.9014, lon: 35.51904, poModel: 'crowl' },
+            { material: 'AN', eta: 0.6532, e_tnt: 4686, rho: 1725, dh: 2479, vol: 1594.203, dist: 802.5, w_tnt: 950283.3, ze: 8.163, ps: 0.261, po_crowl: 26.405, po_alonso: 16.608, po_sadovski: 16.387, lat: 33.9014, lon: 35.51904, poModel: 'crowl' },
+            { material: 'AN', eta: 0.6532, e_tnt: 4686, rho: 1725, dh: 2479, vol: 1594.203, dist: 934.4, w_tnt: 950283.3, ze: 9.504, ps: 0.211, po_crowl: 21.37, po_alonso: 12.231, po_sadovski: 13.196, lat: 33.9014, lon: 35.51904, poModel: 'crowl' },
+            { material: 'AN', eta: 0.6532, e_tnt: 4686, rho: 1725, dh: 2479, vol: 1594.203, dist: 1600, w_tnt: 950283.3, ze: 16.274, ps: 0.109, po_crowl: 11.05, po_alonso: 7.196, po_sadovski: 6.541, lat: 33.9014, lon: 35.51904, poModel: 'crowl' },
+            { material: 'AN', eta: 0.6532, e_tnt: 4686, rho: 1725, dh: 2479, vol: 1594.203, dist: 3000, w_tnt: 950283.3, ze: 30.514, ps: 0.055, po_crowl: 5.609, po_alonso: 3.471, po_sadovski: 3.136, lat: 33.9014, lon: 35.51904, poModel: 'crowl' }
           ]
-        },
+        },        
         tianjin: {
           name: "2015 Tianjin AN Explosion",
           data: [
-            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1495.6', dist: '300', w_tnt: '450000', ze: '3.915', ps: '0.941', po_crowl: '95.38', po_alonso: '73.21', po_sadovski: '56.12', lat: '39.039677', lon: '117.736059', poModel: 'crowl' },
-            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1495.6', dist: '600', w_tnt: '450000', ze: '7.830', ps: '0.288', po_crowl: '29.18', po_alonso: '18.99', po_sadovski: '17.73', lat: '39.039677', lon: '117.736059', poModel: 'crowl' },
-            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1495.6', dist: '900', w_tnt: '450000', ze: '11.74', ps: '0.162', po_crowl: '16.42', po_alonso: '10.74', po_sadovski: '10.22', lat: '39.039677', lon: '117.736059', poModel: 'crowl' },
-            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1495.6', dist: '1300', w_tnt: '450000', ze: '16.96', ps: '0.104', po_crowl: '10.51', po_alonso: '6.85', po_sadovski: '6.32', lat: '39.039677', lon: '117.736059', poModel: 'crowl' },
-            { material: 'AN', eta: '0.35', e_tnt: '4500', rho: '1725', dh: '2479', vol: '1495.6', dist: '2800', w_tnt: '450000', ze: '36.54', ps: '0.042', po_crowl: '4.29', po_alonso: '2.77', po_sadovski: '2.59', lat: '39.039677', lon: '117.736059', poModel: 'crowl' }
+            { material: 'AN', eta: 0.661, e_tnt: 4686, rho: 1725, dh: 2479, vol: 955.9421, dist: 300, w_tnt: 576628.88, ze: 3.604, ps: 1.096, po_crowl: 111.023, po_alonso: 85.875, po_sadovski: 63.761, lat: 39.039677, lon: 117.736059, poModel: 'crowl' },
+            { material: 'AN', eta: 0.661, e_tnt: 4686, rho: 1725, dh: 2479, vol: 955.9421, dist: 400, w_tnt: 576628.88, ze: 4.806, ps: 0.621, po_crowl: 62.899, po_alonso: 48.166, po_sadovski: 37.885, lat: 39.039677, lon: 117.736059, poModel: 'crowl' },
+            { material: 'AN', eta: 0.661, e_tnt: 4686, rho: 1725, dh: 2479, vol: 955.9421, dist: 500, w_tnt: 576628.88, ze: 6.007, ps: 0.419, po_crowl: 42.453, po_alonso: 30.757, po_sadovski: 26.154, lat: 39.039677, lon: 117.736059, poModel: 'crowl' },
+            { material: 'AN', eta: 0.661, e_tnt: 4686, rho: 1725, dh: 2479, vol: 955.9421, dist: 1000, w_tnt: 576628.88, ze: 12.014, ps: 0.156, po_crowl: 15.808, po_alonso: 10.233, po_sadovski: 9.615, lat: 39.039677, lon: 117.736059, poModel: 'crowl' },
+            { material: 'AN', eta: 0.661, e_tnt: 4686, rho: 1725, dh: 2479, vol: 955.9421, dist: 2000, w_tnt: 576628.88, ze: 24.029, ps: 0.071, po_crowl: 7.211, po_alonso: 4.579, po_sadovski: 4.115, lat: 39.039677, lon: 117.736059, poModel: 'crowl' },
+            { material: 'AN', eta: 0.661, e_tnt: 4686, rho: 1725, dh: 2479, vol: 955.9421, dist: 3000, w_tnt: 576628.88, ze: 36.043, ps: 0.047, po_crowl: 4.721, po_alonso: 2.861, po_sadovski: 2.606, lat: 39.039677, lon: 117.736059, poModel: 'crowl' }
           ]
-        },
+        },        
         // =================== SKENARIO LPG EXPLOSION ===================
         sanJuanico: {
           name: "1984 San Juanico LPG Explosion",
           data: [
-            { material: 'LPG', eta: '0.03', e_tnt: '4550', rho: '493', dh: '50000', vol: '118947.368', dist: '300', w_tnt: '339000', ze: '4.32', ps: '0.78', po_crowl: '79.02', po_alonso: '62.11', po_sadovski: '50.18', lat: '19.523999', lon: '-99.109216', poModel: 'crowl' },
-            { material: 'LPG', eta: '0.03', e_tnt: '4550', rho: '493', dh: '50000', vol: '118947.368', dist: '550', w_tnt: '339000', ze: '7.92', ps: '0.28', po_crowl: '28.38', po_alonso: '18.87', po_sadovski: '17.65', lat: '19.523999', lon: '-99.109216', poModel: 'crowl' },
-            { material: 'LPG', eta: '0.03', e_tnt: '4550', rho: '493', dh: '50000', vol: '118947.368', dist: '1000', w_tnt: '339000', ze: '14.4', ps: '0.12', po_crowl: '12.16', po_alonso: '8.23', po_sadovski: '8.44', lat: '19.523999', lon: '-99.109216', poModel: 'crowl' },
-            { material: 'LPG', eta: '0.03', e_tnt: '4550', rho: '493', dh: '50000', vol: '118947.368', dist: '1300', w_tnt: '339000', ze: '18.72', ps: '0.08', po_crowl: '8.1', po_alonso: '5.65', po_sadovski: '5.43', lat: '19.523999', lon: '-99.109216', poModel: 'crowl' }
+            { material: 'LPG', eta: '0.02', e_tnt: '4686', rho: '492', dh: '46011', vol: '11000', dist: '200', w_tnt: '1062789', ze: '1.96', ps: '4.303', po_crowl: '436.014', po_alonso: '292.232', po_sadovski: '227.758', lat: '19.523999', lon: '-99.109216', poModel: 'crowl' },
+            { material: 'LPG', eta: '0.02', e_tnt: '4686', rho: '492', dh: '46011', vol: '11000', dist: '300', w_tnt: '1062789', ze: '2.94', ps: '1.7', po_crowl: '172.246', po_alonso: '129.355', po_sadovski: '95.119', lat: '19.523999', lon: '-99.109216', poModel: 'crowl' },
+            { material: 'LPG', eta: '0.02', e_tnt: '4686', rho: '492', dh: '46011', vol: '11000', dist: '600', w_tnt: '1062789', ze: '5.879', ps: '0.434', po_crowl: '44.011', po_alonso: '32.115', po_sadovski: '27.072', lat: '19.523999', lon: '-99.109216', poModel: 'crowl' },
+            { material: 'LPG', eta: '0.02', e_tnt: '4686', rho: '492', dh: '46011', vol: '11000', dist: '1200', w_tnt: '1062789', ze: '11.769', ps: '0.16', po_crowl: '16.235', po_alonso: '10.491', po_sadovski: '9.89', lat: '19.523999', lon: '-99.109216', poModel: 'crowl' },
+            { material: 'LPG', eta: '0.02', e_tnt: '4686', rho: '492', dh: '46011', vol: '11000', dist: '2000', w_tnt: '1062789', ze: '19.598', ps: '0.089', po_crowl: '8.984', po_alonso: '5.801', po_sadovski: '5.225', lat: '19.523999', lon: '-99.109216', poModel: 'crowl' }
           ]
         },
         borgoItaly: {
@@ -3943,177 +3924,5 @@ window.addEventListener('load', () => {
 
   });
   </script>
-
-<script type="module">
-  // Menggunakan ES Module untuk mengimpor pustaka Google AI
-  import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
-
-  // --- Konfigurasi API ---
-  const API_KEYS = [
-    "AIzaSyDG5smBPe4YS0DfPzdF32bMk1aTUM_fVt8",
-    "AIzaSyBOol9JlsJIhmPmcaE8VqlKlXPHxEJ6Bic",
-    "AIzaSyCVfb2YVOx2mmRAlbnDIqCf29a7yZMK5J0",
-    "AIzaSyCB_s_Wvn9a63osNm5vwyqYtmOOH9Rw1tk"
-  ];
-  let currentApiKeyIndex = 0;
-  
-  // --- Elemen DOM ---
-  const simulationSelector = document.getElementById('simulationSelector');
-  const caseStudySection = document.getElementById('caseStudySection');
-  const caseStudyContent = document.getElementById('caseStudyContent');
-  const reportSpinner = document.getElementById('reportSpinner');
-
-  // Variabel global untuk cache dan status
-  let reportCache = {}; 
-  let currentScenarioKey = null;
-  let isGenerating = false;
-
-  // --- Fungsi Utama untuk Menghasilkan Laporan ---
-  async function generateIncidentReport(scenarioKey) {
-    if (isGenerating) {
-        console.log("A report generation is already in progress.");
-        return;
-    }
-
-    const scenario = window.simulationScenarios[scenarioKey];
-    if (!scenario) {
-        console.error(`Scenario with key "${scenarioKey}" not found.`);
-        return;
-    }
-    
-    currentScenarioKey = scenarioKey;
-    const lang = window.currentLanguage || 'en';
-    const cacheKey = `${scenarioKey}-${lang}`;
-
-    caseStudySection.style.display = 'block';
-    reportSpinner.style.display = 'block';
-    caseStudyContent.innerHTML = reportSpinner.outerHTML; 
-    
-    if (reportCache[cacheKey]) {
-        displayReport(reportCache[cacheKey]);
-        return;
-    }
-
-    isGenerating = true;
-    
-    try {
-      const genAI = new GoogleGenerativeAI(API_KEYS[currentApiKeyIndex]);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-      const prompt = createPromptForGemini(scenario, lang);
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const reportText = response.text();
-
-      reportCache[cacheKey] = reportText;
-      displayReport(reportText);
-
-    } catch (error) {
-      console.error("Error calling Gemini API:", error);
-      
-      // Coba kunci API berikutnya jika terjadi kesalahan
-      currentApiKeyIndex = (currentApiKeyIndex + 1) % API_KEYS.length;
-      console.log(`Switching to API Key index: ${currentApiKeyIndex}`);
-      
-      const errorMsg = lang === 'id' 
-        ? 'Terjadi kesalahan saat membuat laporan. Silakan coba lagi.'
-        : 'An error occurred while generating the report. Please try again.';
-      caseStudyContent.innerHTML = `<p style="color: var(--danger); padding: 20px; text-align: center;">${errorMsg}</p>`;
-    } finally {
-        isGenerating = false;
-        reportSpinner.style.display = 'none';
-    }
-  }
-
-  // --- Fungsi untuk Membuat Prompt ---
-  function createPromptForGemini(scenario, lang) {
-      const languageInstruction = lang === 'id'
-          ? "Tulis laporan dalam Bahasa Indonesia (Ejaan Yang Disempurnakan - EYD) dengan gaya akademis dan formal."
-          : "Write the report in English (Academic Phrasebank style) with a formal and analytical tone.";
-
-      const logDataSummary = scenario.data.map((log, index) => 
-          `  - Node ${index + 1}: At distance ${log.dist} m, Overpressure (Crowl) is ${log.po_crowl} kPa.`
-      ).join('\n');
-
-      return `
-        **System Role:** You are an AI assistant and an expert in chemical process safety. You have deep knowledge of explosion incidents and understand standards from CCPS, AIChE, NFPA, OSHA, and ISO. Your task is to generate a formal, academic, and analytical Case Study Report on an explosion incident. You must connect simulation results with the incident based on literature. Reference the bibliography at https://virdanurlulu.github.io/html/bibliography_sim_modeling_explosion.html for citations where appropriate.
-
-        **Language Requirement:** ${languageInstruction}
-
-        **Incident Data:**
-        - Incident Name: ${scenario.name}
-        - Chemical Material: ${scenario.data[0].material}
-        - Simulation Log Data Summary:
-        ${logDataSummary}
-
-        **Report Structure:**
-        Generate a report with the following structure. Use Markdown for formatting (e.g., '#' for titles, '**' for bold, '*' for lists).
-
-        # 1. Chronology of Events
-        (Describe in detail how and why the incident occurred, based on public knowledge of the "${scenario.name}" event.)
-
-        # 2. Root Cause Analysis
-        (Analyze the root causes of the incident, referencing literature. Conclude your analysis.)
-
-        # 3. Simulation Data Analysis
-        (Interpret the provided simulation log data, including chemical properties, overpressure calculations, damage/injury estimations, and the contour map's significance. Explain what the results mean in the context of this incident.)
-
-        # 4. Risk Mitigation Strategies
-        (Propose mitigation measures based on industry standards like CCPS Risk Based Process Safety (RBPS) elements and facility siting guidelines (e.g., API RP 752/753). Connect them directly to the identified root causes.)
-
-        # 5. Formal Recommendations
-        (Formulate specific short-term and long-term recommendations, drawing lessons from existing safety literature and the analysis of this incident.)
-      `;
-  }
-
-  // --- [PERBAIKAN] Fungsi untuk Menampilkan Laporan dengan Format Markdown ---
-  function displayReport(markdownText) {
-      // 1. Ganti **teks** menjadi <strong>teks</strong>
-      let html = markdownText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-      
-      // 2. Ganti # Judul menjadi <h1>Judul</h1>
-      html = html.replace(/^# (.*$)/g, '<h1>$1</h1>');
-
-      // 3. Ganti baris yang diawali * atau - menjadi <li>...</li>
-      html = html.replace(/^\* (.*$)/g, '<li>$1</li>');
-      html = html.replace(/^- (.*$)/g, '<li>$1</li>');
-
-      // 4. Bungkus semua <li> dengan <ul>...</ul>
-      html = html.replace(/<li>(.*?)<\/li>/g, '<ul><li>$1</li></ul>');
-      html = html.replace(/<\/ul>\s*<ul>/g, ''); // Gabungkan list yang berdekatan
-
-      // 5. Ganti baris baru dengan <br> (untuk paragraf)
-      html = html.replace(/\n/g, '<br>');
-
-      // 6. Hapus <br> yang tidak perlu sebelum atau sesudah list/heading
-      html = html.replace(/<br><ul>/g, '<ul>');
-      html = html.replace(/<\/ul><br>/g, '</ul>');
-      html = html.replace(/<br><h1>/g, '<h1>');
-      html = html.replace(/<\/h1><br>/g, '</h1>');
-      
-      caseStudyContent.innerHTML = html;
-      reportSpinner.style.display = 'none';
-      caseStudySection.style.display = 'block';
-  }
-
-  // --- Event Listeners ---
-  simulationSelector.addEventListener('change', (event) => {
-      generateIncidentReport(event.target.value);
-  });
-  
-  document.addEventListener('languageChanged', (event) => {
-      if (currentScenarioKey) {
-          generateIncidentReport(currentScenarioKey);
-      }
-  });
-
-  document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        if (simulationSelector.value) {
-            generateIncidentReport(simulationSelector.value);
-        }
-    }, 500);
-  });
-</script>
-
 </body>
 </html>
