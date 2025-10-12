@@ -348,15 +348,79 @@
         }
     }
 
-    /* 2. Styles for Mobile Devices in General */
-    @media (max-width: 768px) {
-        .banner .brand-text h1 { font-size: 1rem; }
-        .banner .brand-text h2 { font-size: 0.8rem; }
-        .footer-buttons { flex-wrap: wrap; justify-content: center; gap: 8px; }
-        #contourMapContainer {
-            height: 65vh;
-        }
+/* 2. Styles for Mobile Devices in General */
+@media (max-width: 768px) {
+    .banner .brand-text h1 { font-size: 1rem; }
+    .banner .brand-text h2 { font-size: 0.8rem; }
+    .footer-buttons { flex-wrap: wrap; justify-content: center; gap: 8px; }
+    #contourMapContainer {
+        height: 65vh;
     }
+
+        /* === TAMBAHKAN KODE BARU DI BAWAH INI === */
+        /* 1. Ubah banner menjadi kolom dan tengahkan isinya */
+        .banner {
+            flex-direction: column; /* Susun item secara vertikal */
+            align-items: center;    /* Tengahkan item secara horizontal */
+            gap: 1rem;              /* Beri jarak antar item (logo/judul dan tombol bahasa) */
+        }
+
+        /* 2. Tengahkan blok logo dan judul itu sendiri */
+        .banner .brandbar {
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            gap: 12px;
+        }
+
+        .banner .brand-text {
+            align-items: center;
+        }
+
+        .banner .brand-text h1,
+        .banner .brand-text h3 {
+            text-align: center;
+        }
+
+        /* 3. Atur ulang posisi tombol bahasa */
+        #language-switcher {
+            position: static; /* Hapus posisi absolut agar mengikuti alur vertikal */
+            bottom: auto;
+            right: auto;
+        }
+
+        /* 4. Pastikan tombol Menu tetap di kanan atas */
+        .banner .dropdown-menu {
+            /*position: fixed; /* Pastikan menu tetap mengambang */
+            top: 12px;      
+            right: 12px;
+            z-index: 1002;   /* Pastikan menu selalu tampil di lapisan paling atas */
+        }
+        /* === AKHIR DARI KODE BARU === */
+
+    /* === SEMUA KODE UNTUK SELULER HARUS DI DALAM BLOK INI === */
+    .banner .brandbar {
+        flex-direction: column; /* Hanya aktif di seluler */
+        align-items: center;   /* Hanya aktif di seluler */
+        width: 100%;           
+        gap: 12px;             
+    }
+
+    .banner .brand-text {
+        align-items: center; /* Hanya aktif di seluler */
+    }
+
+    .banner .brand-text h1,
+    .banner .brand-text h3 {
+        text-align: center; /* Hanya aktif di seluler */
+    }
+
+    .banner .dropdown-menu {
+        top: 12px;      
+        right: 12px;
+    }
+    /* === AKHIR DARI BLOK SELULER === */
+}
 
     /* 3. Fine-tuning for Small Screens */
     @media (max-width: 430px) {
@@ -412,6 +476,7 @@
 
     @media (max-width: 480px) {
       .dropdown-menu {
+        position: fixed;
         top: 12px;
         right: 12px;
       }
@@ -526,6 +591,14 @@
     font-style: italic;
     text-shadow: 0 1px 2px rgba(0,0,0,0.25);
   }
+  /* === TAMBAHKAN KODE BARU DI BAWAH INI === */
+  .banner .brand-text h3:not(.authors) {
+      font-size: clamp(12px, 1.3vw, 17px); /* Ukuran font diperkecil dan responsif */
+      font-weight: 500; /* Sedikit lebih ringan dari judul utama */
+      margin: 0;
+  }
+  /* === AKHIR DARI KODE BARU === */
+
   </style>
 </head>
 <body class="theme-itb full">
@@ -549,9 +622,19 @@
         <button class="dropdown-toggle"><span data-lang-key="menu_button">Menu</span><span class="hamburger-icon">&#9776;</span></button>
         <div class="dropdown-content">
           <a href="/" data-lang-key="menu_home">Home</a>
-          <a href="/html/simulation-modeling-visualisation-explosion.html" data-lang-key="menu_app">Simulation & Modeling Application</a>
+          <a href="/html/simulation-modeling-visualisation-explosion.html" data-lang-key="menu_app">Simulation & Modeling Software</a>
           <a href="/html/flowprocess-simulation.html" data-lang-key="menu_guide">Workflow Process of Simulation</a>
-          <a href="/html/presentation-slide.html" data-lang-key="menu_presentation">Presentation</a>
+          <div class="submenu-container">
+            <a href="#" class="submenu-toggle" data-lang-key="menu_case_study">ACADEMIC CASE STUDY <span class="submenu-arrow">&#9656;</span></a>
+            <div class="submenu-content">
+              <a href="/html/case-study-beirut-explosion-analysis.html"><span class="submenu-arrow">&#9656;</span> 2020 Beirut AN Explosion</a>
+              <a href="/html/case-study-tianjin-explosion-analysis.html"><span class="submenu-arrow">&#9656;</span> 2015 Tianjin AN Explosion</a>
+              <a href="/html/case-study-sanjuanico-explosion-analysis.html"><span class="submenu-arrow">&#9656;</span> 1984 Sanjuanico LPG Explosion</a>
+              <a href="/html/case-study-borgo-italy-explosion-analysis.html"><span class="submenu-arrow">&#9656;</span> 2018 Borgo Italy LPG Explosion</a>
+              <a href="/html/case-study-muskingum-explosion-analysis.html"><span class="submenu-arrow">&#9656;</span> 2007 Muskingum H2 Explosion</a>
+              <a href="/html/case-study-santaclara-explosion-analysis.html"><span class="submenu-arrow">&#9656;</span> 2019 Santaclara H2 Explosion</a>
+            </div>
+          </div>
           <a href="#" data-lang-key="menu_journal">Journal & Conference (coming soon)</a>
           <a href="/html/bibliography_sim_modeling_explosion.html" data-lang-key="menu_bibliography">Bibliography</a>
         </div>
@@ -888,6 +971,21 @@
       };
     }
 
+    function saveFormStateToLocalStorage() {
+      try {
+        const currentState = {};
+        inputFields.forEach(id => {
+          const el = $(id);
+          if (el && el.value !== undefined) {
+            currentState[id] = el.value;
+          }
+        });
+        localStorage.setItem('explosionSimState', JSON.stringify(currentState));
+      } catch (error) {
+        console.warn("Could not save form state to localStorage:", error);
+      }
+    }
+
     function parseNumberLoose(s){
       if (s==null) return NaN;
       s = String(s).trim().replace(/\s+/g,'').replace(/\u00A0/g,'');
@@ -961,14 +1059,14 @@
         en: {
           // Page Titles
           page_title: "Simulation & Modeling of Explosion Effects (TNT Equivalence)",
-          app_title: "Simulation and Modeling of Explosion Effects Based on TNT Equivalence",
+          app_title: "Simulation and Modeling of Explosion Effects Based on TNT Equivalence using JavaScript",
           app_subtitle1: "Chemical Engineering, ",
           app_subtitle2: "Bandung Institute of Technology",
 
           // Menu
           menu_button: "Menu",
           menu_home: "Home",
-          menu_app: "Simulation & Modeling Application",
+          menu_app: "Simulation & Modeling Software",
           menu_guide: "Workflow Process of Simulation",
           menu_presentation: "Presentation",
           menu_journal: "Journal & Conference (coming soon)",
@@ -1214,14 +1312,14 @@
         id: {
           // Page Titles
           page_title: "Simulasi & Pemodelan Efek Ledakan (Ekuivalensi TNT)",
-          app_title: "Simulasi dan Pemodelan Efek Ledakan Berdasarkan Ekuivalensi TNT",
+          app_title: "Simulasi dan Pemodelan Efek Ledakan Berdasarkan Ekuivalensi TNT menggunakan JavaScript",
           app_subtitle1: "Teknik Kimia, ",
           app_subtitle2: "Institut Teknologi Bandung",
          
           // Menu
           menu_button: "Menu",
           menu_home: "Beranda",
-          menu_app: "Aplikasi Simulasi & Pemodelan",
+          menu_app: "Software Simulasi & Pemodelan",
           menu_guide: "Proses Alur Kerja Simulasi",
           menu_presentation: "Presentasi",
           menu_journal: "Jurnal & Konferensi (segera hadir)",
@@ -2378,7 +2476,7 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
         if (btnAddResult) btnAddResult.disabled = false;
 
         if (!isInitialLoad) {
-          //saveStateToURL();
+          saveFormStateToLocalStorage();
         }
       }
 
@@ -2871,13 +2969,13 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
 
         // 1. Ambil data dari array simulationLog berdasarkan indeks
         const logData = simulationLog[index];
-        
         // *** NEW FEATURE: Panggil fungsi untuk menampilkan popup di peta. ***
         showMapPopupForLog(logData);
 
         // 2. Perbarui nilai pada form input utama
         $('vol').value = logData.vol;
         $('dist').value = logData.dist;
+        $('eta').value = logData.eta;
         
         // Mengubah material sedikit lebih rumit karena perlu memicu event 'change'
         const materialSelect = $('material');
@@ -3098,6 +3196,7 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
                       
                               $('vol').value = firstLog.vol;
                               $('dist').value = firstLog.dist;
+                              $('eta').value = firstLog.eta;
                       
                               compute(true);
                               
@@ -3214,6 +3313,7 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
                   materialSelect.value = materialValue;
                   $('vol').value = firstLog.vol;
                   $('dist').value = firstLog.dist;
+                  $('eta').value = firstLog.eta;
                   // Picu event 'change' agar kalkulator dan properti material ikut ter-update
                   materialSelect.dispatchEvent(new Event('change'));
               } else {
@@ -3789,7 +3889,7 @@ window.addEventListener('load', () => {
       if (poModelSelect) poModelSelect.value = settings.poModel;
       // Memanggil updateMapFromLog() di sini untuk memastikan peta melakukan sinkronisasi dengan
       // data log yang sudah dimuat saat halaman pertama kali dibuka.
-      updateMapFromLog(); 
+      updateMapFromLog();
     })();
 
     // Listen for custom events from the other script for CSV import
