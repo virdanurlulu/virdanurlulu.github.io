@@ -354,10 +354,83 @@
     .dropdown-toggle { display: flex; align-items: center; gap: 8px; background-color: rgba(255, 255, 255, 0.9); color: var(--ink); padding: 8px 16px; font-size: 16px; font-weight: 600; border: 1px solid #d6e3ef; border-radius: 8px; cursor: pointer; transition: background-color 0.2s ease, border-color 0.2s ease; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); }
     .dropdown-toggle:hover { background-color: #ffffff; border-color: var(--blue-itb); }
     .dropdown-toggle .hamburger-icon { font-size: 20px; line-height: 1; }
-    .dropdown-content { display: none; opacity: 0; visibility: hidden; position: absolute; right: 0; top: 110%; background-color: #ffffff; min-width: 220px; box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2); border-radius: 8px; overflow: hidden; transform: translateY(-10px); transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s; }
+    .dropdown-content { overflow: visible; display: none; opacity: 0; visibility: hidden; position: absolute; right: 0; top: 110%; background-color: #ffffff; min-width: 220px; box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2); border-radius: 8px; transform: translateY(-10px); transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s; }
     .dropdown-menu.is-active .dropdown-content { display: block; opacity: 1; visibility: visible; transform: translateY(0); }
     .dropdown-content a { color: var(--ink); padding: 12px 16px; text-decoration: none; display: block; transition: background-color 0.2s ease, color 0.2s ease; font-weight: 500; white-space: nowrap; }
     .dropdown-content a:hover { background-color: var(--stripe); color: var(--blue-itb); }
+    
+    .submenu-container {
+      position: relative;
+    }
+    .submenu-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .submenu-toggle .submenu-arrow {
+      display: inline-block;
+      transition: transform 0.2s ease;
+      font-size: 10px;
+    }
+    .submenu-content {
+      display: none;
+      position: absolute;
+      left: 100%;
+      top: -10px; /* Adjust vertical position */
+      background-color: #ffffff;
+      min-width: 260px; /* Wider for longer text */
+      box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      z-index: 10;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(10px);
+      transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+    }
+    .submenu-content a {
+      white-space: normal; /* Allow text wrap */
+      line-height: 1.4;
+    }
+
+    /* Show on hover for desktop */
+@media (min-width: 769px) {
+  .submenu-content {
+    left: auto;
+    right: 100%;
+    top: -10px;           /* tetap */
+  }
+  /* opsional: naikkan z-index jika perlu melintas elemen lain */
+  .submenu-content { z-index: 1010; }
+}
+    
+    /* Active state for mobile/click */
+    .submenu-container.is-active > .submenu-content {
+      display: block;
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+    }
+    .submenu-container.is-active > .submenu-toggle .submenu-arrow {
+       transform: rotate(90deg);
+    }
+    
+    /* Mobile adjustments */
+    @media (max-width: 768px) {
+        .submenu-content {
+            position: static;
+            left: auto;
+            top: auto;
+            min-width: 100%;
+            box-shadow: none;
+            border-radius: 0;
+            transform: none !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            background-color: var(--stripe);
+            padding-left: 15px;
+        }
+    }
+
     #language-switcher { position: absolute; bottom: 12px; right: clamp(16px, 2.4vw, 28px); display: flex; gap: 8px; z-index: 10; }
     .lang-btn { width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.7); background-color: rgba(255, 255, 255, 0.1); cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); opacity: 0.7; }
     .lang-btn:hover { transform: scale(1.1); opacity: 1; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); }
@@ -396,13 +469,74 @@
         #toggle-modal { top: 55%; }
         .content-card { padding: 20px; }
         #language-switcher { bottom: 12px; right: 20px; top: auto; }
+        
+        .dropdown-menu {
+          left: 12px;     /* geser ke kiri */
+          right: auto;    /* hentikan anchor di kanan */
+        }
+        .dropdown-content {
+          left: 0;        /* buka panel dari kiri */
+          right: auto;
+          text-align: left;
+          overflow: visible; /* aman jika submenu panjang */
+        }
     }
+
     @media (max-width: 480px) {
       .dropdown-menu { top: 12px; right: 12px; }
       #toggle-flyer { top: 70%; }
       #toggle-modal { top: 48%; }
       .content-card { padding: 15px; }
+      .dropdown-content {
+        min-width: calc(100vw - 24px); /* 12px margin kiri/kanan */
+      }
     }
+
+    /* TANDA SUBMENU DI ITEM "ACADEMIC CASE STUDY" (top-level) */
+    .submenu-container > .submenu-toggle {
+      position: relative;
+      padding-left: 26px;            /* ruang untuk caret kiri */
+    }
+
+    /* caret default = ▶ (tertutup) di kiri teks */
+    .submenu-container > .submenu-toggle::before {
+      content: "▶";
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      line-height: 1;
+      opacity: 0.9;
+    }
+
+    /* saat TERBUKA (klik di mobile) → caret jadi ▾ */
+    .submenu-container.is-active > .submenu-toggle::before { content: "▼"; }
+
+    /* saat HOVER di desktop → caret juga jadi ▾ */
+    @media (min-width: 769px) {
+      .submenu-container:hover > .submenu-toggle::before { content: "▼"; }
+    }
+
+    /* hindari caret ganda: sembunyikan span-arrow hanya untuk toggle top-level */
+    .submenu-container > .submenu-toggle .submenu-arrow { display: none; }
+
+    /* Ratakan baris ke-2 dan seterusnya sejajar dengan baris pertama (setelah ikon) */
+    .submenu-content a {
+      position: relative;       /* jadi anchor untuk ikon */
+      padding-left: 22px;       /* ruang untuk ikon + jarak */
+      white-space: normal;      /* tetap boleh membungkus (sudah ada) */
+      line-height: 1.4;
+    }
+
+    .submenu-content a .submenu-arrow {
+      position: absolute;
+      left: 8px;                /* posisi ikon di kiri */
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;     /* klik tetap ke link */
+    }
+
   </style>
 </head>
 <body>
@@ -425,15 +559,24 @@
       </div>
       <div class="header-controls">
         <div class="dropdown-menu">
-            <button class="dropdown-toggle" aria-controls="dropdown-content-main" aria-expanded="false">
-                <span data-lang-key="menu_toggle">Menu</span><span class="hamburger-icon">&#9776;</span>
-            </button>
-            <div class="dropdown-content" id="dropdown-content-main">
-                <a href="#" data-lang-key="menu_home">Home</a>
-                <a href="#" data-lang-key="menu_app">Simulation App</a>
-                <a href="#" data-lang-key="menu_workflow">Workflow Process</a>
-                <a href="#" data-lang-key="menu_presentation">Presentation</a>
-                <a href="#" data-lang-key="menu_bibliography">Bibliography</a>
+            <button class="dropdown-toggle"><span data-lang-key="menu_button">Menu</span><span class="hamburger-icon">&#9776;</span></button>
+            <div class="dropdown-content">
+              <a href="/" data-lang-key="menu_home">Home</a>
+              <a href="/html/simulation-modeling-visualisation-explosion.html" data-lang-key="menu_app">Simulation & Modeling Software</a>
+              <a href="/html/flowprocess-simulation.html" data-lang-key="menu_guide">Workflow Process of Simulation</a>
+              <div class="submenu-container">
+                <a href="#" class="submenu-toggle" data-lang-key="menu_case_study">ACADEMIC CASE STUDY <span class="submenu-arrow">25BC;</span></a>
+                <div class="submenu-content">
+                  <a href="/html/case-study-beirut-explosion-analysis.html"><span class="submenu-arrow">&#9656;</span> 2020 Beirut AN Explosion</a>
+                  <a href="/html/case-study-tianjin-explosion-analysis.html"><span class="submenu-arrow">&#9656;</span> 2015 Tianjin AN Explosion</a>
+                  <a href="/html/case-study-sanjuanico-explosion-analysis.html"><span class="submenu-arrow">&#9656;</span> 1984 Sanjuanico LPG Explosion</a>
+                  <a href="/html/case-study-borgo-italy-explosion-analysis.html"><span class="submenu-arrow">&#9656;</span> 2018 Borgo Italy LPG Explosion</a>
+                  <a href="/html/case-study-muskingum-explosion-analysis.html"><span class="submenu-arrow">&#9656;</span> 2007 Muskingum H2 Explosion</a>
+                  <a href="/html/case-study-santaclara-explosion-analysis.html"><span class="submenu-arrow">&#9656;</span> 2019 Santaclara H2 Explosion</a>
+                </div>
+              </div>
+              <a href="#" data-lang-key="menu_journal">Journal & Conference (coming soon)</a>
+              <a href="/html/bibliography_sim_modeling_explosion.html" data-lang-key="menu_bibliography">Bibliography</a>
             </div>
         </div>
         <div id="language-switcher">
@@ -449,22 +592,23 @@
 
     <main role="main">
       <div class="left-panel">
-        <div class="content-card">
+        <!-- MODIFICATION: Added IDs to content cards for navigation -->
+        <div class="content-card" id="info">
           <h2 data-lang-key="header_sim_model">General Information</h2>
           <p data-lang-key="p_sim_model_1">This report details a comprehensive simulation-based analysis of an explosion incident conducted for a hypothetical large-scale ammonium nitrate (AN) storage facility in Beirut. The analysis begins with the identification and characterization of the chemical, Ammonium Nitrate, including its physical properties and explosion parameters. Subsequently, a series of calculations are performed to determine critical explosion characteristics: TNT equivalent mass, scaled distance, and scaled overpressure.</p>
           <p data-lang-key="p_sim_model_2">The investigation proceeds to generate and interpret graphical representations, specifically charts depicting “Scaled Overpressure vs. Scaled Distance” and “Overpressure vs. Distance” to visualize the explosion effects. Key results include estimating potential damage to structures and process equipment, as well as assessing injury consequences at specified distances. The simulation log, providing raw data, is carefully reviewed. Finally, an explosion contour map is generated using geographic coordinates (33.901404° N, 35.519039° E), identified as the Port of Beirut, Lebanon, enabling a contextual analysis of a real-world event and specific recommendations for blast- and fire-resistant control room building standards, drawing lessons from historical incidents documented in academic and news publications.</p>
         </div>
-        <div class="content-card">
+        <div class="content-card" id="causal">
           <h2 data-lang-key="header_causal">Causal Analysis and Historical Context</h2>
           <p data-lang-key="p_causal_1">The incident scenario, though simulated, intrinsically demonstrates the inherent hazards of bulk Ammonium Nitrate (AN). AN is a stable compound under normal conditions but can become a powerful explosive under certain circumstances, particularly when exposed to contamination, confinement, heat, or shock. Historically, major AN explosions, such as the 2020 Beirut Port explosion and the 2015 Tianjin explosion, share common causal factors including inadequate storage conditions, presence of contaminants (e.g., organic materials, heavy metals), prolonged exposure to heat sources, lack of proper segregation, and ineffective emergency response planning.</p>
           <p data-lang-key="p_causal_2">In Beirut, a large quantity of AN was improperly stored for years in a warehouse, leading to a deflagration-to-detonation transition, likely triggered by a fire. Similarly, the Tianjin incident involved AN stored in close proximity to highly flammable chemicals, initiating a chain of explosions. These events underscore the importance of stringent process safety management (PSM) protocols, including comprehensive hazard identification, risk assessment, and robust emergency preparedness for facilities handling such materials.</p>
         </div>
-        <div class="content-card">
+        <div class="content-card" id="analysis">
           <h2 data-lang-key="header_data_analysis">Simulation Data Analysis</h2>
           <p data-lang-key="p_data_analysis_1">The simulation log data provide critical insights into the potential consequences of a catastrophic AN explosion. The identified material is Ammonium Nitrate (AN), with a TNT equivalent efficiency (ηE) of 0.6532 and a heat of explosion (ΔHexp) of 2479 kJ/kg, indicating its significant explosive potential. A density (ρ) of 1725 kg/m³ for a volume of 1594.2029 m³ results in an AN mass of approximately 2750 metric tons, which translates to a TNT equivalent mass (WTNT) of 950,283.334 kg (approximately 950 metric tons of TNT equivalent).</p>
           <p data-lang-key="p_data_analysis_2">This quantity approaches the scale of the Beirut explosion, validating the simulation's relevance to large-scale, real-world incidents. At a distance of 3062 meters (approximately 3 km) from the explosion source, the calculated scaled distance (ze) is 31.145 m·kg⁻¹/³. The scaled overpressure (Ps) is 0.054. The simulation uses three different overpressure prediction models: Crowl, Alonso, and Sadovski, yielding overpressures of 5.491 kPa, 3.389 kPa, and 3.065 kPa, respectively. The selected model, Crowl, provides the most conservative (highest) overpressure value of 5.491 kPa. These overpressure values are crucial for assessing blast effects. For context, an overpressure of 3.5 kPa can cause significant damage to residential structures, including broken windows and minor structural damage, while overpressures exceeding 7 kPa can lead to wall collapse and severe damage. At a distance of 3 km, the 5.491 kPa predicted by the Crowl model suggests that substantial non-fatal injuries (e.g., eardrum rupture, lung damage) are possible for unprotected individuals, and significant structural damage to non-blast-resistant buildings.</p>
         </div>
-        <div class="content-card">
+        <div class="content-card" id="mitigation">
           <h2 data-lang-key="header_mitigation">Risk Mitigation Strategies</h2>
           <p data-lang-key="p_mitigation_1">Mitigating the risks associated with large-scale AN storage requires a multi-faceted approach, integrating principles from CCPS Risk Based Process Safety (RBPS) and industry best practices. Key strategies include:</p>
           <ul>
@@ -477,7 +621,7 @@
             <li data-lang-key="li_mitigation_7"><strong>Mechanical Integrity:</strong> Ensure all storage containers and building structures are regularly inspected.</li>
           </ul>
         </div>
-        <div class="content-card">
+        <div class="content-card" id="recommendations">
           <h2 data-lang-key="header_recommendations">Recommendations</h2>
           <h3 data-lang-key="header_recom_short">Short-Term Recommendations:</h3>
           <ul>
@@ -485,14 +629,14 @@
               <li data-lang-key="li_recom_short_2"><strong>Contamination Control:</strong> Implement immediate measures to prevent any form of contamination in AN storage areas.</li>
               <li data-lang-key="li_recom_short_3"><strong>Enhanced Fire Surveillance:</strong> Install advanced, continuously monitored fire detection systems.</li>
               <li data-lang-key="li_recom_short_4"><strong>Emergency Preparedness Drills:</strong> Conduct frequent and realistic emergency drills for AN release and explosion scenarios.</li>
-          </ul>
+            </ul>
           <h3 data-lang-key="header_recom_long">Long-Term Recommendations:</h3>
           <ul>
               <li data-lang-key="li_recom_long_1"><strong>Revised Facility Siting Studies:</strong> Conduct comprehensive facility siting studies to determine safe separation distances.</li>
               <li data-lang-key="li_recom_long_2"><strong>Blast-Resistant Design for Critical Infrastructure:</strong> Implement blast-resistant design principles for all critical control rooms and occupied buildings.</li>
               <li data-lang-key="li_recom_long_3"><strong>Enhanced Training and Competency:</strong> Develop advanced training programs for all personnel involved in handling AN.</li>
               <li data-lang-key="li_recom_long_4"><strong>Regulatory Compliance and Continuous Improvement:</strong> Ensure full compliance with national and international safety regulations.</li>
-          </ul>
+            </ul>
         </div>
       </div>
     </main>
@@ -646,6 +790,36 @@
       if(toggleFlyerButton) toggleFlyerButton.addEventListener('click', (e) => { e.stopPropagation(); rightFlyer.classList.contains('open') ? closeFlyer() : openFlyer(); });
       if(closeFlyerButton) closeFlyerButton.addEventListener('click', closeFlyer);
       
+      // Submenu handling for touch devices
+      document.querySelectorAll('.submenu-toggle').forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation(); // Stop it from closing the main dropdown
+
+          const parentContainer = this.closest('.submenu-container');
+          
+          // Close other open submenus
+          document.querySelectorAll('.submenu-container.is-active').forEach(openSubmenu => {
+            if (openSubmenu !== parentContainer) {
+              openSubmenu.classList.remove('is-active');
+            }
+          });
+
+          // Toggle the current one
+          parentContainer.classList.toggle('is-active');
+        });
+      });
+
+      // Close submenu if main dropdown is closed or click is outside
+      document.addEventListener('click', (event) => {
+        if (dropdown && !dropdown.contains(event.target)) {
+          document.querySelectorAll('.submenu-container.is-active').forEach(openSubmenu => {
+            openSubmenu.classList.remove('is-active');
+          });
+        }
+      });
+
+
       const mapModal = document.getElementById('map-modal');
       const modalOverlay = document.getElementById('modal-overlay');
       const toggleModalButton = document.getElementById('toggle-modal');
@@ -694,11 +868,12 @@
           software_subtitle: "Risk Assessment Perspective Using Software<br>Simulation and Modelling of Explosion Effects Based on TNT Equivalence using JavaScript",
           subtitle: "Chemical Engineering, Bandung Institute of Technology",
           authors_title: "Authors & Developer :",
-          menu_toggle: "Menu",
+          menu_button: "Menu",
           menu_home: "Home",
-          menu_app: "Simulation App",
-          menu_workflow: "Workflow Process",
-          menu_presentation: "Presentation",
+          menu_app: "Simulation & Modeling Software",
+          menu_guide: "Workflow Process of Simulation",
+          menu_case_study: "ACADEMIC CASE STUDY",
+          menu_journal: "Journal & Conference (coming soon)",
           menu_bibliography: "Bibliography",
           header_sim_model: "General Information",
           p_sim_model_1: "This report details a comprehensive simulation-based analysis of an explosion incident conducted for a hypothetical large-scale ammonium nitrate (AN) storage facility in Beirut. The analysis begins with the identification and characterization of the chemical, Ammonium Nitrate, including its physical properties and explosion parameters. Subsequently, a series of calculations are performed to determine critical explosion characteristics: TNT equivalent mass, scaled distance, and scaled overpressure.",
@@ -751,11 +926,12 @@
           software_subtitle: "Perspektif Penilaian Risiko Menggunakan Software<br>Simulation and Modelling of Explosion Effects Based on TNT Equivalence using JavaScript",
           subtitle: "Teknik Kimia, Institut Teknologi Bandung",
           authors_title: "Authors & Developer :",
-          menu_toggle: "Menu",
+          menu_button: "Menu",
           menu_home: "Beranda",
-          menu_app: "Aplikasi Simulasi",
-          menu_workflow: "Proses Alur Kerja",
-          menu_presentation: "Presentasi",
+          menu_app: "Software Simulasi & Pemodelan",
+          menu_guide: "Proses Alur Kerja Simulasi",
+          menu_case_study: "STUDI KASUS AKADEMIK",
+          menu_journal: "Jurnal & Konferensi (segera hadir)",
           menu_bibliography: "Bibliografi",
           header_sim_model: "Informasi Umum",
           p_sim_model_1: "Laporan ini merinci analisis kejadian ledakan berbasis simulasi komprehensif yang dilakukan untuk fasilitas penyimpanan amonium nitrat (AN) di Kota Beirut skala besar hipotetis. Analisis dimulai dengan identifikasi dan karakterisasi bahan kimia, Amonium Nitrat, termasuk sifat fisik dan parameter ledakannya. Selanjutnya, serangkaian perhitungan dilakukan untuk menentukan karakteristik ledakan kritis massa ekuivalen TNT, jarak terukur, dan tekanan lebih terukur.",
