@@ -2975,7 +2975,10 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
         // 2. Perbarui nilai pada form input utama
         $('vol').value = logData.vol;
         $('dist').value = logData.dist;
+        $('rho').value = logData.rho;
+        $('dh').value = logData.dh;
         $('eta').value = logData.eta;
+        $('e_tnt').value = logData.e_tnt;
         
         // Mengubah material sedikit lebih rumit karena perlu memicu event 'change'
         const materialSelect = $('material');
@@ -3196,7 +3199,10 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
                       
                               $('vol').value = firstLog.vol;
                               $('dist').value = firstLog.dist;
+                              $('rho').value = firstLog.rho;
+                              $('dh').value = firstLog.dh;
                               $('eta').value = firstLog.eta;
+                              $('e_tnt').value = firstLog.e_tnt;
                       
                               compute(true);
                               
@@ -3313,7 +3319,11 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
                   materialSelect.value = materialValue;
                   $('vol').value = firstLog.vol;
                   $('dist').value = firstLog.dist;
+                  $('rho').value = firstLog.rho;
+                  $('dh').value = firstLog.dh;
                   $('eta').value = firstLog.eta;
+                  $('e_tnt').value = firstLog.e_tnt;
+
                   // Picu event 'change' agar kalkulator dan properti material ikut ter-update
                   materialSelect.dispatchEvent(new Event('change'));
               } else {
