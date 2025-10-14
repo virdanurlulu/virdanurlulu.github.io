@@ -217,7 +217,7 @@
     #toTop.show { opacity: 1; visibility: visible; transform: translateY(0); }
     #toTop:hover { background-color: #005a8c; }
    
-    #floatingControlPanel { display: none; position: fixed; z-index: 1001; background-color: var(--card); border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); transition: all 0.4s ease-in-out; width: auto; max-width: 90%; left: 50%; bottom: 20px; transform: translateX(-50%); }
+    #floatingControlPanel { display: none; position: fixed; z-index: 1005; background-color: var(--card); border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); transition: all 0.4s ease-in-out; width: auto; max-width: 90%; left: 50%; bottom: 20px; transform: translateX(-50%); }
     #floatingControlPanel.visible { display: block; }
     .floating-panel-header { cursor: move; padding: 10px 14px; background-color: var(--blue-itb); color: white; border-top-left-radius: 14px; border-top-right-radius: 14px; display: flex; justify-content: space-between; align-items: center; }
     .floating-panel-header h3 { margin: 0; font-size: 12px; font-family: Georgia, "Times New Roman", serif; transition: opacity 0.3s ease; }
@@ -4033,5 +4033,57 @@ window.addEventListener('load', () => {
 
   });
   </script>
+
+<script>
+  // --- SOLUSI DEFINITIF: SKRIP TAMBAHAN UNTUK MENYOROT NODE 1 ---
+
+    /**
+     * Fungsi ini akan secara aktif menunggu sebuah elemen muncul di halaman
+     * sebelum menjalankan aksi. Ini jauh lebih andal daripada menggunakan setTimeout.
+     * @param {string} selector - Selector CSS untuk elemen yang ditunggu.
+     * @param {number} timeout - Waktu maksimal menunggu dalam milidetik.
+     */
+    function waitForElementAndClick(selector, timeout = 5000) {
+        console.log(`Menunggu elemen: "${selector}"...`);
+        const startTime = Date.now();
+
+  const intervalId = setInterval(() => {
+    const element = document.querySelector(selector);
+
+    // 1. Jika elemen ditemukan
+    if (element) {
+        clearInterval(intervalId); // Hentikan pengecekan
+        element.click(); // Lakukan klik
+        console.log(`Elemen "${selector}" ditemukan dan berhasil diklik.`);
+        return;
+    }
+
+    // 2. Jika waktu menunggu habis
+    if (Date.now() - startTime > timeout) {
+        clearInterval(intervalId); // Hentikan pengecekan
+        console.error(`Gagal menemukan elemen "${selector}" setelah menunggu ${timeout / 1000} detik.`);
+    }
+  }, 100); // Cek setiap 100 milidetik
+    }
+
+  // --- PENGATURAN PEMICU (TRIGGER) ---
+
+  // 1. Pemicu: Saat halaman pertama kali dimuat atau di-refresh
+  document.addEventListener('DOMContentLoaded', () => {
+    // Panggil fungsi "penunggu" untuk mencari dan mengklik baris pertama
+      waitForElementAndClick('#logTbody tr:not(.log-placeholder)');
+    });
+
+    // 2. Pemicu: Saat pengguna memilih skenario simulasi yang berbeda
+    const pemilihSimulasi = document.getElementById('simulationSelector');
+    if (pemilihSimulasi) {
+        pemilihSimulasi.addEventListener('change', () => {
+            // Setelah dropdown diubah, panggil kembali fungsi "penunggu"
+            // untuk mencari baris pertama dari data yang baru dimuat.
+            waitForElementAndClick('#logTbody tr:not(.log-placeholder)');
+        });
+    }
+</script>
+
 </body>
 </html>
