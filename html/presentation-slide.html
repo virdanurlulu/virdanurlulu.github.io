@@ -2509,14 +2509,11 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
       }
 
       function loadStateFromURL() {
-        // Hapus semua logika URL, kita fokus ke localStorage
         let stateLoaded = false;
         try {
           const savedStateJSON = localStorage.getItem('explosionSimState');
           if (savedStateJSON) {
             const savedState = JSON.parse(savedStateJSON);
-            
-            // Langkah 1: Isi form dari localStorage
             inputFields.forEach(id => {
               if (savedState[id] !== undefined) {
                 const el = $(id);
@@ -2530,30 +2527,38 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
           localStorage.removeItem('explosionSimState');
         }
 
-        // Langkah 2: Jika tidak ada state tersimpan (pengguna baru), muat default Beirut
-        if (!stateLoaded) {
-          if (simulationLog.length > 0) {
-            const firstLog = simulationLog[0]; // Ini adalah data Beirut node 1
-            const materialValue = Array.from($('material').options).find(opt => 
-                (materialAbbreviationMap[opt.text] || opt.value) === firstLog.material
-            )?.value;
+        // --- AWAL BAGIAN YANG DIPERBAIKI ---
+        // Jika tidak ada state tersimpan (pengguna baru), muat default Beirut
+        if (!stateLoaded && simulationLog.length > 0) {
+          const firstLog = simulationLog[0]; // Data Beirut node 1
+          const materialSelect = $('material');
+          
+          // Temukan nilai <option> yang sesuai dengan singkatan material
+          const materialValue = Array.from(materialSelect.options).find(opt => 
+              (materialAbbreviationMap[opt.text] || opt.value) === firstLog.material
+          )?.value;
 
-            if (materialValue) {
-              const materialSelect = $('material');
-              materialSelect.value = materialValue;
-              
-              // Penting: Panggil 'change' untuk memuat preset (rho, dh, dll)
-              materialSelect.dispatchEvent(new Event('change'));
-              
-              // Setelah preset dimuat, baru kita timpa vol & dist sesuai data log
-              $('vol').value = firstLog.vol;
-              $('dist').value = firstLog.dist;
+          if (materialValue) {
+            materialSelect.value = materialValue;
+            
+            // 1. Muat nilai preset (rho, dh, dll.) dari material yang dipilih
+            const p = presets[materialValue];
+            if (p) {
+              Object.keys(p).forEach(key => {
+                if ($(key)) $(key).value = p[key];
+              });
             }
+            
+            // 2. Timpa nilai volume & jarak dengan data spesifik dari log
+            $('vol').value = firstLog.vol;
+            $('dist').value = firstLog.dist;
           }
         }
+        // --- AKHIR BAGIAN YANG DIPERBAIKI ---
 
         renderEquation($('material').value);
-        compute(true);
+        // Panggil compute HANYA SEKALI di akhir, setelah semua nilai form diatur
+        compute(true); 
         syncFloatingPanelInputs();
       }
      
@@ -4053,10 +4058,7 @@ window.addEventListener('load', () => {
     const debouncedAdjustLogPosition = debounce(adjustLogPosition, 150);
     window.addEventListener('resize', debouncedAdjustLogPosition);
     window.addEventListener('orientationchange', debouncedAdjustLogPosition);
-
   });
   </script>
-
-
 </body>
 </html>
