@@ -3368,6 +3368,19 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
           selector.addEventListener('change', (event) => {
               const selectedScenarioKey = event.target.value;
               loadAndDisplayScenario(selectedScenarioKey);
+              
+              // --- AWAL KODE PERBAIKAN ---
+              // Tambahkan pemicu klik di sini.
+              // Ini memastikan baris pertama dari data yang baru dimuat akan diklik,
+              // sehingga memicu pembaruan popup di peta.
+              setTimeout(() => {
+                  const firstRow = document.querySelector('#logTbody tr:not(.log-placeholder)');
+                  if (firstRow) {
+                      firstRow.click();
+                  }
+              }, 100);
+              // --- AKHIR KODE PERBAIKAN ---
+
               // Simpan kunci skenario yang dipilih ke localStorage setiap kali ada perubahan
               try {
                 localStorage.setItem('lastSelectedScenario', selectedScenarioKey);
@@ -3376,7 +3389,6 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
               }
           });
       }
-      // =================== KODE BARU SELESAI ===================
 
       // --- INITIALIZATION SEQUENCE ---
       initLanguage(); 
