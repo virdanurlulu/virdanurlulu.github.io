@@ -44,7 +44,6 @@
     "publisher": {"@type": "Organization", "name": "Bandung Institute of Technology", "url": "https://che.itb.ac.id/"}
   }
   </script>
-
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -364,7 +363,6 @@
             align-items: center;    /* Tengahkan item secara horizontal */
             gap: 1rem;              /* Beri jarak antar item (logo/judul dan tombol bahasa) */
         }
-
         /* 2. Tengahkan blok logo dan judul itu sendiri */
         .banner .brandbar {
             flex-direction: column;
@@ -372,23 +370,19 @@
             width: 100%;
             gap: 12px;
         }
-
         .banner .brand-text {
             align-items: center;
         }
-
         .banner .brand-text h1,
         .banner .brand-text h3 {
             text-align: center;
         }
-
         /* 3. Atur ulang posisi tombol bahasa */
         #language-switcher {
             position: static; /* Hapus posisi absolut agar mengikuti alur vertikal */
             bottom: auto;
             right: auto;
         }
-
         /* 4. Pastikan tombol Menu tetap di kanan atas */
         .banner .dropdown-menu {
             /*position: fixed; /* Pastikan menu tetap mengambang */
@@ -397,7 +391,6 @@
             z-index: 1002;   /* Pastikan menu selalu tampil di lapisan paling atas */
         }
         /* === AKHIR DARI KODE BARU === */
-
     /* === SEMUA KODE UNTUK SELULER HARUS DI DALAM BLOK INI === */
     .banner .brandbar {
         flex-direction: column; /* Hanya aktif di seluler */
@@ -405,23 +398,19 @@
         width: 100%;           
         gap: 12px;             
     }
-
     .banner .brand-text {
         align-items: center; /* Hanya aktif di seluler */
     }
-
     .banner .brand-text h1,
     .banner .brand-text h3 {
         text-align: center; /* Hanya aktif di seluler */
     }
-
     .banner .dropdown-menu {
         top: 12px;      
         right: 12px;
     }
     /* === AKHIR DARI BLOK SELULER === */
 }
-
     /* 3. Fine-tuning for Small Screens */
     @media (max-width: 430px) {
         body {
@@ -457,8 +446,7 @@
         .model-select select {
             flex-grow: 1;
         }
-    }
-    
+    }    
     /* 4. SPECIFIC FIX for Very Small Screens */
     @media (max-width: 380px) {
         #floatingControlPanel .floating-panel-body {
@@ -521,7 +509,6 @@
             padding: 8px;
         }
     }
-
     /* 5. Adjustments for Landscape Orientation on Phones */
     @media (max-height: 500px) and (max-width: 926px) and (orientation: landscape) {
         .banner.title {
@@ -537,16 +524,13 @@
             height: 85vh;
         }
     }
-
   #logTable tbody tr.selected-row {
     background-color: #dbeafe !important; /* Warna biru muda untuk sorotan */
     font-weight: 600;
   }
-
   #logTable tbody tr:not(.log-placeholder) {
     cursor: pointer; /* Mengubah kursor menjadi pointer saat di atas baris */
   }
-
   .log-actions {
     display: flex;
     flex-wrap: wrap;
@@ -557,7 +541,6 @@
     /* 1. Reset tampilan bawaan browser */
     -webkit-appearance: none;
     appearance: none;
-
     /* 2. Atur ulang properti dasar (tanpa height eksplisit) */
     width: 200px;
     font-size: 12px;
@@ -567,13 +550,11 @@
     outline: none;
     border: none;
     border-radius: 6px;
-    margin-right: 4px;
-    
+    margin-right: 4px;    
     /* 3. Atur padding & warna agar sama dengan tombol */
     padding: 6px 30px 6px 10px; /* Padding kanan ditambah untuk ruang panah */
     background-color: #fff;
     color: var(--blue-itb);
-
     /* 4. Tambahkan ikon panah dropdown custom (SVG) */
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%230079c2' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
     background-position: right 0.5rem center;
@@ -648,7 +629,6 @@
               <img src="https://virdanurlulu.github.io/img/ID.svg" alt="Ganti ke Bahasa Indonesia" />
           </button>
       </div>
-
     </div>
 
     <main class="split" role="main">
@@ -797,7 +777,6 @@
             </div>
           </div>
         </section>
-
       </div>
 
       <aside class="right">
@@ -936,8 +915,7 @@
       <div class="footer-content">
         <div class="footer-buttons">
           <a class="btn-home-3d" href="/" target="_blank" rel="noopener noreferrer" data-lang-key="menu_home">Home</a>
-          <a class="btn-home-3d" href="#" data-lang-key="footer_guide">Guide</a>
-          <a class="btn-home-3d" href="#" data-lang-key="menu_presentation">Presentation</a>
+          <a class="btn-home-3d" href="/html/flowprocess-simulation.html" data-lang-key="footer_guide">SimFlow</a>
           <a class="btn-home-3d" href="#" data-lang-key="footer_journal">Journal</a>
           <a class="btn-home-3d" href="https://id.linkedin.com/in/virdanurlulu" data-lang-key="footer_profile">Profile</a>
         </div>
@@ -955,13 +933,10 @@
   </footer>
 
   <button class="btn" id="toTop" type="button" aria-label="Back to Top">&#8679;</button>
-
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
-  
   <script>
     let simulationLog = []; // Make simulationLog globally accessible for better module interaction
     let updatePsVsZeChart = () => {}; // Define a placeholder function in a shared scope
-
     // Global utility functions
     function debounce(func, delay = 250) {
       let timeoutId;
@@ -1018,21 +993,17 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-
       let isPageLoaded = false; // Flag to prevent premature execution
-
       const presets = {
         AN:  { rho: 1725,    dh:  2479,  e_tnt: 4686, eta: 0.66 },
         LPG: { rho: 492,     dh: 46011,  e_tnt: 4686, eta: 0.02 },
         H2:  { rho: 0.08375, dh: 130800, e_tnt: 4686, eta: 0.05 }
       };
-
       const eqMap = {
         AN:  [{ labelKey: "eq_label_detonation", eq: '2 NH<sub>4</sub>NO<sub>3</sub>(s) <span class="arrow">→</span> 2 N<sub>2</sub>(g) + O<sub>2</sub>(g) + 4 H<sub>2</sub>O(g)' }],
         LPG: [{ labelKey: "eq_label_combustion_propane", eq: 'C<sub>3</sub>H<sub>8</sub>(g) + 5 O<sub>2</sub>(g) <span class="arrow">→</span> 3 CO<sub>2</sub>(g) + 4 H<sub>2</sub>O(g)' }],
         H2:  [{ labelKey: "eq_label_combustion_explosion", eq: '2 H<sub>2</sub>(g) + O<sub>2</sub>(g) <span class="arrow">→</span> 2 H<sub>2</sub>O(g)' }]
-      };
-     
+      };     
       const materialAbbreviationMap = {
         'Ammonium Nitrate (AN)': 'AN',
         'Propane (LPG)': 'LPG',
@@ -1040,8 +1011,7 @@
         'Amonium Nitrat (AN)': 'AN',
         'Propana (LPG)': 'LPG',
         'Hidrogen (H₂)': 'H₂'
-      };
-     
+      };     
       const citations = {
         1: "Wang et al., 2023",
         2: "Clancey, 1972; Crowl & Louvar, 2011",
@@ -1049,11 +1019,9 @@
         4: "Jeremić & Bajić., 2006"
       };
 
-      /*
-      ================================================================================
-      | START: BILINGUAL TRANSLATION SCRIPT                                          |
-      ================================================================================
-      */
+      /*===================================================
+      | START: BILINGUAL TRANSLATION SCRIPT                 
+      ====================================================*/
       const translations = {
         en: {
           // Page Titles
@@ -1564,7 +1532,6 @@
       };
 
       let currentLanguage = 'en'; // Default language
-
       function setLanguage(lang) {
         if (!translations[lang]) return;
         currentLanguage = lang;
@@ -1575,7 +1542,6 @@
         }
        
         document.documentElement.lang = lang;
-
         document.querySelectorAll('[data-lang-key]').forEach(el => {
           const key = el.getAttribute('data-lang-key');
           const translation = translations[lang][key];
@@ -1591,7 +1557,6 @@
         document.querySelectorAll('.lang-btn').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.lang === lang);
         });
-
         if ($('material').value) {
           renderEquation($('material').value);
         }
@@ -1610,7 +1575,6 @@
         updateInjuryPanels(Po_crowl, Po_alonso, Po_sadovski);
         setupFloatingPanel(); 
       }
-
       function initLanguage() {
         let preferredLanguage = 'en';
         try {
@@ -1619,7 +1583,6 @@
             console.warn("Could not read language preference from local storage:", e);
         }
         setLanguage(preferredLanguage);
-
         document.querySelectorAll('.lang-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 setLanguage(btn.dataset.lang);
@@ -1627,10 +1590,9 @@
         });
       }
       /*
-      ================================================================================
-      | END: BILINGUAL TRANSLATION SCRIPT                                            |
-      ================================================================================
-      */   
+      ========================================================
+      | END: BILINGUAL TRANSLATION SCRIPT                    |
+      =======================================================*/   
       function getDamageDescriptionKeys(kPa) {
         const keys = [];
         if (kPa >= 0.14 && kPa <= 2) keys.push("damage_accidental_glass");
@@ -1773,21 +1735,17 @@
       let chartController;
       let overpressureChartController; 
       // simulationLog is now globally defined, so we remove the local 'let' declaration here.
-
       function showStatusMessage(messageKey, isError = false, extraInfo = '') {
           const msgEl = $("msg");
-          if (!msgEl) return;
-         
+          if (!msgEl) return;        
           const message = (translations[currentLanguage][messageKey] || messageKey) + extraInfo;
           msgEl.textContent = message;
-
           if (isError) {
               msgEl.classList.add("bad");
           } else {
               msgEl.classList.remove("bad");
           }
-          msgEl.style.display = 'block';
-         
+          msgEl.style.display = 'block';         
           setTimeout(() => {
               if (msgEl.textContent === message) {
                   msgEl.style.display = 'none';
@@ -1803,23 +1761,19 @@
       }
 
       function goTop() { try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) { window.scrollTo(0, 0); } }
-
       function initializeChart() {
         const chartDom = document.getElementById('chart');
         if (!chartDom) return null;
         const chart = echarts.init(chartDom);
         new ResizeObserver(() => chart.resize()).observe(chartDom);
-
         const css = getComputedStyle(document.documentElement);
         const BLUE    = (css.getPropertyValue('--blue-itb') || '#0079c2').trim();
         const DANGER = (css.getPropertyValue('--danger')   || '#DC2626').trim();
-
         const fPs = (ze) => (1616 * (1 + (ze/4.5)**2)) /
           (Math.sqrt(1 + (ze/0.048)**2) * Math.sqrt(1 + (ze/0.32)**2) * Math.sqrt(1 + (ze/1.35)**2));
         const logspace = (min, max, n=1000) =>
           Array.from({length: n}, (_, i) => 10**(Math.log10(min) + (Math.log10(max) - Math.log10(min)) * i / (n-1)));
         const refPairs = logspace(0.01, 100).map(z => [z, fPs(z)]);
-
         const btn = $('btnExport');
         if (btn) {
           btn.addEventListener('click', () => {
@@ -1896,18 +1850,15 @@
         });
        
         chart.setOption(getBaseOption());
-
         return {
           updateChart: function(currentCalcPoint, logDataPoints) {
             chart.setOption(getBaseOption()); 
             const materialSel = $('material');
             const selectedOption = materialSel ? materialSel.options[materialSel.selectedIndex] : null;
             const compoundName = (selectedOption && selectedOption.value) ? selectedOption.text : 'Calculation';
-
             const currentSeriesData = (currentCalcPoint && Number.isFinite(currentCalcPoint.ze) && Number.isFinite(currentCalcPoint.ps))
               ? [[currentCalcPoint.ze, currentCalcPoint.ps]]
               : [];
-
             chart.setOption({
               series: [
                 { name: translations[currentLanguage].chart_tooltip_ref_curve, data: refPairs },
@@ -1922,10 +1873,8 @@
       // Overwrite the placeholder with the actual function implementation
       updatePsVsZeChart = function() {
           if (!chartController) return;
-
           const pa = parseFloat($("pa").value);
           if (isNaN(pa)) return;
-
           // 1. Dapatkan Data Log - SELALU gunakan 'po_crowl' untuk konsistensi.
           const logPoints = simulationLog.map(log => {
               const ze = parseFloat(log.ze);
@@ -1936,20 +1885,16 @@
               }
               return null;
           }).filter(Boolean);
-
           // 2. Dapatkan Data Perhitungan Saat Ini - SELALU gunakan 'Po_crowl'.
-          const currentZe = parseFloat($("Ze")?.value);
-          
+          const currentZe = parseFloat($("Ze")?.value);          
           let currentPs;
           if (!isNaN(currentZe) && pa > 0) {
               const currentPoCrowl = parseFloat($("Po_crowl")?.value); // Revisi: Hanya menggunakan Crowl
               if (!isNaN(currentPoCrowl)) {
                   currentPs = currentPoCrowl / pa;
               }
-          }
-          
-          const currentCalcPoint = { ze: currentZe, ps: currentPs };
-          
+          }         
+          const currentCalcPoint = { ze: currentZe, ps: currentPs };          
           // 3. Perbarui grafik
           chartController.updateChart(currentCalcPoint, logPoints);
       }
@@ -1957,7 +1902,6 @@
       function initializeOverpressureChart() {
           const ctx = document.getElementById('overpressureChart');
           if (!ctx) return null;
-
           const chart = new Chart(ctx, {
               type: 'line',
               data: {
@@ -1995,15 +1939,12 @@
      
       function updateOverpressureChartFromLog() {
           if (!overpressureChartController || !overpressureChartController.chartInstance) return;
-
           const chart = overpressureChartController.chartInstance;
           const msgEl = $('overpressureChartMsg');
-          const canvasEl = $('overpressureChart');
-         
+          const canvasEl = $('overpressureChart');         
           chart.options.plugins.title.text = translations[currentLanguage].chart_title_po_vs_dist;
           chart.options.scales.x.title.text = translations[currentLanguage].overpressure_chart_x_axis_label;
           chart.options.scales.y.title.text = translations[currentLanguage].overpressure_chart_y_axis_label;
-
           canvasEl.style.display = 'block';
           msgEl.style.display = 'none';
 
@@ -2024,12 +1965,10 @@
           const sadovskiPoints = [];
           const allYValues = [];
           const allXValues = [];
-
           simulationLog.forEach(log => {
               const dist = parseFloat(log.dist);
               if (isNaN(dist)) return;
               allXValues.push(dist);
-
               const poCrowl = parseFloat(log.po_crowl);
               if (!isNaN(poCrowl)) {
                   crowlPoints.push({ x: dist, y: poCrowl });
@@ -2052,14 +1991,12 @@
           const sortByX = (a, b) => a.x - b.x;
           chart.data.datasets[0].data = crowlPoints.sort(sortByX);
           chart.data.datasets[1].data = alonsoPoints.sort(sortByX);
-          chart.data.datasets[2].data = sadovskiPoints.sort(sortByX);
-         
+          chart.data.datasets[2].data = sadovskiPoints.sort(sortByX);         
           if (allYValues.length > 0) {
               const minX = Math.min(...allXValues);
               const maxX = Math.max(...allXValues);
               const minY = Math.min(...allYValues);
               const maxY = Math.max(...allYValues);
-
               chart.options.scales.x.min = minX > 0 ? minX * 0.95 : 0;
               chart.options.scales.x.max = maxX * 1.05;
               chart.options.scales.y.min = minY > 0 ? minY * 0.95 : 0;
@@ -2078,13 +2015,11 @@
       function highlightFirstRow() {
         const logTbody = $('logTbody');
         if (!logTbody) return;
-
         // Hapus sorotan yang sudah ada dari baris lain
         const currentlySelected = logTbody.querySelector('.selected-row');
         if (currentlySelected) {
             currentlySelected.classList.remove('selected-row');
         }
-
         // Tambahkan kelas sorotan ke baris data pertama di tabel
         const firstRow = logTbody.querySelector('tr:not(.log-placeholder)');
         if (firstRow) {
@@ -2109,7 +2044,6 @@
           if (isNaN(poValue)) {
               return { nameKey: "injury_cat_invalid", color: "var(--muted)", textColor: "#FFFFFF" };
           }
-
           if (poValue < 0.14) {
               return { nameKey: "injury_cat_no_effect", color: "#D1FAE5", textColor: "var(--ink)" };
           } else if (poValue <= 20) {
@@ -2128,21 +2062,17 @@
 // GANTI FUNGSI LAMA DENGAN YANG INI
 function updateEstimationPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated = false) {
   const methods = { crowl: PoCrowl, alonso: PoAlonso, sadovski: PoSadovski };
-
   Object.entries(methods).forEach(([method, Po]) => {
       const isPoValid = Number.isFinite(Po);
-      const lang = translations[currentLanguage];
-      
+      const lang = translations[currentLanguage];      
       const valPoEl = $(`val-Po-${method}`);
       const sevEl = $(`sev-${method}`);
       const structuralListEl = $(`structural-damage-${method}`);
       const equipmentListEl = $(`equipment-damage-${method}`);
-
       if (!valPoEl || !sevEl || !structuralListEl || !equipmentListEl) {
           console.error(`One or more elements for damage panel '${method}' not found.`);
           return;
-      }
-      
+      }      
       if (!isPoValid) {
           valPoEl.textContent = '—';
           const impact = getImpactCategory(NaN);
@@ -2156,8 +2086,7 @@ function updateEstimationPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapola
           const impact = getImpactCategory(Po);
           sevEl.textContent = lang[impact.nameKey] || impact.nameKey;
           sevEl.style.backgroundColor = impact.color;
-          sevEl.style.color = impact.textColor;
-          
+          sevEl.style.color = impact.textColor;          
           const structuralKeys = getDamageDescriptionKeys(Po);
           const structuralRangeDesc = overpressureDamageLevels.find(range => Po >= range.minPo && Po < range.maxPo);
           let structuralHtml = structuralKeys.map(key => `<li>${(lang[key] || key).replace(/\[(\d+)\]/g, (match, p1) => `(${citations[p1]})`)}</li>`).join('');
@@ -2165,7 +2094,6 @@ function updateEstimationPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapola
               structuralHtml += `<li>${(lang[structuralRangeDesc.descriptionKey] || structuralRangeDesc.descriptionKey)} (${citations[structuralRangeDesc.citation_ref]})</li>`;
           }
           structuralListEl.innerHTML = structuralHtml || `<li>${lang.damage_no_significant}</li>`;
-
           const equipmentDamage = processEquipmentDamage.slice().reverse().find(item => Po >= item.po);
           equipmentListEl.innerHTML = equipmentDamage ?
               `<li>${(lang[equipmentDamage.descriptionKey] || equipmentDamage.descriptionKey)} (${citations[equipmentDamage.citation_ref]})</li>` :
@@ -2175,13 +2103,10 @@ function updateEstimationPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapola
       // --- MODIFIKASI DIMULAI: Logika untuk peringatan ekstrapolasi Crowl ---
       if (method === 'crowl') {
           const panelContentEl = $('panel-damage-crowl').querySelector('.pad');
-          let existingWarning = panelContentEl.querySelector('.extrapolation-warning-crowl');
-          
+          let existingWarning = panelContentEl.querySelector('.extrapolation-warning-crowl');          
           if (existingWarning) existingWarning.remove();
-
           const zeValue = parseFloat($("Ze")?.value);
           const isCrowlExtrapolated = !isNaN(zeValue) && (zeValue < 0.01 || zeValue > 100);
-
           if (isCrowlExtrapolated && isPoValid) {
               const poValueParagraph = valPoEl.parentElement;
               if (poValueParagraph) {
@@ -2194,14 +2119,11 @@ function updateEstimationPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapola
           }
       }
       // --- MODIFIKASI SELESAI ---
-
       // --- Logika untuk peringatan ekstrapolasi Alonso ---
       if (method === 'alonso') {
           const panelContentEl = $('panel-damage-alonso').querySelector('.pad');
-          let existingWarning = panelContentEl.querySelector('.extrapolation-warning');
-          
+          let existingWarning = panelContentEl.querySelector('.extrapolation-warning');          
           if (existingWarning) existingWarning.remove();
-
           if (isAlonsoExtrapolated && isPoValid) {
               const poValueParagraph = valPoEl.parentElement; 
               if (poValueParagraph) {
@@ -2217,13 +2139,10 @@ function updateEstimationPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapola
       // --- Logika untuk peringatan ekstrapolasi Sadovski ---
       if (method === 'sadovski') {
           const panelContentEl = $('panel-damage-sadovski').querySelector('.pad');
-          let existingWarning = panelContentEl.querySelector('.extrapolation-warning-sadovski');
-          
+          let existingWarning = panelContentEl.querySelector('.extrapolation-warning-sadovski');          
           if (existingWarning) existingWarning.remove();
-
           const zeValue = parseFloat($("Ze")?.value);
           const isSadovskiExtrapolated = !isNaN(zeValue) && (zeValue < 1 || zeValue > 15);
-
           if (isSadovskiExtrapolated && isPoValid) {
               const poValueParagraph = valPoEl.parentElement;
               if (poValueParagraph) {
@@ -2288,11 +2207,9 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
   const updateSinglePanel = (method, Po) => {
       const isPoValid = Number.isFinite(Po);
       const lang = translations[currentLanguage];
-
       const valPoEl = $(`val-Po-${method}-inj`);
       const effectsListEl = $(`injury-effects-${method}`);
       const sevFootEl = $(`sev-injury-${method}`);
-
       if (!valPoEl || !effectsListEl || !sevFootEl) {
           console.error(`One or more injury elements for method '${method}' not found.`);
           return;
@@ -2301,14 +2218,12 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
       const severity = getInjuryRiskCategory(Po);
       sevFootEl.textContent = lang[severity.nameKey] || severity.nameKey;
       sevFootEl.style.backgroundColor = severity.color;
-      sevFootEl.style.color = severity.textColor;
-      
+      sevFootEl.style.color = severity.textColor;      
       if (!isPoValid) {
           valPoEl.textContent = "—";
           effectsListEl.innerHTML = `<li>${lang.awaiting_input}</li>`;
       } else {
           valPoEl.textContent = Po.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 });
-          
           const effectKeys = getInjuryEffects(Po);
           let html = '';
 
@@ -2320,8 +2235,7 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
             return text.replace(/\[(\d+)\]/g, (match, citationKey) => {
               return citations[citationKey] ? ` (${citations[citationKey]})` : match;
             });
-          };
-          
+          };          
           if (effectKeys.primaryKey) {
               html += `<li><strong>${lang.primary_effects_label}</strong> ${processText(effectKeys.primaryKey)}</li>`;
           }
@@ -2331,7 +2245,6 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
           if (effectKeys.conclusionKey) {
               html += `<li><strong>${lang.conclusion_label}</strong> ${processText(effectKeys.conclusionKey)}</li>`;
           }
-
           effectsListEl.innerHTML = html || `<li>${lang.injury_no_significant_effects}</li>`;
       }
 
@@ -2339,12 +2252,9 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
       if (method === 'crowl') {
           const panelContentEl = $('panel-injury-crowl').querySelector('.pad');
           let existingWarning = panelContentEl.querySelector('.extrapolation-warning-crowl-inj');
-
           if (existingWarning) existingWarning.remove();
-
           const zeValue = parseFloat($("Ze")?.value);
           const isCrowlExtrapolated = !isNaN(zeValue) && (zeValue < 0.01 || zeValue > 100);
-
           if (isCrowlExtrapolated && isPoValid) {
               const poValueParagraph = valPoEl.parentElement;
               if (poValueParagraph) {
@@ -2360,9 +2270,7 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
       if (method === 'alonso') {
           const panelContentEl = $('panel-injury-alonso').querySelector('.pad');
           let existingWarning = panelContentEl.querySelector('.extrapolation-warning');
-
-          if (existingWarning) existingWarning.remove();
-          
+          if (existingWarning) existingWarning.remove();          
           if (isAlonsoExtrapolated && isPoValid) {
               const poValueParagraph = valPoEl.parentElement;
               if (poValueParagraph) {
@@ -2378,12 +2286,9 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
       if (method === 'sadovski') {
           const panelContentEl = $('panel-injury-sadovski').querySelector('.pad');
           let existingWarning = panelContentEl.querySelector('.extrapolation-warning-sadovski-inj');
-
           if (existingWarning) existingWarning.remove();
-
           const zeValue = parseFloat($("Ze")?.value);
           const isSadovskiExtrapolated = !isNaN(zeValue) && (zeValue < 1 || zeValue > 15);
-
           if (isSadovskiExtrapolated && isPoValid) {
               const poValueParagraph = valPoEl.parentElement;
               if (poValueParagraph) {
@@ -2414,7 +2319,6 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
           return val;
         };
         const [rho, vol, dh, eta, e_tnt, dist, pa] = fields.map(getFloat);
-
         if (!(eta >= 0 && eta <= 1)) { $('eta').classList.add('input-error'); hasError = true; }
         if (!(e_tnt > 0)) { $('e_tnt').classList.add('input-error'); hasError = true; }
 
@@ -2430,14 +2334,11 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
         };
 
         if (hasError) return resetAll("status_error_range");
-
         const W_mass = rho * vol;
         const E_total = W_mass * dh * eta;
         const W_tnt = E_total / e_tnt;
         const Ze = dist > 0 && W_tnt > 0 ? dist / Math.cbrt(W_tnt) : NaN;
-
         if (!Number.isFinite(Ze) || Ze <= 0) return resetAll("status_error_invalid_ze");
-
         $("W_mass").value = W_mass.toFixed(3);
         $("E_total").value = E_total.toFixed(3);
         $("W_tnt").value = W_tnt.toFixed(3);
@@ -2445,15 +2346,13 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
 
         const PoPa_crowl = (1616 * (1 + (Ze/4.5)**2)) /
           (Math.sqrt(1 + (Ze/0.048)**2) * Math.sqrt(1 + (Ze/0.32)**2) * Math.sqrt(1 + (Ze/1.35)**2));
-        $("Ps").value = PoPa_crowl.toFixed(3);
-        
+        $("Ps").value = PoPa_crowl.toFixed(3);        
         const Po_crowl = PoPa_crowl * pa;
         const isAlonsoExtrapolated = Ze < 1 || Ze > 200; // This line already exists
         const Po_alonso = ((z) => {
             if (z < 10) return 1.13e6 * z**-2.01;
             return 1.83e5 * z**-1.16;
-        })(Ze) / 1000;
-       
+        })(Ze) / 1000;       
         const Po_sadovski = ((w, d) => {
             if (!(d > 0 && w > 0)) return NaN;
             const r = Math.cbrt(w) / d;
@@ -2463,17 +2362,14 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
         $("Po_crowl").value = Po_crowl.toFixed(3);
         $("Po_alonso").value = isNaN(Po_alonso) ? "" : Po_alonso.toFixed(3);
         $("Po_sadovski").value = isNaN(Po_sadovski) ? "" : Po_sadovski.toFixed(3);
-
         updateEstimationPanels(Po_crowl, Po_alonso, Po_sadovski, isAlonsoExtrapolated);
         // MODIFICATION: Add 'isAlonsoExtrapolated' as the fourth argument here
         updateInjuryPanels(Po_crowl, Po_alonso, Po_sadovski, isAlonsoExtrapolated);
         updateFloatingPanelOutputs(Po_crowl, Po_alonso, Po_sadovski, true);
         updatePsVsZeChart(); // Update chart with new calculation
-
         showStatusMessage("status_success");
         if (btnSaveFloat) btnSaveFloat.disabled = false;
         if (btnAddResult) btnAddResult.disabled = false;
-
         if (!isInitialLoad) {
           saveFormStateToLocalStorage();
         }
@@ -2509,14 +2405,11 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
       }
 
       function loadStateFromURL() {
-        // Hapus semua logika URL, kita fokus ke localStorage
         let stateLoaded = false;
         try {
           const savedStateJSON = localStorage.getItem('explosionSimState');
           if (savedStateJSON) {
             const savedState = JSON.parse(savedStateJSON);
-            
-            // Langkah 1: Isi form dari localStorage
             inputFields.forEach(id => {
               if (savedState[id] !== undefined) {
                 const el = $(id);
@@ -2530,30 +2423,34 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
           localStorage.removeItem('explosionSimState');
         }
 
-        // Langkah 2: Jika tidak ada state tersimpan (pengguna baru), muat default Beirut
-        if (!stateLoaded) {
-          if (simulationLog.length > 0) {
-            const firstLog = simulationLog[0]; // Ini adalah data Beirut node 1
-            const materialValue = Array.from($('material').options).find(opt => 
-                (materialAbbreviationMap[opt.text] || opt.value) === firstLog.material
-            )?.value;
-
-            if (materialValue) {
-              const materialSelect = $('material');
-              materialSelect.value = materialValue;
-              
-              // Penting: Panggil 'change' untuk memuat preset (rho, dh, dll)
-              materialSelect.dispatchEvent(new Event('change'));
-              
-              // Setelah preset dimuat, baru kita timpa vol & dist sesuai data log
-              $('vol').value = firstLog.vol;
-              $('dist').value = firstLog.dist;
-            }
+        // --- AWAL BAGIAN YANG DIPERBAIKI ---
+        // Jika tidak ada state tersimpan (pengguna baru), muat default Beirut
+        if (!stateLoaded && simulationLog.length > 0) {
+          const firstLog = simulationLog[0]; // Data Beirut node 1
+          const materialSelect = $('material');          
+          // Temukan nilai <option> yang sesuai dengan singkatan material
+          const materialValue = Array.from(materialSelect.options).find(opt => 
+              (materialAbbreviationMap[opt.text] || opt.value) === firstLog.material
+          )?.value;
+          if (materialValue) {
+            materialSelect.value = materialValue;            
+            // 1. Muat nilai preset (rho, dh, dll.) dari material yang dipilih
+            const p = presets[materialValue];
+            if (p) {
+              Object.keys(p).forEach(key => {
+                if ($(key)) $(key).value = p[key];
+              });
+            }            
+            // 2. Timpa nilai volume & jarak dengan data spesifik dari log
+            $('vol').value = firstLog.vol;
+            $('dist').value = firstLog.dist;
           }
         }
+        // --- AKHIR BAGIAN YANG DIPERBAIKI ---
 
         renderEquation($('material').value);
-        compute(true);
+        // Panggil compute HANYA SEKALI di akhir, setelah semua nilai form diatur
+        compute(true); 
         syncFloatingPanelInputs();
       }
      
@@ -2647,7 +2544,6 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
       // Pastikan elemen dropdown ada sebelum menambahkan event listener
       if (dropdown) {
         const dropdownToggle = dropdown.querySelector('.dropdown-toggle');
-
         // Event listener untuk tombol menu
         if (dropdownToggle) {
           dropdownToggle.addEventListener('click', (event) => {
@@ -2657,7 +2553,6 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
             dropdown.classList.toggle('is-active');
           });
         }
-
         // Event listener pada dokumen untuk menutup menu saat klik di luar area menu
         document.addEventListener('click', (event) => {
           // Cek jika menu sedang aktif dan klik terjadi di luar area '.dropdown-menu'
@@ -2670,8 +2565,7 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
       function setupFloatingPanel() {
         const floatInputs = $('floatPanelInputs');
         const floatOutputs = $('floatPanelOutputs');
-        const lang = translations[currentLanguage];
-       
+        const lang = translations[currentLanguage];       
         floatInputs.innerHTML = `
           <div class="floating-group material">
             <label for="float_material" class="label">${lang.label_select_material}</label>
@@ -2686,7 +2580,6 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
             <input id="float_dist" type="number" min="0" step="any" />
           </div>
         `;
-
         floatOutputs.innerHTML = `
             <span class="label">${lang.float_overpressure_label}</span>
             <div class="output-values">
@@ -2701,8 +2594,7 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
        
         const originalSelect = $('material');
         const floatSelect = $('float_material');
-        floatSelect.innerHTML = originalSelect.innerHTML;
-       
+        floatSelect.innerHTML = originalSelect.innerHTML;       
         const syncValues = (source, target) => {
             if (source.value !== target.value) {
                 target.value = source.value;
@@ -2715,11 +2607,9 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
        
         ['material', 'vol', 'dist'].forEach(id => {
             const original = $(id);
-            const float = $(`float_${id}`);
-           
+            const float = $(`float_${id}`);           
             original.addEventListener('input', () => { if(float.value !== original.value) float.value = original.value; });
-            original.addEventListener('change', () => { if(float.value !== original.value) float.value = original.value; });
-           
+            original.addEventListener('change', () => { if(float.value !== original.value) float.value = original.value; });           
             float.addEventListener('input', () => syncValues(float, original));
             float.addEventListener('change', () => syncValues(float, original));
         });
@@ -2741,7 +2631,6 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
           if(floatAlonso) floatAlonso.textContent = isNaN(alonso) ? '—' : alonso.toFixed(3);
       if(floatSadovski) floatSadovski.textContent = isNaN(sadovski) ? '—' : sadovski.toFixed(3);
           if(btnSaveFloat) btnSaveFloat.disabled = !enabled;
-
       }
 
       function makeDraggable(panel, handle) {
@@ -2751,17 +2640,14 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
           const dragStart = (e) => {
               if (panel.classList.contains('collapsed')) return;
               isDragging = true;
-              panel.style.transition = 'none'; 
-             
+              panel.style.transition = 'none';              
               const rect = panel.getBoundingClientRect();
               panel.style.width = rect.width + 'px';
               panel.style.left = rect.left + 'px';
               panel.style.transform = 'none';
-
               let currentEvent = e.type.startsWith('touch') ? e.touches[0] : e;
               pos3 = currentEvent.clientX;
-              pos4 = currentEvent.clientY;
-             
+              pos4 = currentEvent.clientY;             
               document.addEventListener('mouseup', dragEnd);
               document.addEventListener('mousemove', elementDrag);
               document.addEventListener('touchend', dragEnd);
@@ -2777,15 +2663,12 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
           function elementDrag(e) {
               if (!isDragging) return;
               if (e.type === 'touchmove') e.preventDefault();
-             
               let currentEvent = e.type.startsWith('touch') ? e.touches[0] : e;
               if (!currentEvent.clientX) return; 
-             
               pos1 = pos3 - currentEvent.clientX;
               pos2 = pos4 - currentEvent.clientY;
               pos3 = currentEvent.clientX;
               pos4 = currentEvent.clientY;
-             
               panel.style.top = (panel.offsetTop - pos2) + "px";
               panel.style.left = (panel.offsetLeft - pos1) + "px";
               panel.style.bottom = 'auto'; 
@@ -2806,7 +2689,6 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
      
       const floatingPanel = $('floatingControlPanel');
       makeDraggable(floatingPanel, floatingPanel.querySelector('.floating-panel-header'));
-     
       // --- FINAL ROBUSTNESS CHECK FOR CHART LIBRARIES ---
       if (typeof echarts !== 'undefined') {
         chartController = initializeChart();
@@ -2914,7 +2796,6 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
       }
 
       const logTbody = $('logTbody');
-
       // *** MODIFICATION START ***
       // Fungsi ini akan dipanggil oleh handleLogRowClick untuk menampilkan popup.
       function showMapPopupForLog(logData) {
@@ -3005,10 +2886,8 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
         showStatusMessage(`Data dari log #${index + 1} telah dimuat ke kalkulator.`);
       }
       // *** MODIFICATION END ***
-
       // Tambahkan event listener ke <tbody>
       logTbody.addEventListener('click', handleLogRowClick);
-
       logTbody.addEventListener('click', (event) => {
         const deleteButton = event.target.closest('.btn-delete');
         if (deleteButton) {
@@ -3169,6 +3048,7 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
                   saveLogToLocalStorage();
 
                   if (simulationLog.length > 0) {
+                      // --- AWAL BAGIAN YANG DIPERBAIKI ---
                       try {
                           const firstLog = simulationLog[0];
                           const materialSelect = $('material');
@@ -3176,7 +3056,9 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
                           const findMaterialValue = (abbr) => {
                               const options = materialSelect.options;
                               for (let i = 0; i < options.length; i++) {
-                                  if (materialAbbreviationMap[options[i].text.trim()] === abbr.trim()) {
+                                  // Pencocokan yang lebih kuat, mengabaikan spasi ekstra
+                                  const optionText = options[i].text.trim();
+                                  if ((materialAbbreviationMap[optionText] || options[i].value) === abbr.trim()) {
                                       return options[i].value;
                                   }
                               }
@@ -3185,42 +3067,50 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
                       
                           const materialValue = findMaterialValue(firstLog.material);
                           if (materialValue) {
+                              // 1. Atur semua nilai form terlebih dahulu
                               materialSelect.value = materialValue;
-                      
-                              const p = presets[materialValue];
-                              if (p) {
-                                  Object.keys(p).forEach(key => {
-                                      const el = $(key);
-                                      if (el) el.value = p[key];
-                                  });
-                              }
-                              renderEquation(materialValue);
-                      
                               $('vol').value = firstLog.vol;
                               $('dist').value = firstLog.dist;
                               $('rho').value = firstLog.rho;
                               $('dh').value = firstLog.dh;
                               $('eta').value = firstLog.eta;
                               $('e_tnt').value = firstLog.e_tnt;
-                      
+                              
+                              // 2. Perbarui tampilan persamaan reaksi
+                              renderEquation(materialValue);
+                              
+                              // 3. Panggil kalkulasi HANYA SEKALI di akhir
                               compute(true);
                               
+                              // 4. Sinkronkan dengan panel kontrol cepat
                               syncFloatingPanelInputs();
                           }
                       } catch (e) {
                           console.warn("Gagal memperbarui formulir utama dari CSV yang diimpor, tetapi log berhasil dimuat.", e);
                       }
+                      // --- AKHIR BAGIAN YANG DIPERBAIKI ---
                   }
-
               } catch (err) {
                   showStatusMessage('status_import_error', true, err.message);
               } finally {
                   importFileInput.value = '';
               }
+
+              // --- TAMBAHKAN KODE BARU DI BAWAH INI ---
+              // Memicu klik pada baris pertama setelah impor CSV berhasil.
+              // Ini menyamakan perilaku dengan saat memilih skenario dari dropdown.
+              setTimeout(() => {
+                  const firstRow = document.querySelector('#logTbody tr:not(.log-placeholder)');
+                  if (firstRow) {
+                      firstRow.click();
+                  }
+              }, 150); // Penundaan sedikit lebih lama untuk memastikan semua rendering selesai.
+              // --- AKHIR DARI KODE TAMBAHAN ---
+
           };
           reader.readAsText(file);
       });
-     
+           
       function setupCollapsePanel() {
         const panel = $('floatingControlPanel');
         const collapseBtn = $('floatPanelCollapseBtn');
@@ -3328,6 +3218,7 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
                   console.error(`Material "${materialValue}" dari data skenario tidak ditemukan di dropdown.`);
               }
           }
+          
           // Panggil fungsi untuk menyorot baris pertama setelah tabel diperbarui
           highlightFirstRow();
       }
@@ -3501,7 +3392,6 @@ window.addEventListener('load', () => {
 
     // ======= Compose settings (QS ➜ LS ➜ Built-in) =======
     let settings = { ...BUILTIN_DEFAULTS, ...loadSaved(), ...readFromQS() };
-
     // ======= Geodesic helpers =======
     const R_EARTH = 6371008.8; // m
     function destPoint(latDeg, lonDeg, distanceM, bearingDeg){
@@ -3527,7 +3417,6 @@ window.addEventListener('load', () => {
       }
       return coords;
     }
-
     // ======= Map init =======
     const map = L.map('map', {
       center:[settings.lat, settings.lon],
@@ -3551,7 +3440,6 @@ window.addEventListener('load', () => {
 
     L.control.scale({imperial:false, position: 'bottomright'}).addTo(map);
     L.control.zoom({ position: 'bottomright' }).addTo(map);
-
     const creditHTML =
       `<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a> · ` +
       `<span title="Author">Credit by <a href="https://id.linkedin.com/in/virdanurlulu" target="_blank" rel="nofollow noopener">Virda Nur Lu'lu</a></span>`;
@@ -3572,7 +3460,6 @@ window.addEventListener('load', () => {
     function rgSaveCache(obj){ try{ localStorage.setItem(RG_KEY, JSON.stringify(obj)); }catch{} }
 
     let isProgrammaticMove = false; // Flag to prevent moveend recursion
-
     async function fetchNominatimEN(lat, lon){
       const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1&namedetails=1&accept-language=en`;
       const r = await fetch(url, {headers:{'Accept':'application/json', 'User-Agent': 'ExplosionSim/1.0'}});
@@ -3866,18 +3753,15 @@ window.addEventListener('load', () => {
         
         const lat = parseFloat(mapLatInput.value);
         const lon = parseFloat(mapLonInput.value);
-
         if (!isNaN(lat) && !isNaN(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
             // Cek jika koordinat benar-benar berubah untuk menghindari pembaruan yang tidak perlu
             if (Math.abs(settings.lat - lat) > 1e-7 || Math.abs(settings.lon - lon) > 1e-7) {
                 settings.lat = lat;
                 settings.lon = lon;
                 savePartial({ lat: lat, lon: lon });
-
                 // Atur tampilan peta ke koordinat baru
                 isProgrammaticMove = true; 
                 map.setView([lat, lon]);
-
                 // Muat ulang nama tempat dan gambar ulang semuanya di lokasi baru
                 refreshPlaceName(lat, lon).then(() => {
                     drawInitialState();
@@ -3910,7 +3794,6 @@ window.addEventListener('load', () => {
       // Memanggil updateMapFromLog() di sini untuk memastikan peta melakukan sinkronisasi dengan
       // data log yang sudah dimuat saat halaman pertama kali dibuka.
       updateMapFromLog();
-
       // --- TAMBAHKAN KODE DI BAWAH INI ---
       // Memicu klik pada baris log pertama SETELAH peta dijamin sudah siap.
       // Ini akan menampilkan popup di peta untuk data awal.
@@ -3923,7 +3806,6 @@ window.addEventListener('load', () => {
       // --- AKHIR DARI KODE TAMBAHAN ---
 
     })();
-
     // Listen for custom events from the other script for CSV import
     window.addEventListener('map:updateCoords', (e) => {
         const { lat, lon } = e.detail;
@@ -3951,7 +3833,6 @@ window.addEventListener('load', () => {
         console.error("simulationLog array not found or not an array.");
         return;
       }
-
       // Secara otomatis menyinkronkan kontrol peta dengan entri pertama dalam log simulasi.
       if (simulationLog.length > 0) {
           const firstLog = simulationLog[0];
@@ -4037,7 +3918,6 @@ window.addEventListener('load', () => {
         if (!leftPanel || !rightPanel || !logSection || !overpressureChartSection) {
             return;
         }
-
         if (window.innerWidth <= 1024) {
             if (!leftPanel.contains(logSection)) {
                 overpressureChartSection.insertAdjacentElement('afterend', logSection);
@@ -4048,15 +3928,12 @@ window.addEventListener('load', () => {
             }
         }
     }
-
     adjustLogPosition();
     const debouncedAdjustLogPosition = debounce(adjustLogPosition, 150);
     window.addEventListener('resize', debouncedAdjustLogPosition);
     window.addEventListener('orientationchange', debouncedAdjustLogPosition);
-
   });
   </script>
-
 
 </body>
 </html>
