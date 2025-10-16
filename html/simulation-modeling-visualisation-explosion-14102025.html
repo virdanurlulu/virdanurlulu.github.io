@@ -3295,7 +3295,6 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
       window.addEventListener('resize', debouncedUpdateOnResizeOrRotate);
       window.addEventListener('orientationchange', debouncedUpdateOnResizeOrRotate);
 
-      // =================== KODE BARU DIMULAI ===================
       function loadAndDisplayScenario(scenarioKey) {
           if (!simulationScenarios[scenarioKey]) return;
 
@@ -3369,6 +3368,19 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
           selector.addEventListener('change', (event) => {
               const selectedScenarioKey = event.target.value;
               loadAndDisplayScenario(selectedScenarioKey);
+              
+              // --- AWAL KODE PERBAIKAN ---
+              // Tambahkan pemicu klik di sini.
+              // Ini memastikan baris pertama dari data yang baru dimuat akan diklik,
+              // sehingga memicu pembaruan popup di peta.
+              setTimeout(() => {
+                  const firstRow = document.querySelector('#logTbody tr:not(.log-placeholder)');
+                  if (firstRow) {
+                      firstRow.click();
+                  }
+              }, 100);
+              // --- AKHIR KODE PERBAIKAN ---
+
               // Simpan kunci skenario yang dipilih ke localStorage setiap kali ada perubahan
               try {
                 localStorage.setItem('lastSelectedScenario', selectedScenarioKey);
@@ -3377,7 +3389,6 @@ function updateInjuryPanels(PoCrowl, PoAlonso, PoSadovski, isAlonsoExtrapolated 
               }
           });
       }
-      // =================== KODE BARU SELESAI ===================
 
       // --- INITIALIZATION SEQUENCE ---
       initLanguage(); 
@@ -3899,6 +3910,18 @@ window.addEventListener('load', () => {
       // Memanggil updateMapFromLog() di sini untuk memastikan peta melakukan sinkronisasi dengan
       // data log yang sudah dimuat saat halaman pertama kali dibuka.
       updateMapFromLog();
+
+      // --- TAMBAHKAN KODE DI BAWAH INI ---
+      // Memicu klik pada baris log pertama SETELAH peta dijamin sudah siap.
+      // Ini akan menampilkan popup di peta untuk data awal.
+      setTimeout(() => {
+          const firstRow = document.querySelector('#logTbody tr:not(.log-placeholder)');
+          if (firstRow) {
+              firstRow.click();
+          }
+      }, 100); // Penundaan singkat untuk memastikan semuanya sudah stabil
+      // --- AKHIR DARI KODE TAMBAHAN ---
+
     })();
 
     // Listen for custom events from the other script for CSV import
@@ -4033,57 +4056,5 @@ window.addEventListener('load', () => {
 
   });
   </script>
-
-<script>
-  // --- SOLUSI DEFINITIF: SKRIP TAMBAHAN UNTUK MENYOROT NODE 1 ---
-
-    /**
-     * Fungsi ini akan secara aktif menunggu sebuah elemen muncul di halaman
-     * sebelum menjalankan aksi. Ini jauh lebih andal daripada menggunakan setTimeout.
-     * @param {string} selector - Selector CSS untuk elemen yang ditunggu.
-     * @param {number} timeout - Waktu maksimal menunggu dalam milidetik.
-     */
-    function waitForElementAndClick(selector, timeout = 5000) {
-        console.log(`Menunggu elemen: "${selector}"...`);
-        const startTime = Date.now();
-
-  const intervalId = setInterval(() => {
-    const element = document.querySelector(selector);
-
-    // 1. Jika elemen ditemukan
-    if (element) {
-        clearInterval(intervalId); // Hentikan pengecekan
-        element.click(); // Lakukan klik
-        console.log(`Elemen "${selector}" ditemukan dan berhasil diklik.`);
-        return;
-    }
-
-    // 2. Jika waktu menunggu habis
-    if (Date.now() - startTime > timeout) {
-        clearInterval(intervalId); // Hentikan pengecekan
-        console.error(`Gagal menemukan elemen "${selector}" setelah menunggu ${timeout / 1000} detik.`);
-    }
-  }, 100); // Cek setiap 100 milidetik
-    }
-
-  // --- PENGATURAN PEMICU (TRIGGER) ---
-
-  // 1. Pemicu: Saat halaman pertama kali dimuat atau di-refresh
-  document.addEventListener('DOMContentLoaded', () => {
-    // Panggil fungsi "penunggu" untuk mencari dan mengklik baris pertama
-      waitForElementAndClick('#logTbody tr:not(.log-placeholder)');
-    });
-
-    // 2. Pemicu: Saat pengguna memilih skenario simulasi yang berbeda
-    const pemilihSimulasi = document.getElementById('simulationSelector');
-    if (pemilihSimulasi) {
-        pemilihSimulasi.addEventListener('change', () => {
-            // Setelah dropdown diubah, panggil kembali fungsi "penunggu"
-            // untuk mencari baris pertama dari data yang baru dimuat.
-            waitForElementAndClick('#logTbody tr:not(.log-placeholder)');
-        });
-    }
-</script>
-
 </body>
 </html>
