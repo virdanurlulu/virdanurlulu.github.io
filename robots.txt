@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /html/
+Allow: /pdf/
+Allow: /
+
+Sitemap: https://xplosion.pages.dev/sitemap.xml

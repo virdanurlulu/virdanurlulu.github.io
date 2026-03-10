@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="id">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Overpressure thresholds based on TNT equivalent</title>
+
+		<meta name="description" content="Reference tables for blast overpressure damage thresholds. Classifications for structural damage, injury severity, and process equipment impact based on TNT equivalence modeling.">
+		<link rel="icon" type="image/x-icon" href="/img/favicon.ico" />
+		<link rel="canonical" href="https://xplosion.pages.dev/">
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+		/>
+		<link rel="stylesheet" href="/css/style-main.css" />
+		<style>
+			.flowchart-container {
+				background: var(--card);
+				border-radius: 14px;
+				box-shadow: var(--shadow);
+				overflow: hidden;
+				margin-bottom: 2rem;
+			}
+			.flowchart-header {
+				background: var(--blue-itb);
+				color: #fff;
+				padding: 16px 20px;
+				text-align: center;
+				font-size: 1.4em;
+				font-family: var(--serif-font);
+			}
+			.table-wrapper {
+				overflow-x: auto;
+				padding: 1rem;
+			}
+			table {
+				width: 100%;
+				border-collapse: collapse;
+			}
+			th,
+			td {
+				padding: 0.75rem 1rem;
+				text-align: left;
+				border-bottom: 1px solid #e0e6ec;
+			}
+			thead th {
+				background-color: #f8f9fa;
+				font-weight: 600;
+			}
+		</style>
+	</head>
+	<body class="full" data-title-key="thresholds_page_title">
+		<div id="menu-placeholder"></div>
+
+		<div class="wrap">
+			<header class="banner">
+				<div class="brandbar">
+					<a
+						href="https://virdanurlulu.github.io/"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						<img
+							id="itbLogo"
+							class="brand-logo"
+							alt="Logo ITB"
+							width="96"
+							height="96"
+						/>
+					</a>
+					<div class="brand-text">
+						<h1 data-lang-key="thresholds_page_title">Damage Thresholds</h1>
+						<h3 data-lang-key="page_subtitle">
+							Chemical Engineering, Bandung Institute of Technology
+						</h3>
+					</div>
+				</div>
+
+				<div id="language-switcher">
+					<button
+						class="lang-btn"
+						data-lang="id"
+						aria-label="Ganti ke Bahasa Indonesia"
+					>
+						<img src="/img/ID.svg" alt="ID Flag" />
+					</button>
+					<button
+						class="lang-btn"
+						data-lang="en"
+						aria-label="Switch to English"
+					>
+						<img src="/img/EN.svg" alt="EN Flag" />
+					</button>
+				</div>
+			</header>
+
+			<main>
+				<div class="flowchart-container">
+					<div class="flowchart-header">
+						Table 1. Classification of Structural Damage Based on Blast
+						Overpressure
+					</div>
+					<div class="table-wrapper">
+						<table>
+							<thead>
+								<tr>
+									<th>Risk Damage</th>
+									<th>Po (kPa)</th>
+									<th>Impact of Building Structure</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td
+										style="background-color: #d1fae5"
+										rowspan="6"
+										data-localize-number="IC1 Insignificant<br />(0.14 – ≤2 kPa)"
+									>
+										IC1 Insignificant<br />(0.14 – ≤2 kPa)
+									</td>
+									<td data-localize-number="0.14">0.14</td>
+									<td data-lang-key="bld_dmg_pt_1">
+										Annoying noise (137 dB if low frequency, 10–15 Hz).
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="0.21">0.21</td>
+									<td data-lang-key="bld_dmg_pt_2">
+										Breakage of large windows previously under stress.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="0.28">0.28</td>
+									<td data-lang-key="bld_dmg_pt_3">
+										Loud noise (143 dB), sonic boom, glass failure.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="0.69">0.69</td>
+									<td data-lang-key="bld_dmg_pt_4">
+										Small windows break due to pressure.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="1.03">1.03</td>
+									<td data-lang-key="bld_dmg_pt_5">
+										Typical pressure to break glass.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="≤2">≤2</td>
+									<td data-lang-key="bld_dmg_rg_1">Accidental glass damage.</td>
+								</tr>
+								<tr>
+									<td
+										style="background-color: #a7f3d0"
+										rowspan="6"
+										data-localize-number="IC2 Minor<br />(>2 – ≤9 kPa)"
+									>
+										IC2 Minor<br />(&gt;2 – ≤9 kPa)
+									</td>
+									<td data-localize-number="2.07">2.07</td>
+									<td data-lang-key="bld_dmg_pt_6">
+										"Safe distance," 95% probability of no serious damage below
+										this level, projectile limit, minor ceiling damage, 10%
+										window breakage.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="2.76">2.76</td>
+									<td data-lang-key="bld_dmg_pt_7">
+										Limited minor structural damage.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="4.8">4.8</td>
+									<td data-lang-key="bld_dmg_pt_8">
+										Minor structural damage to houses.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="6.9">6.9</td>
+									<td data-lang-key="bld_dmg_pt_9">
+										Partial house collapse, uninhabitable.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="9">9</td>
+									<td data-lang-key="bld_dmg_pt_10">
+										Slight distortion of coated steel frames.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number=">2 - ≤9">>2 - ≤9</td>
+									<td data-lang-key="bld_dmg_rg_2">
+										Minor glass breakage and light architectural damage such as
+										displacement of roof tiles and falling plaster.
+									</td>
+								</tr>
+								<tr>
+									<td
+										style="background-color: #fde68a"
+										rowspan="7"
+										data-localize-number="IC3 Moderate<br />(>9 – ≤25 kPa)"
+									>
+										IC3 Moderate<br />(&gt;9 – ≤25 kPa)
+									</td>
+									<td data-localize-number="13.8">13.8</td>
+									<td data-lang-key="bld_dmg_pt_11">
+										Partial collapse of roof and walls.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="15.8">15.8</td>
+									<td data-lang-key="bld_dmg_pt_12">
+										Lower limit of serious structural damage.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="17.2">17.2</td>
+									<td data-lang-key="bld_dmg_pt_13">
+										50% of brick walls collapse.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="20.7">20.7</td>
+									<td data-lang-key="bld_dmg_pt_14">
+										Heavy machinery (3,000 lb) slightly damaged in industrial
+										buildings; steel frames distorted or detached from
+										foundation.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number=">9 - ≤25">>9 - ≤25</td>
+									<td data-lang-key="bld_dmg_rg_3">
+										Widespread glass shattering and significant damage to
+										non-structural elements like doors, windows, and roofs.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="13.8 - 20.7">13.8 - 20.7</td>
+									<td data-lang-key="bld_dmg_rg_4">
+										Collapse of unreinforced concrete walls or cement blocks.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="20.7 - ≤25">20.7 - ≤25</td>
+									<td data-lang-key="bld_dmg_rg_5">
+										Frame-less steel panels destroyed; oil storage tanks
+										ruptured (20.7 kPa - ≤25 kPa).
+									</td>
+								</tr>
+								<tr>
+									<td
+										style="background-color: #fcd34d"
+										rowspan="5"
+										data-localize-number="IC4 Serious<br />(>25 – ≤40 kPa)"
+									>
+										IC4 Serious<br />(&gt;25 – ≤40 kPa)
+									</td>
+									<td data-localize-number="27.6">27.6</td>
+									<td data-lang-key="bld_dmg_pt_15">
+										Light industrial structures collapse.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="34.5">34.5</td>
+									<td data-lang-key="bld_dmg_pt_16">
+										Utility poles break; 40,000 lb hydraulic equipment slightly
+										damaged.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="25 - 27.6">25 - 27.6</td>
+									<td data-lang-key="bld_dmg_rg_6">
+										Frame-less steel panels destroyed; oil storage tanks
+										ruptured (25 kPa - 27.6 kPa).
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number=">25 - ≤40">>25 - ≤40</td>
+									<td data-lang-key="bld_dmg_rg_7">
+										Extensive damage to non-structural elements such as brick
+										facades, roofs, and ceilings.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="34.5 - ≤40">34.5 - ≤40</td>
+									<td data-lang-key="bld_dmg_rg_8">
+										Near-total destruction of residential houses (34.5 kPa - ≤40
+										kPa).
+									</td>
+								</tr>
+								<tr>
+									<td
+										style="background-color: #fca5a5"
+										rowspan="4"
+										data-localize-number="IC5 Severe<br />(>40 – ≤55 kPa)"
+									>
+										IC5 Severe<br />(&gt;40 – ≤55 kPa)
+									</td>
+									<td data-localize-number="48.2">48.2</td>
+									<td data-lang-key="bld_dmg_pt_17">
+										8–12 inch thick unreinforced brick panels fail from shear or
+										bending.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="40 - 48.2">40 - 48.2</td>
+									<td data-lang-key="bld_dmg_rg_9">
+										Near-total destruction of residential houses (40 kPa - 48.2
+										kPa).
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number=">40 - ≤55">>40 - ≤55</td>
+									<td data-lang-key="bld_dmg_rg_10">
+										Heavy damage to non-structural elements leading to ceiling
+										collapse.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="48.2 - ≤55">48.2 - ≤55</td>
+									<td data-lang-key="bld_dmg_rg_11">
+										8–12 inch thick unreinforced brick panels fail from shear or
+										bending (48.2 kPa - ≤55 kPa).
+									</td>
+								</tr>
+								<tr>
+									<td
+										style="background-color: #f87171"
+										rowspan="3"
+										data-localize-number="IC6 Major<br />(>55 – ≤76 kPa)"
+									>
+										IC6 Major<br />(&gt;55 – ≤76 kPa)
+									</td>
+									<td data-localize-number="62">62</td>
+									<td data-lang-key="bld_dmg_pt_18">
+										Freight train cars completely destroyed.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="55 - 55.1">55 - 55.1</td>
+									<td data-lang-key="bld_dmg_rg_12">
+										8–12 inch thick unreinforced brick panels fail from shear or
+										bending (55 kPa - 55.1 kPa).
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number=">55 - ≤76">>55 - ≤76</td>
+									<td data-lang-key="bld_dmg_rg_13">
+										Partial collapse of non-structural elements and significant
+										damage to concrete columns.
+									</td>
+								</tr>
+								<tr>
+									<td
+										style="background-color: #991b1b; color: white"
+										rowspan="3"
+										data-localize-number="IC7 Catastrophic<br />(>76 kPa)"
+									>
+										IC7 Catastrophic<br />(&gt;76 kPa)
+									</td>
+									<td data-localize-number="68.9">68.9</td>
+									<td data-lang-key="bld_dmg_pt_19">
+										Likely total damage to structures; 7,000 lb equipment
+										displaced and severely damaged; 12,000 lb machinery still
+										present.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="2068">2068</td>
+									<td data-lang-key="bld_dmg_pt_20">Limit of crater lip</td>
+								</tr>
+								<tr>
+									<td data-localize-number=">76">>76</td>
+									<td data-lang-key="bld_dmg_rg_14">
+										Near-total collapse of all building elements, including
+										heavy damage to load-bearing concrete columns.
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<div class="flowchart-container">
+					<div class="flowchart-header">
+						Table 2. Classification of Injury Severity Based on Blast
+						Overpressure
+					</div>
+					<div class="table-wrapper">
+						<table>
+							<thead>
+								<tr>
+									<th>Risk Injury</th>
+									<th>Po (kPa)</th>
+									<th>Primary Effects</th>
+									<th>Secondary/Tertiary Effects</th>
+									<th>Conclusion</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td
+										style="background-color: #facc15"
+										data-localize-number="Minor Injury<br />(<20 kPa)"
+									>
+										Minor Injury<br />(&lt;20 kPa)
+									</td>
+									<td data-localize-number="<20">&lt;20</td>
+									<td data-lang-key="inj_1_p">
+										No serious injuries; eardrum rupture is not significant.
+									</td>
+									<td data-lang-key="inj_1_s">
+										Glass cracking can begin around 1–1.5 kPa; widespread
+										breakage typically 2–9 kPa.
+									</td>
+									<td data-lang-key="inj_1_c">
+										Primary injury is unlikely, but secondary injury risk from
+										glass fragments remains.
+									</td>
+								</tr>
+								<tr>
+									<td
+										style="background-color: #fdba74"
+										data-localize-number="Moderate Injury<br />(20–30 kPa)"
+									>
+										Moderate Injury<br />(20–30 kPa)
+									</td>
+									<td data-localize-number="20–30">20–30</td>
+									<td data-lang-key="inj_2_p">
+										Minor contusion; 1% eardrum rupture (20–30 kPa).
+									</td>
+									<td data-lang-key="inj_2_s">
+										Moderate structure damage may cause ceiling sections to fall
+										and small objects to drop.
+									</td>
+									<td data-lang-key="inj_2_c">
+										Combination of minor contusion and secondary injuries from
+										fragments/debris.
+									</td>
+								</tr>
+								<tr>
+									<td
+										style="background-color: #fb7185"
+										data-localize-number="Serious Injury<br />(30–50 kPa)"
+									>
+										Serious Injury<br />(30–50 kPa)
+									</td>
+									<td data-localize-number="30–50">30–50</td>
+									<td data-lang-key="inj_3_p">
+										Moderate contusion; eardrum rupture probability 50% around
+										110 kPa.
+									</td>
+									<td data-lang-key="inj_3_s">
+										Wider structural damage creates flying debris, which can
+										cause fractures.
+									</td>
+									<td data-lang-key="inj_3_c">
+										Injury severity rises due to the combined effects of the
+										blast wave and flying debris.
+									</td>
+								</tr>
+								<tr>
+									<td
+										style="background-color: #ef4444; color: white"
+										data-localize-number="Severe Injury<br />(50–100 kPa)"
+									>
+										Severe Injury<br />(50–100 kPa)
+									</td>
+									<td data-localize-number="50–100">50–100</td>
+									<td data-lang-key="inj_4_p">
+										Serious internal contusions and possibly fatal; risk of
+										blast-lung depends on positive-phase duration with
+										overpressure 70 kPa at 50 ms or 140–200 kPa at 3 ms.
+									</td>
+									<td data-lang-key="inj_4_s">
+										Many buildings heavily damaged; some may be totally
+										destroyed, creating entrapment under rubble.
+									</td>
+									<td data-lang-key="inj_4_c">
+										Concurrence of internal injuries and entrapment is
+										potentially fatal.
+									</td>
+								</tr>
+								<tr>
+									<td
+										style="background-color: #7f1d1d; color: white"
+										data-localize-number="Fatality<br />(>100 kPa)"
+									>
+										Fatality<br />(&gt;100 kPa)
+									</td>
+									<td data-localize-number=">100">&gt;100</td>
+									<td data-lang-key="inj_5_p">
+										High mortality for unprotected persons, but thresholds
+										depend on positive-phase duration: 1% lethality 190 kPa at
+										50 ms or 400–500 kPa at 3 ms.
+									</td>
+									<td data-lang-key="inj_5_s">
+										Total building collapse; large debris moving rapidly.
+									</td>
+									<td data-lang-key="inj_5_c">
+										Fatality risk escalates where both overpressure and duration
+										exceed thresholds.
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="flowchart-container">
+					<div class="flowchart-header">
+						Table 3. Classification of Process Equipment Damage Based on
+						Blast Overpressure
+					</div>
+					<div class="table-wrapper">
+						<table>
+							<thead>
+								<tr>
+									<th>Risk Damage</th>
+									<th>Po (kPa)</th>
+									<th>Impact of Process Equipment</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td
+										style="background-color: #d1fae5"
+										rowspan="1"
+										data-localize-number="IC1 Insignificant<br />(<3.45 kPa)"
+									>
+										IC1 Insignificant<br />(&lt;3.45 kPa)
+									</td>
+									<td data-localize-number="<3.45">&lt;3.45</td>
+									<td data-lang-key="pe_dmg_1">
+										No significant damage to process equipment is recorded.
+									</td>
+								</tr>
+								<tr>
+									<td
+										style="background-color: #a7f3d0"
+										rowspan="2"
+										data-localize-number="IC2 Minor<br />(3.45 – <10.34 kPa)"
+									>
+										IC2 Minor<br />(3.45 – &lt;10.34 kPa)
+									</td>
+									<td data-localize-number="3.45">3.45</td>
+									<td data-lang-key="pe_dmg_2">
+										Windows and gauges in both steel- and concrete-roof control
+										houses break, and louvers on the cooling tower fall off.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="6.89">6.89</td>
+									<td data-lang-key="pe_dmg_3">
+										The steel-roof control house roof collapses and damages the
+										switchgear, instruments in the concrete-roof control house
+										are damaged, and the cone-roof tank roof collapses.
+									</td>
+								</tr>
+								<tr>
+									<td
+										style="background-color: #fde68a"
+										rowspan="5"
+										data-localize-number="IC3 Moderate<br />(10.34 – <27.58 kPa)"
+									>
+										IC3 Moderate<br />(10.34 – &lt;27.58 kPa)
+									</td>
+									<td data-localize-number="10.34">10.34</td>
+									<td data-lang-key="pe_dmg_4">
+										The steel-roof control house roof collapses, the frame of
+										the concrete-roof control house deforms, and windows and
+										gauges in the instrument cubicle break.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="13.79">13.79</td>
+									<td data-lang-key="pe_dmg_5">
+										The concrete-roof control house roof collapses, internal
+										parts of the cooling tower are damaged, fire-heater bricks
+										crack, windows and gauges of the chemical reactor break, and
+										the filter suffers debris/missile damage.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="17.24">17.24</td>
+									<td data-lang-key="pe_dmg_6">
+										The fire heater is displaced and connected pipes break.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="20.68">20.68</td>
+									<td data-lang-key="pe_dmg_7">
+										Cone-roof and floating-roof tanks uplift and become tilted,
+										power lines in the instrument cubicle are severed, controls
+										are damaged, and the regenerator moves so that attached
+										piping breaks.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="24.13">24.13</td>
+									<td data-lang-key="pe_dmg_8">
+										Block walls of both steel- and concrete-roof control houses
+										fall, the cooling-tower frame collapses, the cracking
+										reactor moves and attached piping breaks, and pine-support
+										frames deform.
+									</td>
+								</tr>
+								<tr>
+									<td
+										style="background-color: #fcd34d"
+										rowspan="4"
+										data-localize-number="IC4 Serious<br />(27.58 – <41.37 kPa)"
+									>
+										IC4 Serious<br />(27.58 – &lt;41.37 kPa)
+									</td>
+									<td data-localize-number="27.58">27.58</td>
+									<td data-lang-key="pe_dmg_9">
+										The chemical reactor moves and its connected piping breaks.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="31.03">31.03</td>
+									<td data-lang-key="pe_dmg_10">
+										Internal parts of the filter are damaged, the gas-meter case
+										is damaged, and the utilities electronic transformer suffers
+										debris/missile damage.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="34.47">34.47</td>
+									<td data-lang-key="pe_dmg_11">
+										The fire heater overturns or is destroyed, the regenerator
+										moves and piping breaks, structural frames deform, debris
+										from the electric motor causes missile damage, and the
+										blower case is damaged.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="37.92">37.92</td>
+									<td data-lang-key="pe_dmg_12">
+										The fractionation-column frame develops cracks.
+									</td>
+								</tr>
+								<tr>
+									<td
+										style="background-color: #fca5a5"
+										rowspan="4"
+										data-localize-number="IC5 Severe<br />(41.37 – <55.16 kPa)"
+									>
+										IC5 Severe<br />(41.37 – &lt;55.16 kPa)
+									</td>
+									<td data-localize-number="41.37">41.37</td>
+									<td data-lang-key="pe_dmg_13">
+										The instrument cubicle overturns or is destroyed, piping on
+										pine supports breaks and the frame collapses, horizontal
+										pressure-vessel frames deform, several units move with
+										broken pipes, and the gas-regulator utilities unit moves and
+										its piping breaks.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="44.82">44.82</td>
+									<td data-lang-key="pe_dmg_14">
+										Cone-roof and floating-roof tanks uplift with large tilt,
+										the chemical-reactor frame deforms, and the extraction
+										column moves so that connected piping breaks.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="48.26">48.26</td>
+									<td data-lang-key="pe_dmg_15">
+										The cracking reactor moves and piping breaks, and the
+										fractionation column overturns or is destroyed.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="51.71">51.71</td>
+									<td data-lang-key="pe_dmg_16">
+										The regenerator overturns or is destroyed, the utilities
+										electronic transformer moves and piping breaks, and both the
+										steam turbine and heat exchanger move so that their
+										connected piping breaks.
+									</td>
+								</tr>
+								<tr>
+									<td
+										style="background-color: #f87171"
+										rowspan="4"
+										data-localize-number="IC6 Major<br />(55.16 – <82.74 kPa)"
+									>
+										IC6 Major<br />(55.16 – &lt;82.74 kPa)
+									</td>
+									<td data-localize-number="55.16">55.16</td>
+									<td data-lang-key="pe_dmg_17">
+										The spherical tank moves and its connected pipes break.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="62.05">62.05</td>
+									<td data-lang-key="pe_dmg_18">
+										The chemical reactor overturns or is destroyed, the electric
+										motor moves and piping breaks, and the horizontal pressure
+										vessel and heat exchanger overturn or are destroyed.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="65.5">65.5</td>
+									<td data-lang-key="pe_dmg_19">
+										The filter uplifts and is heavily tilted.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="68.95">68.95</td>
+									<td data-lang-key="pe_dmg_20">
+										The utilities electronic transformer and the blower overturn
+										or are destroyed, the gas regulator controls and case are
+										damaged, and the extraction column shifts on its foundation.
+									</td>
+								</tr>
+								<tr>
+									<td
+										style="background-color: #991b1b; color: white"
+										rowspan="4"
+										data-localize-number="IC7 Catastrophic<br />(≥82.74 kPa)"
+									>
+										IC7 Catastrophic<br />(≥82.74 kPa)
+									</td>
+									<td data-localize-number="82.74">82.74</td>
+									<td data-lang-key="pe_dmg_21">
+										The filter, cracking reactor, and extraction column overturn
+										or are destroyed, steam-turbine controls are damaged, and
+										the vertical pressure vessel and pump move with broken
+										pipes.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="96.53">96.53</td>
+									<td data-lang-key="pe_dmg_22">
+										Steam-turbine piping breaks, the spherical tank moves and
+										piping breaks, and the vertical pressure vessel overturns or
+										is destroyed.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="110.32">110.32</td>
+									<td data-lang-key="pe_dmg_23">
+										The spherical tank overturns or is destroyed and the pump
+										shifts on its foundation.
+									</td>
+								</tr>
+								<tr>
+									<td data-localize-number="137.9">137.9</td>
+									<td data-lang-key="pe_dmg_24">
+										The floating-roof tank roof collapses, the electric motor
+										moves on its foundation, and the steam turbine moves on its
+										foundation.
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<div class="flowchart-container">
+					<div class="flowchart-header">
+						References
+					</div>
+					<div class="table-wrapper" style="padding: 1rem 1.5rem; background-color: #fff; font-size: 0.95em; line-height: 1.6;">
+						<p style="margin-bottom: 0.8em;">[1] Wang, Q., Zhang, L., Wang, L., & Bu, L. (2023). A practical method for predicting and analyzing the consequences of ammonium nitrate explosion accidents adjacent to densely populated areas. <em>Heliyon</em>, 9(5), e15616. <a href="https://doi.org/10.1016/j.heliyon.2023.e15616" target="_blank" rel="noopener noreferrer" style="color: var(--blue-itb); text-decoration: underline;">https://doi.org/10.1016/j.heliyon.2023.e15616</a></p>
+						<p style="margin-bottom: 0.8em;">[2] Crowl, D. A., & Louvar, J. F. (2011). <em>Chemical Process Safety: Fundamentals with Applications</em> (3rd ed.). Prentice Hall. (citing V. J. Clancey, “Diagnostic Features of Explosion Damage,” paper presented at the Sixth International Meeting of Forensic Sciences, Edinburgh, 1972).</p>
+						<p style="margin-bottom: 0.8em;">[3] Center for Chemical Process Safety (CCPS). (2000). <em>Guidelines for Chemical Process Quantitative Risk Analysis</em> (2nd ed.). John Wiley & Sons. (citing V. J. Clancey, “Diagnostic Features of Explosion Damage,” paper presented at the Sixth International Meeting of Forensic Sciences, Edinburgh, 1972).</p>
+						<p style="margin-bottom: 0.8em;">[4] Jeremić, R., & Bajić, Z. (2006). An approach to determining the TNT equivalent of high explosives. <em>Scientific Technical Review</em>, 56(1), 58–62.</p>
+					</div>
+				</div>
+			</main>
+
+			<div id="footer-placeholder"></div>
+		</div>
+
+		<script>
+			document.addEventListener("DOMContentLoaded", () => {
+				function loadLogoThresholds() {
+					const img = document.getElementById("itbLogo");
+					if (!img) return;
+					const fallback =
+						'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><circle cx="128" cy="128" r="120" fill="%230079c2"/><text x="50%" y="56%" font-family="Georgia, serif" font-size="88" text-anchor="middle" fill="white">ITB</text></svg>';
+					img.onerror = () => {
+						img.onerror = null;
+						img.src = fallback;
+					};
+					img.src = "/img/Logo_Institut_Teknologi_Bandung.webp";
+				}
+				loadLogoThresholds();
+			});
+		</script>
+		<script src="/js/app-simulator.js" defer></script>
+	</body>
+</html>

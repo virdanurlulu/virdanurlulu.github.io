@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    
+    <title>Researcher Profile | Virda Nur Lu'lu - Explosion Consequence Modelling</title>
+    <meta name="description" content="Academic profile of Virda Nur Lu'lu, M.Sc. at ITB. Specializing in explosion consequence modelling and industrial safety simulation.">
+    <meta name="author" content="Virda Nur Lu'lu">
+    
+    <link rel="icon" type="image/x-icon" href="https://xplosion.pages.dev/img/favicon.ico">
+    
+    <link rel="canonical" href="https://xplosion.pages.dev/" />
+    <meta property="og:title" content="Researcher Profile | Virda Nur Lu'lu - M.Sc. Chemical Engineering">
+    <meta property="og:image" content="https://pjnbshyobrpkkbkoxnqk.supabase.co/storage/v1/object/public/img/ITB-Exlosion-Modeling-Simulation.webp" />
+    <meta property="og:type" content="profile">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Virda Nur Lu'lu",
+      "jobTitle": "Researcher",
+      "affiliation": {"@type": "Organization", "name": "Institut Teknologi Bandung"},
+      "url": "https://xplosion.pages.dev/",
+      "sameAs": [
+        "https://www.linkedin.com/in/virdanurlulu/"
+      ]
+    }
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* CSS Variables */
+        :root {
+            --itb-blue: #0079c2;
+            --itb-dark: #00568a;
+            --linkedin-blue: #0077b5;
+            --slate: #2c3e50;
+            --gray-text: #596a7b;
+            --bg-body: #f8fafc;
+            --card-bg: #ffffff;
+            --accent-bg: #f1f7fb;
+            --transition: all 0.3s ease;
+        }
+
+        /* Reset & Base Styles */
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--slate);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Container & Card */
+        .wrapper {
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .profile-card {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 800px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* Header Section */
+        .card-header {
+            background: linear-gradient(135deg, var(--itb-blue), var(--itb-dark));
+            padding: 30px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .card-header h1 {
+            margin: 0;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 500;
+        }
+
+        /* Body Section */
+        .card-body {
+            padding: 40px;
+        }
+
+        .name {
+            font-size: clamp(1.8rem, 5vw, 2.4rem);
+            font-weight: 800;
+            margin: 0 0 15px 0;
+            color: var(--slate);
+        }
+
+        .credential-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+            color: var(--gray-text);
+        }
+
+        .credential-item i {
+            color: var(--itb-blue);
+            width: 20px;
+        }
+
+        /* Specialization Box */
+        .specialization-box {
+            background-color: var(--accent-bg);
+            border-left: 5px solid var(--itb-blue);
+            padding: 25px;
+            border-radius: 0 8px 8px 0;
+            margin: 30px 0;
+        }
+
+        .specialization-box h2 {
+            font-size: 1.1rem;
+            margin: 0 0 10px 0;
+            color: var(--itb-blue);
+            text-transform: uppercase;
+        }
+
+        .specialization-box p {
+            margin: 0;
+            font-size: 1rem;
+            text-align: justify;
+        }
+
+        /* Action Buttons */
+        .action-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 180px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        /* Email Button */
+        .btn-primary {
+            background-color: var(--itb-blue);
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: var(--itb-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 121, 194, 0.3);
+        }
+
+        /* LinkedIn Button */
+        .btn-linkedin {
+            background-color: white;
+            color: var(--linkedin-blue);
+            border: 2px solid var(--linkedin-blue);
+        }
+        .btn-linkedin:hover {
+            background-color: var(--linkedin-blue);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 119, 181, 0.2);
+        }
+
+        /* Outline Button (Platform) */
+        .btn-outline {
+            background-color: transparent;
+            color: var(--slate);
+            border: 2px solid #e2e8f0;
+        }
+        .btn-outline:hover {
+            border-color: var(--itb-blue);
+            color: var(--itb-blue);
+            background-color: white;
+            transform: translateY(-3px);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 768px) {
+            .profile-card { max-width: 95%; }
+            .card-body { padding: 30px 20px; }
+            .btn { width: 100%; flex: none; }
+            .action-group { gap: 10px; }
+        }
+
+        @media (max-width: 480px) {
+            .name { font-size: 1.7rem; text-align: center; }
+            .credential-item { font-size: 0.9rem; justify-content: center; }
+            .specialization-box p { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+        <main class="profile-card">
+            <header class="card-header">
+                <h1>Researcher Profile</h1>
+            </header>
+            
+            <article class="card-body">
+                <h2 class="name">Virda Nur Lu'lu</h2>
+                
+                <div class="credential-item">
+                    <i class="fas fa-graduation-cap"></i> 
+                    <span>M.Sc. in Chemical Engineering</span>
+                </div>
+                
+                <div class="credential-item">
+                    <i class="fas fa-university"></i> 
+                    <span>Bandung Institute of Technology (ITB)</span>
+                </div>
+
+                <section class="specialization-box">
+                    <h2>Research Specialization</h2>
+                    <p>
+                        Focused on explosion consequence modelling using TNT-equivalent methodologies. Comparative benchmarking of empirical correlations (Crowl & Louvar, Díaz-Alonso, and Sadovski) for the development of web-based simulation tools for rapid safety assessment in industrial facilities.
+                    </p>
+                </section>
+
+                <nav class="action-group" aria-label="Contact options">
+                    <a href="mailto:virda.nurtulu@gmail.com" class="btn btn-primary">
+                        <i class="fas fa-envelope"></i> Email
+                    </a>
+
+                    <a href="https://www.linkedin.com/in/virdanurlulu/" target="_blank" rel="noopener noreferrer" class="btn btn-linkedin">
+                        <i class="fab fa-linkedin"></i> LinkedIn
+                    </a>
+                    
+                    <a href="https://xplosion.pages.dev/" class="btn btn-outline">
+                        <i class="fas fa-desktop"></i> Xplosion Platform
+                    </a>
+                </nav>
+            </article>
+        </main>
+    </div>
+
+</body>
+</html>
