@@ -7,7 +7,7 @@ export function getDomRefs() {
     'bodyOrientation','shellSectionType','shellODStart','shellODEnd','shellThickness','shellLength','frontHeadType','rearHeadType',
     'bodyFlangeTag','bodyFlangeLocation','bodyFlangeEnabled','bodyFlangeOD','bodyFlangeThickness','bodyFlangeWidth','bodyGasketEnabled','bodyGasketOD','bodyGasketID','bodyGasketThickness','bodyStudEnabled','bodyStudBCD','bodyStudDiameter','bodyStudCount','bodyStudLength',
     'pigBodyWrap','reboilerBodyWrap','pigMinorOD','pigReducerLength','pigNeckLength','closureType','channelOD','channelLength','tubeBundleOD',
-    'nozzleTag','nozzleType','nozzleEnabled','nozzleLocationMode','nozzleOD','nozzleThickness','nozzleProjection','nozzleOffset','nozzleAngle','nozzlePadEnabled','nozzleBlindEnabled','nozzlePadOD',
+    'nozzleTag','nozzleType','nozzleEnabled','nozzleLocationMode','nozzleOD','nozzleThickness','nozzleProjection','nozzleOffset','nozzleAngle','nozzleFlangeEnabled','nozzleFlangeOD','nozzleFlangeThickness','nozzleFlangeBoltCount','nozzlePadEnabled','nozzlePadOD','nozzlePadThickness','nozzleBlindEnabled','nozzleBlindOD','nozzleBlindThickness','nozzleGasketEnabled','nozzleGasketOD','nozzleGasketID','nozzleGasketThickness','nozzleStudEnabled','nozzleStudBCD','nozzleStudDiameter','nozzleStudCount','nozzleStudLength',
     'supportType','supportSpacing','supportWidth','supportHeight',
     'extLiftingLug','extTailingLug','extNamePlate','extEarthingBoss','extClips',
     'intTubeSheet','intBaffleInlet','intWearPlate','intWeir','intVortexBreaker','intDipPipe','intRing','intClips',
@@ -185,9 +185,25 @@ export function bindForm({ dom, store }) {
   bind(dom.nozzleProjection, () => store.updatePath('model.nozzles[0].neck.projection', numValue(dom.nozzleProjection)));
   bind(dom.nozzleOffset, () => store.updatePath('model.nozzles[0].location.offset', numValue(dom.nozzleOffset)));
   bind(dom.nozzleAngle, () => store.updatePath('model.nozzles[0].location.angle', numValue(dom.nozzleAngle)));
+  bind(dom.nozzleFlangeEnabled, () => store.updatePath('model.nozzles[0].flange.enabled', boolValue(dom.nozzleFlangeEnabled)));
+  bind(dom.nozzleFlangeOD, () => store.updatePath('model.nozzles[0].flange.od', numValue(dom.nozzleFlangeOD)));
+  bind(dom.nozzleFlangeThickness, () => store.updatePath('model.nozzles[0].flange.thickness', numValue(dom.nozzleFlangeThickness)));
+  bind(dom.nozzleFlangeBoltCount, () => store.updatePath('model.nozzles[0].flange.boltCount', numValue(dom.nozzleFlangeBoltCount)));
   bind(dom.nozzlePadEnabled, () => store.updatePath('model.nozzles[0].reinforcementPad.enabled', boolValue(dom.nozzlePadEnabled)));
-  bind(dom.nozzleBlindEnabled, () => store.updatePath('model.nozzles[0].blindFlange.enabled', boolValue(dom.nozzleBlindEnabled)));
   bind(dom.nozzlePadOD, () => store.updatePath('model.nozzles[0].reinforcementPad.od', numValue(dom.nozzlePadOD)));
+  bind(dom.nozzlePadThickness, () => store.updatePath('model.nozzles[0].reinforcementPad.thickness', numValue(dom.nozzlePadThickness)));
+  bind(dom.nozzleBlindEnabled, () => store.updatePath('model.nozzles[0].blindFlange.enabled', boolValue(dom.nozzleBlindEnabled)));
+  bind(dom.nozzleBlindOD, () => store.updatePath('model.nozzles[0].blindFlange.od', numValue(dom.nozzleBlindOD)));
+  bind(dom.nozzleBlindThickness, () => store.updatePath('model.nozzles[0].blindFlange.thickness', numValue(dom.nozzleBlindThickness)));
+  bind(dom.nozzleGasketEnabled, () => store.updatePath('model.nozzles[0].gasket.enabled', boolValue(dom.nozzleGasketEnabled)));
+  bind(dom.nozzleGasketOD, () => store.updatePath('model.nozzles[0].gasket.outerDiameter', numValue(dom.nozzleGasketOD)));
+  bind(dom.nozzleGasketID, () => store.updatePath('model.nozzles[0].gasket.innerDiameter', numValue(dom.nozzleGasketID)));
+  bind(dom.nozzleGasketThickness, () => store.updatePath('model.nozzles[0].gasket.thickness', numValue(dom.nozzleGasketThickness)));
+  bind(dom.nozzleStudEnabled, () => store.updatePath('model.nozzles[0].studBolt.enabled', boolValue(dom.nozzleStudEnabled)));
+  bind(dom.nozzleStudBCD, () => store.updatePath('model.nozzles[0].studBolt.boltCircleDiameter', numValue(dom.nozzleStudBCD)));
+  bind(dom.nozzleStudDiameter, () => store.updatePath('model.nozzles[0].studBolt.boltDiameter', numValue(dom.nozzleStudDiameter)));
+  bind(dom.nozzleStudCount, () => store.updatePath('model.nozzles[0].studBolt.boltCount', numValue(dom.nozzleStudCount)));
+  bind(dom.nozzleStudLength, () => store.updatePath('model.nozzles[0].studBolt.boltLength', numValue(dom.nozzleStudLength)));
 
   bind(dom.supportType, () => store.updatePath('model.supports[0].type', dom.supportType.value));
   bind(dom.supportSpacing, () => { store.updatePath('model.supports[0].spacing', numValue(dom.supportSpacing)); store.updatePath('model.supports[1].spacing', numValue(dom.supportSpacing)); });
@@ -284,9 +300,25 @@ export function renderForm({ dom, state }) {
   dom.nozzleProjection.value = nozzle.neck?.projection || 200;
   dom.nozzleOffset.value = nozzle.location?.offset || 0;
   dom.nozzleAngle.value = nozzle.location?.angle || 0;
+  dom.nozzleFlangeEnabled.checked = Boolean(nozzle.flange?.enabled);
+  dom.nozzleFlangeOD.value = nozzle.flange?.od || Math.round((nozzle.neck?.od || 100) * 1.65);
+  dom.nozzleFlangeThickness.value = nozzle.flange?.thickness || Math.max((nozzle.neck?.thickness || 8) * 1.8, 16);
+  dom.nozzleFlangeBoltCount.value = nozzle.flange?.boltCount || (nozzle.type === 'manhole' ? 12 : 8);
   dom.nozzlePadEnabled.checked = Boolean(nozzle.reinforcementPad?.enabled);
   dom.nozzleBlindEnabled.checked = Boolean(nozzle.blindFlange?.enabled);
   dom.nozzlePadOD.value = nozzle.reinforcementPad?.od || Math.round((nozzle.neck?.od || 100) * 1.4);
+  dom.nozzlePadThickness.value = nozzle.reinforcementPad?.thickness || (nozzle.neck?.thickness || 8);
+  dom.nozzleBlindOD.value = nozzle.blindFlange?.od || Math.round((nozzle.flange?.od || (nozzle.neck?.od || 100) * 1.65));
+  dom.nozzleBlindThickness.value = nozzle.blindFlange?.thickness || (nozzle.flange?.thickness || Math.max((nozzle.neck?.thickness || 8) * 1.8, 16));
+  dom.nozzleGasketEnabled.checked = Boolean(nozzle.gasket?.enabled);
+  dom.nozzleGasketOD.value = nozzle.gasket?.outerDiameter || Math.round((nozzle.flange?.od || (nozzle.neck?.od || 100) * 1.65) * 0.9);
+  dom.nozzleGasketID.value = nozzle.gasket?.innerDiameter || Math.round((nozzle.neck?.od || 100) * 1.02);
+  dom.nozzleGasketThickness.value = nozzle.gasket?.thickness || 3;
+  dom.nozzleStudEnabled.checked = Boolean(nozzle.studBolt?.enabled);
+  dom.nozzleStudBCD.value = nozzle.studBolt?.boltCircleDiameter || Math.round((nozzle.flange?.od || (nozzle.neck?.od || 100) * 1.65) * 0.87);
+  dom.nozzleStudDiameter.value = nozzle.studBolt?.boltDiameter || Math.max(Math.round((nozzle.neck?.od || 100) * 0.06), 12);
+  dom.nozzleStudCount.value = nozzle.studBolt?.boltCount || (nozzle.flange?.boltCount || (nozzle.type === 'manhole' ? 12 : 8));
+  dom.nozzleStudLength.value = nozzle.studBolt?.boltLength || Math.max((nozzle.flange?.thickness || 16) + (nozzle.blindFlange?.thickness || 16) + (nozzle.gasket?.thickness || 0) + 12, 42);
 
   dom.supportType.value = support.type || 'saddle';
   dom.supportSpacing.value = support.spacing || 0;

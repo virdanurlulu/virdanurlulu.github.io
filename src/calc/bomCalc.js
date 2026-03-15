@@ -31,6 +31,8 @@ function equipmentTypeLabel(type) {
     bodyFlange: 'Body Flange',
     bodyGasket: 'Body Flange Gasket',
     studBolt: 'Stud Bolt Set',
+    blindFlange: 'Blind Flange',
+    reinforcementPad: 'Reinforcement Pad',
   }[type] || type;
 }
 
@@ -140,13 +142,40 @@ export function getBOMRows(model) {
         qty: 1,
       });
     }
+    if (item.flange?.enabled) {
+      rows.push({
+        tag: `NF-${item.tag}`,
+        family: familyLabel('nozzle'),
+        type: 'Nozzle Flange',
+        description: `Flange OD ${item.flange.od} mm, thickness ${item.flange.thickness} mm, bolt count ${item.flange.boltCount}`,
+        qty: 1,
+      });
+    }
     if (item.blindFlange?.enabled) {
       rows.push({
         tag: `BF-${item.tag}`,
         family: familyLabel('nozzle'),
         type: 'Blind Flange',
-        description: `Blind flange for ${item.tag}`,
+        description: `Blind flange OD ${item.blindFlange.od} mm, thickness ${item.blindFlange.thickness} mm`,
         qty: 1,
+      });
+    }
+    if (item.gasket?.enabled) {
+      rows.push({
+        tag: `GK-${item.tag}`,
+        family: familyLabel('nozzle'),
+        type: 'Blind Flange Gasket',
+        description: `Outer diameter ${item.gasket.outerDiameter} mm, inner diameter ${item.gasket.innerDiameter} mm, thickness ${item.gasket.thickness} mm`,
+        qty: 1,
+      });
+    }
+    if (item.studBolt?.enabled) {
+      rows.push({
+        tag: `SB-${item.tag}`,
+        family: familyLabel('nozzle'),
+        type: 'Stud Bolt Set',
+        description: `${item.studBolt.boltCount} studs, bolt circle diameter ${item.studBolt.boltCircleDiameter} mm, stud diameter ${item.studBolt.boltDiameter} mm, stud length ${item.studBolt.boltLength} mm`,
+        qty: item.studBolt.boltCount,
       });
     }
   });

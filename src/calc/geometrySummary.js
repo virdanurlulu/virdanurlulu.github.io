@@ -28,12 +28,16 @@ export function getSummary(state) {
   const mass = getSteelMassKg(state.model, state.material.density, state.material.corrosionAllowance);
   const bom = getBOMRows(state.model);
   const issues = getValidationIssues(state.model);
+  const reinforcementPadCount = state.model.nozzles.filter((item) => item.enabled && item.reinforcementPad?.enabled).length;
+  const blindFlangeCount = state.model.nozzles.filter((item) => item.enabled && item.blindFlange?.enabled).length;
   return [
     { label: 'Equipment Type', value: equipmentLabel(state.model.meta.equipmentType) },
     { label: 'Main Shell OD', value: fmtMm(mainShell.odStart) },
     { label: 'Straight Shell Length', value: fmtMm(mainShell.length) },
     { label: 'Nozzle Count', value: String(state.model.nozzles.filter((item) => item.enabled).length) },
     { label: 'Body Flange Count', value: String(state.model.body.bodyFlanges.filter((item) => item.enabled).length) },
+    { label: 'Reinforcement Pad Count', value: String(reinforcementPadCount) },
+    { label: 'Blind Flange Count', value: String(blindFlangeCount) },
     { label: 'Support Count', value: String(state.model.supports.length) },
     { label: 'Weld Specification', value: weldLabel(state) },
     { label: 'Internal Volume', value: fmtVolume(volume) },

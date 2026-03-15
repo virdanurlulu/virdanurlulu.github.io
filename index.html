@@ -150,8 +150,8 @@
       <section class="panel" id="nozzlePanel">
         <h2>Nozzles / Manholes</h2>
         <div class="form-grid">
-          <label>Nozzle tag<input id="nozzleTag" type="text" readonly /></label>
-          <label>Nozzle type
+          <label>Nozzle Tag<input id="nozzleTag" type="text" readonly /></label>
+          <label>Nozzle Type
             <select id="nozzleType">
               <option value="flangedNozzle">Flanged Nozzle</option>
               <option value="manhole">Manhole</option>
@@ -161,8 +161,8 @@
           <label>Nozzle Location
             <select id="nozzleLocationMode">
               <option value="radial">Radial</option>
-              <option value="axial-front">Axial Front</option>
-              <option value="axial-rear">Axial Rear</option>
+              <option value="axial-front">Front Axial</option>
+              <option value="axial-rear">Rear Axial</option>
             </select>
           </label>
           <label>Neck OD (mm)<input id="nozzleOD" type="number" min="30" step="5" /></label>
@@ -170,9 +170,35 @@
           <label>Projection (mm)<input id="nozzleProjection" type="number" min="30" step="5" /></label>
           <label>Axial Offset (mm)<input id="nozzleOffset" type="number" step="10" /></label>
           <label>Circumferential Angle (deg)<input id="nozzleAngle" type="number" min="-180" max="180" step="5" /></label>
-          <label class="switch-row"><span>Reinforcement pad</span><input id="nozzlePadEnabled" type="checkbox" /></label>
-          <label class="switch-row"><span>Blind flange</span><input id="nozzleBlindEnabled" type="checkbox" /></label>
-          <label>Reinforcement Pad OD (mm)<input id="nozzlePadOD" type="number" min="50" step="10" /></label>
+          <label class="switch-row"><span>Enable Nozzle Flange</span><input id="nozzleFlangeEnabled" type="checkbox" /></label>
+          <label>Nozzle Flange OD (mm)<input id="nozzleFlangeOD" type="number" min="50" step="5" /></label>
+          <label>Nozzle Flange Thickness (mm)<input id="nozzleFlangeThickness" type="number" min="4" step="1" /></label>
+          <label>Nozzle Flange Bolt Count<input id="nozzleFlangeBoltCount" type="number" min="4" step="1" /></label>
+        </div>
+        <div class="subsection">
+          <div class="panel-head"><h3>Reinforcement Pad</h3></div>
+          <div class="form-grid">
+            <label class="switch-row"><span>Enable Reinforcement Pad</span><input id="nozzlePadEnabled" type="checkbox" /></label>
+            <label>Pad OD (mm)<input id="nozzlePadOD" type="number" min="50" step="10" /></label>
+            <label>Pad Thickness (mm)<input id="nozzlePadThickness" type="number" min="2" step="1" /></label>
+          </div>
+        </div>
+        <div class="subsection">
+          <div class="panel-head"><h3>Blind Flange Assembly</h3></div>
+          <div class="form-grid">
+            <label class="switch-row"><span>Enable Blind Flange</span><input id="nozzleBlindEnabled" type="checkbox" /></label>
+            <label>Blind Flange OD (mm)<input id="nozzleBlindOD" type="number" min="50" step="5" /></label>
+            <label>Blind Flange Thickness (mm)<input id="nozzleBlindThickness" type="number" min="4" step="1" /></label>
+            <label class="switch-row"><span>Enable Blind Flange Gasket</span><input id="nozzleGasketEnabled" type="checkbox" /></label>
+            <label>Gasket OD (mm)<input id="nozzleGasketOD" type="number" min="50" step="5" /></label>
+            <label>Gasket ID (mm)<input id="nozzleGasketID" type="number" min="20" step="5" /></label>
+            <label>Gasket Thickness (mm)<input id="nozzleGasketThickness" type="number" min="1" step="0.5" /></label>
+            <label class="switch-row"><span>Enable Stud Bolt Set</span><input id="nozzleStudEnabled" type="checkbox" /></label>
+            <label>Stud Bolt Circle Diameter (mm)<input id="nozzleStudBCD" type="number" min="50" step="5" /></label>
+            <label>Stud Diameter (mm)<input id="nozzleStudDiameter" type="number" min="4" step="1" /></label>
+            <label>Stud Count<input id="nozzleStudCount" type="number" min="4" step="1" /></label>
+            <label>Stud Length (mm)<input id="nozzleStudLength" type="number" min="10" step="1" /></label>
+          </div>
         </div>
       </section>
 

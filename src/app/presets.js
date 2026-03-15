@@ -5,10 +5,10 @@ function stdNozzle() {
     type: 'flangedNozzle',
     location: { mode: 'radial', sectionIndex: 0, offset: 0, angle: 0 },
     neck: { od: 300, thickness: 10, projection: 420 },
-    flange: { enabled: true },
-    blindFlange: { enabled: false },
-    gasket: { enabled: false },
-    studBolt: { enabled: false },
+    flange: { enabled: true, od: 495, thickness: 18, boltCount: 8 },
+    blindFlange: { enabled: false, od: 495, thickness: 18 },
+    gasket: { enabled: false, outerDiameter: 450, innerDiameter: 305, thickness: 3 },
+    studBolt: { enabled: false, boltCircleDiameter: 430, boltDiameter: 20, boltCount: 8, boltLength: 52 },
     reinforcementPad: { enabled: true, od: 420, thickness: 10 },
     fitting: { type: 'none' },
   };
@@ -123,9 +123,9 @@ export function createPigLauncherPreset() {
       closure: { tag: 'QOC-01', enabled: true, type: 'flat', thickness: 18 },
     },
     nozzles: [
-      { tag: 'N1', enabled: true, type: 'flangedNozzle', location: { mode: 'radial', sectionIndex: 0, offset: -200, angle: 90 }, neck: { od: 100, thickness: 10, projection: 220 }, flange: { enabled: true }, blindFlange: { enabled: false }, gasket: { enabled: false }, studBolt: { enabled: false }, reinforcementPad: { enabled: false }, fitting: { type: 'vent' } },
-      { tag: 'N2', enabled: true, type: 'flangedNozzle', location: { mode: 'radial', sectionIndex: 0, offset: 950, angle: -90 }, neck: { od: 80, thickness: 10, projection: 200 }, flange: { enabled: true }, blindFlange: { enabled: false }, gasket: { enabled: false }, studBolt: { enabled: false }, reinforcementPad: { enabled: false }, fitting: { type: 'kicker' } },
-      { tag: 'N3', enabled: true, type: 'flangedNozzle', location: { mode: 'axial-rear', sectionIndex: 2, offset: 0, angle: 0 }, neck: { od: 480, thickness: 12, projection: 450 }, flange: { enabled: true }, blindFlange: { enabled: false }, gasket: { enabled: false }, studBolt: { enabled: false }, reinforcementPad: { enabled: false }, fitting: { type: 'outlet' } },
+      { tag: 'N1', enabled: true, type: 'flangedNozzle', location: { mode: 'radial', sectionIndex: 0, offset: -200, angle: 90 }, neck: { od: 100, thickness: 10, projection: 220 }, flange: { enabled: true, od: 165, thickness: 16, boltCount: 8 }, blindFlange: { enabled: false, od: 165, thickness: 16 }, gasket: { enabled: false, outerDiameter: 150, innerDiameter: 102, thickness: 3 }, studBolt: { enabled: false, boltCircleDiameter: 140, boltDiameter: 16, boltCount: 8, boltLength: 42 }, reinforcementPad: { enabled: false, od: 0, thickness: 0 }, fitting: { type: 'vent' } },
+      { tag: 'N2', enabled: true, type: 'flangedNozzle', location: { mode: 'radial', sectionIndex: 0, offset: 950, angle: -90 }, neck: { od: 80, thickness: 10, projection: 200 }, flange: { enabled: true, od: 132, thickness: 16, boltCount: 8 }, blindFlange: { enabled: false, od: 132, thickness: 16 }, gasket: { enabled: false, outerDiameter: 118, innerDiameter: 82, thickness: 3 }, studBolt: { enabled: false, boltCircleDiameter: 112, boltDiameter: 16, boltCount: 8, boltLength: 42 }, reinforcementPad: { enabled: false, od: 0, thickness: 0 }, fitting: { type: 'kicker' } },
+      { tag: 'N3', enabled: true, type: 'flangedNozzle', location: { mode: 'axial-rear', sectionIndex: 2, offset: 0, angle: 0 }, neck: { od: 480, thickness: 12, projection: 450 }, flange: { enabled: true, od: 165, thickness: 16, boltCount: 8 }, blindFlange: { enabled: false, od: 165, thickness: 16 }, gasket: { enabled: false, outerDiameter: 150, innerDiameter: 102, thickness: 3 }, studBolt: { enabled: false, boltCircleDiameter: 140, boltDiameter: 16, boltCount: 8, boltLength: 42 }, reinforcementPad: { enabled: false, od: 0, thickness: 0 }, fitting: { type: 'outlet' } },
     ],
     supports: [
       { tag: 'S1', type: 'saddle', width: 260, height: 460, spacing: 2200 },
@@ -185,9 +185,9 @@ export function createReboilerPreset() {
       closure: { tag: 'CL-01', enabled: false, type: 'flat', thickness: 16 },
     },
     nozzles: [
-      { tag: 'N1', enabled: true, type: 'flangedNozzle', location: { mode: 'radial', sectionIndex: 1, offset: -900, angle: 0 }, neck: { od: 250, thickness: 10, projection: 350 }, flange: { enabled: true }, blindFlange: { enabled: false }, gasket: { enabled: false }, studBolt: { enabled: false }, reinforcementPad: { enabled: false }, fitting: { type: 'shell-side' } },
-      { tag: 'N2', enabled: true, type: 'flangedNozzle', location: { mode: 'radial', sectionIndex: 1, offset: 850, angle: 180 }, neck: { od: 190, thickness: 10, projection: 290 }, flange: { enabled: true }, blindFlange: { enabled: false }, gasket: { enabled: false }, studBolt: { enabled: false }, reinforcementPad: { enabled: false }, fitting: { type: 'shell-side' } },
-      { tag: 'N3', enabled: true, type: 'flangedNozzle', location: { mode: 'radial', sectionIndex: 0, offset: 0, angle: 90 }, neck: { od: 180, thickness: 8, projection: 260 }, flange: { enabled: true }, blindFlange: { enabled: false }, gasket: { enabled: false }, studBolt: { enabled: false }, reinforcementPad: { enabled: false }, fitting: { type: 'channel-side' } },
+      { tag: 'N1', enabled: true, type: 'flangedNozzle', location: { mode: 'radial', sectionIndex: 1, offset: -900, angle: 0 }, neck: { od: 250, thickness: 10, projection: 350 }, flange: { enabled: true, od: 165, thickness: 16, boltCount: 8 }, blindFlange: { enabled: false, od: 165, thickness: 16 }, gasket: { enabled: false, outerDiameter: 150, innerDiameter: 102, thickness: 3 }, studBolt: { enabled: false, boltCircleDiameter: 140, boltDiameter: 16, boltCount: 8, boltLength: 42 }, reinforcementPad: { enabled: false, od: 0, thickness: 0 }, fitting: { type: 'shell-side' } },
+      { tag: 'N2', enabled: true, type: 'flangedNozzle', location: { mode: 'radial', sectionIndex: 1, offset: 850, angle: 180 }, neck: { od: 190, thickness: 10, projection: 290 }, flange: { enabled: true, od: 165, thickness: 16, boltCount: 8 }, blindFlange: { enabled: false, od: 165, thickness: 16 }, gasket: { enabled: false, outerDiameter: 150, innerDiameter: 102, thickness: 3 }, studBolt: { enabled: false, boltCircleDiameter: 140, boltDiameter: 16, boltCount: 8, boltLength: 42 }, reinforcementPad: { enabled: false, od: 0, thickness: 0 }, fitting: { type: 'shell-side' } },
+      { tag: 'N3', enabled: true, type: 'flangedNozzle', location: { mode: 'radial', sectionIndex: 0, offset: 0, angle: 90 }, neck: { od: 180, thickness: 8, projection: 260 }, flange: { enabled: true, od: 165, thickness: 16, boltCount: 8 }, blindFlange: { enabled: false, od: 165, thickness: 16 }, gasket: { enabled: false, outerDiameter: 150, innerDiameter: 102, thickness: 3 }, studBolt: { enabled: false, boltCircleDiameter: 140, boltDiameter: 16, boltCount: 8, boltLength: 42 }, reinforcementPad: { enabled: false, od: 0, thickness: 0 }, fitting: { type: 'channel-side' } },
     ],
     supports: [
       { tag: 'S1', type: 'saddle', width: 300, height: 540, spacing: 3000 },
