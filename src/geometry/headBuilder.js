@@ -36,41 +36,83 @@ function createLatheHeadProfile(type, radius, height, steps = 24) {
   return points;
 }
 
-export function createHead({ type, radius, thickness, segments, material, isTop = true }) {
+function createStraightFlange({ outerRadius, innerRadius, length, segments, material }) {
   const group = new THREE.Group();
-  const height = getHeadHeight(type, radius);
-  const innerRadius = Math.max(radius - thickness, 1);
-  const innerHeight = Math.max(height - thickness, 1);
-
-  if (type === 'flat') {
-    const disk = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, thickness, segments), material);
-    disk.position.y = isTop ? thickness / 2 : -thickness / 2;
-    group.add(disk);
-    return { group, height: thickness };
-  }
 
   const outer = new THREE.Mesh(
-    new THREE.LatheGeometry(createLatheHeadProfile(type, radius, height), segments),
+    new THREE.CylinderGeometry(outerRadius, outerRadius, length, segments, 1, true),
     material
   );
+  outer.position.y = length / 2;
   group.add(outer);
 
   const inner = new THREE.Mesh(
-    new THREE.LatheGeometry(createLatheHeadProfile(type, innerRadius, innerHeight), segments),
+    new THREE.CylinderGeometry(innerRadius, innerRadius, length, segments, 1, true),
     material
   );
+  inner.position.y = length / 2;
   inner.scale.x = -1;
   group.add(inner);
 
-  const ring = new THREE.Mesh(new THREE.RingGeometry(innerRadius, radius, segments), material);
-  ring.rotation.x = isTop ? -Math.PI / 2 : Math.PI / 2;
-  group.add(ring);
+  const lip = new THREE.Mesh(new THREE.RingGeometry(innerRadius, outerRadius, segments), material);
+  lip.rotation.x = -Math.PI / 2;
+  lip.position.y = 0;
+  group.add(lip);
+
+  return group;
+}
+
+export function createHead({ type, radius, thickness, segments, material, isTop = true }) {
+  const group = new THREE.Group();
+  const dishDepth = getHeadHeight(type, radius);
+  const innerRadius = Math.max(radius - thickness, 1);
+  const innerDishDepth = Math.max(dishDepth - thickness, 1);
+  const straightFlangeLength = type === 'flat' ? 0 : Math.max(thickness * 1.5, 18);
+
+  // Local origin is always the shell-to-head weld plane.
+  // Head geometry grows in +Y direction, then mirrored for the opposite side.
+  if (type === 'flat') {
+    const disk = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, thickness, segments), material);
+    disk.position.y = thickness / 2;
+    group.add(disk);
+    if (!isTop) group.rotation.z = Math.PI;
+    return { group, height: thickness };
+  }
+
+  const flange = createStraightFlange({
+    outerRadius: radius,
+    innerRadius,
+    length: straightFlangeLength,
+    segments,
+    material,
+  });
+  group.add(flange);
+
+  const outer = new THREE.Mesh(
+    new THREE.LatheGeometry(createLatheHeadProfile(type, radius, dishDepth), segments),
+    material
+  );
+  outer.position.y = straightFlangeLength;
+  group.add(outer);
+
+  const inner = new THREE.Mesh(
+    new THREE.LatheGeometry(createLatheHeadProfile(type, innerRadius, innerDishDepth), segments),
+    material
+  );
+  inner.position.y = straightFlangeLength;
+  inner.scale.x = -1;
+  group.add(inner);
+
+  const tangentRing = new THREE.Mesh(new THREE.RingGeometry(innerRadius, radius, segments), material);
+  tangentRing.rotation.x = -Math.PI / 2;
+  tangentRing.position.y = 0;
+  group.add(tangentRing);
 
   if (!isTop) {
     group.rotation.z = Math.PI;
   }
 
-  return { group, height };
+  return { group, height: straightFlangeLength + dishDepth };
 }
 
 export function createClosureRing({ radius, thickness, material }) {
