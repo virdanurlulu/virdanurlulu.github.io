@@ -1,4 +1,4 @@
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.183.0/examples/jsm/controls/OrbitControls.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 export function createControls(camera, domElement) {
   const controls = new OrbitControls(camera, domElement);

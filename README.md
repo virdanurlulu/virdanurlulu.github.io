@@ -108,3 +108,10 @@ Belum mencakup:
 - buat `material database`
 - tambahkan `engineering table`
 - migrasi ke `React + Zustand + Vite` jika nanti proyek makin besar
+
+
+## Catatan menjalankan aplikasi
+
+- Jangan buka `index.html` langsung lewat `file:///...` karena browser sering memblokir ES modules lokal.
+- Jalankan lewat **GitHub Pages**, **VS Code Live Server**, atau server lokal sederhana.
+- Versi ini memakai **import map** untuk `three` dan `three/addons`, supaya OrbitControls / STLExporter / GLTFExporter bisa dimuat dengan benar di browser.

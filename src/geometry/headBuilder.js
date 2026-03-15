@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.183.0/build/three.module.js';
+import * as THREE from 'three';
 
 export function getHeadHeight(type, radius) {
   if (type === 'hemispherical') return radius;

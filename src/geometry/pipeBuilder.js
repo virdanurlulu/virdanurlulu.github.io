@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.183.0/build/three.module.js';
+import * as THREE from 'three';
 import { createMaterialSet, orientEquipment } from './shellBuilder.js';
 import { degToRad, clamp } from '../utils/math.js';
 

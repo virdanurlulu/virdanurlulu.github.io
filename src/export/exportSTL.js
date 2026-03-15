@@ -1,4 +1,4 @@
-import { STLExporter } from 'https://cdn.jsdelivr.net/npm/three@0.183.0/examples/jsm/exporters/STLExporter.js';
+import { STLExporter } from 'three/addons/exporters/STLExporter.js';
 
 function cloneExportableModel(model) {
   const clone = model.clone(true);

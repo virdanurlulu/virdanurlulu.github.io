@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.183.0/build/three.module.js';
+import * as THREE from 'three';
 import { createCamera } from './camera.js';
 import { createRenderer } from './renderer.js';
 import { createControls } from './controls.js';

@@ -1,4 +1,4 @@
-import { GLTFExporter } from 'https://cdn.jsdelivr.net/npm/three@0.183.0/examples/jsm/exporters/GLTFExporter.js';
+import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
 
 function cloneExportableModel(model) {
   const clone = model.clone(true);

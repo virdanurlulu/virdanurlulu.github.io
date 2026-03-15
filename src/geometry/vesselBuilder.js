@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.183.0/build/three.module.js';
+import * as THREE from 'three';
 import { createMaterialSet, createOpenShellSection, createTubeBundle, orientEquipment } from './shellBuilder.js';
 import { createHead, createClosureRing } from './headBuilder.js';
 import { createRadialNozzle, createAxialNozzle, createPipeNozzle, createFlangedNozzle, createNozzleLabel } from './nozzleBuilder.js';
