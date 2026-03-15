@@ -137,24 +137,53 @@ function createAnchorLug({ signX, signZ, width, depth, material }) {
 
 export function createSaddle({ radius, width, height, material }) {
   const group = new THREE.Group();
-  const baseDepth = Math.max(radius * 0.82, 260);
-  const supportHeight = Math.max(height, radius * 0.58);
+  const baseDepth = Math.max(radius * 0.92, 320);
+  const supportHeight = Math.max(height, radius * 0.82);
+  const pedestalRadius = Math.max(radius * 0.11, 85);
+  const pedestalHeight = Math.max(supportHeight * 0.42, radius * 0.24);
 
   const crown = createSaddleCrown({ radius, width, material });
   const wearPlate = createWearPlate({ radius, width, material });
-  const base = createBasePlate({ width, depth: baseDepth, material });
+  const base = createBasePlate({ width: width * 1.08, depth: baseDepth * 1.06, material });
 
   group.add(crown, wearPlate, base);
-  group.add(createSideFrame({ width, height: supportHeight, depth: baseDepth, material, sign: -1 }));
-  group.add(createSideFrame({ width, height: supportHeight, depth: baseDepth, material, sign: 1 }));
+  group.add(createSideFrame({ width: width * 1.02, height: supportHeight, depth: baseDepth, material, sign: -1 }));
+  group.add(createSideFrame({ width: width * 1.02, height: supportHeight, depth: baseDepth, material, sign: 1 }));
 
-  const stiffenerXs = [-0.22, 0, 0.22].map((factor) => factor * width);
+  const stiffenerXs = [-0.28, -0.09, 0.09, 0.28].map((factor) => factor * width);
   stiffenerXs.forEach((x) => group.add(createWebPlate({ x, height: supportHeight, depth: baseDepth, material })));
 
-  group.add(createAnchorLug({ signX: -1, signZ: 1, width, depth: baseDepth, material }));
-  group.add(createAnchorLug({ signX: 1, signZ: 1, width, depth: baseDepth, material }));
-  group.add(createAnchorLug({ signX: -1, signZ: -1, width, depth: baseDepth, material }));
-  group.add(createAnchorLug({ signX: 1, signZ: -1, width, depth: baseDepth, material }));
+  const pedestal = new THREE.Mesh(
+    new THREE.CylinderGeometry(pedestalRadius, pedestalRadius, pedestalHeight, 28),
+    material
+  );
+  pedestal.position.y = -supportHeight * 0.72;
+  pedestal.castShadow = true;
+  pedestal.receiveShadow = true;
+  pedestal.userData.exportable = true;
+  group.add(pedestal);
+
+  const pedestalBase = box(width * 0.22, Math.max(baseDepth * 0.08, 22), baseDepth * 0.38, material);
+  pedestalBase.position.y = -Math.max(baseDepth * 0.08, 22) / 2 - 2;
+  group.add(pedestalBase);
+
+  const shimHeight = Math.max(baseDepth * 0.045, 12);
+  const shimOffset = width * 0.36;
+  const shimDepth = baseDepth * 0.14;
+  const shim1 = box(width * 0.16, shimHeight, shimDepth, material);
+  shim1.position.set(-shimOffset, shimHeight / 2, baseDepth * 0.42);
+  const shim2 = shim1.clone();
+  shim2.position.z = -baseDepth * 0.42;
+  const shim3 = shim1.clone();
+  shim3.position.x = shimOffset;
+  const shim4 = shim2.clone();
+  shim4.position.x = shimOffset;
+  group.add(shim1, shim2, shim3, shim4);
+
+  group.add(createAnchorLug({ signX: -1, signZ: 1, width: width * 1.04, depth: baseDepth * 1.02, material }));
+  group.add(createAnchorLug({ signX: 1, signZ: 1, width: width * 1.04, depth: baseDepth * 1.02, material }));
+  group.add(createAnchorLug({ signX: -1, signZ: -1, width: width * 1.04, depth: baseDepth * 1.02, material }));
+  group.add(createAnchorLug({ signX: 1, signZ: -1, width: width * 1.04, depth: baseDepth * 1.02, material }));
 
   group.userData.exportable = true;
   return group;

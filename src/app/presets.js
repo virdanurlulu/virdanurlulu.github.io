@@ -1,4 +1,4 @@
-function stdNozzle() {
+function stdNozzle(overrides = {}) {
   return {
     tag: 'N1',
     enabled: true,
@@ -11,6 +11,15 @@ function stdNozzle() {
     studBolt: { enabled: false, boltCircleDiameter: 430, boltDiameter: 20, boltCount: 8, boltLength: 52 },
     reinforcementPad: { enabled: true, od: 420, thickness: 10 },
     fitting: { type: 'none' },
+    ...overrides,
+    location: { mode: 'radial', sectionIndex: 0, offset: 0, angle: 0, ...(overrides.location || {}) },
+    neck: { od: 300, thickness: 10, projection: 420, ...(overrides.neck || {}) },
+    flange: { enabled: true, od: 495, thickness: 18, boltCount: 8, ...(overrides.flange || {}) },
+    blindFlange: { enabled: false, od: 495, thickness: 18, ...(overrides.blindFlange || {}) },
+    gasket: { enabled: false, outerDiameter: 450, innerDiameter: 305, thickness: 3, ...(overrides.gasket || {}) },
+    studBolt: { enabled: false, boltCircleDiameter: 430, boltDiameter: 20, boltCount: 8, boltLength: 52, ...(overrides.studBolt || {}) },
+    reinforcementPad: { enabled: true, od: 420, thickness: 10, ...(overrides.reinforcementPad || {}) },
+    fitting: { type: 'none', ...(overrides.fitting || {}) },
   };
 }
 
@@ -62,7 +71,7 @@ export function createStandardVesselPreset() {
       bodyFlanges: [
         {
           tag: 'BF-01',
-          enabled: true,
+          enabled: false,
           location: 'front-end',
           od: 2480,
           thickness: 26,
@@ -73,12 +82,24 @@ export function createStandardVesselPreset() {
       ],
       closure: { tag: 'CL-01', enabled: false, type: 'flat', thickness: 16 },
     },
-    nozzles: [stdNozzle()],
-    supports: [
-      { tag: 'S1', type: 'saddle', width: 320, height: 680, spacing: 3400 },
-      { tag: 'S2', type: 'saddle', width: 320, height: 680, spacing: 3400 },
+    nozzles: [
+      { ...stdNozzle(), tag: 'N1', type: 'manhole', neck: { od: 520, thickness: 12, projection: 240 }, flange: { enabled: true, od: 760, thickness: 22, boltCount: 16 }, location: { mode: 'radial', sectionIndex: 0, offset: -900, angle: 0 }, reinforcementPad: { enabled: false, od: 0, thickness: 0 } },
+      { ...stdNozzle({ tag: 'N2', neck: { od: 250, thickness: 10, projection: 220 }, flange: { enabled: true, od: 420, thickness: 18, boltCount: 8 }, location: { mode: 'radial', sectionIndex: 0, offset: -80, angle: 0 }, reinforcementPad: { enabled: true, od: 390, thickness: 10 } }) },
+      { ...stdNozzle({ tag: 'N3', neck: { od: 180, thickness: 8, projection: 200 }, flange: { enabled: true, od: 320, thickness: 16, boltCount: 8 }, location: { mode: 'radial', sectionIndex: 0, offset: 780, angle: 0 }, reinforcementPad: { enabled: true, od: 300, thickness: 8 } }) },
+      { ...stdNozzle({ tag: 'N4', neck: { od: 120, thickness: 8, projection: 180 }, flange: { enabled: true, od: 240, thickness: 14, boltCount: 4 }, location: { mode: 'radial', sectionIndex: 0, offset: 1450, angle: 0 }, reinforcementPad: { enabled: false, od: 0, thickness: 0 } }) },
+      { ...stdNozzle({ tag: 'N5', neck: { od: 90, thickness: 8, projection: 160 }, flange: { enabled: true, od: 190, thickness: 14, boltCount: 4 }, location: { mode: 'radial', sectionIndex: 0, offset: -1600, angle: 0 }, reinforcementPad: { enabled: false, od: 0, thickness: 0 } }) },
     ],
-    externalAttachments: defaultExternalAttachments(),
+    supports: [
+      { tag: 'S1', type: 'saddle', width: 760, height: 980, spacing: 3600 },
+      { tag: 'S2', type: 'saddle', width: 760, height: 980, spacing: 3600 },
+    ],
+    externalAttachments: [
+      { tag: 'NP-01', type: 'namePlate', enabled: true },
+      { tag: 'EB-01', type: 'earthingBoss', enabled: true },
+      { tag: 'EL-01', type: 'liftingLug', enabled: true },
+      { tag: 'TL-01', type: 'tailingLug', enabled: false },
+      { tag: 'CL-01', type: 'clips', enabled: true },
+    ],
     internalAttachments: defaultInternalAttachments(),
     removableInternals: defaultRemovableInternals(),
   };
