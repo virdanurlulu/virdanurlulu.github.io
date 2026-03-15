@@ -3,6 +3,7 @@ import { createMaterialSet, createOpenShellSection, createTubeBundle, orientEqui
 import { createHead, createClosureRing } from './headBuilder.js';
 import { createRadialNozzle, createAxialNozzle, createPipeNozzle, createFlangedNozzle, createNozzleLabel } from './nozzleBuilder.js';
 import { addHorizontalSaddles, addVerticalSkirt } from './supportBuilder.js';
+import { createShellHeadWeld, createTransitionWeld, createWeldMaterial } from './welded-join.js';
 
 function resolveSupportType(item) {
   if (item.supportType && item.supportType !== 'auto') return item.supportType;
@@ -31,6 +32,37 @@ function addRingFlange(group, { radius, thickness, width, y, material }) {
   flange.position.y = y;
   group.add(flange);
   return flange;
+}
+
+function createEquipmentWeldMaterial(material) {
+  return createWeldMaterial(material);
+}
+
+function addShellHeadWeld(group, { radius, thickness, y, referenceMaterial, style = 'double-v', sizeFactor = 1 }) {
+  const weld = createShellHeadWeld({
+    radius,
+    thickness,
+    y,
+    material: createEquipmentWeldMaterial(referenceMaterial),
+    style,
+    sizeFactor,
+  });
+  group.add(weld);
+  return weld;
+}
+
+function addTransitionWeld(group, { radiusA, radiusB, thickness, y, referenceMaterial, style = 'double-v', sizeFactor = 1 }) {
+  const weld = createTransitionWeld({
+    radiusA,
+    radiusB,
+    thickness,
+    y,
+    material: createEquipmentWeldMaterial(referenceMaterial),
+    style,
+    sizeFactor,
+  });
+  group.add(weld);
+  return weld;
 }
 
 function buildQuickOpeningClosureAssembly({ radius, thickness, closureType, materialBase, materialAccent, y }) {
@@ -119,6 +151,9 @@ function buildStandard(state) {
   const mats = createMaterialSet(state.view.displayMode);
   const group = new THREE.Group();
   group.name = 'StandardVessel';
+  const weldEnabled = state.weld?.enabled !== false;
+  const weldType = state.weld?.type || 'double-v';
+  const weldSizeFactor = state.weld?.sizeFactor || 1;
 
   const bottomRadius = item.shellOD / 2;
   const topRadius = (item.shellType === 'tapered' ? item.shellTopOD : item.shellOD) / 2;
@@ -153,6 +188,26 @@ function buildStandard(state) {
   });
   bottomHead.group.position.y -= item.shellLength / 2;
   group.add(bottomHead.group);
+
+  if (weldEnabled) {
+    addShellHeadWeld(group, {
+      radius: topRadius,
+      thickness: item.thickness,
+      y: item.shellLength / 2,
+      referenceMaterial: mats.accent,
+      style: weldType,
+      sizeFactor: weldSizeFactor,
+    });
+
+    addShellHeadWeld(group, {
+      radius: bottomRadius,
+      thickness: item.thickness,
+      y: -item.shellLength / 2,
+      referenceMaterial: mats.accent,
+      style: weldType,
+      sizeFactor: weldSizeFactor,
+    });
+  }
 
   if (item.nozzleEnabled) {
     const nozzle = createRadialNozzle({
@@ -201,6 +256,9 @@ function buildPigLauncher(state) {
   const mats = createMaterialSet(state.view.displayMode);
   const group = new THREE.Group();
   group.name = 'PigLauncher';
+  const weldEnabled = state.weld?.enabled !== false;
+  const weldType = state.weld?.type || 'double-v';
+  const weldSizeFactor = state.weld?.sizeFactor || 1;
 
   const majorRadius = item.majorOD / 2;
   const minorRadius = item.minorOD / 2;
@@ -226,6 +284,17 @@ function buildPigLauncher(state) {
     material: mats.base,
   });
   group.add(majorBarrel);
+
+  if (weldEnabled) {
+    addShellHeadWeld(group, {
+      radius: majorRadius,
+      thickness: item.thickness,
+      y: -item.majorLength / 2,
+      referenceMaterial: mats.accent,
+      style: weldType,
+      sizeFactor: weldSizeFactor,
+    });
+  }
 
   addRingFlange(group, {
     radius: majorRadius * 1.02,
@@ -265,6 +334,28 @@ function buildPigLauncher(state) {
   neck.position.y = neckCenterY;
   group.add(neck);
 
+  if (weldEnabled) {
+    addTransitionWeld(group, {
+      radiusA: majorRadius,
+      radiusB: minorRadius,
+      thickness: item.thickness,
+      y: reducerStartY,
+      referenceMaterial: mats.accent,
+      style: weldType,
+      sizeFactor: weldSizeFactor,
+    });
+
+    addTransitionWeld(group, {
+      radiusA: minorRadius,
+      radiusB: minorRadius,
+      thickness: item.thickness,
+      y: reducerStartY + item.reducerLength,
+      referenceMaterial: mats.accent,
+      style: weldType,
+      sizeFactor: weldSizeFactor,
+    });
+  }
+
   addRingFlange(group, {
     radius: minorRadius * 1.02,
     thickness: Math.max(item.thickness * 1.4, 14),
@@ -283,6 +374,17 @@ function buildPigLauncher(state) {
   });
   tailHead.group.position.y = reducerStartY + item.reducerLength + item.neckLength;
   group.add(tailHead.group);
+
+  if (weldEnabled) {
+    addShellHeadWeld(group, {
+      radius: minorRadius,
+      thickness: item.thickness,
+      y: reducerStartY + item.reducerLength + item.neckLength,
+      referenceMaterial: mats.accent,
+      style: weldType,
+      sizeFactor: weldSizeFactor,
+    });
+  }
 
   const axialOutlet = createAxialNozzle({
     nozzleDiameter: item.minorOD * 0.72,
@@ -342,6 +444,9 @@ function buildReboiler(state) {
   const mats = createMaterialSet(state.view.displayMode);
   const group = new THREE.Group();
   group.name = 'Reboiler';
+  const weldEnabled = state.weld?.enabled !== false;
+  const weldType = state.weld?.type || 'double-v';
+  const weldSizeFactor = state.weld?.sizeFactor || 1;
 
   const shellRadius = item.shellOD / 2;
   const channelRadius = item.channelOD / 2;
@@ -368,6 +473,17 @@ function buildReboiler(state) {
   });
   rearHead.group.position.y = item.shellLength / 2;
   group.add(rearHead.group);
+
+  if (weldEnabled) {
+    addShellHeadWeld(group, {
+      radius: shellRadius,
+      thickness: item.thickness,
+      y: item.shellLength / 2,
+      referenceMaterial: mats.accent,
+      style: weldType,
+      sizeFactor: weldSizeFactor,
+    });
+  }
 
   addRingFlange(group, {
     radius: shellRadius * 1.015,
@@ -406,6 +522,27 @@ function buildReboiler(state) {
   });
   channelHead.group.position.y = -item.shellLength / 2 - item.channelLength - flangeWidth - frontFlangeGap;
   group.add(channelHead.group);
+
+  if (weldEnabled) {
+    addTransitionWeld(group, {
+      radiusA: shellRadius,
+      radiusB: channelRadius,
+      thickness: item.thickness,
+      y: -item.shellLength / 2,
+      referenceMaterial: mats.accent,
+      style: weldType,
+      sizeFactor: weldSizeFactor,
+    });
+
+    addShellHeadWeld(group, {
+      radius: channelRadius,
+      thickness: item.thickness,
+      y: -item.shellLength / 2 - item.channelLength - flangeWidth - frontFlangeGap,
+      referenceMaterial: mats.accent,
+      style: weldType,
+      sizeFactor: weldSizeFactor,
+    });
+  }
 
   addRingFlange(group, {
     radius: channelRadius * 1.03,

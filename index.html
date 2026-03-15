@@ -78,6 +78,29 @@
         </div>
       </section>
 
+      <section id="weldPanel" class="panel">
+        <h2>Weld Settings</h2>
+        <div class="form-grid">
+          <label class="switch-row">
+            <span>Weld aktif</span>
+            <input id="weldEnabled" type="checkbox" checked />
+          </label>
+          <label>
+            Tipe weld
+            <select id="weldType">
+              <option value="single-v">Single-V</option>
+              <option value="double-v" selected>Double-V</option>
+              <option value="fillet">Fillet</option>
+            </select>
+          </label>
+          <label>
+            Faktor ukuran weld
+            <input id="weldSizeFactor" type="number" min="0.5" max="2.5" step="0.1" value="1.0" />
+          </label>
+        </div>
+        <p class="mono-note">Dipakai untuk visual welded join pada shell-head dan transition joint.</p>
+      </section>
+
       <section id="pipePanel" class="panel hidden">
         <h2>Pipe Builder</h2>
         <div class="form-grid">

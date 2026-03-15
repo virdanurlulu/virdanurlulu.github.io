@@ -13,6 +13,11 @@ const DEFAULT_STATE = {
     density: 7850,
     corrosionAllowance: 0,
   },
+  weld: {
+    enabled: true,
+    type: 'double-v',
+    sizeFactor: 1,
+  },
   pipe: {
     orientation: 'horizontal',
     outerDiameter: 500,

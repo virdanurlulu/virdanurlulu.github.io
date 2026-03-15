@@ -6,6 +6,17 @@ function surfaceAreaCyl(radius, length) {
   return 2 * Math.PI * radius * length / 1_000_000;
 }
 
+function formatWeldValue(state) {
+  if (state.weld?.enabled === false) return 'Off';
+  const type = state.weld?.type === 'single-v'
+    ? 'Single-V'
+    : state.weld?.type === 'fillet'
+      ? 'Fillet'
+      : 'Double-V';
+  const size = Number.isFinite(state.weld?.sizeFactor) ? state.weld.sizeFactor.toFixed(1) : '1.0';
+  return `${type} × ${size}`;
+}
+
 export function getSummary(state) {
   if (state.meta.modelType === 'pipe') {
     const vol = getPipeInternalVolumeM3(state.pipe);
@@ -29,6 +40,7 @@ export function getSummary(state) {
       { label: 'Major / Minor OD', value: `${fmtMm(item.majorOD)} / ${fmtMm(item.minorOD)}` },
       { label: 'Major barrel length', value: fmtMm(item.majorLength) },
       { label: 'Reducer + neck', value: `${fmtMm(item.reducerLength)} + ${fmtMm(item.neckLength)}` },
+      { label: 'Weld type', value: formatWeldValue(state) },
       { label: 'Internal volume', value: fmtVolume(vol) },
       { label: 'Estimated steel mass', value: fmtMass(mass) },
     ];
@@ -45,6 +57,7 @@ export function getSummary(state) {
       { label: 'Shell / channel length', value: `${fmtMm(item.shellLength)} / ${fmtMm(item.channelLength)}` },
       { label: 'Tube bundle OD', value: fmtMm(item.tubeBundleOD) },
       { label: 'Approx. shell area', value: fmtArea(area) },
+      { label: 'Weld type', value: formatWeldValue(state) },
       { label: 'Internal volume', value: fmtVolume(vol) },
       { label: 'Estimated steel mass', value: fmtMass(mass) },
     ];
@@ -60,6 +73,7 @@ export function getSummary(state) {
     { label: 'Thickness', value: fmtMm(item.thickness) },
     { label: 'Shell length', value: fmtMm(item.shellLength) },
     { label: 'Approx. shell area', value: fmtArea(area) },
+    { label: 'Weld type', value: formatWeldValue(state) },
     { label: 'Internal volume', value: fmtVolume(vol) },
     { label: 'Estimated steel mass', value: fmtMass(mass) },
   ];

@@ -3,6 +3,7 @@ import { clamp } from '../utils/math.js';
 export function getDomRefs() {
   const ids = [
     'modelName','modelType','equipmentType','equipmentTypeWrap','displayMode','segments','materialDensity','corrosionAllowance',
+    'weldPanel','weldEnabled','weldType','weldSizeFactor',
     'pipePanel','pipeOrientation','pipeOuterDiameter','pipeInnerDiameter','pipeThickness','pipeLength','pipeElbowAngle','pipeBendRadius','pipeOutletLength',
     'standardPanel','stdOrientation','stdShellType','stdShellOD','stdShellID','stdThickness','stdShellTopOD','stdShellTopODWrap','stdShellLength','stdTopHeadType','stdBottomHeadType',
     'stdNozzleEnabled','stdNozzleDiameter','stdNozzleThickness','stdNozzleProjection','stdNozzleOffset','stdNozzleAngle','stdSupportType',
@@ -41,6 +42,9 @@ export function bindForm({ dom, store }) {
     ['segments', 'view.segments', (v) => clamp(number(v), 24, 144)],
     ['materialDensity', 'material.density', (v) => Math.max(100, number(v))],
     ['corrosionAllowance', 'material.corrosionAllowance', (v) => Math.max(0, number(v))],
+    ['weldEnabled', 'weld.enabled', (v) => Boolean(v)],
+    ['weldType', 'weld.type'],
+    ['weldSizeFactor', 'weld.sizeFactor', (v) => clamp(number(v), 0.5, 2.5)],
 
     ['pipeOrientation', 'pipe.orientation'],
     ['pipeLength', 'pipe.length', (v) => Math.max(100, number(v))],
@@ -122,7 +126,7 @@ export function bindForm({ dom, store }) {
 }
 
 export function renderForm({ dom, state }) {
-  const { meta, view, material, pipe } = state;
+  const { meta, view, material, pipe, weld } = state;
   const standard = state.vessel.standard;
   const pig = state.vessel.pigLauncher;
   const reb = state.vessel.reboiler;
@@ -135,6 +139,9 @@ export function renderForm({ dom, state }) {
   dom.segments.value = view.segments;
   dom.materialDensity.value = material.density;
   dom.corrosionAllowance.value = material.corrosionAllowance;
+  dom.weldEnabled.checked = weld.enabled;
+  dom.weldType.value = weld.type;
+  dom.weldSizeFactor.value = weld.sizeFactor;
 
   dom.pipeOrientation.value = pipe.orientation;
   dom.pipeOuterDiameter.value = pipe.outerDiameter;
@@ -202,6 +209,7 @@ export function renderForm({ dom, state }) {
 
   const isPipe = meta.modelType === 'pipe';
   dom.pipePanel.classList.toggle('hidden', !isPipe);
+  dom.weldPanel.classList.toggle('hidden', isPipe);
   dom.equipmentTypeWrap.classList.toggle('hidden', isPipe);
   dom.standardPanel.classList.toggle('hidden', isPipe || equipmentType !== 'standard');
   dom.pigLauncherPanel.classList.toggle('hidden', isPipe || equipmentType !== 'pigLauncher');
