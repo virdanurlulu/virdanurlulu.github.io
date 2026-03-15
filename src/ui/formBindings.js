@@ -1,0 +1,200 @@
+function boolValue(el) { return Boolean(el.checked); }
+function numValue(el) { return Number(el.value); }
+
+export function getDomRefs() {
+  const ids = [
+    'modelName','equipmentType','displayMode','segments','materialDensity','corrosionAllowance','weldEnabled','weldType','weldSizeFactor',
+    'bodyOrientation','shellSectionType','shellODStart','shellODEnd','shellThickness','shellLength','frontHeadType','rearHeadType',
+    'pigBodyWrap','reboilerBodyWrap','pigMinorOD','pigReducerLength','pigNeckLength','closureType','channelOD','channelLength','tubeBundleOD',
+    'nozzleTag','nozzleType','nozzleEnabled','nozzleLocationMode','nozzleOD','nozzleThickness','nozzleProjection','nozzleOffset','nozzleAngle','nozzlePadEnabled','nozzleBlindEnabled','nozzlePadOD',
+    'supportType','supportSpacing','supportWidth','supportHeight',
+    'extLiftingLug','extTailingLug','extNamePlate','extEarthingBoss','extClips',
+    'intTubeSheet','intBaffleInlet','intWearPlate','intWeir','intVortexBreaker','intDipPipe','intRing','intClips',
+    'remInletDistributor','remMistEliminator','remSchoepentoeter','remTrays','remSandJetting',
+    'summary','bomPreview','viewerTitle','viewerSubTitle',
+  ];
+  const dom = Object.fromEntries(ids.map((id) => [id, document.getElementById(id)]));
+  dom.fitViewBtn = document.getElementById('fitViewBtn');
+  dom.resetBtn = document.getElementById('resetBtn');
+  dom.saveJsonBtn = document.getElementById('saveJsonBtn');
+  dom.exportBomBtn = document.getElementById('exportBomBtn');
+  dom.exportStlBtn = document.getElementById('exportStlBtn');
+  dom.exportGlbBtn = document.getElementById('exportGlbBtn');
+  dom.viewButtons = document.querySelectorAll('.view-btn');
+  return dom;
+}
+
+function eventName(el) { return el.type === 'checkbox' || el.tagName === 'SELECT' ? 'change' : 'input'; }
+
+function bind(el, fn) { if (!el) return; el.addEventListener(eventName(el), fn); }
+
+function setAttachmentToggle(arr, type, enabled) {
+  const item = arr.find((entry) => entry.type === type || entry.tag?.toLowerCase().includes(type.toLowerCase()));
+  if (item) item.enabled = enabled;
+}
+
+export function bindForm({ dom, store }) {
+  bind(dom.modelName, () => store.updatePath('model.meta.name', dom.modelName.value));
+  bind(dom.equipmentType, () => store.setEquipmentType(dom.equipmentType.value));
+  bind(dom.displayMode, () => store.updatePath('view.displayMode', dom.displayMode.value));
+  bind(dom.segments, () => store.updatePath('view.segments', numValue(dom.segments)));
+  bind(dom.materialDensity, () => store.updatePath('material.density', numValue(dom.materialDensity)));
+  bind(dom.corrosionAllowance, () => store.updatePath('material.corrosionAllowance', numValue(dom.corrosionAllowance)));
+  bind(dom.weldEnabled, () => store.updatePath('weld.enabled', boolValue(dom.weldEnabled)));
+  bind(dom.weldType, () => store.updatePath('weld.type', dom.weldType.value));
+  bind(dom.weldSizeFactor, () => store.updatePath('weld.sizeFactor', numValue(dom.weldSizeFactor)));
+
+  bind(dom.bodyOrientation, () => store.updatePath('model.body.orientation', dom.bodyOrientation.value));
+  bind(dom.shellSectionType, () => store.updatePath('model.body.shellSections[0].type', dom.shellSectionType.value));
+  bind(dom.shellODStart, () => store.updatePath('model.body.shellSections[0].odStart', numValue(dom.shellODStart)));
+  bind(dom.shellODEnd, () => store.updatePath('model.body.shellSections[0].odEnd', numValue(dom.shellODEnd)));
+  bind(dom.shellThickness, () => {
+    store.updatePath('model.body.shellSections[0].thickness', numValue(dom.shellThickness));
+    store.updatePath('model.body.heads.front.thickness', numValue(dom.shellThickness));
+    store.updatePath('model.body.heads.rear.thickness', numValue(dom.shellThickness));
+  });
+  bind(dom.shellLength, () => store.updatePath('model.body.shellSections[0].length', numValue(dom.shellLength)));
+  bind(dom.frontHeadType, () => store.updatePath('model.body.heads.front.type', dom.frontHeadType.value));
+  bind(dom.rearHeadType, () => store.updatePath('model.body.heads.rear.type', dom.rearHeadType.value));
+
+  bind(dom.pigMinorOD, () => {
+    store.updatePath('model.body.shellSections[1].odEnd', numValue(dom.pigMinorOD));
+    store.updatePath('model.body.shellSections[2].odStart', numValue(dom.pigMinorOD));
+    store.updatePath('model.body.shellSections[2].odEnd', numValue(dom.pigMinorOD));
+    store.updatePath('model.body.heads.rear.od', numValue(dom.pigMinorOD));
+  });
+  bind(dom.pigReducerLength, () => store.updatePath('model.body.shellSections[1].length', numValue(dom.pigReducerLength)));
+  bind(dom.pigNeckLength, () => store.updatePath('model.body.shellSections[2].length', numValue(dom.pigNeckLength)));
+  bind(dom.closureType, () => store.updatePath('model.body.closure.type', dom.closureType.value));
+
+  bind(dom.channelOD, () => {
+    store.updatePath('model.body.shellSections[0].odStart', numValue(dom.channelOD));
+    store.updatePath('model.body.shellSections[0].odEnd', numValue(dom.channelOD));
+    store.updatePath('model.body.heads.front.od', numValue(dom.channelOD));
+  });
+  bind(dom.channelLength, () => store.updatePath('model.body.shellSections[0].length', numValue(dom.channelLength)));
+  bind(dom.tubeBundleOD, () => store.updatePath('model.internalAttachments[0].bundleOD', numValue(dom.tubeBundleOD)));
+
+  bind(dom.nozzleType, () => store.updatePath('model.nozzles[0].type', dom.nozzleType.value));
+  bind(dom.nozzleEnabled, () => store.updatePath('model.nozzles[0].enabled', boolValue(dom.nozzleEnabled)));
+  bind(dom.nozzleLocationMode, () => store.updatePath('model.nozzles[0].location.mode', dom.nozzleLocationMode.value));
+  bind(dom.nozzleOD, () => store.updatePath('model.nozzles[0].neck.od', numValue(dom.nozzleOD)));
+  bind(dom.nozzleThickness, () => store.updatePath('model.nozzles[0].neck.thickness', numValue(dom.nozzleThickness)));
+  bind(dom.nozzleProjection, () => store.updatePath('model.nozzles[0].neck.projection', numValue(dom.nozzleProjection)));
+  bind(dom.nozzleOffset, () => store.updatePath('model.nozzles[0].location.offset', numValue(dom.nozzleOffset)));
+  bind(dom.nozzleAngle, () => store.updatePath('model.nozzles[0].location.angle', numValue(dom.nozzleAngle)));
+  bind(dom.nozzlePadEnabled, () => store.updatePath('model.nozzles[0].reinforcementPad.enabled', boolValue(dom.nozzlePadEnabled)));
+  bind(dom.nozzleBlindEnabled, () => store.updatePath('model.nozzles[0].blindFlange.enabled', boolValue(dom.nozzleBlindEnabled)));
+  bind(dom.nozzlePadOD, () => store.updatePath('model.nozzles[0].reinforcementPad.od', numValue(dom.nozzlePadOD)));
+
+  bind(dom.supportType, () => store.updatePath('model.supports[0].type', dom.supportType.value));
+  bind(dom.supportSpacing, () => { store.updatePath('model.supports[0].spacing', numValue(dom.supportSpacing)); store.updatePath('model.supports[1].spacing', numValue(dom.supportSpacing)); });
+  bind(dom.supportWidth, () => { store.updatePath('model.supports[0].width', numValue(dom.supportWidth)); store.updatePath('model.supports[1].width', numValue(dom.supportWidth)); });
+  bind(dom.supportHeight, () => { store.updatePath('model.supports[0].height', numValue(dom.supportHeight)); store.updatePath('model.supports[1].height', numValue(dom.supportHeight)); });
+
+  bind(dom.extLiftingLug, () => store.setState((draft) => setAttachmentToggle(draft.model.externalAttachments, 'liftingLug', boolValue(dom.extLiftingLug))));
+  bind(dom.extTailingLug, () => store.setState((draft) => setAttachmentToggle(draft.model.externalAttachments, 'tailingLug', boolValue(dom.extTailingLug))));
+  bind(dom.extNamePlate, () => store.setState((draft) => setAttachmentToggle(draft.model.externalAttachments, 'namePlate', boolValue(dom.extNamePlate))));
+  bind(dom.extEarthingBoss, () => store.setState((draft) => setAttachmentToggle(draft.model.externalAttachments, 'earthingBoss', boolValue(dom.extEarthingBoss))));
+  bind(dom.extClips, () => store.setState((draft) => setAttachmentToggle(draft.model.externalAttachments, 'clips', boolValue(dom.extClips))));
+
+  bind(dom.intTubeSheet, () => store.setState((draft) => setAttachmentToggle(draft.model.internalAttachments, 'tubeSheet', boolValue(dom.intTubeSheet))));
+  bind(dom.intBaffleInlet, () => store.setState((draft) => setAttachmentToggle(draft.model.internalAttachments, 'baffleInlet', boolValue(dom.intBaffleInlet))));
+  bind(dom.intWearPlate, () => store.setState((draft) => setAttachmentToggle(draft.model.internalAttachments, 'wearPlate', boolValue(dom.intWearPlate))));
+  bind(dom.intWeir, () => store.setState((draft) => setAttachmentToggle(draft.model.internalAttachments, 'weir', boolValue(dom.intWeir))));
+  bind(dom.intVortexBreaker, () => store.setState((draft) => setAttachmentToggle(draft.model.internalAttachments, 'vortexBreaker', boolValue(dom.intVortexBreaker))));
+  bind(dom.intDipPipe, () => store.setState((draft) => setAttachmentToggle(draft.model.internalAttachments, 'dipPipe', boolValue(dom.intDipPipe))));
+  bind(dom.intRing, () => store.setState((draft) => setAttachmentToggle(draft.model.internalAttachments, 'ring', boolValue(dom.intRing))));
+  bind(dom.intClips, () => store.setState((draft) => setAttachmentToggle(draft.model.internalAttachments, 'clips', boolValue(dom.intClips))));
+
+  bind(dom.remInletDistributor, () => store.setState((draft) => setAttachmentToggle(draft.model.removableInternals, 'inletDistributor', boolValue(dom.remInletDistributor))));
+  bind(dom.remMistEliminator, () => store.setState((draft) => setAttachmentToggle(draft.model.removableInternals, 'mistEliminator', boolValue(dom.remMistEliminator))));
+  bind(dom.remSchoepentoeter, () => store.setState((draft) => setAttachmentToggle(draft.model.removableInternals, 'schoepentoeter', boolValue(dom.remSchoepentoeter))));
+  bind(dom.remTrays, () => store.setState((draft) => setAttachmentToggle(draft.model.removableInternals, 'trays', boolValue(dom.remTrays))));
+  bind(dom.remSandJetting, () => store.setState((draft) => setAttachmentToggle(draft.model.removableInternals, 'sandJetting', boolValue(dom.remSandJetting))));
+}
+
+function findAttachment(arr, type) { return arr.find((item) => item.type === type); }
+
+export function renderForm({ dom, state }) {
+  const model = state.model;
+  const main = model.body.shellSections[0];
+  const nozzle = model.nozzles[0] || {};
+  const support = model.supports[0] || {};
+
+  dom.modelName.value = model.meta.name;
+  dom.equipmentType.value = model.meta.equipmentType;
+  dom.displayMode.value = state.view.displayMode;
+  dom.segments.value = state.view.segments;
+  dom.materialDensity.value = state.material.density;
+  dom.corrosionAllowance.value = state.material.corrosionAllowance;
+  dom.weldEnabled.checked = state.weld.enabled;
+  dom.weldType.value = state.weld.type;
+  dom.weldSizeFactor.value = state.weld.sizeFactor;
+
+  dom.bodyOrientation.value = model.body.orientation;
+  dom.shellSectionType.value = main.type;
+  dom.shellODStart.value = main.odStart;
+  dom.shellODEnd.value = main.odEnd;
+  dom.shellThickness.value = main.thickness;
+  dom.shellLength.value = main.length;
+  dom.frontHeadType.value = model.body.heads.front.type;
+  dom.rearHeadType.value = model.body.heads.rear.type;
+
+  dom.pigBodyWrap.classList.toggle('hidden', model.meta.equipmentType !== 'pigLauncher');
+  dom.reboilerBodyWrap.classList.toggle('hidden', model.meta.equipmentType !== 'reboiler');
+
+  if (model.meta.equipmentType === 'pigLauncher') {
+    dom.pigMinorOD.value = model.body.shellSections[2].odStart;
+    dom.pigReducerLength.value = model.body.shellSections[1].length;
+    dom.pigNeckLength.value = model.body.shellSections[2].length;
+    dom.closureType.value = model.body.closure.type;
+  }
+  if (model.meta.equipmentType === 'reboiler') {
+    dom.channelOD.value = model.body.shellSections[0].odStart;
+    dom.channelLength.value = model.body.shellSections[0].length;
+    dom.tubeBundleOD.value = model.internalAttachments[0]?.bundleOD || 1200;
+  }
+
+  dom.nozzleTag.value = nozzle.tag || '';
+  dom.nozzleType.value = nozzle.type || 'flangedNozzle';
+  dom.nozzleEnabled.checked = Boolean(nozzle.enabled);
+  dom.nozzleLocationMode.value = nozzle.location?.mode || 'radial';
+  dom.nozzleOD.value = nozzle.neck?.od || 100;
+  dom.nozzleThickness.value = nozzle.neck?.thickness || 8;
+  dom.nozzleProjection.value = nozzle.neck?.projection || 200;
+  dom.nozzleOffset.value = nozzle.location?.offset || 0;
+  dom.nozzleAngle.value = nozzle.location?.angle || 0;
+  dom.nozzlePadEnabled.checked = Boolean(nozzle.reinforcementPad?.enabled);
+  dom.nozzleBlindEnabled.checked = Boolean(nozzle.blindFlange?.enabled);
+  dom.nozzlePadOD.value = nozzle.reinforcementPad?.od || Math.round((nozzle.neck?.od || 100) * 1.4);
+
+  dom.supportType.value = support.type || 'saddle';
+  dom.supportSpacing.value = support.spacing || 0;
+  dom.supportWidth.value = support.width || 0;
+  dom.supportHeight.value = support.height || 0;
+
+  dom.extLiftingLug.checked = Boolean(findAttachment(model.externalAttachments, 'liftingLug')?.enabled);
+  dom.extTailingLug.checked = Boolean(findAttachment(model.externalAttachments, 'tailingLug')?.enabled);
+  dom.extNamePlate.checked = Boolean(findAttachment(model.externalAttachments, 'namePlate')?.enabled);
+  dom.extEarthingBoss.checked = Boolean(findAttachment(model.externalAttachments, 'earthingBoss')?.enabled);
+  dom.extClips.checked = Boolean(findAttachment(model.externalAttachments, 'clips')?.enabled);
+
+  dom.intTubeSheet.checked = Boolean(findAttachment(model.internalAttachments, 'tubeSheet')?.enabled);
+  dom.intBaffleInlet.checked = Boolean(findAttachment(model.internalAttachments, 'baffleInlet')?.enabled);
+  dom.intWearPlate.checked = Boolean(findAttachment(model.internalAttachments, 'wearPlate')?.enabled);
+  dom.intWeir.checked = Boolean(findAttachment(model.internalAttachments, 'weir')?.enabled);
+  dom.intVortexBreaker.checked = Boolean(findAttachment(model.internalAttachments, 'vortexBreaker')?.enabled);
+  dom.intDipPipe.checked = Boolean(findAttachment(model.internalAttachments, 'dipPipe')?.enabled);
+  dom.intRing.checked = Boolean(findAttachment(model.internalAttachments, 'ring')?.enabled);
+  dom.intClips.checked = Boolean(findAttachment(model.internalAttachments, 'clips')?.enabled);
+
+  dom.remInletDistributor.checked = Boolean(findAttachment(model.removableInternals, 'inletDistributor')?.enabled);
+  dom.remMistEliminator.checked = Boolean(findAttachment(model.removableInternals, 'mistEliminator')?.enabled);
+  dom.remSchoepentoeter.checked = Boolean(findAttachment(model.removableInternals, 'schoepentoeter')?.enabled);
+  dom.remTrays.checked = Boolean(findAttachment(model.removableInternals, 'trays')?.enabled);
+  dom.remSandJetting.checked = Boolean(findAttachment(model.removableInternals, 'sandJetting')?.enabled);
+
+  dom.viewerTitle.textContent = model.meta.name;
+  dom.viewerSubTitle.textContent = ` — ${model.meta.equipmentType}`;
+}

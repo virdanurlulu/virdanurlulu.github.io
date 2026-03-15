@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pressure Vessel Builder — Domain Refactor</title>
+  <link rel="stylesheet" href="./styles/main.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.183.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.183.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <h1>Pressure Vessel Builder</h1>
+        <p>Domain-based engineering builder for body, nozzles/manholes, supports, attachments, internals, and BOM generation.</p>
+      </div>
+
+      <section class="panel" id="generalPanel">
+        <h2>General</h2>
+        <div class="form-grid">
+          <label>Model Name<input id="modelName" type="text" /></label>
+          <label>Equipment type
+            <select id="equipmentType">
+              <option value="standardVessel">Standard Vessel</option>
+              <option value="pigLauncher">Pig Launcher</option>
+              <option value="reboiler">Reboiler</option>
+            </select>
+          </label>
+          <label>Display Mode
+            <select id="displayMode">
+              <option value="solid">Solid</option>
+              <option value="wireframe">Wireframe</option>
+              <option value="ghost">Ghosted</option>
+            </select>
+          </label>
+          <label>Segment detail<input id="segments" type="number" min="24" max="144" step="4" /></label>
+          <label>Material Density (kg/m³)<input id="materialDensity" type="number" min="100" step="10" /></label>
+          <label>Corrosion allowance (mm)<input id="corrosionAllowance" type="number" min="0" step="0.5" /></label>
+          <label class="switch-row"><span>Enable Weld</span><input id="weldEnabled" type="checkbox" /></label>
+          <label>Weld Type
+            <select id="weldType">
+              <option value="single-v">Single-V</option>
+              <option value="double-v">Double-V</option>
+              <option value="fillet">Fillet</option>
+            </select>
+          </label>
+          <label>Weld Size Factor<input id="weldSizeFactor" type="number" min="0.5" max="2.5" step="0.1" /></label>
+        </div>
+      </section>
+
+      <section class="panel" id="bodyPanel">
+        <h2>Body</h2>
+        <div class="form-grid">
+          <label>Vessel Orientation
+            <select id="bodyOrientation">
+              <option value="horizontal">Horizontal</option>
+              <option value="vertical">Vertical</option>
+            </select>
+          </label>
+          <label>Shell section type
+            <select id="shellSectionType">
+              <option value="cylindrical">Cylindrical</option>
+              <option value="tapered">Tapered</option>
+            </select>
+          </label>
+          <label>Shell OD start (mm)<input id="shellODStart" type="number" min="100" step="10" /></label>
+          <label>Shell OD end (mm)<input id="shellODEnd" type="number" min="100" step="10" /></label>
+          <label>Shell Thickness (mm)<input id="shellThickness" type="number" min="2" step="1" /></label>
+          <label>Straight Shell Length (mm)<input id="shellLength" type="number" min="100" step="25" /></label>
+          <label>Front head type
+            <select id="frontHeadType">
+              <option value="ellipsoidal">2:1 Ellipsoidal</option>
+              <option value="hemispherical">Hemispherical</option>
+              <option value="conical">Conical</option>
+              <option value="flat">Flat</option>
+            </select>
+          </label>
+          <label>Rear head type
+            <select id="rearHeadType">
+              <option value="ellipsoidal">2:1 Ellipsoidal</option>
+              <option value="hemispherical">Hemispherical</option>
+              <option value="conical">Conical</option>
+              <option value="flat">Flat</option>
+            </select>
+          </label>
+        </div>
+        <div id="pigBodyWrap" class="subsection hidden">
+          <div class="panel-head"><h3>Pig Launcher Body</h3></div>
+          <div class="form-grid">
+            <label>Neck OD (mm)<input id="pigMinorOD" type="number" min="100" step="10" /></label>
+            <label>Reducer length (mm)<input id="pigReducerLength" type="number" min="100" step="25" /></label>
+            <label>Neck length (mm)<input id="pigNeckLength" type="number" min="100" step="25" /></label>
+            <label>Closure type
+              <select id="closureType">
+                <option value="flat">Flat</option>
+                <option value="ellipsoidal">Ellipsoidal</option>
+                <option value="hemispherical">Hemispherical</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <div id="reboilerBodyWrap" class="subsection hidden">
+          <div class="panel-head"><h3>Reboiler Front Channel</h3></div>
+          <div class="form-grid">
+            <label>Channel OD (mm)<input id="channelOD" type="number" min="100" step="10" /></label>
+            <label>Channel length (mm)<input id="channelLength" type="number" min="100" step="25" /></label>
+            <label>Tube bundle OD (mm)<input id="tubeBundleOD" type="number" min="100" step="10" /></label>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="nozzlePanel">
+        <h2>Nozzles / Manholes</h2>
+        <div class="form-grid">
+          <label>Nozzle tag<input id="nozzleTag" type="text" readonly /></label>
+          <label>Nozzle type
+            <select id="nozzleType">
+              <option value="flangedNozzle">Flanged Nozzle</option>
+              <option value="manhole">Manhole</option>
+            </select>
+          </label>
+          <label class="switch-row"><span>Enable Nozzle</span><input id="nozzleEnabled" type="checkbox" /></label>
+          <label>Nozzle Location
+            <select id="nozzleLocationMode">
+              <option value="radial">Radial</option>
+              <option value="axial-front">Axial Front</option>
+              <option value="axial-rear">Axial Rear</option>
+            </select>
+          </label>
+          <label>Neck OD (mm)<input id="nozzleOD" type="number" min="30" step="5" /></label>
+          <label>Neck Thickness (mm)<input id="nozzleThickness" type="number" min="2" step="1" /></label>
+          <label>Projection (mm)<input id="nozzleProjection" type="number" min="30" step="5" /></label>
+          <label>Axial Offset (mm)<input id="nozzleOffset" type="number" step="10" /></label>
+          <label>Circumferential Angle (deg)<input id="nozzleAngle" type="number" min="-180" max="180" step="5" /></label>
+          <label class="switch-row"><span>Reinforcement pad</span><input id="nozzlePadEnabled" type="checkbox" /></label>
+          <label class="switch-row"><span>Blind flange</span><input id="nozzleBlindEnabled" type="checkbox" /></label>
+          <label>Reinforcement Pad OD (mm)<input id="nozzlePadOD" type="number" min="50" step="10" /></label>
+        </div>
+      </section>
+
+      <section class="panel" id="supportPanel">
+        <h2>Supports</h2>
+        <div class="form-grid">
+          <label>Primary support type
+            <select id="supportType">
+              <option value="saddle">Saddle</option>
+              <option value="skirt">Skirt</option>
+              <option value="leg">Leg</option>
+              <option value="ring">Ring</option>
+              <option value="lug">Lug</option>
+            </select>
+          </label>
+          <label>Support spacing (mm)<input id="supportSpacing" type="number" min="100" step="25" /></label>
+          <label>Support width (mm)<input id="supportWidth" type="number" min="50" step="10" /></label>
+          <label>Support height (mm)<input id="supportHeight" type="number" min="50" step="10" /></label>
+        </div>
+      </section>
+
+      <section class="panel" id="externalPanel">
+        <h2>External Attachments</h2>
+        <div class="form-grid">
+          <label class="switch-row"><span>Lifting Lug / Pad</span><input id="extLiftingLug" type="checkbox" /></label>
+          <label class="switch-row"><span>Tailing Lug / Beam</span><input id="extTailingLug" type="checkbox" /></label>
+          <label class="switch-row"><span>Name Plate</span><input id="extNamePlate" type="checkbox" /></label>
+          <label class="switch-row"><span>Earthing Boss</span><input id="extEarthingBoss" type="checkbox" /></label>
+          <label class="switch-row"><span>Clips</span><input id="extClips" type="checkbox" /></label>
+        </div>
+      </section>
+
+      <section class="panel" id="internalPanel">
+        <h2>Internal Attachments</h2>
+        <div class="form-grid">
+          <label class="switch-row"><span>Tube Sheet</span><input id="intTubeSheet" type="checkbox" /></label>
+          <label class="switch-row"><span>Baffle Inlet</span><input id="intBaffleInlet" type="checkbox" /></label>
+          <label class="switch-row"><span>Wear Plate</span><input id="intWearPlate" type="checkbox" /></label>
+          <label class="switch-row"><span>Weir</span><input id="intWeir" type="checkbox" /></label>
+          <label class="switch-row"><span>Vortex Breaker</span><input id="intVortexBreaker" type="checkbox" /></label>
+          <label class="switch-row"><span>Dip Pipe</span><input id="intDipPipe" type="checkbox" /></label>
+          <label class="switch-row"><span>Ring</span><input id="intRing" type="checkbox" /></label>
+          <label class="switch-row"><span>Clips</span><input id="intClips" type="checkbox" /></label>
+        </div>
+      </section>
+
+      <section class="panel" id="removablePanel">
+        <h2>Removable Internals</h2>
+        <div class="form-grid">
+          <label class="switch-row"><span>Inlet Distributor</span><input id="remInletDistributor" type="checkbox" /></label>
+          <label class="switch-row"><span>Mist Eliminator</span><input id="remMistEliminator" type="checkbox" /></label>
+          <label class="switch-row"><span>Schoepentoeter</span><input id="remSchoepentoeter" type="checkbox" /></label>
+          <label class="switch-row"><span>Trays</span><input id="remTrays" type="checkbox" /></label>
+          <label class="switch-row"><span>Sand Jetting</span><input id="remSandJetting" type="checkbox" /></label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="grid-2 compact-actions">
+          <button class="btn primary" id="fitViewBtn">Fit View</button>
+          <button class="btn" id="resetBtn">Reset to Default</button>
+          <button class="btn" id="saveJsonBtn">Download JSON</button>
+          <button class="btn" id="exportBomBtn">Export BOM</button>
+          <button class="btn" id="exportStlBtn">Export STL</button>
+          <button class="btn" id="exportGlbBtn">Export GLB</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Summary</h2>
+        <div id="summary" class="summary"></div>
+      </section>
+      <section class="panel">
+        <h2>BOM Preview</h2>
+        <div id="bomPreview" class="summary bom-preview"></div>
+      </section>
+      <section class="panel note">
+        <p>This refactor organizes the project by engineering breakdown: body, nozzles/manholes, supports, external attachments, internal attachments, and removable internals.</p>
+      </section>
+    </aside>
+
+    <main class="viewer-wrap">
+      <div class="viewer-toolbar">
+        <div><strong id="viewerTitle">PV-001</strong><span id="viewerSubTitle"> — domain-based engineering builder</span></div>
+        <div class="toolbar-actions">
+          <button class="view-btn" data-view="iso">ISO</button>
+          <button class="view-btn" data-view="front">Front</button>
+          <button class="view-btn" data-view="right">Right</button>
+          <button class="view-btn" data-view="top">Top</button>
+        </div>
+      </div>
+      <div id="viewer"></div>
+    </main>
+  </div>
+
+  <script type="module" src="./src/bootstrap.js"></script>
+</body>
+</html>
