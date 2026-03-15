@@ -5,6 +5,7 @@ export function getDomRefs() {
   const ids = [
     'modelName','equipmentType','displayMode','segments','materialDensity','corrosionAllowance','weldEnabled','weldType','weldSizeFactor',
     'bodyOrientation','shellSectionType','shellODStart','shellODEnd','shellThickness','shellLength','frontHeadType','rearHeadType',
+    'bodyFlangeTag','bodyFlangeLocation','bodyFlangeEnabled','bodyFlangeOD','bodyFlangeThickness','bodyFlangeWidth','bodyGasketEnabled','bodyGasketOD','bodyGasketID','bodyGasketThickness','bodyStudEnabled','bodyStudBCD','bodyStudDiameter','bodyStudCount','bodyStudLength',
     'pigBodyWrap','reboilerBodyWrap','pigMinorOD','pigReducerLength','pigNeckLength','closureType','channelOD','channelLength','tubeBundleOD',
     'nozzleTag','nozzleType','nozzleEnabled','nozzleLocationMode','nozzleOD','nozzleThickness','nozzleProjection','nozzleOffset','nozzleAngle','nozzlePadEnabled','nozzleBlindEnabled','nozzlePadOD',
     'supportType','supportSpacing','supportWidth','supportHeight',
@@ -33,6 +34,50 @@ function setAttachmentToggle(arr, type, enabled) {
   if (item) item.enabled = enabled;
 }
 
+function ensurePrimaryBodyFlange(model) {
+  if (!Array.isArray(model.body.bodyFlanges)) model.body.bodyFlanges = [];
+  if (!model.body.bodyFlanges[0]) {
+    const shell = model.body.shellSections[0];
+    model.body.bodyFlanges[0] = {
+      tag: 'BF-01',
+      enabled: true,
+      location: 'front-end',
+      od: Math.round((shell?.odStart || 1000) * 1.12),
+      thickness: Math.max(Math.round((shell?.thickness || 12) * 1.6), 20),
+      width: Math.max(Math.round((shell?.thickness || 12) * 2), 28),
+      gasket: {
+        enabled: true,
+        outerDiameter: Math.round((shell?.odStart || 1000) * 1.04),
+        innerDiameter: shell?.odStart || 1000,
+        thickness: 3,
+      },
+      studBolt: {
+        enabled: true,
+        boltCircleDiameter: Math.round((shell?.odStart || 1000) * 1.05),
+        boltDiameter: 24,
+        boltCount: 16,
+        boltLength: 70,
+      },
+    };
+  }
+  return model.body.bodyFlanges[0];
+}
+
+function bodyFlangeLocationValue(flange) {
+  if (typeof flange?.sectionInterface === 'number') return `interface-${flange.sectionInterface + 1}`;
+  return flange?.location || 'front-end';
+}
+
+function applyBodyFlangeLocation(flange, value) {
+  delete flange.sectionInterface;
+  delete flange.location;
+  if (value.startsWith('interface-')) {
+    flange.sectionInterface = Math.max(Number(value.split('-')[1] || 1) - 1, 0);
+  } else {
+    flange.location = value;
+  }
+}
+
 export function bindForm({ dom, store }) {
   bind(dom.modelName, () => store.updatePath('model.meta.name', dom.modelName.value));
   bind(dom.equipmentType, () => store.setEquipmentType(dom.equipmentType.value));
@@ -56,6 +101,63 @@ export function bindForm({ dom, store }) {
   bind(dom.shellLength, () => store.updatePath('model.body.shellSections[0].length', numValue(dom.shellLength)));
   bind(dom.frontHeadType, () => store.updatePath('model.body.heads.front.type', dom.frontHeadType.value));
   bind(dom.rearHeadType, () => store.updatePath('model.body.heads.rear.type', dom.rearHeadType.value));
+
+  bind(dom.bodyFlangeLocation, () => store.setState((draft) => {
+    const flange = ensurePrimaryBodyFlange(draft.model);
+    applyBodyFlangeLocation(flange, dom.bodyFlangeLocation.value);
+  }));
+  bind(dom.bodyFlangeEnabled, () => store.setState((draft) => {
+    const flange = ensurePrimaryBodyFlange(draft.model);
+    flange.enabled = boolValue(dom.bodyFlangeEnabled);
+  }));
+  bind(dom.bodyFlangeOD, () => store.setState((draft) => {
+    const flange = ensurePrimaryBodyFlange(draft.model);
+    flange.od = numValue(dom.bodyFlangeOD);
+  }));
+  bind(dom.bodyFlangeThickness, () => store.setState((draft) => {
+    const flange = ensurePrimaryBodyFlange(draft.model);
+    flange.thickness = numValue(dom.bodyFlangeThickness);
+  }));
+  bind(dom.bodyFlangeWidth, () => store.setState((draft) => {
+    const flange = ensurePrimaryBodyFlange(draft.model);
+    flange.width = numValue(dom.bodyFlangeWidth);
+  }));
+  bind(dom.bodyGasketEnabled, () => store.setState((draft) => {
+    const flange = ensurePrimaryBodyFlange(draft.model);
+    flange.gasket.enabled = boolValue(dom.bodyGasketEnabled);
+  }));
+  bind(dom.bodyGasketOD, () => store.setState((draft) => {
+    const flange = ensurePrimaryBodyFlange(draft.model);
+    flange.gasket.outerDiameter = numValue(dom.bodyGasketOD);
+  }));
+  bind(dom.bodyGasketID, () => store.setState((draft) => {
+    const flange = ensurePrimaryBodyFlange(draft.model);
+    flange.gasket.innerDiameter = numValue(dom.bodyGasketID);
+  }));
+  bind(dom.bodyGasketThickness, () => store.setState((draft) => {
+    const flange = ensurePrimaryBodyFlange(draft.model);
+    flange.gasket.thickness = numValue(dom.bodyGasketThickness);
+  }));
+  bind(dom.bodyStudEnabled, () => store.setState((draft) => {
+    const flange = ensurePrimaryBodyFlange(draft.model);
+    flange.studBolt.enabled = boolValue(dom.bodyStudEnabled);
+  }));
+  bind(dom.bodyStudBCD, () => store.setState((draft) => {
+    const flange = ensurePrimaryBodyFlange(draft.model);
+    flange.studBolt.boltCircleDiameter = numValue(dom.bodyStudBCD);
+  }));
+  bind(dom.bodyStudDiameter, () => store.setState((draft) => {
+    const flange = ensurePrimaryBodyFlange(draft.model);
+    flange.studBolt.boltDiameter = numValue(dom.bodyStudDiameter);
+  }));
+  bind(dom.bodyStudCount, () => store.setState((draft) => {
+    const flange = ensurePrimaryBodyFlange(draft.model);
+    flange.studBolt.boltCount = numValue(dom.bodyStudCount);
+  }));
+  bind(dom.bodyStudLength, () => store.setState((draft) => {
+    const flange = ensurePrimaryBodyFlange(draft.model);
+    flange.studBolt.boltLength = numValue(dom.bodyStudLength);
+  }));
 
   bind(dom.pigMinorOD, () => {
     store.updatePath('model.body.shellSections[1].odEnd', numValue(dom.pigMinorOD));
@@ -140,6 +242,23 @@ export function renderForm({ dom, state }) {
   dom.shellLength.value = main.length;
   dom.frontHeadType.value = model.body.heads.front.type;
   dom.rearHeadType.value = model.body.heads.rear.type;
+
+  const bodyFlange = ensurePrimaryBodyFlange(model);
+  dom.bodyFlangeTag.value = bodyFlange.tag || 'BF-01';
+  dom.bodyFlangeLocation.value = bodyFlangeLocationValue(bodyFlange);
+  dom.bodyFlangeEnabled.checked = Boolean(bodyFlange.enabled);
+  dom.bodyFlangeOD.value = bodyFlange.od || 0;
+  dom.bodyFlangeThickness.value = bodyFlange.thickness || 0;
+  dom.bodyFlangeWidth.value = bodyFlange.width || 0;
+  dom.bodyGasketEnabled.checked = Boolean(bodyFlange.gasket?.enabled);
+  dom.bodyGasketOD.value = bodyFlange.gasket?.outerDiameter || 0;
+  dom.bodyGasketID.value = bodyFlange.gasket?.innerDiameter || 0;
+  dom.bodyGasketThickness.value = bodyFlange.gasket?.thickness || 0;
+  dom.bodyStudEnabled.checked = Boolean(bodyFlange.studBolt?.enabled);
+  dom.bodyStudBCD.value = bodyFlange.studBolt?.boltCircleDiameter || 0;
+  dom.bodyStudDiameter.value = bodyFlange.studBolt?.boltDiameter || 0;
+  dom.bodyStudCount.value = bodyFlange.studBolt?.boltCount || 0;
+  dom.bodyStudLength.value = bodyFlange.studBolt?.boltLength || 0;
 
   dom.pigBodyWrap.classList.toggle('hidden', model.meta.equipmentType !== 'pigLauncher');
   dom.reboilerBodyWrap.classList.toggle('hidden', model.meta.equipmentType !== 'reboiler');

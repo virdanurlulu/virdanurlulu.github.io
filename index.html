@@ -67,17 +67,17 @@
               <option value="vertical">Vertical</option>
             </select>
           </label>
-          <label>Shell section type
+          <label>Shell Section Type
             <select id="shellSectionType">
               <option value="cylindrical">Cylindrical</option>
               <option value="tapered">Tapered</option>
             </select>
           </label>
-          <label>Shell OD start (mm)<input id="shellODStart" type="number" min="100" step="10" /></label>
-          <label>Shell OD end (mm)<input id="shellODEnd" type="number" min="100" step="10" /></label>
+          <label>Shell OD Start (mm)<input id="shellODStart" type="number" min="100" step="10" /></label>
+          <label>Shell OD End (mm)<input id="shellODEnd" type="number" min="100" step="10" /></label>
           <label>Shell Thickness (mm)<input id="shellThickness" type="number" min="2" step="1" /></label>
           <label>Straight Shell Length (mm)<input id="shellLength" type="number" min="100" step="25" /></label>
-          <label>Front head type
+          <label>Front Head Type
             <select id="frontHeadType">
               <option value="ellipsoidal">2:1 Ellipsoidal</option>
               <option value="hemispherical">Hemispherical</option>
@@ -85,7 +85,7 @@
               <option value="flat">Flat</option>
             </select>
           </label>
-          <label>Rear head type
+          <label>Rear Head Type
             <select id="rearHeadType">
               <option value="ellipsoidal">2:1 Ellipsoidal</option>
               <option value="hemispherical">Hemispherical</option>
@@ -94,6 +94,34 @@
             </select>
           </label>
         </div>
+
+        <div class="subsection">
+          <div class="panel-head"><h3>Body Flange / Gasket / Stud Bolt</h3></div>
+          <div class="form-grid">
+            <label>Body Flange Tag<input id="bodyFlangeTag" type="text" readonly /></label>
+            <label>Body Flange Location
+              <select id="bodyFlangeLocation">
+                <option value="front-end">Front End</option>
+                <option value="rear-end">Rear End</option>
+                <option value="interface-1">Shell Interface 1</option>
+              </select>
+            </label>
+            <label class="switch-row"><span>Enable Body Flange</span><input id="bodyFlangeEnabled" type="checkbox" /></label>
+            <label>Flange OD (mm)<input id="bodyFlangeOD" type="number" min="100" step="10" /></label>
+            <label>Flange Thickness (mm)<input id="bodyFlangeThickness" type="number" min="4" step="1" /></label>
+            <label>Flange Width (mm)<input id="bodyFlangeWidth" type="number" min="4" step="1" /></label>
+            <label class="switch-row"><span>Enable Gasket</span><input id="bodyGasketEnabled" type="checkbox" /></label>
+            <label>Gasket Outer Diameter (mm)<input id="bodyGasketOD" type="number" min="80" step="10" /></label>
+            <label>Gasket Inner Diameter (mm)<input id="bodyGasketID" type="number" min="60" step="10" /></label>
+            <label>Gasket Thickness (mm)<input id="bodyGasketThickness" type="number" min="1" step="0.5" /></label>
+            <label class="switch-row"><span>Enable Stud Bolt Set</span><input id="bodyStudEnabled" type="checkbox" /></label>
+            <label>Stud Bolt Circle Diameter (mm)<input id="bodyStudBCD" type="number" min="80" step="10" /></label>
+            <label>Stud Diameter (mm)<input id="bodyStudDiameter" type="number" min="8" step="1" /></label>
+            <label>Stud Count<input id="bodyStudCount" type="number" min="4" step="1" /></label>
+            <label>Stud Length (mm)<input id="bodyStudLength" type="number" min="10" step="1" /></label>
+          </div>
+        </div>
+
         <div id="pigBodyWrap" class="subsection hidden">
           <div class="panel-head"><h3>Pig Launcher Body</h3></div>
           <div class="form-grid">

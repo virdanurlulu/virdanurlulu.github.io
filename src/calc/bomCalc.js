@@ -28,6 +28,9 @@ function equipmentTypeLabel(type) {
     vent: 'Vent',
     kicker: 'Kicker',
     outlet: 'Outlet',
+    bodyFlange: 'Body Flange',
+    bodyGasket: 'Body Flange Gasket',
+    studBolt: 'Stud Bolt Set',
   }[type] || type;
 }
 
@@ -77,13 +80,34 @@ export function getBOMRows(model) {
   });
 
   model.body.bodyFlanges?.filter((item) => item.enabled).forEach((item) => {
+    const flangeLocation = typeof item.sectionInterface === 'number'
+      ? `section interface ${item.sectionInterface + 1}`
+      : (item.location === 'front-end' ? 'front end' : item.location === 'rear-end' ? 'rear end' : 'custom location');
     rows.push({
       tag: item.tag,
       family: familyLabel('body'),
       type: 'Body Flange',
-      description: `OD ${item.od} mm, thickness ${item.thickness} mm, width ${item.width} mm`,
+      description: `${flangeLocation}, OD ${item.od} mm, thickness ${item.thickness} mm, width ${item.width} mm`,
       qty: 1,
     });
+    if (item.gasket?.enabled) {
+      rows.push({
+        tag: `GK-${item.tag}`,
+        family: familyLabel('body'),
+        type: 'Body Flange Gasket',
+        description: `Outer diameter ${item.gasket.outerDiameter} mm, inner diameter ${item.gasket.innerDiameter} mm, thickness ${item.gasket.thickness} mm`,
+        qty: 1,
+      });
+    }
+    if (item.studBolt?.enabled) {
+      rows.push({
+        tag: `SB-${item.tag}`,
+        family: familyLabel('body'),
+        type: 'Stud Bolt Set',
+        description: `${item.studBolt.boltCount} studs, bolt circle diameter ${item.studBolt.boltCircleDiameter} mm, stud diameter ${item.studBolt.boltDiameter} mm, stud length ${item.studBolt.boltLength} mm`,
+        qty: item.studBolt.boltCount,
+      });
+    }
   });
 
   if (model.body.closure?.enabled) {

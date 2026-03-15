@@ -33,6 +33,7 @@ export function getSummary(state) {
     { label: 'Main Shell OD', value: fmtMm(mainShell.odStart) },
     { label: 'Straight Shell Length', value: fmtMm(mainShell.length) },
     { label: 'Nozzle Count', value: String(state.model.nozzles.filter((item) => item.enabled).length) },
+    { label: 'Body Flange Count', value: String(state.model.body.bodyFlanges.filter((item) => item.enabled).length) },
     { label: 'Support Count', value: String(state.model.supports.length) },
     { label: 'Weld Specification', value: weldLabel(state) },
     { label: 'Internal Volume', value: fmtVolume(volume) },
