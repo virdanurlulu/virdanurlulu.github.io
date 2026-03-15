@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pressure Vessel Builder — Domain Refactor</title>
+  <title>Pressure Vessel Builder — Domain Refactor | Responsive UI</title>
   <link rel="stylesheet" href="./styles/main.css" />
   <script type="importmap">
     {
@@ -15,10 +15,13 @@
   </script>
 </head>
 <body>
-  <div class="app-shell">
+  <div class="app-shell responsive-shell">
     <aside class="sidebar">
       <div class="brand">
-        <h1>Pressure Vessel Builder</h1>
+        <div class="brand-head">
+          <h1>Pressure Vessel Builder</h1>
+          <span class="device-badge">Responsive: Mobile / Tablet / Desktop</span>
+        </div>
         <p>Domain-based engineering builder for body, nozzles/manholes, supports, attachments, internals, and BOM generation.</p>
       </div>
 
@@ -223,9 +226,9 @@
       </section>
     </aside>
 
-    <main class="viewer-wrap">
+    <main class="viewer-wrap" aria-label="3D model viewer">
       <div class="viewer-toolbar">
-        <div><strong id="viewerTitle">PV-001</strong><span id="viewerSubTitle"> — domain-based engineering builder</span></div>
+        <div class="viewer-heading"><strong id="viewerTitle">PV-001</strong><span id="viewerSubTitle"> — domain-based engineering builder</span></div>
         <div class="toolbar-actions">
           <button class="view-btn" data-view="iso">ISO</button>
           <button class="view-btn" data-view="front">Front</button>

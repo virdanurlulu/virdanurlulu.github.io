@@ -19,3 +19,9 @@ Status:
 Notes:
 - Some domains are still in the initial implementation or scaffold stage so the project remains clean and scalable
 - Run through localhost or GitHub Pages, not `file:///`
+
+
+Responsive UI support:
+- Desktop / PC layout uses a two-panel engineering workspace
+- Tablet layout preserves the 3D viewer with stacked controls and touch-friendly spacing
+- Mobile / cellular layout moves the 3D viewer to the top, collapses form grids to a single column, and keeps controls readable and touch-friendly
