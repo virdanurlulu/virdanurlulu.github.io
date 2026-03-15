@@ -8,6 +8,8 @@ function computeRenderableBounds(root) {
   const tmp = new THREE.Box3();
   let found = false;
 
+  root.updateWorldMatrix(true, true);
+
   root.traverse((child) => {
     if (!child.visible) return;
     if (child.userData?.helper) return;
@@ -28,26 +30,27 @@ function computeRenderableBounds(root) {
 
 function applyCameraToBounds({ camera, controls, render, box, view = 'iso' }) {
   if (box.isEmpty()) return;
+
   const size = box.getSize(new THREE.Vector3());
   const center = box.getCenter(new THREE.Vector3());
 
-  const maxDim = Math.max(size.x, size.y, size.z, 1);
-  const fov = (camera.fov * Math.PI) / 180;
-  const fitHeightDistance = maxDim / (2 * Math.tan(fov / 2));
-  const fitWidthDistance = fitHeightDistance / camera.aspect;
-  const dist = Math.max(fitHeightDistance, fitWidthDistance) * 1.55;
+  const fitHeightDistance = size.y / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov * 0.5)));
+  const fitWidthDistance = size.x / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov * 0.5))) / camera.aspect;
+  const fitDepthDistance = size.z * 1.2;
+  const dist = Math.max(fitHeightDistance, fitWidthDistance, fitDepthDistance, 500) * 1.35;
 
   if (view === 'front') camera.position.set(center.x, center.y, center.z + dist);
   else if (view === 'right') camera.position.set(center.x + dist, center.y, center.z);
   else if (view === 'top') camera.position.set(center.x, center.y + dist, center.z);
-  else camera.position.set(center.x + dist * 0.95, center.y + dist * 0.62, center.z + dist * 0.95);
+  else camera.position.set(center.x + dist * 0.95, center.y + dist * 0.58, center.z + dist * 0.95);
 
-  camera.near = Math.max(0.1, maxDim / 1000);
-  camera.far = Math.max(50000, dist * 12);
+  camera.near = Math.max(0.1, dist / 5000);
+  camera.far = Math.max(50000, dist * 20);
   camera.updateProjectionMatrix();
 
   controls.target.copy(center);
   controls.update();
+  camera.lookAt(center);
   render();
 }
 
@@ -57,6 +60,10 @@ export function createSceneMount(container) {
 
   const camera = createCamera(container);
   const renderer = createRenderer(container);
+  renderer.domElement.style.display = 'block';
+  renderer.domElement.style.width = '100%';
+  renderer.domElement.style.height = '100%';
+
   const controls = createControls(camera, renderer.domElement);
 
   const hemi = new THREE.HemisphereLight(0xffffff, 0x0b1220, 1.1);
@@ -80,8 +87,22 @@ export function createSceneMount(container) {
 
   let currentModel = null;
   let currentView = 'iso';
+  let lastWidth = 0;
+  let lastHeight = 0;
+
+  function resizeToContainer() {
+    const width = Math.max(Math.floor(container.clientWidth), 1);
+    const height = Math.max(Math.floor(container.clientHeight), 1);
+    if (width === lastWidth && height === lastHeight) return;
+    lastWidth = width;
+    lastHeight = height;
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height, false);
+  }
 
   function render() {
+    resizeToContainer();
     renderer.render(scene, camera);
   }
 
@@ -89,11 +110,16 @@ export function createSceneMount(container) {
     if (currentModel) scene.remove(currentModel);
     currentModel = model;
     scene.add(model);
-    render();
+    resizeToContainer();
+    frameObject(currentModel, currentView);
   }
 
   function frameObject(object = currentModel, view = currentView) {
-    if (!object) return;
+    if (!object) {
+      render();
+      return;
+    }
+    resizeToContainer();
     const box = computeRenderableBounds(object);
     applyCameraToBounds({ camera, controls, render, box, view });
   }
@@ -108,14 +134,14 @@ export function createSceneMount(container) {
     render();
     requestAnimationFrame(animate);
   }
-  animate();
+  requestAnimationFrame(() => {
+    resizeToContainer();
+    frameObject(currentModel, currentView);
+    animate();
+  });
 
   window.addEventListener('resize', () => {
-    const width = Math.max(container.clientWidth, 1);
-    const height = Math.max(container.clientHeight, 1);
-    camera.aspect = width / height;
-    camera.updateProjectionMatrix();
-    renderer.setSize(width, height);
+    resizeToContainer();
     frameObject(currentModel, currentView);
   });
 

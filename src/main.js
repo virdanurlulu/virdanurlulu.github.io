@@ -19,10 +19,14 @@ function renderApp(state) {
   const model = buildEquipmentModel({ state, materials });
   sceneMount.setModel(model);
   renderSummaryPanel(dom.summary, dom.bomPreview, getSummary(state), state.model);
-  if (firstRender) {
-    requestAnimationFrame(() => sceneMount.setPresetView('iso'));
-    firstRender = false;
-  }
+
+  requestAnimationFrame(() => {
+    sceneMount.frameObject();
+    if (firstRender) {
+      sceneMount.setPresetView('iso');
+      firstRender = false;
+    }
+  });
 }
 
 bindForm({ dom, store: modelStore });
@@ -30,7 +34,10 @@ bindToolbar({
   dom,
   sceneMount,
   store: modelStore,
-  onReset: () => { firstRender = true; modelStore.reset(); },
+  onReset: () => {
+    firstRender = true;
+    modelStore.reset();
+  },
   onExportJSON: exportJSON,
   onExportBOM: exportBOM,
 });
