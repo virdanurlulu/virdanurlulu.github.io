@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pressure Vessel Builder Modular</title>
+  <link rel="stylesheet" href="./styles/main.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <h1>Pressure Vessel Builder</h1>
+        <p>Modular parametric builder — Pipe, Standard Vessel, Pig Launcher, dan Reboiler.</p>
+      </div>
+
+      <section class="panel">
+        <h2>Model Umum</h2>
+        <div class="form-grid">
+          <label>
+            Nama model
+            <input id="modelName" type="text" value="Model-001" />
+          </label>
+          <label>
+            Tipe builder
+            <select id="modelType">
+              <option value="vessel">Pressure Vessel Builder</option>
+              <option value="pipe">Pipe Builder</option>
+            </select>
+          </label>
+          <label id="equipmentTypeWrap">
+            Jenis equipment
+            <select id="equipmentType">
+              <option value="standard">Standard Vessel</option>
+              <option value="pigLauncher">Pig Launcher</option>
+              <option value="reboiler">Reboiler</option>
+            </select>
+          </label>
+          <label>
+            Mode tampilan
+            <select id="displayMode">
+              <option value="solid">Solid</option>
+              <option value="wireframe">Wireframe</option>
+              <option value="ghost">Ghosted</option>
+            </select>
+          </label>
+          <label>
+            Segment detail
+            <input id="segments" type="number" min="24" max="144" step="4" value="72" />
+          </label>
+          <label>
+            Densitas material (kg/m³)
+            <input id="materialDensity" type="number" min="100" step="10" value="7850" />
+          </label>
+          <label>
+            Corrosion allowance (mm)
+            <input id="corrosionAllowance" type="number" min="0" step="0.5" value="0" />
+          </label>
+        </div>
+      </section>
+
+      <section id="pipePanel" class="panel hidden">
+        <h2>Pipe Builder</h2>
+        <div class="form-grid">
+          <label>
+            Orientasi pipe
+            <select id="pipeOrientation">
+              <option value="horizontal">Horizontal</option>
+              <option value="vertical">Vertical</option>
+            </select>
+          </label>
+          <label>
+            Outer diameter pipe (mm)
+            <input id="pipeOuterDiameter" type="number" min="30" step="5" value="500" />
+          </label>
+          <label>
+            Inner diameter pipe (mm)
+            <input id="pipeInnerDiameter" type="number" min="10" step="5" value="476" />
+          </label>
+          <label>
+            Tebal pipe (mm)
+            <input id="pipeThickness" type="number" min="2" step="1" value="12" />
+          </label>
+          <label>
+            Panjang inlet lurus (mm)
+            <input id="pipeLength" type="number" min="100" step="25" value="1800" />
+          </label>
+          <label>
+            Elbow angle (deg)
+            <input id="pipeElbowAngle" type="number" min="0" max="180" step="5" value="90" />
+          </label>
+          <label>
+            Bend radius (mm)
+            <input id="pipeBendRadius" type="number" min="50" step="10" value="600" />
+          </label>
+          <label>
+            Panjang outlet lurus (mm)
+            <input id="pipeOutletLength" type="number" min="100" step="25" value="1200" />
+          </label>
+        </div>
+      </section>
+
+      <section id="standardPanel" class="panel">
+        <h2>Standard Vessel</h2>
+        <div class="form-grid">
+          <label>
+            Orientasi vessel
+            <select id="stdOrientation">
+              <option value="horizontal">Horizontal vessel</option>
+              <option value="vertical">Vertical vessel</option>
+            </select>
+          </label>
+          <label>
+            Bentuk shell
+            <select id="stdShellType">
+              <option value="cylindrical">Cylindrical shell</option>
+              <option value="tapered">Tapered shell</option>
+            </select>
+          </label>
+          <label>
+            Shell OD bawah (mm)
+            <input id="stdShellOD" type="number" min="100" step="10" value="2200" />
+          </label>
+          <label>
+            Shell ID bawah (mm)
+            <input id="stdShellID" type="number" min="50" step="10" value="2168" />
+          </label>
+          <label>
+            Tebal shell (mm)
+            <input id="stdThickness" type="number" min="2" step="1" value="16" />
+          </label>
+          <label id="stdShellTopODWrap" class="hidden">
+            Shell OD atas / outlet taper (mm)
+            <input id="stdShellTopOD" type="number" min="100" step="10" value="1600" />
+          </label>
+          <label>
+            Panjang shell lurus (mm)
+            <input id="stdShellLength" type="number" min="200" step="50" value="6500" />
+          </label>
+          <label>
+            Bentuk top head
+            <select id="stdTopHeadType">
+              <option value="ellipsoidal">2:1 Ellipsoidal</option>
+              <option value="hemispherical">Hemispherical</option>
+              <option value="conical">Conical</option>
+              <option value="flat">Flat</option>
+            </select>
+          </label>
+          <label>
+            Bentuk bottom head
+            <select id="stdBottomHeadType">
+              <option value="ellipsoidal">2:1 Ellipsoidal</option>
+              <option value="hemispherical">Hemispherical</option>
+              <option value="conical">Conical</option>
+              <option value="flat">Flat</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection-head">
+            <h3>Nozzle & Support</h3>
+            <label class="switch-row">
+              <span>Nozzle aktif</span>
+              <input id="stdNozzleEnabled" type="checkbox" checked />
+            </label>
+          </div>
+          <div class="form-grid">
+            <label class="std-nozzle-field">
+              OD nozzle (mm)
+              <input id="stdNozzleDiameter" type="number" min="50" step="10" value="300" />
+            </label>
+            <label class="std-nozzle-field">
+              Tebal nozzle (mm)
+              <input id="stdNozzleThickness" type="number" min="2" step="1" value="10" />
+            </label>
+            <label class="std-nozzle-field">
+              Projection nozzle (mm)
+              <input id="stdNozzleProjection" type="number" min="50" step="10" value="420" />
+            </label>
+            <label class="std-nozzle-field">
+              Lokasi nozzle aksial dari center shell (mm)
+              <input id="stdNozzleOffset" type="number" step="10" value="0" />
+            </label>
+            <label class="std-nozzle-field">
+              Sudut keliling nozzle (deg)
+              <input id="stdNozzleAngle" type="number" min="-180" max="180" step="5" value="0" />
+            </label>
+            <label>
+              Support vessel
+              <select id="stdSupportType">
+                <option value="auto">Auto</option>
+                <option value="saddles">Saddles</option>
+                <option value="skirt">Skirt</option>
+                <option value="none">None</option>
+              </select>
+            </label>
+            <label id="stdSaddleSpacingWrap">
+              Saddle spacing (mm)
+              <input id="stdSaddleSpacing" type="number" min="400" step="50" value="3400" />
+            </label>
+            <label id="stdSaddleWidthWrap">
+              Lebar saddle (mm)
+              <input id="stdSaddleWidth" type="number" min="100" step="10" value="320" />
+            </label>
+            <label id="stdSaddleHeightWrap">
+              Tinggi saddle (mm)
+              <input id="stdSaddleHeight" type="number" min="100" step="10" value="680" />
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <section id="pigLauncherPanel" class="panel hidden">
+        <h2>Pig Launcher</h2>
+        <div class="form-grid">
+          <label>
+            Orientasi launcher
+            <select id="pigOrientation">
+              <option value="horizontal">Horizontal</option>
+              <option value="vertical">Vertical</option>
+            </select>
+          </label>
+          <label>
+            Major barrel OD (mm)
+            <input id="pigMajorOD" type="number" min="200" step="10" value="1200" />
+          </label>
+          <label>
+            Minor barrel OD / neck (mm)
+            <input id="pigMinorOD" type="number" min="100" step="10" value="700" />
+          </label>
+          <label>
+            Tebal shell (mm)
+            <input id="pigThickness" type="number" min="2" step="1" value="18" />
+          </label>
+          <label>
+            Panjang major barrel (mm)
+            <input id="pigMajorLength" type="number" min="400" step="50" value="2800" />
+          </label>
+          <label>
+            Panjang reducer (mm)
+            <input id="pigReducerLength" type="number" min="100" step="25" value="900" />
+          </label>
+          <label>
+            Panjang neck / kicker barrel (mm)
+            <input id="pigNeckLength" type="number" min="200" step="25" value="1400" />
+          </label>
+          <label>
+            Bentuk closure inlet
+            <select id="pigClosureType">
+              <option value="flat">Flat closure</option>
+              <option value="ellipsoidal">Ellipsoidal</option>
+              <option value="hemispherical">Hemispherical</option>
+            </select>
+          </label>
+          <label>
+            Bentuk tail head
+            <select id="pigTailType">
+              <option value="ellipsoidal">Ellipsoidal</option>
+              <option value="flat">Flat</option>
+              <option value="conical">Conical</option>
+            </select>
+          </label>
+          <label>
+            Projection outlet axial (mm)
+            <input id="pigDischargeProjection" type="number" min="100" step="10" value="450" />
+          </label>
+          <label>
+            Support saddle spacing (mm)
+            <input id="pigSaddleSpacing" type="number" min="300" step="50" value="2200" />
+          </label>
+          <label>
+            Lebar saddle (mm)
+            <input id="pigSaddleWidth" type="number" min="100" step="10" value="260" />
+          </label>
+          <label>
+            Tinggi saddle (mm)
+            <input id="pigSaddleHeight" type="number" min="100" step="10" value="460" />
+          </label>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection-head">
+            <h3>Nozzle utilitas</h3>
+            <label class="switch-row">
+              <span>Vent aktif</span>
+              <input id="pigVentEnabled" type="checkbox" checked />
+            </label>
+          </div>
+          <div class="form-grid">
+            <label id="pigVentNozzleWrap">
+              OD vent nozzle (mm)
+              <input id="pigVentNozzleDiameter" type="number" min="25" step="5" value="100" />
+            </label>
+            <label>
+              Kicker / drain aktif
+              <input id="pigKickerEnabled" type="checkbox" checked />
+            </label>
+            <label id="pigKickerNozzleWrap">
+              OD kicker / drain nozzle (mm)
+              <input id="pigKickerNozzleDiameter" type="number" min="25" step="5" value="80" />
+            </label>
+            <label>
+              Tebal nozzle utilitas (mm)
+              <input id="pigNozzleThickness" type="number" min="2" step="1" value="10" />
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <section id="reboilerPanel" class="panel hidden">
+        <h2>Reboiler</h2>
+        <div class="form-grid">
+          <label>
+            Orientasi reboiler
+            <select id="rebOrientation">
+              <option value="horizontal">Horizontal</option>
+              <option value="vertical">Vertical</option>
+            </select>
+          </label>
+          <label>
+            Shell OD (mm)
+            <input id="rebShellOD" type="number" min="200" step="10" value="1800" />
+          </label>
+          <label>
+            Shell ID (mm)
+            <input id="rebShellID" type="number" min="150" step="10" value="1768" />
+          </label>
+          <label>
+            Tebal shell (mm)
+            <input id="rebThickness" type="number" min="2" step="1" value="16" />
+          </label>
+          <label>
+            Panjang shell lurus (mm)
+            <input id="rebShellLength" type="number" min="400" step="50" value="5200" />
+          </label>
+          <label>
+            Channel OD (mm)
+            <input id="rebChannelOD" type="number" min="100" step="10" value="1100" />
+          </label>
+          <label>
+            Panjang channel depan (mm)
+            <input id="rebChannelLength" type="number" min="100" step="25" value="650" />
+          </label>
+          <label>
+            Rear head type
+            <select id="rebRearHeadType">
+              <option value="ellipsoidal">Ellipsoidal</option>
+              <option value="hemispherical">Hemispherical</option>
+              <option value="flat">Flat</option>
+            </select>
+          </label>
+          <label>
+            Front channel head
+            <select id="rebFrontHeadType">
+              <option value="flat">Flat channel cover</option>
+              <option value="ellipsoidal">Ellipsoidal</option>
+            </select>
+          </label>
+          <label>
+            Tube bundle OD (mm)
+            <input id="rebTubeBundleOD" type="number" min="100" step="10" value="1200" />
+          </label>
+          <label>
+            OD nozzle utama (mm)
+            <input id="rebNozzleDiameter" type="number" min="50" step="10" value="250" />
+          </label>
+          <label>
+            Projection nozzle utama (mm)
+            <input id="rebNozzleProjection" type="number" min="100" step="10" value="350" />
+          </label>
+          <label>
+            Support saddle spacing (mm)
+            <input id="rebSaddleSpacing" type="number" min="300" step="50" value="3000" />
+          </label>
+          <label>
+            Lebar saddle (mm)
+            <input id="rebSaddleWidth" type="number" min="100" step="10" value="300" />
+          </label>
+          <label>
+            Tinggi saddle (mm)
+            <input id="rebSaddleHeight" type="number" min="100" step="10" value="540" />
+          </label>
+        </div>
+      </section>
+
+      <section class="panel compact-actions grid-2">
+        <button id="fitViewBtn" class="btn primary">Fit view</button>
+        <button id="resetBtn" class="btn">Reset default</button>
+        <button id="saveJsonBtn" class="btn">Download JSON</button>
+        <button id="exportStlBtn" class="btn">Export STL</button>
+        <button id="exportGlbBtn" class="btn">Export GLB</button>
+      </section>
+
+      <section class="panel">
+        <h2>Ringkasan Model</h2>
+        <div id="summary" class="summary"></div>
+      </section>
+
+      <section class="panel note">
+        <h2>Struktur Modular</h2>
+        <p>
+          Kode sekarang dipecah per domain: state, core scene, geometry, UI, calculation, export, dan utils.
+          Struktur ini lebih aman untuk revisi bertahap dibanding memisahkan file berdasarkan “stage”, karena satu perubahan shell/head/nozzle cukup dilakukan di modul terkait saja.
+        </p>
+      </section>
+    </aside>
+
+    <main class="viewer-wrap">
+      <div class="viewer-toolbar">
+        <div>
+          <strong id="viewerTitle">Model-001</strong>
+          <span id="viewerSubTitle"> — parametric engineering builder</span>
+        </div>
+        <div class="toolbar-actions">
+          <button data-view="iso" class="view-btn">ISO</button>
+          <button data-view="front" class="view-btn">Front</button>
+          <button data-view="right" class="view-btn">Right</button>
+          <button data-view="top" class="view-btn">Top</button>
+        </div>
+      </div>
+      <div id="viewer"></div>
+    </main>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
