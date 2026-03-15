@@ -20,8 +20,7 @@ function renderApp(state) {
   sceneMount.setModel(model);
   renderSummaryPanel(dom.summary, dom.bomPreview, getSummary(state), state.model);
   if (firstRender) {
-    sceneMount.frameObject(model);
-    sceneMount.setPresetView('iso');
+    requestAnimationFrame(() => sceneMount.setPresetView('iso'));
     firstRender = false;
   }
 }

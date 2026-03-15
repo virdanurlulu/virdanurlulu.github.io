@@ -3,6 +3,54 @@ import { createCamera } from './camera.js';
 import { createRenderer } from './renderer.js';
 import { createControls } from './controls.js';
 
+function computeRenderableBounds(root) {
+  const box = new THREE.Box3();
+  const tmp = new THREE.Box3();
+  let found = false;
+
+  root.traverse((child) => {
+    if (!child.visible) return;
+    if (child.userData?.helper) return;
+    const isRenderable = child.isMesh || child.isLine || child.isPoints || child.isSprite;
+    if (!isRenderable) return;
+    tmp.setFromObject(child);
+    if (!Number.isFinite(tmp.min.x) || !Number.isFinite(tmp.max.x)) return;
+    if (tmp.isEmpty()) return;
+    box.union(tmp);
+    found = true;
+  });
+
+  if (!found) {
+    box.setFromObject(root);
+  }
+  return box;
+}
+
+function applyCameraToBounds({ camera, controls, render, box, view = 'iso' }) {
+  if (box.isEmpty()) return;
+  const size = box.getSize(new THREE.Vector3());
+  const center = box.getCenter(new THREE.Vector3());
+
+  const maxDim = Math.max(size.x, size.y, size.z, 1);
+  const fov = (camera.fov * Math.PI) / 180;
+  const fitHeightDistance = maxDim / (2 * Math.tan(fov / 2));
+  const fitWidthDistance = fitHeightDistance / camera.aspect;
+  const dist = Math.max(fitHeightDistance, fitWidthDistance) * 1.55;
+
+  if (view === 'front') camera.position.set(center.x, center.y, center.z + dist);
+  else if (view === 'right') camera.position.set(center.x + dist, center.y, center.z);
+  else if (view === 'top') camera.position.set(center.x, center.y + dist, center.z);
+  else camera.position.set(center.x + dist * 0.95, center.y + dist * 0.62, center.z + dist * 0.95);
+
+  camera.near = Math.max(0.1, maxDim / 1000);
+  camera.far = Math.max(50000, dist * 12);
+  camera.updateProjectionMatrix();
+
+  controls.target.copy(center);
+  controls.update();
+  render();
+}
+
 export function createSceneMount(container) {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x0f172a);
@@ -31,6 +79,11 @@ export function createSceneMount(container) {
   scene.add(axes);
 
   let currentModel = null;
+  let currentView = 'iso';
+
+  function render() {
+    renderer.render(scene, camera);
+  }
 
   function setModel(model) {
     if (currentModel) scene.remove(currentModel);
@@ -39,45 +92,15 @@ export function createSceneMount(container) {
     render();
   }
 
-  function render() {
-    renderer.render(scene, camera);
-  }
-
-  function frameObject(object = currentModel) {
+  function frameObject(object = currentModel, view = currentView) {
     if (!object) return;
-    const box = new THREE.Box3().setFromObject(object);
-    const size = box.getSize(new THREE.Vector3());
-    const center = box.getCenter(new THREE.Vector3());
-
-    const maxDim = Math.max(size.x, size.y, size.z, 1);
-    const fov = (camera.fov * Math.PI) / 180;
-    const dist = Math.abs(maxDim / Math.sin(fov / 2)) * 0.9;
-
-    camera.position.copy(center.clone().add(new THREE.Vector3(dist * 0.95, dist * 0.65, dist * 0.95)));
-    camera.near = Math.max(0.1, maxDim / 500);
-    camera.far = Math.max(200000, dist * 8);
-    camera.updateProjectionMatrix();
-
-    controls.target.copy(center);
-    controls.update();
-    render();
+    const box = computeRenderableBounds(object);
+    applyCameraToBounds({ camera, controls, render, box, view });
   }
 
-  function setPresetView(view) {
-    if (!currentModel) return;
-    const box = new THREE.Box3().setFromObject(currentModel);
-    const size = box.getSize(new THREE.Vector3());
-    const center = box.getCenter(new THREE.Vector3());
-    const dist = Math.max(size.x, size.y, size.z, 1) * 2.1;
-
-    if (view === 'front') camera.position.set(center.x, center.y, center.z + dist);
-    else if (view === 'right') camera.position.set(center.x + dist, center.y, center.z);
-    else if (view === 'top') camera.position.set(center.x, center.y + dist, center.z);
-    else camera.position.set(center.x + dist * 0.9, center.y + dist * 0.6, center.z + dist * 0.9);
-
-    controls.target.copy(center);
-    controls.update();
-    render();
+  function setPresetView(view = 'iso') {
+    currentView = view;
+    frameObject(currentModel, view);
   }
 
   function animate() {
@@ -88,10 +111,12 @@ export function createSceneMount(container) {
   animate();
 
   window.addEventListener('resize', () => {
-    camera.aspect = container.clientWidth / container.clientHeight;
+    const width = Math.max(container.clientWidth, 1);
+    const height = Math.max(container.clientHeight, 1);
+    camera.aspect = width / height;
     camera.updateProjectionMatrix();
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    render();
+    renderer.setSize(width, height);
+    frameObject(currentModel, currentView);
   });
 
   return {
