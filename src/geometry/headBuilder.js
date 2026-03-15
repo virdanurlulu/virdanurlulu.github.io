@@ -44,6 +44,7 @@ export function createHead({ type, radius, thickness, segments, material, isTop 
 
   if (type === 'flat') {
     const disk = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, thickness, segments), material);
+    disk.position.y = isTop ? thickness / 2 : -thickness / 2;
     group.add(disk);
     return { group, height: thickness };
   }
@@ -65,12 +66,10 @@ export function createHead({ type, radius, thickness, segments, material, isTop 
   ring.rotation.x = isTop ? -Math.PI / 2 : Math.PI / 2;
   group.add(ring);
 
-  if (isTop) {
-    group.position.y = height;
-  } else {
+  if (!isTop) {
     group.rotation.z = Math.PI;
-    group.position.y = -height;
   }
+
   return { group, height };
 }
 
